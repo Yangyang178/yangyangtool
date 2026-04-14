@@ -1,0 +1,147 @@
+page {
+  height: 100vh;
+  background-color: #F8FAFC;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-scroll {
+  flex: 1;
+  height: 100vh;
+}
+
+.page-container {
+  padding: 0 20px;
+  padding-bottom: 100px;
+  min-height: calc(100vh - 100px);
+}
+
+.header-section {
+  padding: 24px 0 28px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1E293B;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #64748B;
+}
+
+.tools-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tool-item {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 18px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  transition: all 0.15s ease;
+}
+
+.tool-item-hover {
+  transform: scale(0.98);
+  opacity: 0.95;
+}
+
+.item-icon-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 14px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+}
+
+.item-icon {
+  font-size: 26px;
+}
+
+.item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1E293B;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.item-desc {
+  font-size: 13px;
+  color: #64748B;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-action {
+  padding: 8px 12px;
+  flex-shrink: 0;
+}
+
+.item-action text {
+  font-size: 13px;
+  color: #94A3B8;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+}
+
+.empty-icon {
+  font-size: 72px;
+  margin-bottom: 20px;
+  opacity: 0.6;
+}
+
+.empty-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1E293B;
+  margin-bottom: 10px;
+}
+
+.empty-subtext {
+  font-size: 14px;
+  color: #94A3B8;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.empty-btn {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  padding: 12px 32px;
+  border-radius: 25px;
+}
+
+.empty-btn text {
+  font-size: 15px;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.bottom-safe-area {
+  height: 40px;
+}

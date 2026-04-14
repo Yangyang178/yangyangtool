@@ -1,0 +1,6 @@
+<!-- 最近使用图标 - 选中状态 -->
+<svg width="81" height="81" viewBox="0 0 81 81" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="40.5" cy="40.5" r="22" fill="#3B82F6"/>
+  <polyline points="30,40.5 38,48.5 52,33" stroke="white" stroke-width="3.5" fill="none" 
+            stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

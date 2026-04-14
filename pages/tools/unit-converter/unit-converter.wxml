@@ -1,0 +1,83 @@
+<navigation-bar title="单位换算" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper red-gradient">
+        <text class="tool-icon">📏</text>
+      </view>
+      <text class="tool-title">智能单位换算</text>
+      <text class="tool-desc">长度/重量/温度/面积等一键转换</text>
+    </view>
+
+    <!-- 分类选择 -->
+    <view class="category-tabs">
+      <view 
+        wx:for="{{categories}}" 
+        wx:key="id"
+        class="tab-item {{currentCategory === item.id ? 'active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onCategoryChange"
+      >
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 输入区域 -->
+    <view class="input-section">
+      <view class="input-card">
+        <text class="card-label">输入数值</text>
+        <view class="value-input-wrapper">
+          <input 
+            class="value-input" 
+            type="digit"
+            placeholder="请输入数值"
+            value="{{inputValue}}"
+            bindinput="onInput"
+          />
+          <view class="unit-selector" bindtap="showFromUnit">
+            <text>{{fromUnit}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 转换方向 -->
+      <view class="convert-arrow">
+        <text>↓</text>
+      </view>
+
+      <!-- 目标单位 -->
+      <view class="output-card">
+        <text class="card-label">转换结果</text>
+        <view class="result-display">
+          <text class="result-value">{{resultValue}}</text>
+          <view class="unit-selector" bindtap="showToUnit">
+            <text>{{toUnit}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 常用换算表 -->
+    <view class="conversion-table" wx:if="{{showTable}}">
+      <text class="table-title">常用换算参考</text>
+      <view class="table-list">
+        <view class="table-row" wx:for="{{conversionList}}" wx:key="index">
+          <text class="table-from">{{item.from}}</text>
+          <text class="table-equal">=</text>
+          <text class="table-to">{{item.to}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-btns">
+      <button class="primary-btn" bindtap="copyResult">
+        <text>复制结果</text>
+      </button>
+      <button class="secondary-btn" bindtap="swapUnits">
+        <text>交换单位</text>
+      </button>
+    </view>
+  </view>
+</scroll-view>

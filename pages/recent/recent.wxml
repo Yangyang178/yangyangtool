@@ -1,0 +1,50 @@
+<navigation-bar title="最近使用" back="{{false}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="main-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+  <view class="page-container">
+    <view class="header-section">
+      <text class="page-title">最近使用</text>
+      <view class="clear-btn" wx:if="{{recentTools.length > 0}}" bindtap="clearRecent">
+        <text>清空记录</text>
+      </view>
+    </view>
+
+    <!-- 最近使用列表 -->
+    <view class="tools-list" wx:if="{{recentTools.length > 0}}">
+      <view 
+        wx:for="{{recentTools}}" 
+        wx:key="id"
+        class="tool-item"
+        data-tool="{{item}}"
+        bindtap="onToolClick"
+        hover-class="tool-item-hover"
+        hover-stay-time="100"
+      >
+        <view class="item-icon-wrapper">
+          <text class="item-icon">{{item.icon}}</text>
+        </view>
+        
+        <view class="item-content">
+          <text class="item-name">{{item.name}}</text>
+          <text class="item-time">{{item.timeText}}</text>
+        </view>
+
+        <view class="item-index" wx:if="{{index < 3}}">
+          <text>{{index + 1}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{recentTools.length === 0}}">
+      <text class="empty-icon">🕐</text>
+      <text class="empty-text">暂无使用记录</text>
+      <text class="empty-subtext">使用过的工具会显示在这里</text>
+      <view class="empty-btn" bindtap="goToHome">
+        <text>去使用工具</text>
+      </view>
+    </view>
+
+    <view class="bottom-safe-area"></view>
+  </view>
+</scroll-view>

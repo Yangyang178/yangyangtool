@@ -1,0 +1,120 @@
+<navigation-bar title="世界时钟" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper" style="background: linear-gradient(135deg, #8B5CF633 0%, #8B5CF666 100%);">
+        <text class="tool-icon">🌍</text>
+      </view>
+      <text class="tool-title">世界时钟</text>
+      <text class="tool-desc">全球时区时间实时查看</text>
+    </view>
+
+    <view class="local-time-card">
+      <view class="local-header">
+        <text class="local-icon">📍</text>
+        <text class="local-label">本地时间</text>
+      </view>
+      <view class="local-time">
+        <text class="time-text">{{localTime}}</text>
+        <text class="date-text">{{localDate}}</text>
+      </view>
+      <view class="local-info">
+        <text class="timezone">UTC{{localOffset >= '+' ? '' : ''}}{{localOffset}}</text>
+        <text class="weekday">{{localWeekday}}</text>
+      </view>
+    </view>
+
+    <view class="section-header">
+      <text class="section-title">已添加城市 ({{cityList.length}})</text>
+      <view class="add-btn" bindtap="showAddCity">
+        <text>➕ 添加</text>
+      </view>
+    </view>
+
+    <view class="city-list">
+      <view 
+        class="city-card" 
+        wx:for="{{cityList}}" 
+        wx:key="id"
+      >
+        <view class="city-main">
+          <view class="city-emoji">{{item.emoji}}</view>
+          <view class="city-info">
+            <text class="city-name">{{item.city}}</text>
+            <text class="country-name">{{item.country}}</text>
+          </view>
+          <view class="timezone-badge">
+            <text>{{item.timezone}}</text>
+          </view>
+        </view>
+        
+        <view class="city-time-display">
+          <text class="city-time">{{item.time}}</text>
+          <text class="city-date">{{item.date}}</text>
+          <view class="diff-badge {{item.diffType}}">
+            <text>{{item.diffText}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{cityList.length === 0}}" class="empty-state">
+        <text class="empty-icon">🌐</text>
+        <text class="empty-text">暂无城市，点击上方添加</text>
+      </view>
+    </view>
+
+    <view wx:if="{{showCityPicker}}" class="picker-overlay" bindtap="hideAddCity">
+      <view class="picker-modal" catchtap="">
+        <view class="picker-header">
+          <text class="picker-title">选择城市</text>
+          <text class="picker-close" bindtap="hideAddCity">✕</text>
+        </view>
+        
+        <view class="search-box">
+          <text class="search-icon">🔍</text>
+          <input 
+            class="search-input"
+            placeholder="搜索城市..."
+            value="{{searchKeyword}}"
+            bindinput="onSearchCity"
+          />
+        </view>
+
+        <scroll-view class="city-picker-list" scroll-y>
+          <view 
+            class="picker-city-item"
+            wx:for="{{filteredCities}}"
+            wx:key="id"
+            bindtap="selectCity"
+            data-city="{{item}}"
+          >
+            <text class="picker-emoji">{{item.emoji}}</text>
+            <text class="picker-city-name">{{item.city}}</text>
+            <text class="picker-country">{{item.country}}</text>
+            <text class="picker-timezone">{{item.timezone}}</text>
+          </view>
+
+          <view wx:if="{{filteredCities.length === 0}}" class="no-result">
+            <text>未找到城市</text>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+
+    <view class="popular-cities">
+      <text class="popular-title">热门城市</text>
+      <view class="popular-grid">
+        <view 
+          class="popular-tag"
+          wx:for="{{popularCities}}"
+          wx:key="id"
+          bindtap="quickAddCity"
+          data-city="{{item}}"
+        >
+          <text>{{item.emoji}} {{item.city}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</scroll-view>

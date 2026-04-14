@@ -1,0 +1,211 @@
+page {
+  background-color: #F8FAFC;
+}
+
+.tool-page {
+  height: 100vh;
+}
+
+.container {
+  padding: 20px;
+  padding-bottom: 40px;
+}
+
+.tool-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.icon-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.red-gradient {
+  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+}
+
+.tool-icon {
+  font-size: 40px;
+}
+
+.tool-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1E293B;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.tool-desc {
+  font-size: 14px;
+  color: #64748B;
+}
+
+/* 分类标签 */
+.category-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 4px;
+}
+
+.tab-item {
+  padding: 10px 18px;
+  border-radius: 20px;
+  background: #FFFFFF;
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748B;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.tab-item.active {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* 输入区域 */
+.input-section {
+  margin-bottom: 28px;
+}
+
+.input-card, .output-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 12px;
+}
+
+.card-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748B;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.value-input-wrapper, .result-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.value-input {
+  flex: 1;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.result-value {
+  flex: 1;
+  font-size: 36px;
+  font-weight: 700;
+  color: #EF4444;
+}
+
+.unit-selector {
+  padding: 10px 16px;
+  background: #F8FAFC;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #3B82F6;
+  min-width: 80px;
+  text-align: center;
+}
+
+.convert-arrow {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.convert-arrow text {
+  font-size: 28px;
+  color: #94A3B8;
+}
+
+/* 换算表 */
+.conversion-table {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.table-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1E293B;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.table-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.table-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: #F8FAFC;
+  border-radius: 10px;
+}
+
+.table-from, .table-to {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1E293B;
+  flex: 1;
+}
+
+.table-equal {
+  font-size: 14px;
+  color: #94A3B8;
+  margin: 0 12px;
+}
+
+/* 操作按钮 */
+.action-btns {
+  display: flex;
+  gap: 12px;
+}
+
+.primary-btn, .secondary-btn {
+  flex: 1;
+  height: 52px;
+  border-radius: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.secondary-btn {
+  background: #F1F5F9;
+  color: #64748B;
+}

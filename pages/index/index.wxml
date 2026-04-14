@@ -1,0 +1,93 @@
+<navigation-bar title="" back="{{false}}" color="black" background="transparent"></navigation-bar>
+
+<scroll-view class="main-scroll" scroll-y enhanced show-scrollbar="{{false}}" refresher-enabled="{{true}}" refresher-triggered="{{isRefreshing}}" bindrefresherrefresh="onPullDownRefresh">
+  <view class="page-container">
+    <!-- 应用头部 -->
+    <view class="header-section">
+      <view class="header-top">
+        <text class="app-title">百宝工具箱</text>
+        <view class="header-right" bindtap="showMoreMenu">
+          <text class="greeting-text">{{greetingText}}</text>
+          <view class="more-icon">
+            <text class="dot"></text>
+            <text class="dot"></text>
+            <text class="dot"></text>
+          </view>
+        </view>
+      </view>
+      <text class="slogan">即用即走 · 轻量实用</text>
+    </view>
+
+    <!-- 全局搜索栏 -->
+    <view class="search-bar">
+      <view class="search-input-wrapper">
+        <text class="search-icon">🔍</text>
+        <input 
+          class="search-input" 
+          type="text" 
+          placeholder="搜索工具…" 
+          placeholder-class="search-placeholder"
+          value="{{searchKeyword}}"
+          bindinput="onSearchInput"
+          confirm-type="search"
+        />
+        <view class="clear-btn {{searchKeyword ? 'show' : ''}}" bindtap="clearSearch">
+          <text>✕</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分类快捷标签栏 -->
+    <scroll-view class="category-tabs" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="tabs-container">
+        <view 
+          wx:for="{{categories}}" 
+          wx:key="id"
+          class="tab-item {{currentCategory === item.id ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onCategoryChange"
+        >
+          <text class="tab-text">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 工具网格区域 -->
+    <view class="tools-grid">
+      <view 
+        wx:for="{{filteredTools}}" 
+        wx:key="id"
+        class="tool-card {{item.isFavorite ? 'favorite' : ''}}"
+        data-tool="{{item}}"
+        bindtap="onToolClick"
+        hover-class="tool-card-hover"
+        hover-stay-time="100"
+      >
+        <view class="card-favorite" catchtap="toggleFavorite" data-id="{{item.id}}">
+          <text>{{item.isFavorite ? '★' : '☆'}}</text>
+        </view>
+        
+        <view class="card-icon-wrapper" style="background: {{item.iconBg}}">
+          <text class="card-icon">{{item.icon}}</text>
+        </view>
+        
+        <text class="card-title">{{item.name}}</text>
+        <text class="card-desc">{{item.description}}</text>
+        
+        <view class="card-badge" wx:if="{{item.isHot}}">
+          <text>热门</text>
+        </view>
+      </view>
+
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{filteredTools.length === 0}}">
+        <text class="empty-icon">🔍</text>
+        <text class="empty-text">没有找到相关工具</text>
+        <text class="empty-subtext">试试其他关键词</text>
+      </view>
+    </view>
+
+    <!-- 底部安全区域占位 -->
+    <view class="bottom-safe-area"></view>
+  </view>
+</scroll-view>

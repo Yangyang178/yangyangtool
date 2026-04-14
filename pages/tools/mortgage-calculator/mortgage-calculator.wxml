@@ -1,0 +1,86 @@
+<navigation-bar title="房贷计算器" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper green-gradient">
+        <text class="tool-icon">🏠</text>
+      </view>
+      <text class="tool-title">房贷月供计算器</text>
+      <text class="tool-desc">精准计算月供、利息和还款总额</text>
+    </view>
+
+    <!-- 输入表单 -->
+    <view class="form-section">
+      <view class="input-group">
+        <text class="label">贷款金额（万元）</text>
+        <input class="input" type="digit" placeholder="请输入贷款金额" value="{{loanAmount}}" bindinput="onLoanAmountInput"/>
+      </view>
+
+      <view class="input-group">
+        <text class="label">贷款年限</text>
+        <picker mode="selector" range="{{yearOptions}}" value="{{yearIndex}}" bindchange="onYearChange">
+          <view class="picker-value">{{yearOptions[yearIndex]}}年 ▼</view>
+        </picker>
+      </view>
+
+      <view class="input-group">
+        <text class="label">年利率（%）</text>
+        <input class="input" type="digit" placeholder="请输入利率" value="{{interestRate}}" bindinput="onRateInput"/>
+        <view class="rate-tips">
+          <text class="tip-item" wx:for="{{ratePresets}}" wx:key="rate" data-rate="{{item.rate}}" bindtap="usePresetRate">{{item.label}}</text>
+        </view>
+      </view>
+
+      <view class="input-group">
+        <text class="label">还款方式</text>
+        <view class="type-selector">
+          <view class="type-btn {{repaymentType === 'equalPayment' ? 'active' : ''}}" data-type="equalPayment" bindtap="onTypeChange">
+            <text>等额本息</text>
+          </view>
+          <view class="type-btn {{repaymentType === 'equalPrincipal' ? 'active' : ''}}" data-type="equalPrincipal" bindtap="onTypeChange">
+            <text>等额本金</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 计算结果 -->
+    <view class="result-section">
+      <view class="result-card main-result">
+        <text class="result-label">每月还款</text>
+        <text class="result-value">{{monthlyPayment}}</text>
+        <text class="result-unit">元/月</text>
+      </view>
+
+      <view class="result-grid">
+        <view class="result-item">
+          <text class="item-label">支付利息</text>
+          <text class="item-value">{{totalInterest}}</text>
+        </view>
+        <view class="result-item">
+          <text class="item-label">还款总额</text>
+          <text class="item-value">{{totalPayment}}</text>
+        </view>
+        <view class="result-item">
+          <text class="item-label">贷款总额</text>
+          <text class="item-value">{{loanTotal}}</text>
+        </view>
+        <view class="result-item">
+          <text class="item-label">还款月数</text>
+          <text class="item-value">{{totalMonths}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-btns">
+      <button class="primary-btn" bindtap="calculate">
+        <text>开始计算</text>
+      </button>
+      <button class="secondary-btn" bindtap="resetForm">
+        <text>重置</text>
+      </button>
+    </view>
+  </view>
+</scroll-view>

@@ -1,0 +1,48 @@
+page { background-color: #F8FAFC; }
+.tool-page { height: 100vh; }
+.container { padding: 20px; padding-bottom: 40px; }
+
+/* 工具头部 */
+.tool-header { text-align: center; margin-bottom: 28px; }
+.icon-wrapper { width: 80px; height: 80px; border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; background: linear-gradient(135deg, #DDD6FE 0%, #C4B5FD 100%); }
+.purple-gradient { background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); }
+.tool-icon { font-size: 40px; }
+.tool-title { font-size: 24px; font-weight: 700; color: #1E293B; display: block; margin-bottom: 8px; }
+.tool-desc { font-size: 14px; color: #64748B; }
+
+/* 输入区域 */
+.input-section { background: #FFFFFF; border-radius: 20px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 20px; }
+.section-label { font-size: 15px; font-weight: 600; color: #1E293B; display: block; margin-bottom: 12px; }
+.content-input { width: 100%; min-height: 120px; font-size: 15px; line-height: 1.6; color: #1E293B; border: none; outline: none; }
+.input-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid #F1F5F9; }
+.char-count { font-size: 13px; color: #94A3B8; }
+.clear-btn { font-size: 13px; color: #EF4444; background: none; border: none; padding: 6px 12px; }
+
+/* 生成按钮 */
+.generate-btn { width: 100%; height: 56px; border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 600; border: none; margin-bottom: 24px; transition: all 0.3s ease; background: #E2E8F0; color: #94A3B8; }
+.generate-btn.active { background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); color: #FFFFFF; box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4); }
+.generate-btn:active { transform: scale(0.98); }
+
+/* 二维码区域 */
+.qrcode-section { background: #FFFFFF; border-radius: 24px; padding: 32px 20px; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15); margin-bottom: 24px; text-align: center; }
+.qrcode-wrapper { width: 240px; height: 240px; margin: 0 auto 20px; border: 3px dashed #E2E8F0; border-radius: 16px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.qrcode-canvas { width: 240px; height: 240px; position: absolute; top: 0; left: 0; }
+.qrcode-placeholder { z-index: 10; text-align: center; }
+.placeholder-text { font-size: 18px; font-weight: 600; color: #8B5CF6; display: block; margin-bottom: 8px; }
+.placeholder-sub { font-size: 13px; color: #94A3B8; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+
+.qrcode-info { background: #F8FAFC; border-radius: 12px; padding: 14px; text-align: left; }
+.info-label { font-size: 13px; color: #64748B; display: block; margin-bottom: 6px; }
+.info-content { font-size: 14px; color: #1E293B; word-break: break-all; line-height: 1.5; }
+
+/* 操作按钮 */
+.action-btns { display: flex; gap: 12px; margin-bottom: 28px; }
+.primary-btn, .secondary-btn { flex: 1; height: 52px; border-radius: 26px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; border: none; }
+.primary-btn { background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); color: #FFFFFF; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); }
+.secondary-btn { background: #F1F5F9; color: #64748B; }
+
+/* 提示区域 */
+.tips-section { background: linear-gradient(135deg, #FEFCE8 0%, #FEF3C7 100%); border-radius: 16px; padding: 18px; border-left: 4px solid #F59E0B; }
+.tips-title { font-size: 15px; font-weight: 600; color: #92400E; display: block; margin-bottom: 10px; }
+.tips-list { display: flex; flex-direction: column; gap: 6px; }
+.tip-item { font-size: 13px; color: #78350F; line-height: 1.5; }

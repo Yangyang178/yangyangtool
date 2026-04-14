@@ -1,0 +1,111 @@
+<navigation-bar title="番茄计时" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<view class="tool-page">
+  <view class="container">
+    <!-- 工具头部 -->
+    <view class="tool-header">
+      <view class="icon-wrapper red-gradient">
+        <text class="tool-icon">🍅</text>
+      </view>
+      <text class="tool-title">番茄工作法</text>
+      <text class="tool-desc">专注25分钟，高效完成目标</text>
+    </view>
+
+    <!-- 计时器显示区 -->
+    <view class="timer-section">
+      <!-- 圆形进度条 -->
+      <view class="progress-ring-wrapper">
+        <canvas canvas-id="progressRing" class="progress-canvas"></canvas>
+        
+        <view class="timer-display">
+          <text class="time-text">{{displayTime}}</text>
+          <text class="status-text">{{statusText}}</text>
+        </view>
+      </view>
+
+      <!-- 统计信息 -->
+      <view class="stats-row">
+        <view class="stat-item">
+          <text class="stat-value">{{completedCount}}</text>
+          <text class="stat-label">已完成</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value">{{totalMinutes}}</text>
+          <text class="stat-label">总分钟</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value">{{currentRound}}/{{totalRounds}}</text>
+          <text class="stat-label">当前轮次</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 控制按钮 -->
+    <view class="control-btns">
+      <button 
+        class="main-control-btn {{isRunning ? 'running' : ''}}" 
+        bindtap="toggleTimer"
+      >
+        <text>{{isRunning ? '⏸ 暂停' : (isPaused ? '▶ 继续' : '▶ 开始')}}</text>
+      </button>
+      
+      <button class="secondary-control-btn" bindtap="resetTimer" wx:if="{{!isRunning}}">
+        <text>🔄 重置</text>
+      </button>
+
+      <button class="skip-btn" bindtap="skipToBreak" wx:if="{{isRunning}}">
+        <text>⏭ 跳过</text>
+      </button>
+    </view>
+
+    <!-- 时间设置 -->
+    <view class="settings-section">
+      <text class="settings-title">⚙️ 时间设置</text>
+      
+      <view class="setting-item">
+        <text class="setting-label">专注时长</text>
+        <picker mode="selector" range="{{workDurations}}" value="{{workDurationIndex}}" bindchange="onWorkDurationChange">
+          <view class="setting-picker">{{workDurations[workDurationIndex]}} 分钟 ▼</view>
+        </picker>
+      </view>
+
+      <view class="setting-item">
+        <text class="setting-label">短休息</text>
+        <picker mode="selector" range="{{shortBreaks}}" value="{{shortBreakIndex}}" bindchange="onShortBreakChange">
+          <view class="setting-picker">{{shortBreaks[shortBreakIndex]}} 分钟 ▼</view>
+        </picker>
+      </view>
+
+      <view class="setting-item">
+        <text class="setting-label">长休息</text>
+        <picker mode="selector" range="{{longBreaks}}" value="{{longBreakIndex}}" bindchange="onLongBreakChange">
+          <view class="setting-picker">{{longBreaks[longBreakIndex]}} 分钟 ▼</view>
+        </picker>
+      </view>
+
+      <view class="setting-item">
+        <text class="setting-label">目标轮次</text>
+        <view class="round-selector">
+          <button class="round-btn {{totalRounds === 2 ? 'active' : ''}}" data-round="2" bindtap="changeTotalRounds">2</button>
+          <button class="round-btn {{totalRounds === 4 ? 'active' : ''}}" data-round="4" bindtap="changeTotalRounds">4</button>
+          <button class="round-btn {{totalRounds === 6 ? 'active' : ''}}" data-round="6" bindtap="changeTotalRounds">6</button>
+          <button class="round-btn {{totalRounds === 8 ? 'active' : ''}}" data-round="8" bindtap="changeTotalRounds">8</button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 今日记录 -->
+    <view class="history-section" wx:if="{{todayRecords.length > 0}}">
+      <text class="history-title">📋 今日记录</text>
+      <view class="record-list">
+        <view class="record-item" wx:for="{{todayRecords}}" wx:key="index">
+          <text class="record-icon">{{item.type === 'work' ? '🍅' : '☕'}}</text>
+          <text class="record-time">{{item.time}}</text>
+          <text class="record-duration">{{item.duration}}分钟</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
