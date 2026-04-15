@@ -215,21 +215,50 @@ page {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px;
+  padding: 14px 16px;
   background: #F8FAFC;
-  border-radius: 10px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.rate-item:active {
+  transform: scale(0.98);
+  background: #EFF6FF;
+}
+
+.rate-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rate-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .rate-code {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: #1E293B;
 }
 
-.rate-value {
+.rate-name {
+  font-size: 12px;
+  color: #64748B;
+}
+
+.rate-symbol {
   font-size: 14px;
   color: #3B82F6;
   font-weight: 600;
+}
+
+.rate-value {
+  font-size: 15px;
+  color: #3B82F6;
+  font-weight: 700;
 }
 
 /* 操作按钮 */

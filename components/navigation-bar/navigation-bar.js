@@ -60,20 +60,21 @@ Component({
   lifetimes: {
     attached() {
       var that = this;
-      
+
       try {
-        var systemInfo = wx.getSystemInfoSync();
-        var platform = systemInfo.platform || 'ios';
-        var windowWidth = systemInfo.windowWidth || 375;
-        
-        var statusBarHeight = systemInfo.statusBarHeight || 20;
+        var deviceInfo = wx.getDeviceInfo();
+        var windowInfo = wx.getWindowInfo();
+        var platform = deviceInfo.platform || 'ios';
+        var windowWidth = windowInfo.windowWidth || 375;
+
+        var statusBarHeight = windowInfo.statusBarHeight || 20;
         var menuButton = wx.getMenuButtonBoundingClientRect();
         var menuButtonTop = menuButton.top || (statusBarHeight + 4);
         var menuButtonHeight = menuButton.height || 32;
-        
+
         var navBarHeight = menuButtonHeight + (menuButtonTop - statusBarHeight) * 2;
         var totalTop = statusBarHeight + (menuButtonTop - statusBarHeight);
-        
+
         that.setData({
           ios: platform !== 'android',
           innerPaddingRight: 'padding-right: ' + (windowWidth - menuButton.left) + 'px',
@@ -82,7 +83,7 @@ Component({
           statusBarHeight: statusBarHeight,
           navBarHeight: navBarHeight
         });
-        
+
       } catch (e) {
         console.log('nav error:', e);
         that.setData({

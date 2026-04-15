@@ -16,9 +16,9 @@
       <view class="input-group">
         <text class="input-label">转换金额</text>
         <view class="amount-input-wrapper">
-          <text class="currency-symbol">¥</text>
-          <input 
-            class="amount-input" 
+          <text class="currency-symbol">{{fromSymbol}}</text>
+          <input
+            class="amount-input"
             type="digit"
             placeholder="请输入金额"
             value="{{amount}}"
@@ -59,9 +59,15 @@
       <view class="quick-rates">
         <text class="section-title">常用汇率参考</text>
         <view class="rate-list">
-          <view class="rate-item" wx:for="{{quickRates}}" wx:key="code">
-            <text class="rate-code">{{item.code}}</text>
-            <text class="rate-value">{{item.rate}}</text>
+          <view class="rate-item" wx:for="{{quickRates}}" wx:key="code" bindtap="selectQuickRate" data-currency="{{item.code}}">
+            <view class="rate-left">
+              <text class="rate-code">{{item.code}}</text>
+              <text class="rate-name">{{item.name}}</text>
+            </view>
+            <view class="rate-right">
+              <text class="rate-symbol">{{item.symbol}}</text>
+              <text class="rate-value">{{item.rate}}</text>
+            </view>
           </view>
         </view>
       </view>

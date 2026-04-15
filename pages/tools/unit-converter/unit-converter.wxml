@@ -7,19 +7,19 @@
         <text class="tool-icon">📏</text>
       </view>
       <text class="tool-title">智能单位换算</text>
-      <text class="tool-desc">长度/重量/温度/面积等一键转换</text>
+      <text class="tool-desc">10大类别 · 100+单位 · 一键精准转换</text>
     </view>
 
     <!-- 分类选择 -->
     <view class="category-tabs">
-      <view 
-        wx:for="{{categories}}" 
+      <view
+        wx:for="{{categories}}"
         wx:key="id"
         class="tab-item {{currentCategory === item.id ? 'active' : ''}}"
         data-id="{{item.id}}"
         bindtap="onCategoryChange"
       >
-        <text>{{item.name}}</text>
+        <text>{{item.icon}} {{item.name}}</text>
       </view>
     </view>
 
@@ -78,6 +78,29 @@
       <button class="secondary-btn" bindtap="swapUnits">
         <text>交换单位</text>
       </button>
+    </view>
+
+    <!-- 自定义单位选择器弹窗 -->
+    <view class="unit-picker-mask" wx:if="{{showUnitPicker}}" bindtap="hideUnitPicker"></view>
+    <view class="unit-picker-popup {{showUnitPicker ? 'show' : ''}}">
+      <view class="picker-header">
+        <text class="picker-title">选择{{pickerType === 'from' ? '源' : '目标'}}单位</text>
+        <view class="picker-close" bindtap="hideUnitPicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <scroll-view scroll-y class="picker-list">
+        <view
+          class="picker-item {{item.name === (pickerType === 'from' ? fromUnit : toUnit) ? 'selected' : ''}}"
+          wx:for="{{currentUnits}}"
+          wx:key="name"
+          data-name="{{item.name}}"
+          bindtap="selectUnit"
+        >
+          <text class="picker-item-text">{{item.name}}</text>
+          <text class="picker-check" wx:if="{{item.name === (pickerType === 'from' ? fromUnit : toUnit)}}">✓</text>
+        </view>
+      </scroll-view>
     </view>
   </view>
 </scroll-view>
