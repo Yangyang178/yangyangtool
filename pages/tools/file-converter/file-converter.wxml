@@ -1,0 +1,226 @@
+<scroll-view scroll-y class="container">
+  <navigation-bar title="文件格式转换" />
+
+  <view class="tool-content">
+    <!-- 工具头部 -->
+    <view class="tool-header">
+      <view class="icon-wrapper teal-gradient">
+        <text class="tool-icon">📁</text>
+      </view>
+      <text class="tool-title">文件格式转换指南</text>
+      <text class="tool-desc">格式查询 · 兼容性 · 转换方法</text>
+    </view>
+
+    <!-- 搜索框 -->
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="搜索文件格式（如 PDF、JPG、MP4）"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        confirm-type="search"
+        bindconfirm="onSearch"
+      />
+      <text class="clear-btn" wx:if="{{searchKeyword}}" bindtap="clearSearch">✕</text>
+    </view>
+
+    <!-- 分类标签 -->
+    <view class="category-tabs">
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        class="tab-item {{currentCategory === item.id ? 'active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onCategoryChange"
+      >
+        <text>{{item.icon}} {{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 格式列表 -->
+    <view class="format-list">
+      <view
+        wx:for="{{filteredFormats}}"
+        wx:key="ext"
+        class="format-card {{item.ext.toLowerCase().includes(searchKeyword.toLowerCase()) || item.name.toLowerCase().includes(searchKeyword.toLowerCase()) ? '' : 'hidden'}}"
+        data-ext="{{item.ext}}"
+        bindtap="showFormatDetail"
+      >
+        <view class="card-header">
+          <view class="ext-badge {{item.category}}">
+            <text>{{item.ext}}</text>
+          </view>
+          <text class="format-name">{{item.name}}</text>
+          <text class="format-category">{{item.categoryName}}</text>
+        </view>
+
+        <view class="card-body">
+          <text class="format-desc">{{item.description}}</text>
+
+          <view class="feature-tags">
+            <text
+              wx:for="{{item.features}}"
+              wx:key="*this"
+              wx:for-item="feature"
+              class="tag"
+            >{{feature}}</text>
+          </view>
+        </view>
+
+        <view class="card-footer">
+          <view class="compatibility">
+            <text class="compat-label">兼容性:</text>
+            <view class="platform-icons">
+              <text wx:if="{{item.windows}}" class="platform win">🪟</text>
+              <text wx:if="{{item.mac}}" class="platform mac">🍎</text>
+              <text wx:if="{{item.linux}}" class="platform linux">🐧</text>
+              <text wx:if="{{item.android}}" class="platform android">🤖</text>
+              <text wx:if="{{item.ios}}" class="platform ios">📱</text>
+              <text wx:if="{{item.web}}" class="platform web">🌐</text>
+            </view>
+          </view>
+          <text class="arrow">→</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{filteredFormats.length === 0}}">
+      <text class="empty-icon">🔎</text>
+      <text class="empty-text">未找到匹配的文件格式</text>
+      <text class="empty-hint">试试其他关键词，如 "图片"、"视频"、"文档"</text>
+    </view>
+
+    <!-- 常用转换场景 -->
+    <view class="conversion-scenarios">
+      <text class="section-title">🔄 常用转换场景</text>
+
+      <view class="scenario-list">
+        <view
+          wx:for="{{scenarios}}"
+          wx:key="id"
+          class="scenario-card"
+          bindtap="showScenarioDetail"
+          data-id="{{item.id}}"
+        >
+          <view class="scenario-header">
+            <text class="scenario-icon">{{item.icon}}</text>
+            <text class="scenario-title">{{item.title}}</text>
+          </view>
+          <text class="scenario-desc">{{item.desc}}</text>
+          <view class="scenario-formats">
+            <text class="from-format">{{item.from}}</text>
+            <text class="convert-arrow">→</text>
+            <text class="to-format">{{item.to}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 转换工具推荐 -->
+    <view class="tools-recommendation">
+      <text class="section-title">💡 推荐转换工具</text>
+
+      <view class="tool-cards">
+        <view
+          wx:for="{{recommendTools}}"
+          wx:key="name"
+          class="tool-card"
+        >
+          <text class="tool-name">{{item.name}}</text>
+          <text class="tool-desc">{{item.desc}}</text>
+          <view class="tool-features">
+            <text
+              wx:for="{{item.features}}"
+              wx:key="*this"
+              class="tool-tag"
+            >{{item}}</text>
+          </view>
+          <text class="tool-platform">{{item.platform}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 使用提示 -->
+    <view class="tips-section">
+      <text class="tips-title">📌 格式选择建议</text>
+      <view class="tips-list">
+        <text class="tip-item">• 图片分享：优先使用 WebP（体积小）或 JPG（兼容性好）</text>
+        <text class="tip-item">• 文档存档：PDF 是最安全的选择，跨平台完美兼容</text>
+        <text class="tip-item">• 视频上传：MP4 (H.264) 适合所有平台，WebP 更现代</text>
+        <text class="tip-item">• 音频保存：FLAC 无损音质，MP3 通用性好</text>
+        <text class="tip-item">• 压缩归档：7Z 压缩率最高，ZIP 兼容性最好</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 详情弹窗 -->
+  <view class="detail-mask" wx:if="{{showDetail}}" bindtap="hideDetail"></view>
+  <view class="detail-popup {{showDetail ? 'show' : ''}}">
+    <view class="detail-header">
+      <text class="detail-title">{{selectedFormat.ext}} - {{selectedFormat.name}}</text>
+      <view class="close-btn" bindtap="hideDetail">✕</view>
+    </view>
+
+    <scroll-view scroll-y class="detail-content">
+      <view class="detail-section">
+        <text class="detail-section-title">基本信息</text>
+        <text class="detail-text">{{selectedFormat.fullDesc}}</text>
+      </view>
+
+      <view class="detail-section" wx:if="{{selectedFormat.pros.length > 0}}">
+        <text class="detail-section-title">✅ 优点</text>
+        <view class="pros-cons-list">
+          <text wx:for="{{selectedFormat.pros}}" wx:key="*this" class="pro-item">+ {{item}}</text>
+        </view>
+      </view>
+
+      <view class="detail-section" wx:if="{{selectedFormat.cons.length > 0}}">
+        <text class="detail-section-title">❌ 缺点</text>
+        <view class="pros-cons-list">
+          <text wx:for="{{selectedFormat.cons}}" wx:key="*this" class="con-item">- {{item}}</text>
+        </view>
+      </view>
+
+      <view class="detail-section">
+        <text class="detail-section-title">🔧 转换方法</text>
+        <view class="convert-methods">
+          <view
+            wx:for="{{selectedFormat.convertMethods}}"
+            wx:key="name"
+            class="method-card"
+          >
+            <text class="method-name">{{item.name}}</text>
+            <text class="method-steps">{{item.steps}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="detail-section">
+        <text class="detail-section-title">💻 支持平台</text>
+        <view class="platform-grid">
+          <view class="platform-item {{selectedFormat.windows ? 'supported' : ''}}">
+            <text>Windows</text>
+          </view>
+          <view class="platform-item {{selectedFormat.mac ? 'supported' : ''}}">
+            <text>macOS</text>
+          </view>
+          <view class="platform-item {{selectedFormat.linux ? 'supported' : ''}}">
+            <text>Linux</text>
+          </view>
+          <view class="platform-item {{selectedFormat.android ? 'supported' : ''}}">
+            <text>Android</text>
+          </view>
+          <view class="platform-item {{selectedFormat.ios ? 'supported' : ''}}">
+            <text>iOS</text>
+          </view>
+          <view class="platform-item {{selectedFormat.web ? 'supported' : ''}}">
+            <text>Web</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</scroll-view>

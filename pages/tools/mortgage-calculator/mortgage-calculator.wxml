@@ -13,8 +13,11 @@
     <!-- 输入表单 -->
     <view class="form-section">
       <view class="input-group">
-        <text class="label">贷款金额（万元）</text>
-        <input class="input" type="digit" placeholder="请输入贷款金额" value="{{loanAmount}}" bindinput="onLoanAmountInput"/>
+        <view class="label-row">
+          <text class="label">贷款金额</text>
+          <text class="unit-hint">单位：万元（如 50 表示50万）</text>
+        </view>
+        <input class="input" type="digit" placeholder="请输入贷款金额，如 50" value="{{loanAmount}}" bindinput="onLoanAmountInput"/>
       </view>
 
       <view class="input-group">
@@ -26,7 +29,7 @@
 
       <view class="input-group">
         <text class="label">年利率（%）</text>
-        <input class="input" type="digit" placeholder="请输入利率" value="{{interestRate}}" bindinput="onRateInput"/>
+        <input class="input" type="digit" placeholder="如 4.2" value="{{interestRate}}" bindinput="onRateInput"/>
         <view class="rate-tips">
           <text class="tip-item" wx:for="{{ratePresets}}" wx:key="rate" data-rate="{{item.rate}}" bindtap="usePresetRate">{{item.label}}</text>
         </view>
@@ -37,38 +40,12 @@
         <view class="type-selector">
           <view class="type-btn {{repaymentType === 'equalPayment' ? 'active' : ''}}" data-type="equalPayment" bindtap="onTypeChange">
             <text>等额本息</text>
+            <text class="type-desc">每月还款额相同</text>
           </view>
           <view class="type-btn {{repaymentType === 'equalPrincipal' ? 'active' : ''}}" data-type="equalPrincipal" bindtap="onTypeChange">
             <text>等额本金</text>
+            <text class="type-desc">逐月递减，总利息少</text>
           </view>
-        </view>
-      </view>
-    </view>
-
-    <!-- 计算结果 -->
-    <view class="result-section">
-      <view class="result-card main-result">
-        <text class="result-label">每月还款</text>
-        <text class="result-value">{{monthlyPayment}}</text>
-        <text class="result-unit">元/月</text>
-      </view>
-
-      <view class="result-grid">
-        <view class="result-item">
-          <text class="item-label">支付利息</text>
-          <text class="item-value">{{totalInterest}}</text>
-        </view>
-        <view class="result-item">
-          <text class="item-label">还款总额</text>
-          <text class="item-value">{{totalPayment}}</text>
-        </view>
-        <view class="result-item">
-          <text class="item-label">贷款总额</text>
-          <text class="item-value">{{loanTotal}}</text>
-        </view>
-        <view class="result-item">
-          <text class="item-label">还款月数</text>
-          <text class="item-value">{{totalMonths}}</text>
         </view>
       </view>
     </view>
@@ -81,6 +58,77 @@
       <button class="secondary-btn" bindtap="resetForm">
         <text>重置</text>
       </button>
+    </view>
+
+    <!-- 计算结果 -->
+    <view class="result-section" wx:if="{{hasCalculated}}">
+      <view class="result-card main-result">
+        <text class="result-label">{{repaymentType === 'equalPayment' ? '每月还款' : '首月还款'}}</text>
+        <text class="result-value">{{monthlyPayment}}</text>
+        <text class="result-unit">元/月</text>
+        <text class="amount-info">贷款 {{amountDisplay}} 元 · {{totalMonths}}期 · 年利率{{interestRate}}%</text>
+      </view>
+
+      <view class="result-grid">
+        <view class="result-item">
+          <text class="item-label">支付利息</text>
+          <text class="item-value interest">{{totalInterest}}</text>
+          <text class="item-unit">元</text>
+        </view>
+        <view class="result-item">
+          <text class="item-label">还款总额</text>
+          <text class="item-value">{{totalPayment}}</text>
+          <text class="item-unit">元</text>
+        </view>
+        <view class="result-item">
+          <text class="item-label">贷款本金</text>
+          <text class="item-value">{{loanTotal}}</text>
+          <text class="item-unit">元</text>
+        </view>
+        <view class="result-item">
+          <text class="item-label">还款期限</text>
+          <text class="item-value">{{totalMonths}}</text>
+          <text class="item-unit">个月 ({{yearOptions[yearIndex]}}年)</text>
+        </view>
+      </view>
+
+      <!-- 等额本金额外信息 -->
+      <view class="extra-info" wx:if="{{repaymentType === 'equalPrincipal'}}">
+        <view class="info-row">
+          <text class="info-label">首月还款</text>
+          <text class="info-value">{{firstMonthPayment}} 元</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">末月还款</text>
+          <text class="info-value">{{lastMonthPayment}} 元</text>
+        </view>
+        <view class="info-row highlight">
+          <text class="info-label">每月递减</text>
+          <text class="info-value">{{monthlyDecrease}}</text>
+        </view>
+      </view>
+
+      <!-- 对比信息 -->
+      <view class="compare-section">
+        <text class="compare-title">💡 还款分析</text>
+        <view class="compare-item">
+          <text class="compare-text">贷款金额: {{amountDisplay}} 元</text>
+        </view>
+        <view class="compare-item">
+          <text class="compare-text">利息占总额比例: {{interestRatio}}%</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 使用说明 -->
+    <view class="tips-section">
+      <text class="tips-title">📖 计算说明</text>
+      <view class="tips-list">
+        <text class="tip-item">• 等额本息：每月还款金额固定，前期还息多后期还本多</text>
+        <text class="tip-item">• 等额本金：每月还的本金固定，利息逐月递减，总利息更少</text>
+        <text class="tip-item">• 贷款金额请输入万元数，如贷款50万则输入 50</text>
+        <text class="tip-item">• LPR为贷款市场报价利率，以银行实际为准</text>
+      </view>
     </view>
   </view>
 </scroll-view>

@@ -22,7 +22,9 @@
     "pages/tools/json-formatter/json-formatter",
     "pages/tools/color-converter/color-converter",
     "pages/tools/url-encoder/url-encoder",
-    "pages/tools/regex-tester/regex-tester"
+    "pages/tools/regex-tester/regex-tester",
+    "pages/tools/image-processor/image-processor",
+    "pages/tools/file-converter/file-converter"
   ],
   "window": {
     "navigationBarTextStyle": "black",

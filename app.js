@@ -21,7 +21,9 @@ App({
       { id: 17, name: 'JSON格式化', category: 'dev' },
       { id: 18, name: '颜色转换', category: 'dev' },
       { id: 19, name: 'URL编解码', category: 'dev' },
-      { id: 20, name: '正则表达式测试', category: 'dev' }
+      { id: 20, name: '正则表达式测试', category: 'dev' },
+      { id: 21, name: '图片处理', category: 'dev' },
+      { id: 22, name: '文件格式转换', category: 'dev' }
     ]
   },
 
@@ -39,14 +41,14 @@ App({
 
   onShareAppMessage() {
     return {
-      title: '🧰 百宝工具箱 - 20+实用小工具合集',
+      title: '🧰 百宝工具箱 - 22+实用小工具合集',
       path: '/pages/index/index'
     };
   },
 
   onShareTimeline() {
     return {
-      title: '🧰 百宝工具箱 - 汇率换算、单位转换等20+实用工具',
+      title: '🧰 百宝工具箱 - 汇率换算、单位转换等22+实用工具',
       query: ''
     };
   }

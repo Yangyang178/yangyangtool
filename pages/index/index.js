@@ -214,6 +214,26 @@ Page({
         category: 'dev',
         isHot: false,
         isFavorite: false
+      },
+      {
+        id: 21,
+        name: '图片处理',
+        description: '压缩/转换/裁剪/信息查看',
+        icon: '🖼️',
+        iconBg: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)',
+        category: 'dev',
+        isHot: true,
+        isFavorite: false
+      },
+      {
+        id: 22,
+        name: '文件格式转换',
+        description: '格式查询/兼容性/转换指南',
+        icon: '📁',
+        iconBg: 'linear-gradient(135deg, #2DD4BF 0%, #14B8A6 100%)',
+        category: 'dev',
+        isHot: true,
+        isFavorite: false
       }
     ],
     filteredTools: []
@@ -328,7 +348,9 @@ Page({
       17: '/pages/tools/json-formatter/json-formatter',
       18: '/pages/tools/color-converter/color-converter',
       19: '/pages/tools/url-encoder/url-encoder',
-      20: '/pages/tools/regex-tester/regex-tester'
+      20: '/pages/tools/regex-tester/regex-tester',
+      21: '/pages/tools/image-processor/image-processor',
+      22: '/pages/tools/file-converter/file-converter'
     }
     
     const url = urlMap[tool.id]

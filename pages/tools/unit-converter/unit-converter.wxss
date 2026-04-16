@@ -105,14 +105,14 @@ page {
 
 .value-input {
   flex: 1;
-  font-size: 32px;
+  font-size: 20px;
   font-weight: 700;
   color: #1E293B;
 }
 
 .result-value {
   flex: 1;
-  font-size: 36px;
+  font-size: 22px;
   font-weight: 700;
   color: #EF4444;
 }
