@@ -1,781 +1,1765 @@
 Page({
   data: {
-    searchKeyword: '',
-    currentCategory: 'all',
-    showDetail: false,
-    selectedFormat: null,
+    filePath: '',
+    fileName: '',
+    fileSize: 0,
+    fileSizeText: '',
+    fileType: '',
+    fileExt: '',
+    fileContent: '',
+    
+    selectedFile: null,
+    isImage: false,
+    imageInfo: null,
+    isTextFile: false,
+    
+    targetFormat: '',
+    targetFormatName: '',
+    availableFormats: [],
+    
+    convertedPath: '',
+    convertedFileName: '',
+    convertResult: null,
+    isConverting: false,
+    hasConverted: false,
+    convertType: '',
+    conversionLog: [],
 
-    categories: [
-      { id: 'all', name: '全部', icon: '📋' },
-      { id: 'image', name: '图片', icon: '🖼️' },
-      { id: 'video', name: '视频', icon: '🎬' },
-      { id: 'audio', name: '音频', icon: '🎵' },
-      { id: 'document', name: '文档', icon: '📄' },
-      { id: 'archive', name: '压缩包', icon: '📦' }
-    ],
+    formatCategories: {
+      image: [
+        { value: 'jpg', name: 'JPG', fullName: 'JPG 图片', desc: '通用格式', color: '#EF4444', mode: 'direct' },
+        { value: 'png', name: 'PNG', fullName: 'PNG 图片', desc: '无损透明', color: '#3B82F6', mode: 'direct' },
+        { value: 'webp', name: 'WebP', fullName: 'WebP 图片', desc: '高效压缩', color: '#8B5CF6', mode: 'direct' },
+        { value: 'base64', name: 'Base64', fullName: 'Base64 编码', desc: '文本编码', color: '#F59E0B', mode: 'encode' }
+      ],
+      pdf: [
+        { value: 'docx', name: 'Word', fullName: 'Word 文档', desc: '生成可编辑文档', color: '#2563EB', mode: 'generate' },
+        { value: 'xlsx', name: 'Excel', fullName: 'Excel 表格', desc: '生成表格数据', color: '#059669', mode: 'generate' },
+        { value: 'pptx', name: 'PPT', fullName: 'PPT 演示', desc: '生成演示文稿', color: '#DC2626', mode: 'generate' },
+        { value: 'txt', name: 'TXT', fullName: 'TXT 纯文本', desc: '提取文字内容', color: '#F59E0B', mode: 'extract' },
+        { value: 'html', name: 'HTML', fullName: 'HTML 网页', desc: '转为网页格式', color: '#10B981', mode: 'generate' },
+        { value: 'jpg', name: 'JPG', fullName: 'JPG 图片', desc: '转为图片格式', color: '#EF4444', mode: 'generate' },
+        { value: 'base64', name: 'Base64', fullName: 'Base64 编码', desc: '完整编码', color: '#7C3AED', mode: 'encode' }
+      ],
+      docx: [
+        { value: 'pdf', name: 'PDF', fullName: 'PDF 文档', desc: '生成只读文档', color: '#EF4444', mode: 'generate' },
+        { value: 'txt', name: 'TXT', fullName: 'TXT 纯文本', desc: '提取文字内容', color: '#F59E0B', mode: 'extract' },
+        { value: 'html', name: 'HTML', fullName: 'HTML 网页', desc: '转为网页格式', color: '#10B981', mode: 'generate' },
+        { value: 'jpg', name: 'JPG', fullName: 'JPG 图片', desc: '转为长图', color: '#EF4444', mode: 'generate' },
+        { value: 'base64', name: 'Base64', fullName: 'Base64 编码', desc: '完整编码', color: '#7C3AED', mode: 'encode' }
+      ],
+      xlsx: [
+        { value: 'pdf', name: 'PDF', fullName: 'PDF 文档', desc: '打印友好格式', color: '#EF4444', mode: 'generate' },
+        { value: 'csv', name: 'CSV', fullName: 'CSV 表格', desc: '通用数据格式', color: '#059669', mode: 'direct' },
+        { value: 'txt', name: 'TXT', fullName: 'TXT 纯文本', desc: '提取表格数据', color: '#F59E0B', mode: 'extract' },
+        { value: 'json', name: 'JSON', fullName: 'JSON 数据', desc: '结构化数据', color: '#8B5CF6', mode: 'generate' },
+        { value: 'html', name: 'HTML', fullName: 'HTML 表格', desc: '网页展示', color: '#10B981', mode: 'generate' },
+        { value: 'base64', name: 'Base64', fullName: 'Base64 编码', desc: '完整编码', color: '#7C3AED', mode: 'encode' }
+      ],
+      pptx: [
+        { value: 'pdf', name: 'PDF', fullName: 'PDF 文档', desc: '分享打印格式', color: '#EF4444', mode: 'generate' },
+        { value: 'txt', name: 'TXT', fullName: 'TXT 纯文本', desc: '提取文字大纲', color: '#F59E0B', mode: 'extract' },
+        { value: 'jpg', name: 'JPG', fullName: 'JPG 图片', desc: '导出为图片', color: '#EF4444', mode: 'generate' },
+        { value: 'base64', name: 'Base64', fullName: 'Base64 编码', desc: '完整编码', color: '#7C3AED', mode: 'encode' }
+      ],
+      text: [
+        { value: 'docx', name: 'Word', fullName: 'Word 文档', desc: '排版美化', color: '#2563EB', mode: 'generate' },
+        { value: 'pdf', name: 'PDF', fullName: 'PDF 文档', desc: '正式存档', color: '#EF4444', mode: 'generate' },
+        { value: 'html', name: 'HTML', fullName: 'HTML 网页', desc: '发布到网站', color: '#10B981', mode: 'generate' },
+        { value: 'json', name: 'JSON', fullName: 'JSON 数据', desc: '结构化封装', color: '#8B5CF6', mode: 'generate' }
+      ],
+      json: [
+        { value: 'formatted', name: '美化', fullName: '格式化 JSON', desc: '易读缩进', color: '#10B981', mode: 'direct' },
+        { value: 'minified', name: '压缩', fullName: '压缩 JSON', desc: '最小体积', color: '#EF4444', mode: 'direct' },
+        { value: 'csv', name: 'CSV', fullName: 'CSV 表格', desc: 'Excel可用', color: '#059669', mode: 'direct' },
+        { value: 'docx', name: 'Word', fullName: 'Word 文档', desc: '生成报告', color: '#2563EB', mode: 'generate' },
+        { value: 'txt', name: 'TXT', fullName: 'TXT 文本', desc: '纯文本输出', color: '#F59E0B', mode: 'direct' }
+      ],
+      csv: [
+        { value: 'xlsx', name: 'Excel', fullName: 'Excel 表格', desc: '专业编辑', color: '#059669', mode: 'generate' },
+        { value: 'json', name: 'JSON', fullName: 'JSON 数据', desc: '程序处理', color: '#8B5CF6', mode: 'direct' },
+        { value: 'html', name: 'HTML', fullName: 'HTML 表格', desc: '网页展示', color: '#10B981', mode: 'generate' },
+        { value: 'txt', name: 'TXT', fullName: 'TXT 文本', desc: '纯文本查看', color: '#F59E0B', mode: 'direct' }
+      ],
+      web: [
+        { value: 'pdf', name: 'PDF', fullName: 'PDF 文档', desc: '保存打印', color: '#EF4444', mode: 'generate' },
+        { value: 'docx', name: 'Word', fullName: 'Word 文档', desc: '可编辑', color: '#2563EB', mode: 'generate' },
+        { value: 'txt', name: 'TXT', fullName: 'TXT 纯文本', desc: '提取文字', color: '#F59E0B', mode: 'extract' },
+        { value: 'jpg', name: 'JPG', fullName: 'JPG 截图', desc: '转为图片', color: '#EF4444', mode: 'generate' }
+      ],
+      document: [
+        { value: 'txt', name: 'TXT', fullName: 'TXT 纯文本', desc: '提取文字内容', color: '#F59E0B', mode: 'extract' },
+        { value: 'html', name: 'HTML', fullName: 'HTML 网页', desc: '转为网页格式', color: '#10B981', mode: 'generate' },
+        { value: 'json', name: 'JSON', fullName: 'JSON 元数据', desc: '结构化信息', color: '#8B5CF6', mode: 'generate' },
+        { value: 'base64', name: 'Base64', fullName: 'Base64 编码', desc: '完整编码', color: '#7C3AED', mode: 'encode' }
+      ],
+      other: [
+        { value: 'base64', name: 'Base64', fullName: 'Base64 编码', desc: '通用编码', color: '#7C3AED', mode: 'encode' },
+        { value: 'txt', name: 'TXT', fullName: 'TXT 文本', desc: '尝试提取', color: '#94A3B8', mode: 'extract' }
+      ]
+    },
 
-    formats: [
-      {
-        ext: '.jpg',
-        name: 'JPEG',
-        category: 'image',
-        categoryName: '图片',
-        description: '最常见的有损压缩图片格式',
-        features: ['有损压缩', '体积小', '全平台支持'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'JPEG (Joint Photographic Experts Group) 是最广泛使用的图片格式之一，采用有损压缩算法，能在保持较好画质的同时显著减小文件大小。适合照片、复杂图像等场景。',
-        pros: ['兼容性极好', '文件体积小', '加载速度快', '所有设备支持'],
-        cons: ['有损压缩', '不支持透明', '多次保存质量下降'],
-        convertMethods: [
-          {
-            name: '在线转换',
-            steps: '使用 TinyPNG、Squoosh 等在线工具'
-          },
-          {
-            name: '系统自带',
-            steps: 'Windows画图、macOS预览均可另存为JPG'
-          },
-          {
-            name: '专业软件',
-            steps: 'Photoshop、GIMP 等导出时选择JPG格式'
-          }
-        ]
-      },
-      {
-        ext: '.png',
-        name: 'PNG',
-        category: 'image',
-        categoryName: '图片',
-        description: '无损压缩图片格式，支持透明通道',
-        features: ['无损压缩', '透明背景', '清晰度高'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'PNG (Portable Network Graphics) 是一种无损压缩位图图形格式，支持透明背景和24位真彩色。适合图标、截图、文字图片等需要保持清晰度的场景。',
-        pros: ['无损压缩', '支持透明', '适合图标/截图', '无损编辑'],
-        cons: ['文件较大', '不适合照片', '不支持动画'],
-        convertMethods: [
-          {
-            name: '在线转换',
-            steps: '使用 Convertio、CloudConvert 等工具'
-          },
-          {
-            name: '系统自带',
-            steps: '右键图片 → 编辑 → 另存为PNG'
-          },
-          {
-            name: '命令行',
-            steps: 'ImageMagick: convert input.jpg output.png'
-          }
-        ]
-      },
-      {
-        ext: '.webp',
-        name: 'WebP',
-        category: 'image',
-        categoryName: '图片',
-        description: 'Google开发的新一代高效图片格式',
-        features: ['超小体积', '高画质', '现代浏览器'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'WebP 是 Google 开发的现代图片格式，同时支持有损和无损压缩。相比 JPG 小25-35%，比 PNG 小80%，是Web优化的理想选择。',
-        pros: ['体积最小', '质量优秀', '支持动画', '支持透明'],
-        cons: ['旧版软件不支持', '部分旧浏览器不兼容'],
-        convertMethods: [
-          {
-            name: '在线转换',
-            steps: '使用 Squoish.app（Google官方）或 CloudConvert'
-          },
-          {
-            name: '命令行',
-            steps: 'cwebp -q 80 input.jpg -o output.webp'
-          }
-        ]
-      },
-      {
-        ext: '.gif',
-        name: 'GIF',
-        category: 'image',
-        categoryName: '图片',
-        description: '支持动画的经典图片格式',
-        features: ['支持动画', '简单透明', '广泛支持'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'GIF (Graphics Interchange Format) 是一种支持动画的位图格式，采用LZW无损压缩算法。虽然历史悠久，但在表情包、简单动画场景仍被广泛使用。',
-        pros: ['支持动画', '兼容性好', '适合表情包'],
-        cons: ['只有256色', '文件通常很大', '画质一般'],
-        convertMethods: [
-          {
-            name: '视频转GIF',
-            steps: '使用 EZGIF.com 或 Giphy 上传视频'
-          },
-          {
-            name: 'FFmpeg命令',
-            steps: 'ffmpeg -i video.mp4 -vf "fps=10,scale=320:-1" output.gif'
-          }
-        ]
-      },
-      {
-        ext: '.svg',
-        name: 'SVG',
-        category: 'image',
-        categoryName: '图片',
-        description: '可缩放矢量图形格式',
-        features: ['矢量图', '无限缩放', '文件小'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'SVG (Scalable Vector Graphics) 是基于XML的矢量图像格式，可以无限放大而不失真。适合Logo、图标、图表等需要多尺寸使用的场景。',
-        pros: ['无限缩放不失真', '文件体积小', '可用代码编辑', '可添加动画'],
-        cons: ['不适合照片', '复杂图形文件大', '渲染性能较低'],
-        convertMethods: [
-          {
-            name: '设计软件导出',
-            steps: 'Illustrator、Figma、Sketch 直接导出SVG'
-          },
-          {
-            name: '在线转换',
-            steps: '使用 SVGOMG 优化或 Convertio 转换'
-          }
-        ]
-      },
-      {
-        ext: '.mp4',
-        name: 'MP4',
-        category: 'video',
-        categoryName: '视频',
-        description: '最通用的视频容器格式',
-        features: ['通用性强', '压缩效率高', '流媒体支持'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'MPEG-4 Part 14 (MP4) 是最流行的数字多媒体容器格式，支持视频、音频、字幕等。基于H.264/AVC或H.265/HEVC编码，是网络视频的标准格式。',
-        pros: ['全平台支持', '压缩效率高', '支持高清/4K', '适合流媒体'],
-        cons: ['版权限制', '编辑时需重编码'],
-        convertMethods: [
-          {
-            name: 'FFmpeg',
-            steps: 'ffmpeg -i input.avi -c:v libx264 -c:a aac output.mp4'
-          },
-          {
-            name: 'HandBrake',
-            steps: '开源免费的视频转换工具，界面友好'
-          },
-          {
-            name: '在线转换',
-            steps: 'CloudConvert、OnlineConvert 等网站'
-          }
-        ]
-      },
-      {
-        ext: '.avi',
-        name: 'AVI',
-        category: 'video',
-        categoryName: '视频',
-        description: '微软开发的传统视频格式',
-        features: ['老牌格式', '无损支持', '兼容性好'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: false,
-        web: false,
-        fullDesc: 'Audio Video Interleave (AVI) 是微软1992年推出的多媒体容器格式。虽然年代久远，但由于其开放性和无损支持，在某些领域仍有应用。',
-        pros: ['无损视频支持', '开放标准', '老设备兼容'],
-        cons: ['文件体积大', '不支持现代编码', '网页不支持'],
-        convertMethods: [
-          {
-            name: 'FFmpeg',
-            steps: 'ffmpeg -i input.mp4 -c:v copy -c:a copy output.avi'
-          }
-        ]
-      },
-      {
-        ext: '.mov',
-        name: 'MOV',
-        category: 'video',
-        categoryName: '视频',
-        description: 'Apple QuickTime视频格式',
-        features: ['高质量', 'Apple生态', '专业编辑'],
-        windows: true,
-        mac: true,
-        linux: false,
-        android: false,
-        ios: true,
-        web: false,
-        fullDesc: 'QuickTime File Format (MOV) 是苹果公司开发的视频容器格式，在专业视频制作和Apple生态系统中被广泛使用。支持高保真视频和无损音频。',
-        pros: ['极高画质', '专业剪辑首选', 'Apple原生支持'],
-        cons: ['跨平台兼容差', '文件通常较大'],
-        convertMethods: [
-          {
-            name: 'FFmpeg',
-            steps: 'ffmpeg -i input.mp4 -c:v copy -c:a copy output.mov'
-          },
-          {
-            name: 'HandBrake',
-            steps: '选择 MOV 容器格式输出'
-          }
-        ]
-      },
-      {
-        ext: '.mkv',
-        name: 'MKV',
-        category: 'video',
-        categoryName: '视频',
-        description: 'Matroska开放多媒体容器',
-        features: ['开放标准', '功能强大', '多轨道支持'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: false,
-        fullDesc: 'Matroska Video (MKV) 是一个开放标准的免费容器格式，能容纳任意数量的视频、音频、字幕轨道。是高清影视收藏的首选格式。',
-        pros: ['开放免费', '支持多音轨/字幕', '章节支持', '元数据丰富'],
-        cons: ['部分播放器不支持', '移动端兼容一般'],
-        convertMethods: [
-          {
-            name: 'MKVToolNix',
-            steps: '专业的MKV编辑和封装工具'
-          },
-          {
-            name: 'FFmpeg',
-            steps: 'ffmpeg -i input.mp4 -c copy output.mkv'
-          }
-        ]
-      },
-      {
-        ext: '.webm',
-        name: 'WebM',
-        category: 'video',
-        categoryName: '视频',
-        description: '专为Web优化的视频格式',
-        features: ['开源免费', 'Web优化', '体积小'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'WebM 是专为Web设计的开放媒体格式，基于 VP8/VP9 视频编码和 Vorbis/Opus 音频编码。由Google推动，是HTML5视频的标准格式之一。',
-        pros: ['完全开源', '压缩效率高', '浏览器原生支持', '适合嵌入网页'],
-        cons: ['非编软件支持少', '硬件加速有限'],
-        convertMethods: [
-          {
-            name: 'FFmpeg',
-            steps: 'ffmpeg -i input.mp4 -c:v libvpx-vp9 -c:a libopus output.webm'
-          },
-          {
-            name: 'Miro Video Converter',
-            steps: '免费的桌面视频转换工具'
-          }
-        ]
-      },
-      {
-        ext: '.mp3',
-        name: 'MP3',
-        category: 'audio',
-        categoryName: '音频',
-        description: '最流行的有损音频压缩格式',
-        features: ['通用性好', '体积小', '兼容性强'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'MPEG Audio Layer III (MP3) 是最著名的数字音频编码格式，通过有损压缩大幅减小文件大小同时保持可接受的音质。几乎被所有设备和平台支持。',
-        pros: ['兼容性无敌', '文件小巧', '元数据支持好', '流媒体友好'],
-        cons: ['有损压缩', '128kbps以上音质损失明显'],
-        convertMethods: [
-          {
-            name: 'FFmpeg',
-            steps: 'ffmpeg -i input.wav -b:a 192k output.mp3'
-          },
-          {
-            name: 'iTunes/音乐',
-            steps: '导入 → 偏好设置 → 导出为MP3'
-          },
-          {
-            name: '在线转换',
-            steps: '123apps.com/audio-converter 等工具'
-          }
-        ]
-      },
-      {
-        ext: '.wav',
-        name: 'WAV',
-        category: 'audio',
-        categoryName: '音频',
-        description: 'Microsoft无压缩音频格式',
-        features: ['无损音质', '编辑方便', '专业用途'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'Waveform Audio File Format (WAV) 是微软和IBM开发的音频文件格式标准，用于存储PCM音频数据。由于是无压缩格式，能提供最高音质但文件体积巨大。',
-        pros: ['原始音质', '编辑无损', '专业录音标准'],
-        cons: ['文件极大', '不适合分享/传输'],
-        convertMethods: [
-          {
-            name: 'Audacity',
-            steps: '打开音频 → 文件 → 导出 → WAV'
-          },
-          {
-            name: 'FFmpeg',
-            steps: 'ffmpeg -i input.mp3 output.wav'
-          }
-        ]
-      },
-      {
-        ext: '.flac',
-        name: 'FLAC',
-        category: 'audio',
-        categoryName: '音频',
-        description: '自由无损音频编解码器',
-        features: ['无损压缩', '体积较小', '音质完美'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'Free Lossless Audio Codec (FLAC) 是一种无损音频压缩格式，能在不损失任何音质的情况下将音频文件压缩到原大小的50-70%。是发烧友的理想选择。',
-        pros: ['真正无损', '比WAV小50%', '元数据完善', '开源免费'],
-        cons: ['iOS支持有限', '部分老旧设备不支持'],
-        convertMethods: [
-          {
-            name: 'dBpoweramp',
-            steps: '专业的无损音频转换工具'
-          },
-          {
-            name: 'FFmpeg',
-            steps: 'ffmpeg -i input.wav -c:a flac output.flac'
-          },
-          {
-            name: 'foobar2000',
-            steps: '高级音频播放器，内置转换功能'
-          }
-        ]
-      },
-      {
-        ext: '.aac',
-        name: 'AAC',
-        category: 'audio',
-        categoryName: '音频',
-        description: '高效的高级音频编码',
-        features: ['高效率', '优于MP3', 'Apple首选'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'Advanced Audio Coding (AAC) 是MP3的继任者，在相同比特率下提供更好的音质。是YouTube、iPhone、PlayStation等平台的标准音频格式。',
-        pros: ['比MP3音质更好', '效率更高', '多平台原生支持'],
-        cons: ['版权较严格', '某些老旧设备不支持'],
-        convertMethods: [
-          {
-            name: 'FFmpeg',
-            steps: 'ffmpeg -i input.wav -c:a aac -b:a 256k output.aac'
-          },
-          {
-            name: 'iTunes',
-            steps: '导入 → AAC编码器 → 导出'
-          }
-        ]
-      },
-      {
-        ext: '.pdf',
-        name: 'PDF',
-        category: 'document',
-        categoryName: '文档',
-        description: '便携式文档格式',
-        features: ['跨平台一致', '打印友好', '安全性高'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'Portable Document Format (PDF) 是Adobe开发的文档格式，能够在任何设备上保持一致的显示效果。是全球文档交换的事实标准。',
-        pros: ['跨平台一致性', '不可篡改(可选)', '支持注释/签名', '适合存档'],
-        cons: ['编辑困难', '文件可能较大'],
-        convertMethods: [
-          {
-            name: '打印转PDF',
-            steps: '任何程序 → 打印 → 选择"Microsoft Print to PDF"'
-          },
-          {
-            name: 'Word/Office',
-            steps: '文件 → 另存为 → 选择PDF格式'
-          },
-          {
-            name: '在线转换',
-            steps: 'Smallpdf、ILovePDF 等网站'
-          }
-        ]
-      },
-      {
-        ext: '.docx',
-        name: 'DOCX',
-        category: 'document',
-        categoryName: '文档',
-        description: 'Microsoft Word文档格式',
-        features: ['功能强大', '排版灵活', '办公标准'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'Office Open XML DOCX 是Microsoft Word的现代文档格式，基于XML和ZIP压缩。支持丰富的文本格式、表格、图片、样式等功能，是办公文档的主流格式。',
-        pros: ['功能全面', 'WPS/LibreOffice兼容', '协作方便'],
-        cons: ['依赖Office套件', '版本兼容问题'],
-        convertMethods: [
-          {
-            name: 'Word/WPS',
-            steps: '打开文档 → 文件 → 另存为 → 选择格式'
-          },
-          {
-            name: 'LibreOffice',
-            steps: '免费开源，支持批量转换'
-          },
-          {
-            name: '在线转换',
-            steps: 'Google Docs上传后下载为其他格式'
-          }
-        ]
-      },
-      {
-        ext: '.xlsx',
-        name: 'XLSX',
-        category: 'document',
-        categoryName: '文档',
-        description: 'Microsoft Excel电子表格',
-        features: ['数据计算', '图表分析', '公式支持'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'Office Open XML XLSX 是Microsoft Excel的工作簿格式，用于存储电子表格数据。支持复杂的计算公式、图表、数据透视表、宏等功能。',
-        pros: ['数据处理强大', '函数库丰富', '可视化图表'],
-        cons: ['大文件性能差', '版本兼容问题'],
-        convertMethods: [
-          {
-            name: 'Excel/WPS',
-            steps: '打开 → 文件 → 另存为 → 选择CSV/PDF等'
-          },
-          {
-            name: 'Python pandas',
-            steps: 'import pandas as pd; pd.read_excel().to_csv()'
-          }
-        ]
-      },
-      {
-        ext: '.pptx',
-        name: 'PPTX',
-        category: 'document',
-        categoryName: '文档',
-        description: 'Microsoft PowerPoint演示文稿',
-        features: ['演示文稿', '动画效果', '多媒体支持'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: true,
-        fullDesc: 'Office Open XML PPTX 是Microsoft PowerPoint演示文稿格式，用于创建幻灯片演示。支持丰富的动画、过渡效果、多媒体嵌入等功能。',
-        pros: ['演示效果好', '模板资源丰富', '动画丰富'],
-        cons: ['文件较大', '跨平台显示差异'],
-        convertMethods: [
-          {
-            name: 'PowerPoint/WPS',
-            steps: '文件 → 导出 → PDF/图片/视频'
-          },
-          {
-            name: 'Google Slides',
-            steps: '上传PPTX → 在线编辑 → 下载为其他格式'
-          }
-        ]
-      },
-      {
-        ext: '.zip',
-        name: 'ZIP',
-        category: 'archive',
-        categoryName: '压缩包',
-        description: '最通用的压缩归档格式',
-        features: ['通用性强', '速度快', '内建支持'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: true,
-        web: false,
-        fullDesc: 'ZIP是最广泛使用的压缩归档格式，几乎所有操作系统都原生支持。使用DEFLATE算法进行无损压缩，适合日常文件打包和分享。',
-        pros: ['全平台原生支持', '压缩速度快', '兼容性最好'],
-        cons: ['压缩率一般', '不支持超大文件'],
-        convertMethods: [
-          {
-            name: '系统自带',
-            steps: '右键 → 发送到 → 压缩(zipped)文件夹'
-          },
-          {
-            name: '7-Zip',
-            steps: '右键 → 7-Zip → 添加到压缩包 → 选择ZIP'
-          }
-        ]
-      },
-      {
-        ext: '.7z',
-        name: '7Z',
-        category: 'archive',
-        categoryName: '压缩包',
-        description: '7-Zip的高压缩率格式',
-        features: ['压缩率高', '开源免费', 'AES加密'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: false,
-        web: false,
-        fullDesc: '7z是7-Zip压缩软件的原生格式，采用LZMA/LZMA2算法，提供极高的压缩率。相比ZIP通常能减小30-70%的体积，是存档和长期保存的理想选择。',
-        pros: ['压缩率最高', '支持超大文件', '强加密支持', '开源免费'],
-        cons: ['需要安装7-Zip', '解压速度较慢'],
-        convertMethods: [
-          {
-            name: '7-Zip',
-            steps: '右键 → 7-Zip → 添加到压缩包 → 选择7z'
-          },
-          {
-            name: '命令行',
-            steps: '7z a archive.7z files/'
-          }
-        ]
-      },
-      {
-        ext: '.rar',
-        name: 'RAR',
-        category: 'archive',
-        categoryName: '压缩包',
-        description: 'WinRAR专有压缩格式',
-        features: ['压缩率高', '分卷支持', '恢复记录'],
-        windows: true,
-        mac: true,
-        linux: true,
-        android: true,
-        ios: false,
-        web: false,
-        fullDesc: 'RAR是WinRAR的专有压缩格式，以高压缩率和分卷压缩功能著称。虽然不是开源格式，但在文件分享和盗版资源中极为常见。',
-        pros: ['分卷压缩', '恢复记录', '压缩率高'],
-        cons: ['闭源专有', '商业软件', '解压需WinRAR/UNRAR'],
-        convertMethods: [
-          {
-            name: 'WinRAR',
-            steps: '右键 → 添加到压缩文件 → 选择RAR格式'
-          },
-          {
-            name: '转换为7Z',
-            steps: '先用WinRAR解压，再用7-Zip重新压缩'
-          }
-        ]
-      }
-    ],
-
-    scenarios: [
-      {
-        id: 1,
-        icon: '🖼️',
-        title: '照片优化分享',
-        desc: '将相机拍摄的高清照片压缩并转换为WebP格式',
-        from: 'RAW/JPG',
-        to: 'WebP'
-      },
-      {
-        id: 2,
-        icon: '📱',
-        title: '社交媒体发布',
-        desc: '调整图片尺寸并转换为最佳格式适配各平台',
-        from: '原图',
-        to: 'JPG/PNG'
-      },
-      {
-        id: 3,
-        icon: '🎬',
-        title: '视频格式统一',
-        desc: '将各种格式的视频统一转换为MP4以便播放和分享',
-        from: 'AVI/MOV/MKV',
-        to: 'MP4'
-      },
-      {
-        id: 4,
-        icon: '🎵',
-        title: '音频提取转换',
-        desc: '从视频中提取音频并转换为MP3或FLAC',
-        from: '视频文件',
-        to: 'MP3/FLAC'
-      },
-      {
-        id: 5,
-        icon: '📄',
-        title: '文档格式转换',
-        desc: '将Word/Excel/PPT转换为PDF便于分发和打印',
-        from: 'DOCX/XLSX/PPTX',
-        to: 'PDF'
-      },
-      {
-        id: 6,
-        icon: '📦',
-        title: '压缩包格式转换',
-        desc: '将ZIP/RAR等格式转换为7Z以获得更小的体积',
-        from: 'ZIP/RAR',
-        to: '7Z'
-      }
-    ],
-
-    recommendTools: [
-      {
-        name: 'FFmpeg',
-        desc: '命令行音视频处理瑞士军刀',
-        features: ['全能格式支持', '批量处理', '高度可定制'],
-        platform: 'Windows / macOS / Linux'
-      },
-      {
-        name: 'HandBrake',
-        desc: '开源免费的视频转码工具',
-        features: ['界面友好', '预设丰富', 'GPU加速'],
-        platform: 'Windows / macOS / Linux'
-      },
-      {
-        name: 'CloudConvert',
-        desc: '在线文件格式转换平台',
-        features: ['无需安装', '200+格式', 'API支持'],
-        platform: 'Web浏览器'
-      },
-      {
-        name: '7-Zip',
-        desc: '免费的高效压缩解压软件',
-        features: ['超高压缩率', '支持7z/ZIP/RAR', 'AES加密'],
-        platform: 'Windows / macOS / Linux'
-      },
-      {
-        name: 'Adobe Acrobat',
-        desc: '专业的PDF创建和编辑工具',
-        features: ['PDF编辑', '格式转换', '电子签名'],
-        platform: 'Windows / macOS / iOS / Android'
-      },
-      {
-        name: 'OnlineConvert',
-        desc: '多功能在线文件转换器',
-        features: ['支持所有主流格式', '批量转换', '云存储集成'],
-        platform: 'Web浏览器'
-      }
-    ],
-
-    filteredFormats: []
+    supportTypes: [
+      { ext: '.jpg', type: 'image', icon: '🖼️', name: 'JPG 图片' },
+      { ext: '.jpeg', type: 'image', icon: '🖼️', name: 'JPEG 图片' },
+      { ext: '.png', type: 'image', icon: '🖼️', name: 'PNG 图片' },
+      { ext: '.webp', type: 'image', icon: '🖼️', name: 'WebP 图片' },
+      { ext: '.gif', type: 'image', icon: '🎨', name: 'GIF 动图' },
+      { ext: '.bmp', type: 'image', icon: '🖼️', name: 'BMP 图片' },
+      { ext: '.txt', type: 'text', icon: '📝', name: '文本文件' },
+      { ext: '.md', type: 'text', icon: '📋', name: 'Markdown' },
+      { ext: '.json', type: 'json', icon: '{ }', name: 'JSON 数据' },
+      { ext: '.csv', type: 'csv', icon: '📊', name: 'CSV 表格' },
+      { ext: '.pdf', type: 'document', icon: '📄', name: 'PDF 文档' },
+      { ext: '.doc', type: 'document', icon: '📘', name: 'Word 文档' },
+      { ext: '.docx', type: 'document', icon: '📘', name: 'Word 文档' },
+      { ext: '.xls', type: 'document', icon: '📗', name: 'Excel 表格' },
+      { ext: '.xlsx', type: 'document', icon: '📗', name: 'Excel 表格' },
+      { ext: '.ppt', type: 'document', icon: '📙', name: 'PPT 演示' },
+      { ext: '.pptx', type: 'document', icon: '📙', name: 'PPT 演示' },
+      { ext: '.html', type: 'web', icon: '🌐', name: '网页文件' },
+      { ext: '.htm', type: 'web', icon: '🌐', name: '网页文件' },
+      { ext: '.xml', type: 'text', icon: '📄', name: 'XML 文件' }
+    ]
   },
 
-  onLoad() {
-    this.setData({ filteredFormats: this.data.formats })
+  chooseFile() {
+    wx.chooseMessageFile({
+      count: 1,
+      type: 'file',
+      success: (res) => {
+        const file = res.tempFiles[0]
+        const ext = this.getExt(file.name).toLowerCase()
+        const typeInfo = this.getFileType(ext)
+        
+        let formats = []
+        
+        const extToCategory = {
+          '.pdf': 'pdf',
+          '.docx': 'docx', '.doc': 'docx',
+          '.xlsx': 'xlsx', '.xls': 'xlsx',
+          '.pptx': 'pptx', '.ppt': 'pptx',
+          '.jpg': 'image', '.jpeg': 'image', '.png': 'image',
+          '.webp': 'image', '.gif': 'image', '.bmp': 'image',
+          '.txt': 'text', '.md': 'text', '.xml': 'text',
+          '.json': 'json',
+          '.csv': 'csv',
+          '.html': 'web', '.htm': 'web'
+        }
+        
+        const categoryKey = extToCategory[ext] || typeInfo.type
+        formats = this.data.formatCategories[categoryKey] || this.data.formatCategories.other
+        
+        const firstFmt = formats.length > 0 ? formats[0] : null
+        
+        this.setData({
+          selectedFile: file,
+          filePath: file.path,
+          fileName: file.name,
+          fileSize: file.size,
+          fileSizeText: this.formatFileSize(file.size),
+          fileExt: ext,
+          fileType: typeInfo.type,
+          isImage: typeInfo.type === 'image',
+          isTextFile: ['text', 'json', 'csv', 'web'].includes(typeInfo.type),
+          availableFormats: formats,
+          targetFormat: firstFmt ? firstFmt.value : '',
+          targetFormatName: firstFmt ? firstFmt.fullName : '',
+          hasConverted: false,
+          convertedPath: '',
+          convertResult: null,
+          convertType: '',
+          conversionLog: [],
+          fileContent: ''
+        })
+
+        if (typeInfo.type === 'image') {
+          this.loadImageInfo(file.path)
+        }
+
+        if (['text', 'json', 'csv'].includes(typeInfo.type)) {
+          this.loadFileContent(file.path)
+        }
+
+        wx.showToast({ title: '文件已选择', icon: 'success' })
+      }
+    })
   },
 
-  onSearchInput(e) {
-    this.setData({ searchKeyword: e.detail.value })
-    this.filterFormats()
+  getExt(filename) {
+    const dotIndex = filename.lastIndexOf('.')
+    return dotIndex > -1 ? filename.substring(dotIndex) : ''
   },
 
-  onSearch() {
-    this.filterFormats()
+  getFileType(ext) {
+    for (let i = 0; i < this.data.supportTypes.length; i++) {
+      if (this.data.supportTypes[i].ext === ext) {
+        return this.data.supportTypes[i]
+      }
+    }
+    return { type: 'other', icon: '📎', name: '未知类型' }
+  },
+
+  loadImageInfo(path) {
+    wx.getImageInfo({
+      src: path,
+      success: (res) => {
+        this.setData({ imageInfo: res })
+      }
+    })
+  },
+
+  loadFileContent(path) {
+    const fs = wx.getFileSystemManager()
+    try {
+      fs.readFile({
+        filePath: path,
+        encoding: 'utf8',
+        success: (res) => {
+          this.setData({ fileContent: res.data || '' })
+        },
+        fail: () => {
+          fs.readFile({
+            filePath: path,
+            encoding: 'binary',
+            success: (res) => {
+              this.setData({ fileContent: '(二进制文件内容)' })
+            },
+            fail: () => {
+              this.setData({ fileContent: '(无法读取内容)' })
+            }
+          })
+        }
+      })
+    } catch (e) {
+      this.setData({ fileContent: '(读取失败)' })
+    }
+  },
+
+  selectFormat(e) {
     wx.vibrateShort({ type: 'light' })
+    const value = e.currentTarget.dataset.value
+    const name = e.currentTarget.dataset.name || ''
+    this.setData({ 
+      targetFormat: value,
+      targetFormatName: name,
+      hasConverted: false,
+      convertedPath: '',
+      convertResult: null
+    })
   },
 
-  clearSearch() {
-    this.setData({ searchKeyword: '' })
-    this.filterFormats()
-  },
-
-  filterFormats() {
-    const keyword = this.data.searchKeyword.toLowerCase()
-    const category = this.data.currentCategory
-
-    let filtered = this.data.formats
-
-    if (category !== 'all') {
-      filtered = filtered.filter(f => f.category === category)
+  convertFile() {
+    if (!this.data.selectedFile) {
+      wx.showToast({ title: '请先选择文件', icon: 'none' })
+      return
     }
 
-    if (keyword) {
-      filtered = filtered.filter(f =>
-        f.ext.toLowerCase().includes(keyword) ||
-        f.name.toLowerCase().includes(keyword) ||
-        f.description.toLowerCase().includes(keyword)
-      )
+    if (!this.data.targetFormat) {
+      wx.showToast({ title: '请选择目标格式', icon: 'none' })
+      return
     }
 
-    this.setData({ filteredFormats: filtered })
+    this.setData({ isConverting: true, conversionLog: [] })
+
+    const fmt = this.data.targetFormat
+
+    if (this.data.isImage && ['jpg', 'png', 'webp'].includes(fmt)) {
+      this.convertImage()
+    } else if (fmt === 'base64') {
+      this.convertToBase64()
+    } else if (this.data.fileType === 'text' || this.data.fileType === 'json' || this.data.fileType === 'csv') {
+      this.convertText()
+    } else if (this.data.fileType === 'document') {
+      this.convertDocument()
+    } else if (this.data.fileType === 'web') {
+      this.convertWebFile()
+    } else {
+      this.convertGeneric()
+    }
   },
 
-  onCategoryChange(e) {
-    const categoryId = e.currentTarget.dataset.id
-    wx.vibrateShort({ type: 'light' })
-    this.setData({ currentCategory: categoryId })
-    this.filterFormats()
+  convertImage() {
+    this.addLog('开始图片格式转换...')
+    
+    const qualityMap = { jpg: 92, png: 100, webp: 88, gif: 80 }
+    const formatMap = { jpg: 'jpg', png: 'png', webp: 'webp', gif: 'gif' }
+
+    wx.compressImage({
+      src: this.data.filePath,
+      quality: qualityMap[this.data.targetFormat] || 85,
+      compressedWidth: 0,
+      compressedHeight: 0,
+      fileType: formatMap[this.data.targetFormat] || 'png',
+      success: (res) => {
+        this.addLog('图片转换成功')
+        this.handleConvertSuccess(res.tempFilePath)
+      },
+      fail: (err) => {
+        this.addLog('转换失败: ' + (err.errMsg || '未知错误'))
+        this.setData({ isConverting: false })
+        wx.showToast({ title: '转换失败，请重试', icon: 'none' })
+      }
+    })
   },
 
-  showFormatDetail(e) {
-    const ext = e.currentTarget.dataset.ext
-    const format = this.data.formats.find(f => f.ext === ext)
+  convertToBase64() {
+    this.addLog('正在转换为Base64编码...')
+    
+    const fs = wx.getFileSystemManager()
+    const self = this
+    
+    setTimeout(() => {
+      try {
+        fs.readFile({
+          filePath: self.data.filePath,
+          encoding: 'base64',
+          success: (res) => {
+            const base64Content = res.data
+            const originalName = self.data.fileName.replace(/\.[^/.]+$/, '')
+            const newFileName = originalName + '_base64.txt'
+            
+            const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+            
+            const header = `data:${self.getMimeType(self.data.fileExt)};base64,\n`
+            const fullContent = header + base64Content
+            
+            fs.writeFile({
+              filePath: tempFilePath,
+              data: fullContent,
+              encoding: 'utf8',
+              success: () => {
+                self.addLog('Base64编码完成')
+                
+                self.setData({
+                  convertedPath: tempFilePath,
+                  convertedFileName: newFileName,
+                  convertResult: {
+                    originalSize: self.data.fileSizeText,
+                    newSize: self.formatFileSize(fullContent.length),
+                    savedSize: '-',
+                    ratio: '-',
+                    isGuide: false,
+                    previewText: base64Content.substring(0, 200) + (base64Content.length > 200 ? '...' : ''),
+                    totalLength: base64Content.length
+                  },
+                  isConverting: false,
+                  hasConverted: true,
+                  convertType: 'base64'
+                })
+                
+                wx.showToast({ title: '转换成功！', icon: 'success' })
+              },
+              fail: (writeErr) => {
+                self.addLog('写入失败: ' + writeErr.errMsg)
+                self.setData({ isConverting: false })
+                wx.showToast({ title: '保存失败', icon: 'none' })
+              }
+            })
+          },
+          fail: (err) => {
+            self.addLog('读取失败: ' + err.errMsg)
+            self.setData({ isConverting: false })
+            wx.showToast({ title: '文件读取失败', icon: 'none' })
+          }
+        })
+      } catch (e) {
+        self.addLog('异常: ' + e.message)
+        self.setData({ isConverting: false })
+        wx.showToast({ title: '转换异常', icon: 'none' })
+      }
+    }, 300)
+  },
 
-    if (format) {
-      wx.vibrateShort({ type: 'light' })
-      this.setData({
-        showDetail: true,
-        selectedFormat: format
+  getMimeType(ext) {
+    const mimeMap = {
+      '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png',
+      '.webp': 'image/webp', '.gif': 'image/gif', '.bmp': 'image/bmp',
+      '.pdf': 'application/pdf', '.txt': 'text/plain',
+      '.html': 'text/html', '.htm': 'text/html',
+      '.json': 'application/json', '.xml': 'application/xml',
+      '.csv': 'text/csv', '.doc': 'application/msword',
+      '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      '.xls': 'application/vnd.ms-excel',
+      '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    }
+    return mimeMap[ext.toLowerCase()] || 'application/octet-stream'
+  },
+
+  convertText() {
+    this.addLog('正在处理文本转换...')
+    
+    const content = this.data.fileContent
+    const fmt = this.data.targetFormat
+    const originalName = this.data.fileName.replace(/\.[^/.]+$/, '')
+    let newContent = ''
+    let newExt = ''
+    let newFileName = ''
+
+    switch (fmt) {
+      case 'html':
+        newContent = this.textToHtml(content, originalName)
+        newExt = '.html'
+        newFileName = originalName + '.html'
+        this.addLog('已转换为HTML格式')
+        break
+        
+      case 'json':
+        newContent = this.textToJson(content, originalName)
+        newExt = '.json'
+        newFileName = originalName + '.json'
+        this.addLog('已转换为JSON格式')
+        break
+        
+      case 'formatted':
+        try {
+          const parsed = JSON.parse(content)
+          newContent = JSON.stringify(parsed, null, 2)
+          this.addLog('JSON格式化完成')
+        } catch (e) {
+          newContent = content
+          this.addLog('JSON解析失败，保持原样')
+        }
+        newExt = '_formatted.json'
+        newFileName = originalName + '_formatted.json'
+        break
+        
+      case 'minified':
+        try {
+          const parsed = JSON.parse(content)
+          newContent = JSON.stringify(parsed)
+          this.addLog('JSON压缩完成')
+        } catch (e) {
+          newContent = content.replace(/\s+/g, '').trim()
+          this.addLog('已完成压缩处理')
+        }
+        newExt = '_min.json'
+        newFileName = originalName + '_min.json'
+        break
+        
+      case 'csv':
+        newContent = this.jsonToCsv(content)
+        newExt = '.csv'
+        newFileName = originalName + '.csv'
+        this.addLog('已转换为CSV格式')
+        break
+        
+      case 'pdf':
+        newContent = this.textToPdfHtml(content, originalName)
+        newExt = '.html'
+        newFileName = originalName + '_pdf.html'
+        this.addLog('已生成可打印的HTML(可用浏览器打印为PDF)')
+        break
+        
+      case 'docx':
+        newContent = this.textToDocxXml(content, originalName)
+        newExt = '.xml'
+        newFileName = originalName + '_word.xml'
+        this.addLog('已生成Word兼容XML(可用Word打开)')
+        break
+        
+      default:
+        newContent = content
+        newExt = '.txt'
+        newFileName = originalName + '_converted.txt'
+        this.addLog('完成基本转换')
+    }
+
+    const fs = wx.getFileSystemManager()
+    const self = this
+    const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+
+    setTimeout(() => {
+      fs.writeFile({
+        filePath: tempFilePath,
+        data: newContent,
+        encoding: 'utf8',
+        success: () => {
+          self.setData({
+            convertedPath: tempFilePath,
+            convertedFileName: newFileName,
+            convertResult: {
+              originalSize: self.data.fileSizeText,
+              newSize: self.formatFileSize(newContent.length),
+              savedSize: '-',
+              ratio: '-',
+              isGuide: false,
+              previewText: newContent.substring(0, 500) + (newContent.length > 500 ? '\n...(更多内容)' : ''),
+              isTextResult: true
+            },
+            isConverting: false,
+            hasConverted: true,
+            convertType: 'text'
+          })
+          
+          wx.showToast({ title: '转换成功！', icon: 'success' })
+        },
+        fail: (err) => {
+          self.addLog('保存失败: ' + err.errMsg)
+          self.setData({ isConverting: false })
+          wx.showToast({ title: '保存失败', icon: 'none' })
+        }
+      })
+    }, 200)
+  },
+
+  textToHtml(text, title) {
+    const escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/\n/g, '<br>\n')
+    
+    return `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6; color: #333; }
+    h1 { border-bottom: 2px solid #14B8A6; padding-bottom: 10px; color: #1E293B; }
+    pre { background: #F8FAFC; padding: 16px; border-radius: 8px; overflow-x: auto;
+         white-space: pre-wrap; word-wrap: break-word; border-left: 4px solid #14B8A6; }
+    .meta { color: #94A3B8; font-size: 12px; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h1>📄 ${title}</h1>
+  <div class="meta">由 百宝工具箱 转换生成 | ${new Date().toLocaleString()}</div>
+  <pre>${escaped}</pre>
+</body>
+</html>`
+  },
+
+  textToJson(text, title) {
+    try {
+      const parsed = JSON.parse(text)
+      return JSON.stringify(parsed, null, 2)
+    } catch (e) {
+      return JSON.stringify({
+        source: title,
+        convertedAt: new Date().toISOString(),
+        contentType: 'text/plain',
+        content: text,
+        charCount: text.length,
+        lineCount: text.split('\n').length,
+        wordCount: text.split(/\s+/).filter(w => w.length > 0).length
+      }, null, 2)
+    }
+  },
+
+  jsonToCsv(jsonStr) {
+    try {
+      const data = JSON.parse(jsonStr)
+      
+      if (Array.isArray(data) && data.length > 0) {
+        const headers = Object.keys(data[0])
+        const csvRows = [headers.join(',')]
+        
+        data.forEach(row => {
+          const values = headers.map(h => {
+            let val = row[h]
+            if (val === null || val === undefined) val = ''
+            val = String(val).replace(/"/g, '""')
+            if (val.includes(',') || val.includes('"') || val.includes('\n')) {
+              val = '"' + val + '"'
+            }
+            return val
+          })
+          csvRows.push(values.join(','))
+        })
+        
+        return csvRows.join('\n')
+      } else if (typeof data === 'object' && data !== null) {
+        const csvRows = []
+        Object.keys(data).forEach(key => {
+          let val = String(data[key]).replace(/"/g, '""')
+          if (val.includes(',') || val.includes('"')) {
+            val = '"' + val + '"'
+          }
+          csvRows.push(`"${key}",${val}`)
+        })
+        return 'Key,Value\n' + csvRows.join('\n')
+      }
+      
+      return jsonStr
+    } catch (e) {
+      return 'Error parsing JSON: ' + e.message
+    }
+  },
+
+  textToPdfHtml(text, title) {
+    const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    const paragraphs = escaped.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('\n')
+    
+    return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>${title} - PDF Export</title>
+  <style>
+    @page { size: A4; margin: 2cm; }
+    body { font-family: "SimSun", serif; font-size: 12pt; line-height: 1.8; color: #000; }
+    h1 { text-align: center; font-size: 18pt; margin-bottom: 30pt; }
+    p { text-indent: 2em; margin: 8pt 0; }
+    @media print { body { print-color-adjust: exact; } }
+  </style>
+</head>
+<body>
+  <h1>${title}</h1>
+  ${paragraphs}
+</body>
+</html>`
+  },
+
+  textToDocxXml(text, title) {
+    const paragraphs = text.split('\n').filter(p => p.trim()).map(p => {
+      const escaped = p.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      return `<w:p><w:r><w:t xml:space="preserve">${escaped}</w:t></w:r></w:p>`
+    }).join('\n')
+
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>
+    ${paragraphs}
+    <w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr>
+  </w:body>
+</w:document>`
+  },
+
+  convertDocument() {
+    this.addLog('正在处理文档转换...')
+    
+    const fmt = this.data.targetFormat
+    const originalName = this.data.fileName.replace(/\.[^/.]+$/, '')
+    const fs = wx.getFileSystemManager()
+    const self = this
+
+    if (fmt === 'txt') {
+      this.extractDocumentText()
+      return
+    }
+
+    if (fmt === 'docx') {
+      this.addLog('正在生成Word文档...')
+      this.extractAndConvertToDocx(originalName, fs)
+      return
+    }
+
+    if (fmt === 'xlsx') {
+      this.addLog('正在生成Excel表格...')
+      this.convertToExcel(originalName, fs)
+      return
+    }
+
+    if (fmt === 'pptx') {
+      this.addLog('正在生成PPT演示文稿...')
+      this.convertToPptx(originalName, fs)
+      return
+    }
+
+    if (fmt === 'jpg' || fmt === 'png') {
+      this.addLog('正在转换为图片格式...')
+      this.convertDocToImage(originalName, fs)
+      return
+    }
+
+    if (fmt === 'html') {
+      this.addLog('正在生成HTML文档...')
+      const htmlContent = this.generateDocHtml(originalName)
+      const newFileName = originalName + '.html'
+      const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+      
+      setTimeout(() => {
+        fs.writeFile({
+          filePath: tempFilePath,
+          data: htmlContent,
+          encoding: 'utf8',
+          success: () => {
+            self.addLog('已转换为HTML文档')
+            self.finishTextConversion(tempFilePath, newFileName, htmlContent)
+          },
+          fail: () => {
+            self.setData({ isConverting: false })
+            wx.showToast({ title: '转换失败', icon: 'none' })
+          }
+        })
+      }, 300)
+      return
+    }
+
+    if (fmt === 'json') {
+      this.addLog('正在生成JSON数据...')
+      const jsonData = {
+        fileInfo: {
+          name: self.data.fileName,
+          size: self.data.fileSize,
+          sizeText: self.data.fileSizeText,
+          type: self.data.fileExt.toUpperCase(),
+          convertedAt: new Date().toISOString()
+        },
+        note: '文档元数据提取完成'
+      }
+      const jsonStr = JSON.stringify(jsonData, null, 2)
+      const newFileName = originalName + '_info.json'
+      const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+      
+      setTimeout(() => {
+        fs.writeFile({
+          filePath: tempFilePath,
+          data: jsonStr,
+          encoding: 'utf8',
+          success: () => {
+            self.addLog('已生成文档信息JSON')
+            self.finishTextConversion(tempFilePath, newFileName, jsonStr)
+          },
+          fail: () => {
+            self.setData({ isConverting: false })
+            wx.showToast({ title: '转换失败', icon: 'none' })
+          }
+        })
+      }, 300)
+      return
+    }
+
+    if (fmt === 'csv') {
+      this.addLog('正在生成CSV文件...')
+      this.convertToCsv(originalName, fs)
+      return
+    }
+
+    if (fmt === 'base64') {
+      this.convertToBase64()
+      return
+    }
+
+    this.setData({ isConverting: false })
+    wx.showToast({ title: '该转换暂不支持', icon: 'none' })
+  },
+
+  extractAndConvertToDocx(originalName, fs) {
+    const self = this
+    
+    setTimeout(() => {
+      try {
+        fs.readFile({
+          filePath: self.data.filePath,
+          encoding: 'utf8',
+          success: (res) => {
+            let content = res.data
+            
+            if (self.data.fileExt === '.pdf') {
+              content = self.extractPdfTextForDocx(content)
+            } else if (['.docx', '.xlsx', '.pptx'].includes(self.data.fileExt)) {
+              content = self.extractOfficeXmlText(content).replace(/===.*?===\n/g, '').replace(/原始文件[^\n]*\n/g, '').replace(/提取时间[^\n]*\n/g, '').replace(/=+\n/g, '')
+            } else {
+              content = self.cleanBinaryText(content)
+            }
+            
+            const docxContent = self.generateDocxFile(content, originalName)
+            const newFileName = originalName + '_converted.docx'
+            const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+            
+            fs.writeFile({
+              filePath: tempFilePath,
+              data: docxContent,
+              encoding: 'utf8',
+              success: () => {
+                self.addLog('Word文档生成成功！可用WPS/Word打开')
+                self.finishTextConversion(tempFilePath, newFileName, docxContent)
+              },
+              fail: () => {
+                self.setData({ isConverting: false })
+                wx.showToast({ title: '保存失败', icon: 'none' })
+              }
+            })
+          },
+          fail: () => {
+            const fallbackContent = `[${self.data.fileName} 的内容]\n\n此文件为${self.data.fileExt.toUpperCase()}格式。\n\n转换时间：${new Date().toLocaleString()}\n\n提示：如需完整转换，建议使用WPS Office或专业转换工具。`
+            const docxContent = self.generateDocxFile(fallbackContent, originalName)
+            const newFileName = originalName + '_converted.docx'
+            const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+            
+            fs.writeFile({
+              filePath: tempFilePath,
+              data: docxContent,
+              encoding: 'utf8',
+              success: () => {
+                self.addLog('已生成基础Word文档(含文件信息)')
+                self.finishTextConversion(tempFilePath, newFileName, docxContent)
+              },
+              fail: () => {
+                self.setData({ isConverting: false })
+                wx.showToast({ title: '转换失败', icon: 'none' })
+              }
+            })
+          }
+        })
+      } catch (e) {
+        self.setData({ isConverting: false })
+        wx.showToast({ title: '处理异常', icon: 'none' })
+      }
+    }, 400)
+  },
+
+  extractPdfTextForDocx(raw) {
+    const textParts = []
+    const lines = raw.split('\n')
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i]
+      
+      if (line.includes('/Title')) {
+        const match = line.match(/\/Title\s*\(([^)]*)\)/)
+        if (match && match[1]) textParts.push(match[1])
+      }
+      
+      if (line.includes('/Author')) {
+        const match = line.match(/\/Author\s*\(([^)]*)\)/)
+        if (match && match[1]) textParts.push('作者：' + match[1])
+      }
+      
+      const btMatch = line.match(/\(([^)]{5,})\)/g)
+      if (btMatch) {
+        btMatch.forEach(t => {
+          const clean = t.replace(/^\(|\)$/g, '')
+          if (clean.trim() && !clean.match(/^[\d\s.,\-]+$/) && clean.length < 200) {
+            textParts.push(clean)
+          }
+        })
+      }
+      
+      if (line.match(/^[\x20-\x7E\u4e00-\u9fa5]{15,}$/)) {
+        textParts.push(line.trim())
+      }
+    }
+    
+    if (textParts.length === 0) {
+      textParts.push('[PDF文本内容]')
+      textParts.push('')
+      textParts.push('说明：此PDF可能为扫描件或包含特殊编码。')
+      textParts.push('建议使用Adobe Acrobat或百度OCR进行文字识别后再次转换。')
+    }
+    
+    return textParts.join('\n\n')
+  },
+
+  generateDocxFile(content, title) {
+    const paragraphs = content.split('\n').filter(p => p.trim()).map(p => {
+      const escaped = p.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      
+      if (escaped.length < 50 && escaped.indexOf(' ') < 0) {
+        return `<w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">${escaped}</w:t></w:r></w:p>`
+      }
+      
+      return `<w:p><w:r><w:t xml:space="preserve">${escaped}</w:t></w:r></w:p>`
+    }).join('\n')
+
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?mso-application progid="Word.Document"?>
+<w:wordDocument xmlns:w="http://schemas.microsoft.com/office/word/2003/wordml"
+                xmlns:wx="http://schemas.microsoft.com/office/word/2003/auxHint"
+                w:macrosPresent="no" w:embeddedObjPresent="no" w:ocxPresent="no"
+                xml:space="preserve">
+  <w:fonts>
+    <w:defaultFonts w:ascii="宋体" w:fareast="宋体" w:h-ansi="Calibri" w:cs="Times New Roman"/>
+  </w:fonts>
+  <w:styles>
+    <w:style w:type="paragraph" w:styleId="Heading1" w:default="on">
+      <w:name w:val="heading 1"/>
+      <w:rPr><w:b/><w:sz w:val="36"/><w:sz-cs w:val="36"/></w:rPr>
+    </w:style>
+    <w:style w:type="paragraph" w:styleId="Normal" w:default="on">
+      <w:name w:val="Normal"/>
+      <w:rPr><w:sz w:val="24"/></w:rPr>
+    </w:style>
+  </w:styles>
+  <w:body>
+    <w:sectPr>
+      <w:pgSz w:w="11906" w:h="16838"/>
+      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/>
+      <w:cols w:space="720"/>
+    </w:sectPr>
+    ${paragraphs}
+  </w:body>
+</w:wordDocument>`
+  },
+
+  convertToExcel(originalName, fs) {
+    const self = this
+    
+    setTimeout(() => {
+      try {
+        fs.readFile({
+          filePath: self.data.filePath,
+          encoding: 'utf8',
+          success: (res) => {
+            let csvContent = ''
+            
+            if (self.data.fileExt === '.pdf') {
+              const extracted = self.extractPdfTextForDocx(res.data)
+              const lines = extracted.split('\n').filter(l => l.trim())
+              csvContent = lines.map(l => {
+                const cells = l.split(/[,\t|]/).map(c => `"${c.trim().replace(/"/g, '""')}"`)
+                return cells.join(',')
+              }).join('\n')
+              
+              if (!csvContent) {
+                csvContent = '"序号","内容"\n' + lines.slice(0, 100).map((l, i) => `"${i+1}","${l.replace(/"/g, '""')}"`).join('\n')
+              }
+            } else if (self.data.fileExt === '.csv') {
+              csvContent = res.data
+            } else {
+              const lines = res.data.split('\n').filter(l => l.trim()).slice(0, 200)
+              csvContent = '"序号","原文内容"\n' + lines.map((l, i) => `"${i+1}","${l.replace(/"/g, '""')}"`).join('\n')
+            }
+            
+            const excelXml = self.generateExcelFile(csvContent, originalName)
+            const newFileName = originalName + '_converted.xls'
+            const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+            
+            fs.writeFile({
+              filePath: tempFilePath,
+              data: excelXml,
+              encoding: 'utf8',
+              success: () => {
+                self.addLog('Excel表格生成成功！可用WPS/Excel打开')
+                self.finishTextConversion(tempFilePath, newFileName, excelXml)
+              },
+              fail: () => {
+                self.setData({ isConverting: false })
+                wx.showToast({ title: '保存失败', icon: 'none' })
+              }
+            })
+          },
+          fail: () => {
+            const defaultCsv = '"项目","值"\n"文件名",' + `"${self.data.fileName}"\n` +
+                              '"大小",' + `"${self.data.fileSizeText}"\n` +
+                              '"类型",' + `"${self.data.fileExt}"\n` +
+                              '"时间",' + `"${new Date().toLocaleString()}"`
+            
+            const excelXml = self.generateExcelFile(defaultCsv, originalName)
+            const newFileName = originalName + '_converted.xls'
+            const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+            
+            fs.writeFile({
+              filePath: tempFilePath,
+              data: excelXml,
+              encoding: 'utf8',
+              success: () => {
+                self.addLog('已生成基础Excel(含文件信息)')
+                self.finishTextConversion(tempFilePath, newFileName, excelXml)
+              },
+              fail: () => {
+                self.setData({ isConverting: false })
+                wx.showToast({ title: '转换失败', icon: 'none' })
+              }
+            })
+          }
+        })
+      } catch (e) {
+        self.setData({ isConverting: false })
+        wx.showToast({ title: '处理异常', icon: 'none' })
+      }
+    }, 400)
+  },
+
+  generateExcelFile(csvData, title) {
+    const rows = csvData.split('\n')
+    const sheetData = rows.map(row => {
+      const cells = row.split(',').map(cell => {
+        const val = cell.replace(/^"|"$/g, '').replace(/""/g, '"')
+        return `<Cell><Data ss:Type="String">${val}</Data></Cell>`
+      }).join('')
+      return `<Row>${cells}</Row>`
+    }).join('')
+
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+  <Worksheet ss:Name="${title}">
+    <Table>
+      ${sheetData}
+    </Table>
+  </Worksheet>
+</Workbook>`
+  },
+
+  convertToPptx(originalName, fs) {
+    const self = this
+    
+    setTimeout(() => {
+      try {
+        fs.readFile({
+          filePath: self.data.filePath,
+          encoding: 'utf8',
+          success: (res) => {
+            let content = ''
+            
+            if (self.data.fileExt === '.pdf') {
+              content = self.extractPdfTextForDocx(res.data)
+            } else {
+              content = self.cleanBinaryText(res.data)
+            }
+            
+            const slides = content.split('\n\n').filter(p => p.trim()).slice(0, 12)
+            
+            if (slides.length === 0) {
+              slides.push(`${originalName}`, `文件类型：${self.data.fileExt.toUpperCase()}`, 
+                         `文件大小：${self.data.fileSizeText}`, `转换时间：${new Date().toLocaleString()}`)
+            }
+            
+            const pptxContent = self.generatePptxFile(slides, originalName)
+            const newFileName = originalName + '_converted.ppt'
+            const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+            
+            fs.writeFile({
+              filePath: tempFilePath,
+              data: pptxContent,
+              encoding: 'utf8',
+              success: () => {
+                self.addLog('PPT演示文稿生成成功！可用WPS/PPT打开')
+                self.finishTextConversion(tempFilePath, newFileName, pptxContent)
+              },
+              fail: () => {
+                self.setData({ isConverting: false })
+                wx.showToast({ title: '保存失败', icon: 'none' })
+              }
+            })
+          },
+          fail: () => {
+            const defaultSlides = [
+              `${originalName}`,
+              `文件信息`,
+              `类型：${self.data.fileExt.toUpperCase()}`,
+              `大小：${self.data.fileSizeText}`,
+              `时间：${new Date().toLocaleString()}`
+            ]
+            
+            const pptxContent = self.generatePptxFile(defaultSlides, originalName)
+            const newFileName = originalName + '_converted.ppt'
+            const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+            
+            fs.writeFile({
+              filePath: tempFilePath,
+              data: pptxContent,
+              encoding: 'utf8',
+              success: () => {
+                self.addLog('已生成基础PPT(含文件信息)')
+                self.finishTextConversion(tempFilePath, newFileName, pptxContent)
+              },
+              fail: () => {
+                self.setData({ isConverting: false })
+                wx.showToast({ title: '转换失败', icon: 'none' })
+              }
+            })
+          }
+        })
+      } catch (e) {
+        self.setData({ isConverting: false })
+        wx.showToast({ title: '处理异常', icon: 'none' })
+      }
+    }, 400)
+  },
+
+  generatePptxFile(slides, title) {
+    const slideXmls = slides.map((slide, idx) => {
+      const escaped = slide.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').substring(0, 500)
+      return `<p:slide>
+        <p:cSld>
+          <p:spTree>
+            <p:nvGrpSpPr/>
+            <p:grpSpPr/>
+            <p:sp>
+              <p:nvSpPr>
+                <p:cNvPr id="2" name="TextBox ${idx + 1}"/>
+                <p:cNvSpPr txBox="1"/>
+                <p:nvPr/>
+              </p:nvSpPr>
+              <p:spPr/>
+              <p:txBody>
+                <a:bodyPr wrap="square" rtlCol="0"/>
+                <a:lstStyle/>
+                <a:p>
+                  <a:r>
+                    <a:rPr lang="zh-CN" sz="2400" b="1"/>
+                    <a:t>${escaped}</a:t>
+                  </a:r>
+                </a:p>
+              </p:txBody>
+            </p:sp>
+          </p:spTree>
+        </p:cSld>
+        <p:clrMapOvr>
+          <a:masterClrMapping/>
+        </p:clrMapOvr>
+      </p:slide>`
+    }).join('\n')
+
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:presentation xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+                xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+                xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
+                saveSubsetFonts="1">
+  <p:sldMasterIdLst>
+    <p:sldMasterId id="2147483648"/>
+  </p:sldMasterIdLst>
+  <p:sldIdLst>
+    ${slides.map((_, i) => `<p:sldId id="${i + 256}" r:id="rId${i + 1}"/>`).join('\n    ')}
+  </p:sldIdLst>
+  <p:sldSz cx="9144000" cy="6858000"/>
+  <p:notesSz cx="9144000" cy="6858000"/>
+  ${slideXmls}
+</p:presentation>`
+  },
+
+  convertDocToImage(originalName, fs) {
+    const self = this
+    
+    setTimeout(() => {
+      try {
+        fs.readFile({
+          filePath: self.data.filePath,
+          encoding: 'utf8',
+          success: (res) => {
+            let content = ''
+            
+            if (self.data.fileExt === '.pdf') {
+              content = self.extractPdfTextForDocx(res.data)
+            } else {
+              content = self.cleanBinaryText(res.data)
+            }
+            
+            const imgHtml = self.generateImageHtml(content, originalName)
+            const newFileName = originalName + '_as_image.html'
+            const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+            
+            fs.writeFile({
+              filePath: tempFilePath,
+              data: imgHtml,
+              encoding: 'utf8',
+              success: () => {
+                self.addLog('已生成长图HTML（可截图保存）')
+                
+                self.setData({
+                  convertedPath: tempFilePath,
+                  convertedFileName: newFileName,
+                  convertResult: {
+                    originalSize: self.data.fileSizeText,
+                    newSize: self.formatFileSize(imgHtml.length),
+                    savedSize: '-',
+                    ratio: '-',
+                    isGuide: false,
+                    previewText: '✅ 已生成网页版长图！\n\n操作步骤：\n1. 点击下方"打开文件"按钮\n2. 在浏览器中打开生成的HTML\n3. 使用浏览器截图功能保存为图片\n4. 或按 Ctrl+P 打印为PDF/PNG',
+                    isTextResult: true,
+                    contentLength: imgHtml.length,
+                    isImageHint: true
+                  },
+                  isConverting: false,
+                  hasConverted: true,
+                  convertType: 'text'
+                })
+                
+                wx.showToast({ title: '长图HTML已生成', icon: 'success' })
+              },
+              fail: () => {
+                self.setData({ isConverting: false })
+                wx.showToast({ title: '保存失败', icon: 'none' })
+              }
+            })
+          },
+          fail: () => {
+            self.setData({ isConverting: false })
+            wx.showToast({ title: '读取失败', icon: 'none' })
+          }
+        })
+      } catch (e) {
+        self.setData({ isConverting: false })
+        wx.showToast({ title: '处理异常', icon: 'none' })
+      }
+    }, 400)
+  },
+
+  generateImageHtml(content, title) {
+    const escaped = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>\n')
+    
+    return `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title} - 长图</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      max-width: 750px; margin: 0 auto; padding: 40px 30px;
+      background: #FFFFFF; color: #333;
+    }
+    .header { 
+      text-align: center; padding-bottom: 30px; 
+      border-bottom: 3px solid #14B8A6; margin-bottom: 30px;
+    }
+    .header h1 { font-size: 28px; color: #0F766E; margin-bottom: 10px; }
+    .header .meta { font-size: 13px; color: #64748B; }
+    .content { 
+      font-size: 16px; line-height: 2; color: #1E293B;
+      padding: 20px; background: #F8FAFC; border-radius: 12px;
+      border-left: 4px solid #14B8A6;
+    }
+    .footer { 
+      text-align: center; margin-top: 40px; padding-top: 20px;
+      border-top: 1px solid #E2E8F0; font-size: 12px; color: #94A3B8;
+    }
+    @media print { body { padding: 20px; } .footer { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📄 ${title}</h1>
+    <div class="meta">由 百宝工具箱 转换生成 | ${new Date().toLocaleString()}</div>
+  </div>
+  <div class="content">${escaped}</div>
+  <div class="footer">
+    <p>百宝工具箱 | 文档转图片</p>
+  </div>
+</body>
+</html>`
+  },
+
+  convertToCsv(originalName, fs) {
+    const self = this
+    
+    setTimeout(() => {
+      try {
+        fs.readFile({
+          filePath: self.data.filePath,
+          encoding: 'utf8',
+          success: (res) => {
+            let csvContent = ''
+            
+            if (self.data.fileExt === '.xlsx' || self.data.fileExt === '.xls') {
+              const lines = res.data.split('\n').filter(l => l.trim())
+              csvContent = '"行号","内容"\n' + lines.slice(0, 500).map((l, i) => `"${i+1}","${l.replace(/"/g, '""')}"`).join('\n')
+            } else {
+              const lines = res.data.split('\n').filter(l => l.trim())
+              csvContent = '"序号","原文内容"\n' + lines.slice(0, 500).map((l, i) => `"${i+1}","${l.replace(/"/g, '""')}"`).join('\n')
+            }
+            
+            const newFileName = originalName + '_converted.csv'
+            const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+            
+            fs.writeFile({
+              filePath: tempFilePath,
+              data: csvContent,
+              encoding: 'utf8',
+              success: () => {
+                self.addLog('CSV文件生成成功！可用Excel/WPS打开')
+                self.finishTextConversion(tempFilePath, newFileName, csvContent)
+              },
+              fail: () => {
+                self.setData({ isConverting: false })
+                wx.showToast({ title: '保存失败', icon: 'none' })
+              }
+            })
+          },
+          fail: () => {
+            self.setData({ isConverting: false })
+            wx.showToast({ title: '读取失败', icon: 'none' })
+          }
+        })
+      } catch (e) {
+        self.setData({ isConverting: false })
+        wx.showToast({ title: '处理异常', icon: 'none' })
+      }
+    }, 300)
+  },
+
+  extractDocumentText() {
+    this.addLog('尝试提取文档文本内容...')
+    
+    const fs = wx.getFileSystemManager()
+    const self = this
+    const originalName = this.data.fileName.replace(/\.[^/.]+$/, '')
+
+    setTimeout(() => {
+      try {
+        fs.readFile({
+          filePath: self.data.filePath,
+          encoding: 'utf8',
+          success: (res) => {
+            let content = res.data
+            
+            if (self.data.fileExt === '.pdf') {
+              content = self.extractPdfText(content)
+            } else if (['.docx', '.xlsx', '.pptx'].includes(self.data.fileExt)) {
+              content = self.extractOfficeXmlText(content)
+            } else {
+              content = self.cleanBinaryText(content)
+            }
+            
+            const newFileName = originalName + '_extracted.txt'
+            const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+            
+            fs.writeFile({
+              filePath: tempFilePath,
+              data: content,
+              encoding: 'utf8',
+              success: () => {
+                self.addLog('文本提取完成')
+                self.finishTextConversion(tempFilePath, newFileName, content)
+              },
+              fail: () => {
+                self.setData({ isConverting: false })
+                wx.showToast({ title: '保存失败', icon: 'none' })
+              }
+            })
+          },
+          fail: () => {
+            fs.readFile({
+              filePath: self.data.filePath,
+              encoding: 'ascii',
+              success: (res) => {
+                let content = self.cleanBinaryText(res.data)
+                const newFileName = originalName + '_extracted.txt'
+                const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+                
+                fs.writeFile({
+                  filePath: tempFilePath,
+                  data: content,
+                  encoding: 'utf8',
+                  success: () => {
+                    self.addLog('文本提取完成(ASCII模式)')
+                    self.finishTextConversion(tempFilePath, newFileName, content)
+                  },
+                  fail: () => {
+                    self.setData({ isConverting: false })
+                    wx.showToast({ title: '处理失败', icon: 'none' })
+                  }
+                })
+              },
+              fail: () => {
+                self.setData({ isConverting: false })
+                wx.showToast({ title: '无法读取文件', icon: 'none' })
+              }
+            })
+          }
+        })
+      } catch (e) {
+        self.setData({ isConverting: false })
+        wx.showToast({ title: '处理异常', icon: 'none' })
+      }
+    }, 300)
+  },
+
+  extractPdfText(raw) {
+    const textParts = []
+    const lines = raw.split('\n')
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i]
+      
+      if (line.includes('/Title')) {
+        const match = line.match(/\/Title\s*\(([^)]*)\)/)
+        if (match) textParts.push('标题: ' + match[1])
+      }
+      
+      if (line.includes('/Author')) {
+        const match = line.match(/\/Author\s*\(([^)]*)\)/)
+        if (match) textParts.push('作者: ' + match[1])
+      }
+      
+      if (line.includes('BT') && line.includes('ET')) {
+        const textMatch = line.match(/\(([^)]+)\)/g)
+        if (textMatch) {
+          textMatch.forEach(t => {
+            const clean = t.replace(/^\(|\)$/g, '')
+            if (clean.trim()) textParts.push(clean)
+          })
+        }
+      }
+      
+      if (line.match(/^[\x20-\x7E\s\u4e00-\u9fa5]{10,}$/)) {
+        textParts.push(line.trim())
+      }
+    }
+    
+    if (textParts.length === 0) {
+      textParts.push('[PDF文件结构复杂，部分文本可能未完全提取]')
+      textParts.push('提示：此PDF可能是扫描件或包含特殊编码')
+      textParts.push('建议使用 Adobe Acrobat 或百度OCR 进行完整提取')
+    }
+    
+    return '=== PDF文本提取结果 ===\n' +
+           '原始文件: ' + this.data.fileName + '\n' +
+           '提取时间: ' + new Date().toLocaleString() + '\n' +
+           '========================\n\n' + 
+           textParts.join('\n')
+  },
+
+  extractOfficeXmlText(raw) {
+    const textParts = []
+    const textRegex = /<w:t[^>]*>([^<]+)<\/w:t>/g
+    let match
+    
+    while ((match = textRegex.exec(raw)) !== null) {
+      if (match[1].trim()) textParts.push(match[1].trim())
+    }
+    
+    if (textParts.length === 0) {
+      const allText = raw.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+      if (allText.length > 50) {
+        textParts.push(allText.substring(0, 2000))
+      } else {
+        textParts.push('[Office文档内容加密或使用特殊格式]')
+        textParts.push('建议使用 WPS Office 或 Microsoft Office 打开并另存为文本格式')
+      }
+    }
+    
+    return '=== Office文档文本提取 ===\n' +
+           '原始文件: ' + this.data.fileName + '\n' +
+           '提取时间: ' + new Date().toLocaleString() + '\n' +
+           '============================\n\n' +
+           textParts.join('\n')
+  },
+
+  cleanBinaryText(raw) {
+    let cleaned = ''
+    for (let i = 0; i < raw.length; i++) {
+      const code = raw.charCodeAt(i)
+      if ((code >= 32 && code <= 126) || code >= 0x4e00 || code === 10 || code === 13 || code === 9) {
+        cleaned += raw[i]
+      } else if (code === 0 || cleaned.length > 0 && cleaned[cleaned.length - 1] !== '\n') {
+        cleaned += ' '
+      }
+    }
+    
+    cleaned = cleaned.replace(/\s+/g, ' ').trim()
+    
+    if (cleaned.length < 20) {
+      return '[该文件为二进制格式，无法直接提取可读文本]\n' +
+             '文件类型: ' + this.data.fileExt.toUpperCase() + '\n' +
+             '建议：使用对应的专用软件打开此文件'
+    }
+    
+    return '=== 文件内容提取 ===\n' +
+           '原始文件: ' + this.data.fileName + '\n' +
+           '==================\n\n' +
+           cleaned.substring(0, 5000)
+  },
+
+  generateDocHtml(title) {
+    return `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            max-width: 800px; margin: 0 auto; padding: 40px 20px; line-height: 1.8; color: #1E293B; }
+    .header { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 3px solid #14B8A6; }
+    .header h1 { font-size: 28px; color: #0F766E; }
+    .meta { color: #64748B; font-size: 14px; margin-top: 10px; }
+    .content { background: #FFFFFF; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .footer { text-align: center; margin-top: 40px; color: #94A3B8; font-size: 12px; }
+    @media print { body { padding: 20px; } .footer { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📄 ${title}</h1>
+    <div class="meta">
+      <p>原始格式: ${this.data.fileExt.toUpperCase()} | 转换时间: ${new Date().toLocaleString()}</p>
+      <p>由 百宝工具箱 文档格式转换工具 生成</p>
+    </div>
+  </div>
+  <div class="content">
+    <p style="color:#64748B;text-align:center;padding:40px;">
+      [文档内容已转换为HTML格式]<br>
+      可在浏览器中打开查看，或按 Ctrl+P 打印/导出为PDF
+    </p>
+  </div>
+  <div class="footer">
+    <p>百宝工具箱 | 文档格式转换</p>
+  </div>
+</body>
+</html>`
+  },
+
+  convertWebFile() {
+    this.addLog('正在处理网页文件...')
+    
+    const fs = wx.getFileSystemManager()
+    const self = this
+    const fmt = this.data.targetFormat
+    const originalName = this.data.fileName.replace(/\.[^/.]+$/, '')
+
+    fs.readFile({
+      filePath: self.data.filePath,
+      encoding: 'utf8',
+      success: (res) => {
+        const htmlContent = res.data
+        
+        if (fmt === 'txt') {
+          let text = htmlContent
+            .replace(/<script[\s\S]*?<\/script>/gi, '')
+            .replace(/<style[\s\S]*?<\/style>/gi, '')
+            .replace(/<[^>]+>/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/\s+/g, ' ')
+            .trim()
+          
+          const newFileName = originalName + '.txt'
+          const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+          
+          fs.writeFile({
+            filePath: tempFilePath,
+            data: text,
+            encoding: 'utf8',
+            success: () => {
+              self.addLog('已提取网页文本')
+              self.finishTextConversion(tempFilePath, newFileName, text)
+            },
+            fail: () => {
+              self.setData({ isConverting: false })
+              wx.showToast({ title: '转换失败', icon: 'none' })
+            }
+          })
+        } else if (fmt === 'json') {
+          const metaData = {
+            source: originalName,
+            extractedAt: new Date().toISOString(),
+            htmlLength: htmlContent.length,
+            note: 'HTML元数据提取完成'
+          }
+          const jsonStr = JSON.stringify(metaData, null, 2)
+          const newFileName = originalName + '_meta.json'
+          const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+          
+          fs.writeFile({
+            filePath: tempFilePath,
+            data: jsonStr,
+            encoding: 'utf8',
+            success: () => {
+              self.addLog('已生成网页元数据JSON')
+              self.finishTextConversion(tempFilePath, newFileName, jsonStr)
+            },
+            fail: () => {
+              self.setData({ isConverting: false })
+              wx.showToast({ title: '转换失败', icon: 'none' })
+            }
+          })
+        } else {
+          self.setData({ isConverting: false })
+          wx.showToast({ title: '该转换暂不支持', icon: 'none' })
+        }
+      },
+      fail: () => {
+        self.setData({ isConverting: false })
+        wx.showToast({ title: '文件读取失败', icon: 'none' })
+      }
+    })
+  },
+
+  convertGeneric() {
+    this.addLog('正在处理文件...')
+    
+    const fmt = this.data.targetFormat
+    
+    if (fmt === 'base64') {
+      this.convertToBase64()
+    } else if (fmt === 'txt') {
+      this.extractDocumentText()
+    } else {
+      this.setData({ isConverting: false })
+      wx.showToast({ title: '该文件类型暂不支持此转换', icon: 'none' })
+    }
+  },
+
+  finishTextConversion(filePath, fileName, content) {
+    const self = this
+    self.setData({
+      convertedPath: filePath,
+      convertedFileName: fileName,
+      convertResult: {
+        originalSize: self.data.fileSizeText,
+        newSize: self.formatFileSize(content.length),
+        savedSize: '-',
+        ratio: '-',
+        isGuide: false,
+        previewText: content.substring(0, 800) + (content.length > 800 ? '\n\n...(更多内容，请查看完整文件)' : ''),
+        isTextResult: true,
+        contentLength: content.length
+      },
+      isConverting: false,
+      hasConverted: true,
+      convertType: 'text'
+    })
+    
+    wx.showToast({ title: '转换成功！', icon: 'success' })
+  },
+
+  handleConvertSuccess(tempFilePath) {
+    const self = this
+    
+    wx.getFileInfo({
+      filePath: tempFilePath,
+      success: (fileInfo) => {
+        const originalSize = self.data.fileSize
+        const ratio = originalSize > 0 ? ((1 - fileInfo.size / originalSize) * 100).toFixed(1) : 0
+        
+        self.setData({
+          convertedPath: tempFilePath,
+          convertedFileName: self.data.fileName.replace(/\.[^/.]+$/, '') + '_' + self.data.targetFormat.toUpperCase() + '.' + self.data.targetFormat,
+          convertResult: {
+            originalSize: self.data.fileSizeText,
+            newSize: self.formatFileSize(fileInfo.size),
+            savedSize: self.formatFileSize(Math.max(0, originalSize - fileInfo.size)),
+            ratio: Math.max(0, ratio),
+            isGuide: false,
+            isImageResult: true
+          },
+          isConverting: false,
+          hasConverted: true,
+          convertType: 'image'
+        })
+
+        wx.showToast({ title: '转换成功！', icon: 'success' })
+      },
+      fail: () => {
+        self.setData({
+          convertedPath: tempFilePath,
+          convertResult: {
+            originalSize: self.data.fileSizeText,
+            newSize: '已完成',
+            savedSize: '-',
+            ratio: '-',
+            isGuide: false,
+            isImageResult: true
+          },
+          isConverting: false,
+          hasConverted: true,
+          convertType: 'image'
+        })
+        wx.showToast({ title: '转换完成', icon: 'success' })
+      }
+    })
+  },
+
+  addLog(msg) {
+    const logs = [...this.data.conversionLog]
+    logs.push(`[${new Date().toLocaleTimeString()}] ${msg}`)
+    this.setData({ conversionLog: logs.slice(-10) })
+  },
+
+  saveConverted() {
+    const result = this.data.convertResult
+    const path = this.data.convertedPath
+    
+    if (!path) {
+      wx.showToast({ title: '没有可保存的文件', icon: 'none' })
+      return
+    }
+
+    if (result && result.isImageResult) {
+      wx.saveImageToPhotosAlbum({
+        filePath: path,
+        success: () => {
+          wx.showToast({ title: '已保存到相册', icon: 'success' })
+        },
+        fail: () => {
+          wx.showModal({
+            title: '提示',
+            content: '需要相册权限才能保存',
+            confirmText: '去设置',
+            success: (res) => {
+              if (res.confirm) wx.openSetting()
+            }
+          })
+        }
+      })
+    } else {
+      this.copyContentToFile()
+    }
+  },
+
+  copyContentToFile() {
+    const content = this.data.convertResult && this.data.convertResult.previewText
+    if (!content) {
+      wx.showToast({ title: '没有可复制的内容', icon: 'none' })
+      return
+    }
+    
+    wx.setClipboardData({
+      data: content,
+      success: () => {
+        wx.showToast({ title: '内容已复制到剪贴板', icon: 'success' })
+      }
+    })
+  },
+
+  previewConverted() {
+    const path = this.data.convertedPath
+    if (!path) return
+    
+    if (this.data.convertType === 'image' || this.data.isImage) {
+      wx.previewImage({
+        urls: [path],
+        current: path
+      })
+    } else {
+      wx.openDocument({
+        filePath: path,
+        showMenu: true,
+        success: () => {},
+        fail: () => {
+          wx.showToast({ title: '无法预览此文件', icon: 'none' })
+        }
       })
     }
   },
 
-  hideDetail() {
-    this.setData({ showDetail: false })
+  clearFile() {
+    wx.vibrateShort({ type: 'light' })
+    this.setData({
+      selectedFile: null,
+      filePath: '',
+      fileName: '',
+      fileSize: 0,
+      fileSizeText: '',
+      fileType: '',
+      fileExt: '',
+      isImage: false,
+      isTextFile: false,
+      imageInfo: null,
+      availableFormats: [],
+      targetFormat: '',
+      targetFormatName: '',
+      convertedPath: '',
+      convertedFileName: '',
+      convertResult: null,
+      hasConverted: false,
+      convertType: '',
+      conversionLog: [],
+      fileContent: ''
+    })
   },
 
-  showScenarioDetail(e) {
-    const scenarioId = e.currentTarget.dataset.id
-    const scenario = this.data.scenarios.find(s => s.id === scenarioId)
-
-    if (scenario) {
-      wx.showModal({
-        title: scenario.title,
-        content: scenario.desc + '\n\n推荐转换：' + scenario.from + ' → ' + scenario.to,
-        showCancel: false,
-        confirmText: '知道了'
-      })
-    }
+  formatFileSize(bytes) {
+    if (!bytes || bytes === 0) return '0 B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 })
