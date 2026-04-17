@@ -340,5 +340,8 @@ Page({
       title: 'JSON格式化 - 百宝工具箱',
       path: '/pages/tools/json-formatter/json-formatter'
     }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

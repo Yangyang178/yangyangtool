@@ -74,5 +74,11 @@ Page({
       inputText: '',
       outputText: ''
     })
+  },
+  onShareAppMessage() {
+    return { title: '大小写转换 - 好用方便的工具集', path: '/pages/index/index' }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

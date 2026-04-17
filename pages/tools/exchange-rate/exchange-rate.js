@@ -188,5 +188,11 @@ Page({
         duration: 1000
       })
     }
+  },
+  onShareAppMessage() {
+    return { title: '汇率换算 - 好用方便的工具集', path: '/pages/index/index' }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

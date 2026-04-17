@@ -578,5 +578,8 @@ Page({
       title: '我的二维码',
       path: '/pages/tools/qrcode-generator/qrcode-generator'
     }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

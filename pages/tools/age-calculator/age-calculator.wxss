@@ -1,4 +1,4 @@
-page { background-color: #F8FAFC; }
+page { background-color: var(--pageBg,#F8FAFC); }
 
 .tool-page {
   height: 100vh;
@@ -34,13 +34,13 @@ page { background-color: #F8FAFC; }
 .tool-title {
   font-size: 22px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   margin-bottom: 6px;
 }
 
 .tool-desc {
   font-size: 13px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 .input-section {
@@ -62,26 +62,26 @@ page { background-color: #F8FAFC; }
   display: block;
   font-size: 14px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   margin-bottom: 10px;
 }
 
 .date-picker-box {
   height: 48px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 10px;
   padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 15px;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   border: 2px solid transparent;
   transition: border-color 0.2s ease;
 }
 
 .date-picker-box:active {
-  border-color: #EC4899;
+  border-color: var(--accentPink,#EC4899);
 }
 
 .picker-icon {
@@ -95,18 +95,18 @@ page { background-color: #F8FAFC; }
 .quick-label {
   display: block;
   font-size: 13px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   margin-bottom: 10px;
 }
 
 .quick-btn {
   display: inline-block;
   padding: 6px 14px;
-  background: linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%);
+  background: linear-gradient(135deg, var(--bgTipRed,#FEF2F2) 0%, var(--bgTipRed,#FEF2F2) 100%);
   border-radius: 16px;
   font-size: 12px;
   font-weight: 600;
-  color: #BE185D;
+  color: var(--accentPink,#EC4899);
   margin-right: 8px;
   margin-bottom: 8px;
   transition: transform 0.2s ease;
@@ -119,7 +119,7 @@ page { background-color: #F8FAFC; }
 .calculate-btn {
   width: 100%;
   height: 52px;
-  background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+  background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, var(--accentPink,#EC4899) 100%);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -144,7 +144,7 @@ page { background-color: #F8FAFC; }
 }
 
 .age-display-card {
-  background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+  background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, var(--accentPink,#EC4899) 100%);
   border-radius: 20px;
   padding: 28px;
   margin-bottom: 20px;
@@ -236,7 +236,7 @@ page { background-color: #F8FAFC; }
 .countdown-days {
   font-size: 32px;
   font-weight: 800;
-  color: #FDE047;
+  color: var(--accentYellow,#F59E0B);
 }
 
 .countdown-unit {
@@ -274,14 +274,14 @@ page { background-color: #F8FAFC; }
 .stat-value {
   font-size: 18px;
   font-weight: 800;
-  color: #EC4899;
+  color: var(--accentPink,#EC4899);
   display: block;
   line-height: 1.2;
 }
 
 .stat-label {
   font-size: 11px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
   font-weight: 600;
   margin-top: 4px;
   display: block;
@@ -298,7 +298,7 @@ page { background-color: #F8FAFC; }
 .milestone-title {
   font-size: 16px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 14px;
 }
@@ -314,16 +314,16 @@ page { background-color: #F8FAFC; }
   align-items: center;
   padding: 12px;
   border-radius: 10px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   transition: all 0.2s ease;
 }
 
 .milestone-item.passed {
-  background: linear-gradient(135deg, #DCFCE7 0%, #D1FAE5 100%);
+  background: linear-gradient(135deg, var(--bgTipGreen,#ECFDF5) 0%, var(--bgTipGreen,#ECFDF5) 100%);
 }
 
 .milestone-item.future {
-  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  background: linear-gradient(135deg, var(--bgTipYellowDeep,#FEF3C7) 0%, #FDE68A 100%);
 }
 
 .milestone-status {
@@ -340,18 +340,18 @@ page { background-color: #F8FAFC; }
 .milestone-age {
   font-size: 14px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .milestone-name {
   font-size: 12px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   margin-top: 2px;
 }
 
 .milestone-date {
   font-size: 12px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
   font-weight: 500;
 }
 
@@ -378,14 +378,14 @@ page { background-color: #F8FAFC; }
 }
 
 .action-btn.copy {
-  background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+  background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, var(--accentPink,#EC4899) 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
 }
 
 .action-btn.share {
-  background: linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%);
-  color: #BE185D;
+  background: linear-gradient(135deg, var(--bgTipRed,#FEF2F2) 0%, var(--bgTipRed,#FEF2F2) 100%);
+  color: var(--accentPink,#EC4899);
 }
 
 .history-section {
@@ -405,12 +405,12 @@ page { background-color: #F8FAFC; }
 .section-title {
   font-size: 16px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .clear-history {
   font-size: 13px;
-  color: #EF4444;
+  color: var(--accentRed,#EF4444);
   font-weight: 600;
 }
 
@@ -425,23 +425,23 @@ page { background-color: #F8FAFC; }
   justify-content: space-between;
   align-items: center;
   padding: 12px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 10px;
 }
 
 .history-birth {
   font-size: 14px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .history-age {
   font-size: 13px;
-  color: #EC4899;
+  color: var(--accentPink,#EC4899);
   font-weight: 700;
 }
 
 .history-time {
   font-size: 12px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
 }

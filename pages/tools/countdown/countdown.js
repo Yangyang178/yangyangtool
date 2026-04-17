@@ -374,5 +374,8 @@ Page({
         : '倒计时 - 百宝工具箱',
       path: '/pages/tools/countdown/countdown'
     }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

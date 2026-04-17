@@ -2336,5 +2336,11 @@ Page({
     const sizes = ['B', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  },
+  onShareAppMessage() {
+    return { title: '文件格式转换 - 好用方便的工具集', path: '/pages/index/index' }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

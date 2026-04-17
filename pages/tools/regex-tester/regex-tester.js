@@ -309,5 +309,8 @@ Page({
       title: '正则表达式测试 - 百宝工具箱',
       path: '/pages/tools/regex-tester/regex-tester'
     };
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 });

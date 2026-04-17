@@ -430,5 +430,8 @@ Page({
       title: '颜色转换工具 - 百宝工具箱',
       path: '/pages/tools/color-converter/color-converter'
     }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

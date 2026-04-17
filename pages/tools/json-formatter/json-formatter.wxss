@@ -1,4 +1,4 @@
-page { background-color: #F8FAFC; }
+page { background-color: var(--pageBg,#F8FAFC); }
 
 .tool-page {
   height: 100vh;
@@ -30,19 +30,19 @@ page { background-color: #F8FAFC; }
 .tool-icon {
   font-size: 32px;
   font-weight: 700;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 .tool-title {
   font-size: 22px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   margin-bottom: 6px;
 }
 
 .tool-desc {
   font-size: 13px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 .input-section {
@@ -59,7 +59,7 @@ page { background-color: #F8FAFC; }
 .label-text {
   font-size: 15px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .input-actions,
@@ -81,22 +81,22 @@ page { background-color: #F8FAFC; }
 }
 
 .action-tag.paste {
-  background: #EFF6FF;
-  color: #3B82F6;
+  background: var(--bgTipBlue,#EFF6FF);
+  color: var(--accentBlue,#3B82F6);
 }
 
 .action-tag.sample {
-  background: #F0FDF4;
-  color: #10B981;
+  background: var(--bgTipGreen,#ECFDF5);
+  color: var(--accentGreen,#10B981);
 }
 
 .action-tag.clear {
-  background: #FEF2F2;
-  color: #EF4444;
+  background: var(--bgTipRed,#FEF2F2);
+  color: var(--accentRed,#EF4444);
 }
 
 .action-tag.copy {
-  background: linear-gradient(135deg, #64748B 0%, #475569 100%);
+  background: linear-gradient(135deg, var(--textSecondary,#64748B) 0%, var(--textSecondary,#64748B) 100%);
   color: white;
 }
 
@@ -105,18 +105,18 @@ page { background-color: #F8FAFC; }
   min-height: 180px;
   max-height: 300px;
   background: white;
-  border: 2px solid #E2E8F0;
+  border: 2px solid var(--borderLight,#E2E8F0);
   border-radius: 12px;
   padding: 16px;
   font-size: 13px;
   font-family: 'Courier New', monospace;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   line-height: 1.6;
   box-sizing: border-box;
 }
 
 .json-input:focus {
-  border-color: #64748B;
+  border-color: var(--textSecondary,#64748B);
 }
 
 .error-banner {
@@ -125,7 +125,7 @@ page { background-color: #F8FAFC; }
   gap: 8px;
   margin-top: 12px;
   padding: 12px 16px;
-  background: #FEF2F2;
+  background: var(--bgTipRed,#FEF2F2);
   border-radius: 10px;
   animation: shake 0.5s ease;
 }
@@ -142,7 +142,7 @@ page { background-color: #F8FAFC; }
 
 .error-msg {
   font-size: 13px;
-  color: #DC2626;
+  color: var(--accentRedDark,#DC2626);
   flex: 1;
   line-height: 1.4;
 }
@@ -153,7 +153,7 @@ page { background-color: #F8FAFC; }
   gap: 8px;
   margin-top: 12px;
   padding: 12px 16px;
-  background: #F0FDF4;
+  background: var(--bgTipGreen,#ECFDF5);
   border-radius: 10px;
 }
 
@@ -163,7 +163,7 @@ page { background-color: #F8FAFC; }
 
 .success-msg {
   font-size: 13px;
-  color: #16A34A;
+  color: var(--accentGreen,#10B981);
   font-weight: 500;
 }
 
@@ -191,17 +191,17 @@ page { background-color: #F8FAFC; }
 }
 
 .main-btn.format {
-  background: linear-gradient(135deg, #64748B 0%, #475569 100%);
+  background: linear-gradient(135deg, var(--textSecondary,#64748B) 0%, var(--textSecondary,#64748B) 100%);
   color: white;
 }
 
 .main-btn.compress {
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, var(--accentBlue,#3B82F6) 100%);
   color: white;
 }
 
 .main-btn.validate {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, var(--accentGreen,#10B981) 100%);
   color: white;
 }
 
@@ -210,7 +210,7 @@ page { background-color: #F8FAFC; }
 }
 
 .output-container {
-  background: #1E293B;
+  background: var(--textPrimary,#1E293B);
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 12px;
@@ -224,7 +224,7 @@ page { background-color: #F8FAFC; }
 .json-output {
   font-size: 13px;
   font-family: 'Courier New', monospace;
-  color: #E2E8F0;
+  color: var(--borderLight,#E2E8F0);
   line-height: 1.7;
   white-space: pre-wrap;
   word-break: break-all;
@@ -247,14 +247,14 @@ page { background-color: #F8FAFC; }
 .stat-value {
   font-size: 20px;
   font-weight: 800;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   display: block;
   line-height: 1.2;
 }
 
 .stat-label {
   font-size: 11px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
   font-weight: 600;
   margin-top: 4px;
   display: block;
@@ -271,7 +271,7 @@ page { background-color: #F8FAFC; }
 .features-title {
   font-size: 16px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 14px;
 }
@@ -283,7 +283,7 @@ page { background-color: #F8FAFC; }
 }
 
 .feature-card {
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 12px;
   padding: 16px;
   text-align: center;
@@ -298,14 +298,14 @@ page { background-color: #F8FAFC; }
 .feature-name {
   font-size: 14px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 4px;
 }
 
 .feature-desc {
   font-size: 11px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   line-height: 1.4;
 }
 
@@ -326,12 +326,12 @@ page { background-color: #F8FAFC; }
 .section-title {
   font-size: 16px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .clear-history {
   font-size: 13px;
-  color: #EF4444;
+  color: var(--accentRed,#EF4444);
   font-weight: 600;
 }
 
@@ -345,20 +345,20 @@ page { background-color: #F8FAFC; }
   display: flex;
   align-items: center;
   padding: 12px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 10px;
   transition: background 0.2s ease;
 }
 
 .history-item:active {
-  background: #E2E8F0;
+  background: var(--borderLight,#E2E8F0);
 }
 
 .history-preview {
   flex: 1;
   font-size: 13px;
   font-family: 'Courier New', monospace;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -367,7 +367,7 @@ page { background-color: #F8FAFC; }
 
 .history-time {
   font-size: 11px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
   margin-right: 8px;
 }
 
@@ -379,11 +379,11 @@ page { background-color: #F8FAFC; }
 }
 
 .history-type.format {
-  background: #FEF3C7;
-  color: #D97706;
+  background: var(--bgTipYellowDeep,#FEF3C7);
+  color: var(--accentYellow,#F59E0B);
 }
 
 .history-type.compress {
-  background: #DBEAFE;
-  color: #2563EB;
+  background: var(--bgTipBlueDeep,#DBEAFE);
+  color: var(--accentBlue,#3B82F6);
 }

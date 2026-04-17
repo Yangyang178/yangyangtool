@@ -98,5 +98,11 @@ Page({
       data: this.data.textContent, 
       success: () => wx.showToast({ title: '已复制文本', icon: 'success' }) 
     })
+  },
+  onShareAppMessage() {
+    return { title: '字数统计 - 好用方便的工具集', path: '/pages/index/index' }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

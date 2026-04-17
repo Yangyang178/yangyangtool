@@ -321,5 +321,11 @@ Page({
     } catch (e) {
       console.error('Load records error:', e)
     }
+  },
+  onShareAppMessage() {
+    return { title: '番茄计时 - 好用方便的工具集', path: '/pages/index/index' }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

@@ -1085,5 +1085,11 @@ Page({
       console.error('Export error:', e)
       wx.showToast({ title: '导出异常', icon: 'none' })
     }
+  },
+  onShareAppMessage() {
+    return { title: '图片处理 - 好用方便的工具集', path: '/pages/index/index' }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

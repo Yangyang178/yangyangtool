@@ -243,5 +243,8 @@ Page({
       title: `随机决定：${this.data.selectedAnswer || '来试试吧！'}`,
       path: '/pages/tools/random-decision/random-decision'
     }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

@@ -1,6 +1,6 @@
 page {
   height: 100vh;
-  background-color: #F8FAFC;
+  background-color: var(--pageBg,#F8FAFC);
   display: flex;
   flex-direction: column;
 }
@@ -23,14 +23,14 @@ page {
 .page-title {
   font-size: 28px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 8px;
 }
 
 .page-subtitle {
   font-size: 14px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 .tools-list {
@@ -40,7 +40,7 @@ page {
 }
 
 .tool-item {
-  background: #FFFFFF;
+  background: var(--cardBg,#FFFFFF);
   border-radius: 16px;
   padding: 18px 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
@@ -63,7 +63,7 @@ page {
   justify-content: center;
   margin-right: 14px;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+  background: linear-gradient(135deg, var(--bgTipBlueDeep,#DBEAFE) 0%, var(--bgTipBlueDeep,#DBEAFE) 100%);
 }
 
 .item-icon {
@@ -78,14 +78,14 @@ page {
 .item-name {
   font-size: 16px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 4px;
 }
 
 .item-desc {
   font-size: 13px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -99,7 +99,7 @@ page {
 
 .item-action text {
   font-size: 13px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
 }
 
 .empty-state {
@@ -119,26 +119,26 @@ page {
 .empty-text {
   font-size: 18px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   margin-bottom: 10px;
 }
 
 .empty-subtext {
   font-size: 14px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
   margin-bottom: 24px;
   text-align: center;
 }
 
 .empty-btn {
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, var(--accentBlue,#3B82F6) 100%);
   padding: 12px 32px;
   border-radius: 25px;
 }
 
 .empty-btn text {
   font-size: 15px;
-  color: #FFFFFF;
+  color: var(--cardBg,#FFFFFF);
   font-weight: 600;
 }
 

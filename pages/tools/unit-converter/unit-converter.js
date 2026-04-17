@@ -187,10 +187,9 @@ Page({
       fromUnit: firstUnit,
       toUnit: secondUnit,
       inputValue: '',
-      resultValue: '0'
-    })
-
-    this.updateConversionList()
+      resultValue: '0'})
+  
+      this.updateConversionList()
     wx.vibrateShort({ type: 'light' })
   },
 
@@ -412,5 +411,11 @@ Page({
         wx.showToast({ title: '已复制', icon: 'success' })
       }
     })
+  },
+  onShareAppMessage() {
+    return { title: '单位换算 - 好用方便的工具集', path: '/pages/index/index' }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

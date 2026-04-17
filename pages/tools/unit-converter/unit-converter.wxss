@@ -1,5 +1,5 @@
 page {
-  background-color: #F8FAFC;
+  background-color: var(--pageBg,#F8FAFC);
 }
 
 .tool-page {
@@ -27,7 +27,7 @@ page {
 }
 
 .red-gradient {
-  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+  background: linear-gradient(135deg, var(--bgTipRed,#FEF2F2) 0%, var(--bgTipRed,#FEF2F2) 100%);
 }
 
 .tool-icon {
@@ -37,14 +37,14 @@ page {
 .tool-title {
   font-size: 24px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 8px;
 }
 
 .tool-desc {
   font-size: 14px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 /* 分类标签 */
@@ -61,18 +61,18 @@ page {
 .tab-item {
   padding: 8px 14px;
   border-radius: 16px;
-  background: #FFFFFF;
+  background: var(--cardBg,#FFFFFF);
   font-size: 13px;
   font-weight: 500;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
 
 .tab-item.active {
-  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--accentRed,#EF4444) 0%, var(--accentRedDark,#DC2626) 100%);
+  color: var(--cardBg,#FFFFFF);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
@@ -82,7 +82,7 @@ page {
 }
 
 .input-card, .output-card {
-  background: #FFFFFF;
+  background: var(--cardBg,#FFFFFF);
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -92,7 +92,7 @@ page {
 .card-label {
   font-size: 13px;
   font-weight: 600;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   display: block;
   margin-bottom: 12px;
 }
@@ -107,23 +107,23 @@ page {
   flex: 1;
   font-size: 20px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .result-value {
   flex: 1;
   font-size: 22px;
   font-weight: 700;
-  color: #EF4444;
+  color: var(--accentRed,#EF4444);
 }
 
 .unit-selector {
   padding: 10px 16px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 12px;
   font-size: 15px;
   font-weight: 600;
-  color: #3B82F6;
+  color: var(--accentBlue,#3B82F6);
   min-width: 80px;
   text-align: center;
 }
@@ -135,12 +135,12 @@ page {
 
 .convert-arrow text {
   font-size: 28px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
 }
 
-/* 换算表 */
+/* 换算�?*/
 .conversion-table {
-  background: #FFFFFF;
+  background: var(--cardBg,#FFFFFF);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 24px;
@@ -150,7 +150,7 @@ page {
 .table-title {
   font-size: 15px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 16px;
 }
@@ -166,20 +166,20 @@ page {
   align-items: center;
   justify-content: space-between;
   padding: 12px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 10px;
 }
 
 .table-from, .table-to {
   font-size: 14px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   flex: 1;
 }
 
 .table-equal {
   font-size: 14px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
   margin: 0 12px;
 }
 
@@ -202,17 +202,17 @@ page {
 }
 
 .primary-btn {
-  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--accentRed,#EF4444) 0%, var(--accentRedDark,#DC2626) 100%);
+  color: var(--cardBg,#FFFFFF);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 .secondary-btn {
-  background: #F1F5F9;
-  color: #64748B;
+  background: var(--surfaceBg,#F1F5F9);
+  color: var(--textSecondary,#64748B);
 }
 
-/* 自定义单位选择器 */
+/* 自定义单位选择�?*/
 .unit-picker-mask {
   position: fixed;
   top: 0;
@@ -228,7 +228,7 @@ page {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #FFFFFF;
+  background: var(--cardBg,#FFFFFF);
   border-radius: 24px 24px 0 0;
   z-index: 1001;
   transform: translateY(100%);
@@ -247,13 +247,13 @@ page {
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  border-bottom: 1px solid #E2E8F0;
+  border-bottom: 1px solid var(--borderLight,#E2E8F0);
 }
 
 .picker-title {
   font-size: 17px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .picker-close {
@@ -262,13 +262,13 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #F1F5F9;
+  background: var(--surfaceBg,#F1F5F9);
   border-radius: 50%;
 }
 
 .picker-close text {
   font-size: 18px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 .picker-list {
@@ -286,26 +286,26 @@ page {
 }
 
 .picker-item:active {
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
 }
 
 .picker-item.selected {
-  background: #EFF6FF;
+  background: var(--bgTipBlue,#EFF6FF);
 }
 
 .picker-item-text {
   font-size: 16px;
   font-weight: 500;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .picker-item.selected .picker-item-text {
-  color: #3B82F6;
+  color: var(--accentBlue,#3B82F6);
   font-weight: 600;
 }
 
 .picker-check {
   font-size: 18px;
-  color: #3B82F6;
+  color: var(--accentBlue,#3B82F6);
   font-weight: 700;
 }

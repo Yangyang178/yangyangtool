@@ -27,9 +27,8 @@ Page({
   onLoanAmountInput(e) {
     this.setData({ 
       loanAmount: e.detail.value,
-      hasCalculated: false 
-    })
-  },
+      hasCalculated: false})
+    },
 
   onYearChange(e) {
     this.setData({ yearIndex: e.detail.value, hasCalculated: false })
@@ -187,5 +186,11 @@ Page({
       interestRatio: '0'
     })
     wx.vibrateShort({ type: 'light' })
+  },
+  onShareAppMessage() {
+    return { title: '房贷计算器 - 好用方便的工具集', path: '/pages/index/index' }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

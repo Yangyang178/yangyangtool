@@ -179,5 +179,11 @@ Page({
     this.setData({ inputContent: text })
     wx.vibrateShort({ type: 'light' })
     wx.showToast({ title: '已填入示例', icon: 'none' })
+  },
+  onShareAppMessage() {
+    return { title: 'Base64编解码 - 好用方便的工具集', path: '/pages/index/index' }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

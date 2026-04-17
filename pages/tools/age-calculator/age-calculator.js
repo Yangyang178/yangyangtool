@@ -345,5 +345,8 @@ Page({
       title: '年龄计算器 - 百宝工具箱',
       path: '/pages/tools/age-calculator/age-calculator'
     }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

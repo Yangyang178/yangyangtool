@@ -1,4 +1,4 @@
-page { background-color: #F8FAFC; }
+page { background-color: var(--pageBg,#F8FAFC); }
 
 .tool-page {
   height: 100vh;
@@ -34,13 +34,13 @@ page { background-color: #F8FAFC; }
 .tool-title {
   font-size: 22px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   margin-bottom: 6px;
 }
 
 .tool-desc {
   font-size: 13px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 .color-preview-section {
@@ -106,12 +106,12 @@ page { background-color: #F8FAFC; }
 .color-name-text {
   font-size: 15px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .contrast-text {
   font-size: 12px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
   font-weight: 500;
 }
 
@@ -133,7 +133,7 @@ page { background-color: #F8FAFC; }
 .input-label {
   font-size: 15px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .format-badge {
@@ -144,24 +144,24 @@ page { background-color: #F8FAFC; }
 }
 
 .format-badge.hex {
-  background: #FEF3C7;
-  color: #D97706;
+  background: var(--bgTipYellowDeep,#FEF3C7);
+  color: var(--accentYellow,#F59E0B);
 }
 
 .format-badge.rgb {
-  background: #FEE2E2;
-  color: #DC2626;
+  background: var(--bgTipRed,#FEF2F2);
+  color: var(--accentRedDark,#DC2626);
 }
 
 .format-badge.hsl {
-  background: #DBEAFE;
-  color: #2563EB;
+  background: var(--bgTipBlueDeep,#DBEAFE);
+  color: var(--accentBlue,#3B82F6);
 }
 
 .input-row {
   display: flex;
   align-items: center;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 10px;
   padding: 0 14px;
   height: 48px;
@@ -170,13 +170,13 @@ page { background-color: #F8FAFC; }
 }
 
 .input-row:focus-within {
-  border-color: #F472B6;
+  border-color: var(--accentPink,#EC4899);
 }
 
 .input-prefix {
   font-size: 20px;
   font-weight: 800;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
   margin-right: 8px;
 }
 
@@ -185,7 +185,7 @@ page { background-color: #F8FAFC; }
   height: 100%;
   font-size: 17px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   font-family: 'Courier New', monospace;
   letter-spacing: 1px;
 }
@@ -232,32 +232,32 @@ page { background-color: #F8FAFC; }
   z-index: 1;
 }
 
-.rgb-label.red { color: #EF4444; }
-.rgb-label.green-text { color: #22C55E; }
-.rgb-label.blue-text { color: #3B82F6; }
+.rgb-label.red { color: var(--accentRed,#EF4444); }
+.rgb-label.green-text { color: var(--accentGreen,#10B981); }
+.rgb-label.blue-text { color: var(--accentBlue,#3B82F6); }
 
-.hsl-label.h-text { color: #F97316; }
-.hsl-label.s-text { color: #EC4899; }
-.hsl-label.l-text { color: #6366F1; }
+.hsl-label.h-text { color: var(--accentYellow,#F59E0B); }
+.hsl-label.s-text { color: var(--accentPink,#EC4899); }
+.hsl-label.l-text { color: var(--accentPurple,#8B5CF6); }
 
 .rgb-input,
 .hsl-input {
   width: 100%;
   height: 48px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border: 2px solid transparent;
   border-radius: 10px;
   padding: 0 10px;
   font-size: 15px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   text-align: center;
   transition: border-color 0.2s ease;
 }
 
 .rgb-input:focus,
 .hsl-input:focus {
-  border-color: #F472B6;
+  border-color: var(--accentPink,#EC4899);
   background: white;
 }
 
@@ -267,11 +267,11 @@ page { background-color: #F8FAFC; }
   top: 14px;
   font-size: 13px;
   font-weight: 700;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
 }
 
 .result-section {
-  background: linear-gradient(135deg, #F472B6 0%, #EC4899 100%);
+  background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, var(--accentPink,#EC4899) 100%);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 14px;
@@ -310,14 +310,14 @@ page { background-color: #F8FAFC; }
 .result-format {
   font-size: 11px;
   font-weight: 700;
-  color: #BE185D;
+  color: var(--accentPink,#EC4899);
   margin-bottom: 4px;
 }
 
 .result-value {
   font-size: 14px;
   font-weight: 800;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   font-family: 'Courier New', monospace;
   word-break: break-all;
   text-align: center;
@@ -336,7 +336,7 @@ page { background-color: #F8FAFC; }
 .css-label {
   font-size: 12px;
   font-weight: 700;
-  color: #BE185D;
+  color: var(--accentPink,#EC4899);
   display: block;
   margin-bottom: 8px;
 }
@@ -351,7 +351,7 @@ page { background-color: #F8FAFC; }
 }
 
 .css-item {
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 8px;
   padding: 8px 12px;
   display: inline-block;
@@ -365,7 +365,7 @@ page { background-color: #F8FAFC; }
 .css-code {
   font-size: 12px;
   font-family: 'Courier New', monospace;
-  color: #475569;
+  color: var(--textSecondary,#64748B);
   font-weight: 600;
   white-space: nowrap;
 }
@@ -381,7 +381,7 @@ page { background-color: #F8FAFC; }
 .palette-title {
   font-size: 15px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 12px;
 }
@@ -450,11 +450,11 @@ page { background-color: #F8FAFC; }
 }
 
 .action-btn.random {
-  background: linear-gradient(135deg, #F472B6 0%, #EC4899 100%);
+  background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, var(--accentPink,#EC4899) 100%);
   color: white;
 }
 
 .action-btn.invert {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+  background: linear-gradient(135deg, var(--accentPurple,#8B5CF6) 0%, var(--accentPurpleDark,#7C3AED) 100%);
   color: white;
 }

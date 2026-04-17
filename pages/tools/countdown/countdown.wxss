@@ -1,4 +1,4 @@
-page { background-color: #F8FAFC; }
+page { background-color: var(--pageBg,#F8FAFC); }
 
 .tool-page {
   height: 100vh;
@@ -34,13 +34,13 @@ page { background-color: #F8FAFC; }
 .tool-title {
   font-size: 22px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   margin-bottom: 6px;
 }
 
 .text-desc {
   font-size: 13px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 .create-section {
@@ -62,37 +62,37 @@ page { background-color: #F8FAFC; }
   display: block;
   font-size: 14px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   margin-bottom: 10px;
 }
 
 .text-input {
   width: 100%;
   height: 48px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 10px;
   padding: 0 16px;
   font-size: 15px;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   border: 2px solid transparent;
   box-sizing: border-box;
 }
 
 .text-input:focus {
-  border-color: #3B82F6;
+  border-color: var(--accentBlue,#3B82F6);
   background: white;
 }
 
 .date-picker-box {
   height: 48px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 10px;
   padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 15px;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   border: 2px solid transparent;
 }
 
@@ -107,18 +107,18 @@ page { background-color: #F8FAFC; }
 .quick-label {
   display: block;
   font-size: 13px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   margin-bottom: 10px;
 }
 
 .event-tag {
   display: inline-block;
   padding: 6px 14px;
-  background: linear-gradient(135deg, #3B82F620 0%, #3B82F640 100%);
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6)20 0%, var(--accentBlue,#3B82F6)40 100%);
   border-radius: 16px;
   font-size: 12px;
   font-weight: 600;
-  color: #3B82F6;
+  color: var(--accentBlue,#3B82F6);
   margin-right: 8px;
   margin-bottom: 8px;
 }
@@ -130,7 +130,7 @@ page { background-color: #F8FAFC; }
 .create-btn {
   width: 100%;
   height: 52px;
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, var(--accentBlue,#3B82F6) 100%);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -166,14 +166,14 @@ page { background-color: #F8FAFC; }
 .event-name {
   font-size: 26px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 6px;
 }
 
 .event-target-date {
   font-size: 14px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 .time-display {
@@ -201,13 +201,13 @@ page { background-color: #F8FAFC; }
 .time-number {
   font-size: 32px;
   font-weight: 800;
-  color: #3B82F6;
+  color: var(--accentBlue,#3B82F6);
   line-height: 1;
 }
 
 .time-unit {
   font-size: 12px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
   margin-top: 4px;
   font-weight: 600;
 }
@@ -215,7 +215,7 @@ page { background-color: #F8FAFC; }
 .time-separator {
   font-size: 28px;
   font-weight: 700;
-  color: #CBD5E1;
+  color: var(--textMuted,#CBD5E1);
   margin-bottom: 20px;
 }
 
@@ -239,14 +239,14 @@ page { background-color: #F8FAFC; }
 .expired-text {
   font-size: 24px;
   font-weight: 700;
-  color: #10B981;
+  color: var(--accentGreen,#10B981);
   display: block;
   margin-bottom: 6px;
 }
 
 .expired-sub {
   font-size: 14px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 .progress-info {
@@ -257,7 +257,7 @@ page { background-color: #F8FAFC; }
 
 .progress-text {
   font-size: 13px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   display: block;
   text-align: center;
   margin-bottom: 8px;
@@ -265,14 +265,14 @@ page { background-color: #F8FAFC; }
 
 .progress-bar {
   height: 8px;
-  background: #E2E8F0;
+  background: var(--borderLight,#E2E8F0);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%);
+  background: linear-gradient(90deg, var(--accentBlue,#3B82F6) 0%, var(--accentBlue,#3B82F6) 100%);
   border-radius: 4px;
   transition: width 1s linear;
 }
@@ -302,18 +302,18 @@ page { background-color: #F8FAFC; }
 }
 
 .action-btn.edit {
-  background: #EFF6FF;
-  color: #3B82F6;
+  background: var(--bgTipBlue,#EFF6FF);
+  color: var(--accentBlue,#3B82F6);
 }
 
 .action-btn.delete {
-  background: #FEF2F2;
-  color: #EF4444;
+  background: var(--bgTipRed,#FEF2F2);
+  color: var(--accentRed,#EF4444);
 }
 
 .action-btn.share {
-  background: #F0FDF4;
-  color: #10B981;
+  background: var(--bgTipGreen,#ECFDF5);
+  color: var(--accentGreen,#10B981);
 }
 
 .events-list {
@@ -328,7 +328,7 @@ page { background-color: #F8FAFC; }
 .list-title {
   font-size: 15px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 14px;
 }
@@ -338,7 +338,7 @@ page { background-color: #F8FAFC; }
   justify-content: space-between;
   align-items: center;
   padding: 12px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 10px;
   margin-bottom: 8px;
   border: 2px solid transparent;
@@ -346,8 +346,8 @@ page { background-color: #F8FAFC; }
 }
 
 .event-item.active {
-  border-color: #3B82F6;
-  background: #EFF6FF;
+  border-color: var(--accentBlue,#3B82F6);
+  background: var(--bgTipBlue,#EFF6FF);
 }
 
 .event-item:last-child {
@@ -357,18 +357,18 @@ page { background-color: #F8FAFC; }
 .item-name {
   font-size: 14px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   flex: 1;
 }
 
 .item-date {
   font-size: 12px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
   margin: 0 12px;
 }
 
 .item-days-left {
   font-size: 13px;
   font-weight: 700;
-  color: #3B82F6;
+  color: var(--accentBlue,#3B82F6);
 }

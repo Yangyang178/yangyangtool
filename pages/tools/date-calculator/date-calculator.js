@@ -295,5 +295,8 @@ Page({
       title: '日期计算器 - 百宝工具箱',
       path: '/pages/tools/date-calculator/date-calculator'
     }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

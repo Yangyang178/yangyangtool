@@ -1,4 +1,4 @@
-page { background-color: #F8FAFC; }
+page { background-color: var(--pageBg,#F8FAFC); }
 
 .tool-page {
   height: 100vh;
@@ -34,13 +34,13 @@ page { background-color: #F8FAFC; }
 .tool-title {
   font-size: 22px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   margin-bottom: 6px;
 }
 
 .tool-desc {
   font-size: 13px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 .search-box {
@@ -61,11 +61,11 @@ page { background-color: #F8FAFC; }
 .search-input {
   flex: 1;
   font-size: 14px;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .search-btn {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, var(--accentGreen,#10B981) 100%);
   color: white;
   padding: 8px 16px;
   border-radius: 8px;
@@ -119,7 +119,7 @@ page { background-color: #F8FAFC; }
 .result-label {
   font-size: 14px;
   font-weight: 700;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -131,7 +131,7 @@ page { background-color: #F8FAFC; }
 .result-item-name {
   font-size: 24px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   margin-bottom: 12px;
 }
 
@@ -145,33 +145,33 @@ page { background-color: #F8FAFC; }
 }
 
 .result-category-badge.recyclable {
-  background: #3B82F620;
-  color: #3B82F6;
+  background: var(--accentBlue,#3B82F6)20;
+  color: var(--accentBlue,#3B82F6);
 }
 
 .result-category-badge.hazardous {
-  background: #EF444420;
-  color: #EF4444;
+  background: var(--accentRed,#EF4444)20;
+  color: var(--accentRed,#EF4444);
 }
 
 .result-category-badge.kitchen {
-  background: #10B98120;
-  color: #10B981;
+  background: var(--accentGreen,#10B981)20;
+  color: var(--accentGreen,#10B981);
 }
 
 .result-category-badge.other {
-  background: #F9731620;
-  color: #F97316;
+  background: var(--accentYellow,#F59E0B)20;
+  color: var(--accentYellow,#F59E0B);
 }
 
 .result-desc {
   font-size: 14px;
-  color: #475569;
+  color: var(--textSecondary,#64748B);
   line-height: 1.6;
   margin-bottom: 12px;
   text-align: left;
   padding: 12px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 10px;
 }
 
@@ -179,7 +179,7 @@ page { background-color: #F8FAFC; }
   display: flex;
   align-items: flex-start;
   padding: 12px;
-  background: #FEF3C7;
+  background: var(--bgTipYellowDeep,#FEF3C7);
   border-radius: 10px;
   gap: 8px;
 }
@@ -191,7 +191,7 @@ page { background-color: #F8FAFC; }
 
 .tip-text {
   font-size: 13px;
-  color: #92400E;
+  color: var(--textPrimary,#1E293B);
   line-height: 1.5;
   text-align: left;
 }
@@ -210,12 +210,12 @@ page { background-color: #F8FAFC; }
 .section-title {
   font-size: 17px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .section-count {
   font-size: 13px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
 }
 
 .items-grid {
@@ -248,7 +248,7 @@ page { background-color: #F8FAFC; }
 .item-name {
   font-size: 14px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   margin-bottom: 8px;
   text-align: center;
 }
@@ -261,23 +261,23 @@ page { background-color: #F8FAFC; }
 }
 
 .item-tag.recyclable {
-  background: #3B82F620;
-  color: #3B82F6;
+  background: var(--accentBlue,#3B82F6)20;
+  color: var(--accentBlue,#3B82F6);
 }
 
 .item-tag.hazardous {
-  background: #EF444420;
-  color: #EF4444;
+  background: var(--accentRed,#EF4444)20;
+  color: var(--accentRed,#EF4444);
 }
 
 .item-tag.kitchen {
-  background: #10B98120;
-  color: #10B981;
+  background: var(--accentGreen,#10B981)20;
+  color: var(--accentGreen,#10B981);
 }
 
 .item-tag.other {
-  background: #F9731620;
-  color: #F97316;
+  background: var(--accentYellow,#F59E0B)20;
+  color: var(--accentYellow,#F59E0B);
 }
 
 .empty-state {
@@ -293,7 +293,7 @@ page { background-color: #F8FAFC; }
 
 .empty-text {
   font-size: 15px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
 }
 
 .history-section {
@@ -305,7 +305,7 @@ page { background-color: #F8FAFC; }
 
 .clear-history {
   font-size: 13px;
-  color: #EF4444;
+  color: var(--accentRed,#EF4444);
   font-weight: 600;
 }
 
@@ -321,14 +321,14 @@ page { background-color: #F8FAFC; }
   justify-content: space-between;
   align-items: center;
   padding: 12px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 10px;
 }
 
 .history-name {
   font-size: 14px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .history-tag {
@@ -339,21 +339,21 @@ page { background-color: #F8FAFC; }
 }
 
 .history-tag.recyclable {
-  background: #3B82F620;
-  color: #3B82F6;
+  background: var(--accentBlue,#3B82F6)20;
+  color: var(--accentBlue,#3B82F6);
 }
 
 .history-tag.hazardous {
-  background: #EF444420;
-  color: #EF4444;
+  background: var(--accentRed,#EF4444)20;
+  color: var(--accentRed,#EF4444);
 }
 
 .history-tag.kitchen {
-  background: #10B98120;
-  color: #10B981;
+  background: var(--accentGreen,#10B981)20;
+  color: var(--accentGreen,#10B981);
 }
 
 .history-tag.other {
-  background: #F9731620;
-  color: #F97316;
+  background: var(--accentYellow,#F59E0B)20;
+  color: var(--accentYellow,#F59E0B);
 }

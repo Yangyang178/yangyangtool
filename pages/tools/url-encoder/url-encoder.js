@@ -331,5 +331,8 @@ Page({
       title: 'URL编解码工具 - 百宝工具箱',
       path: '/pages/tools/url-encoder/url-encoder'
     }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

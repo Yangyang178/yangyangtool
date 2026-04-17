@@ -1,5 +1,5 @@
 page {
-  background-color: #F8FAFC;
+  background-color: var(--pageBg,#F8FAFC);
 }
 
 .tool-page {
@@ -25,11 +25,11 @@ page {
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px;
-  background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+  background: linear-gradient(135deg, var(--bgTipBlueDeep,#DBEAFE) 0%, var(--bgTipBlueDeep,#DBEAFE) 100%);
 }
 
 .blue-gradient {
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, var(--accentBlue,#3B82F6) 100%);
 }
 
 .tool-icon {
@@ -39,14 +39,14 @@ page {
 .tool-title {
   font-size: 24px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 8px;
 }
 
 .tool-desc {
   font-size: 14px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 /* 输入区域 */
@@ -57,13 +57,13 @@ page {
 .input-label {
   font-size: 14px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 12px;
 }
 
 .amount-input-wrapper {
-  background: #FFFFFF;
+  background: var(--cardBg,#FFFFFF);
   border-radius: 16px;
   padding: 18px 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -74,13 +74,13 @@ page {
 }
 
 .amount-input-wrapper:focus-within {
-  border-color: #3B82F6;
+  border-color: var(--accentBlue,#3B82F6);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
 .currency-symbol {
   font-size: 28px;
-  color: #3B82F6;
+  color: var(--accentBlue,#3B82F6);
   font-weight: 700;
   margin-right: 12px;
 }
@@ -89,7 +89,7 @@ page {
   flex: 1;
   font-size: 20px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 /* 货币选择 */
@@ -106,7 +106,7 @@ page {
 
 .selector-box {
   flex: 1;
-  background: #FFFFFF;
+  background: var(--cardBg,#FFFFFF);
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -121,21 +121,21 @@ page {
 .currency-code {
   font-size: 22px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 6px;
 }
 
 .currency-name {
   font-size: 13px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 .swap-btn {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, var(--accentBlue,#3B82F6) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -149,7 +149,7 @@ page {
 
 .swap-icon {
   font-size: 24px;
-  color: #FFFFFF;
+  color: var(--cardBg,#FFFFFF);
 }
 
 /* 结果区域 */
@@ -158,7 +158,7 @@ page {
 }
 
 .result-card {
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, var(--accentBlue,#3B82F6) 100%);
   border-radius: 20px;
   padding: 32px 24px;
   text-align: center;
@@ -169,7 +169,7 @@ page {
 .result-amount {
   font-size: 28px;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--cardBg,#FFFFFF);
   display: block;
   margin-bottom: 10px;
 }
@@ -191,7 +191,7 @@ page {
 }
 
 .quick-rates {
-  background: #FFFFFF;
+  background: var(--cardBg,#FFFFFF);
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -200,7 +200,7 @@ page {
 .section-title {
   font-size: 15px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   display: block;
   margin-bottom: 16px;
 }
@@ -216,14 +216,14 @@ page {
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 12px;
   transition: all 0.2s ease;
 }
 
 .rate-item:active {
   transform: scale(0.98);
-  background: #EFF6FF;
+  background: var(--bgTipBlue,#EFF6FF);
 }
 
 .rate-left {
@@ -241,23 +241,23 @@ page {
 .rate-code {
   font-size: 15px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .rate-name {
   font-size: 12px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 .rate-symbol {
   font-size: 14px;
-  color: #3B82F6;
+  color: var(--accentBlue,#3B82F6);
   font-weight: 600;
 }
 
 .rate-value {
   font-size: 15px;
-  color: #3B82F6;
+  color: var(--accentBlue,#3B82F6);
   font-weight: 700;
 }
 
@@ -281,8 +281,8 @@ page {
 }
 
 .primary-btn {
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, var(--accentBlue,#3B82F6) 100%);
+  color: var(--cardBg,#FFFFFF);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
@@ -292,11 +292,11 @@ page {
 }
 
 .secondary-btn {
-  background: #F1F5F9;
-  color: #64748B;
+  background: var(--surfaceBg,#F1F5F9);
+  color: var(--textSecondary,#64748B);
 }
 
 .secondary-btn:active {
   transform: scale(0.98);
-  background: #E2E8F0;
+  background: var(--borderLight,#E2E8F0);
 }

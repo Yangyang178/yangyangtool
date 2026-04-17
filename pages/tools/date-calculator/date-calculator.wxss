@@ -1,4 +1,4 @@
-page { background-color: #F8FAFC; }
+page { background-color: var(--pageBg,#F8FAFC); }
 
 .tool-page {
   height: 100vh;
@@ -34,13 +34,13 @@ page { background-color: #F8FAFC; }
 .tool-title {
   font-size: 22px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   margin-bottom: 6px;
 }
 
 .tool-desc {
   font-size: 13px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
 }
 
 .calc-mode-tabs {
@@ -60,12 +60,12 @@ page { background-color: #F8FAFC; }
   text-align: center;
   font-size: 14px;
   font-weight: 600;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   transition: all 0.3s ease;
 }
 
 .mode-tab.active {
-  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  background: linear-gradient(135deg, #FBBF24 0%, var(--accentYellow,#F59E0B) 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
 }
@@ -88,7 +88,7 @@ page { background-color: #F8FAFC; }
   gap: 6px;
   font-size: 14px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   margin-bottom: 8px;
 }
 
@@ -98,14 +98,14 @@ page { background-color: #F8FAFC; }
 
 .date-picker {
   height: 48px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 10px;
   padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 15px;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   border: 2px solid transparent;
   transition: border-color 0.2s ease;
 }
@@ -122,7 +122,7 @@ page { background-color: #F8FAFC; }
   width: 44px;
   height: 44px;
   margin: 8px auto;
-  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  background: linear-gradient(135deg, var(--bgTipYellowDeep,#FEF3C7) 0%, #FDE68A 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -145,17 +145,17 @@ page { background-color: #F8FAFC; }
 .quick-label {
   width: 100%;
   font-size: 13px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   margin-bottom: 4px;
 }
 
 .quick-btn {
   padding: 6px 14px;
-  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+  background: linear-gradient(135deg, #FFFBEB 0%, var(--bgTipYellowDeep,#FEF3C7) 100%);
   border-radius: 16px;
   font-size: 12px;
   font-weight: 600;
-  color: #D97706;
+  color: var(--accentYellow,#F59E0B);
   transition: transform 0.2s ease;
 }
 
@@ -166,7 +166,7 @@ page { background-color: #F8FAFC; }
 .calculate-btn {
   width: 100%;
   height: 52px;
-  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  background: linear-gradient(135deg, #FBBF24 0%, var(--accentYellow,#F59E0B) 100%);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -196,14 +196,14 @@ page { background-color: #F8FAFC; }
   justify-content: center;
   font-size: 14px;
   font-weight: 600;
-  background: #F8FAFC;
-  color: #64748B;
+  background: var(--pageBg,#F8FAFC);
+  color: var(--textSecondary,#64748B);
   border: 2px solid transparent;
   transition: all 0.3s ease;
 }
 
 .toggle-btn.active {
-  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  background: linear-gradient(135deg, #FBBF24 0%, var(--accentYellow,#F59E0B) 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
 }
@@ -223,7 +223,7 @@ page { background-color: #F8FAFC; }
 
 .number-label {
   font-size: 12px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
   font-weight: 600;
   margin-bottom: 6px;
 }
@@ -231,12 +231,12 @@ page { background-color: #F8FAFC; }
 .number-input {
   width: 100%;
   height: 56px;
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 12px;
   text-align: center;
   font-size: 24px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   border: 2px solid transparent;
 }
 
@@ -270,7 +270,7 @@ page { background-color: #F8FAFC; }
 .result-title {
   font-size: 14px;
   font-weight: 700;
-  color: #D97706;
+  color: var(--accentYellow,#F59E0B);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -287,7 +287,7 @@ page { background-color: #F8FAFC; }
 .result-number {
   font-size: 48px;
   font-weight: 800;
-  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  background: linear-gradient(135deg, #FBBF24 0%, var(--accentYellow,#F59E0B) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height: 1.2;
@@ -295,7 +295,7 @@ page { background-color: #F8FAFC; }
 
 .result-unit {
   font-size: 18px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
   font-weight: 600;
   margin-left: 8px;
 }
@@ -316,27 +316,27 @@ page { background-color: #F8FAFC; }
 .detail-value {
   font-size: 22px;
   font-weight: 800;
-  color: #D97706;
+  color: var(--accentYellow,#F59E0B);
   display: block;
   line-height: 1.2;
 }
 
 .detail-label {
   font-size: 11px;
-  color: #92400E;
+  color: var(--textPrimary,#1E293B);
   font-weight: 600;
   margin-top: 4px;
 }
 
 .weekday-result {
   font-size: 16px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   font-weight: 600;
   margin-top: 12px;
 }
 
 .extra-info {
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 12px;
   padding: 16px;
   margin-top: 16px;
@@ -347,7 +347,7 @@ page { background-color: #F8FAFC; }
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #E2E8F0;
+  border-bottom: 1px solid var(--borderLight,#E2E8F0);
 }
 
 .info-row:last-child {
@@ -356,13 +356,13 @@ page { background-color: #F8FAFC; }
 
 .info-label {
   font-size: 13px;
-  color: #64748B;
+  color: var(--textSecondary,#64748B);
   font-weight: 500;
 }
 
 .info-value {
   font-size: 14px;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   font-weight: 600;
 }
 
@@ -389,7 +389,7 @@ page { background-color: #F8FAFC; }
 }
 
 .action-btn.copy {
-  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  background: linear-gradient(135deg, #FBBF24 0%, var(--accentYellow,#F59E0B) 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
 }
@@ -411,12 +411,12 @@ page { background-color: #F8FAFC; }
 .section-title {
   font-size: 16px;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
 }
 
 .clear-history {
   font-size: 13px;
-  color: #EF4444;
+  color: var(--accentRed,#EF4444);
   font-weight: 600;
 }
 
@@ -427,7 +427,7 @@ page { background-color: #F8FAFC; }
 }
 
 .history-item {
-  background: #F8FAFC;
+  background: var(--pageBg,#F8FAFC);
   border-radius: 10px;
   padding: 14px;
   display: flex;
@@ -438,11 +438,11 @@ page { background-color: #F8FAFC; }
 .history-text {
   font-size: 14px;
   font-weight: 600;
-  color: #1E293B;
+  color: var(--textPrimary,#1E293B);
   flex: 1;
 }
 
 .history-time {
   font-size: 12px;
-  color: #94A3B8;
+  color: var(--textTertiary,#94A3B8);
 }

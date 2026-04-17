@@ -286,5 +286,11 @@ Page({
         }
       }
     })
+  },
+  onShareAppMessage() {
+    return { title: '喝水提醒 - 好用方便的工具集', path: '/pages/index/index' }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

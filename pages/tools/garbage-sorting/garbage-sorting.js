@@ -173,5 +173,8 @@ Page({
       title: '垃圾分类查询 - 百宝工具箱',
       path: '/pages/tools/garbage-sorting/garbage-sorting'
     }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })

@@ -280,5 +280,8 @@ Page({
       title: '世界时钟 - 百宝工具箱',
       path: '/pages/tools/world-clock/world-clock'
     }
+  },
+  onShareTimeline() {
+    return { title: '' }
   }
 })
