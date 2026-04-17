@@ -9,17 +9,27 @@ page {
   flex: 1;
   height: 100vh;
   background: linear-gradient(180deg, #EFF6FF 0%, #F8FAFC 200px);
+  position: relative;
 }
 
 .page-container {
   padding: 0 20px;
   padding-bottom: 100px;
   min-height: calc(100vh - 100px);
+  position: relative;
+}
+
+/* 导航栏占位 */
+.nav-placeholder {
+  height: 28px;
+  flex-shrink: 0;
 }
 
 /* 应用头部 */
 .header-section {
-  padding: 20px 0 24px;
+  padding: 24px 0 24px;
+  position: relative;
+  z-index: 1;
 }
 
 .header-top {

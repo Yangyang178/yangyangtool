@@ -1,6 +1,6 @@
 <navigation-bar title="世界时钟" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
 
-<scroll-view class="tool-page" scroll-y>
+<scroll-view class="tool-page" scroll-y enhanced="{{false}}" show-scrollbar="{{false}}">
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper" style="background: linear-gradient(135deg, #8B5CF633 0%, #8B5CF666 100%);">

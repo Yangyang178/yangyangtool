@@ -270,8 +270,17 @@
       <!-- 已选图片列表 -->
       <view class="section">
         <view class="section-header">
-          <text class="section-title">已选图片 ({{stitchImages.length}}张)</text>
-          <text class="count-hint" wx:if="{{stitchImages.length < 2}}">至少需要2张</text>
+          <view class="header-left">
+            <text class="section-title">已选图片 ({{stitchImages.length}}张)</text>
+            <text class="count-hint" wx:if="{{stitchImages.length < 2}}">至少需要2张</text>
+          </view>
+          <view 
+            class="clear-all-btn" 
+            wx:if="{{stitchImages.length > 0}}"
+            bindtap="clearStitchImages"
+          >
+            <text>🗑️ 清除全部</text>
+          </view>
         </view>
         
         <view class="stitch-images-list" wx:if="{{stitchImages.length > 0}}">

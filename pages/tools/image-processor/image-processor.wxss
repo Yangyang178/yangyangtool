@@ -282,6 +282,30 @@
   font-weight: 500;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clear-all-btn {
+  padding: 6px 12px;
+  background: #FEF2F2;
+  border-radius: 8px;
+  border: 1px solid #FECACA;
+}
+
+.clear-all-btn text {
+  font-size: 12px;
+  color: #EF4444;
+  font-weight: 600;
+}
+
+.clear-all-btn:active {
+  background: #FEE2E2;
+  transform: scale(0.96);
+}
+
 /* ========== 压缩功能样式 ========== */
 
 .preset-grid {

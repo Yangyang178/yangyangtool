@@ -88,10 +88,10 @@
       <view class="setting-item">
         <text class="setting-label">目标轮次</text>
         <view class="round-selector">
-          <button class="round-btn {{totalRounds === 2 ? 'active' : ''}}" data-round="2" bindtap="changeTotalRounds">2</button>
-          <button class="round-btn {{totalRounds === 4 ? 'active' : ''}}" data-round="4" bindtap="changeTotalRounds">4</button>
-          <button class="round-btn {{totalRounds === 6 ? 'active' : ''}}" data-round="6" bindtap="changeTotalRounds">6</button>
-          <button class="round-btn {{totalRounds === 8 ? 'active' : ''}}" data-round="8" bindtap="changeTotalRounds">8</button>
+          <view class="round-btn {{totalRounds === 2 ? 'active' : ''}}" data-round="2" bindtap="changeTotalRounds">2</view>
+          <view class="round-btn {{totalRounds === 4 ? 'active' : ''}}" data-round="4" bindtap="changeTotalRounds">4</view>
+          <view class="round-btn {{totalRounds === 6 ? 'active' : ''}}" data-round="6" bindtap="changeTotalRounds">6</view>
+          <view class="round-btn {{totalRounds === 8 ? 'active' : ''}}" data-round="8" bindtap="changeTotalRounds">8</view>
         </view>
       </view>
     </view>

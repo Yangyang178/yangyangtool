@@ -1,5 +1,14 @@
 Page({
   data: {
+    inputMode: 'text',
+    textContent: '',
+    contentType: 'auto',
+    textFocus: false,
+    isChoosingFile: false,
+    canShowFormats: false,
+    hasInput: false,
+    canConvert: false,
+    
     filePath: '',
     fileName: '',
     fileSize: 0,
@@ -123,45 +132,30 @@ Page({
     ]
   },
 
-  chooseFile() {
-    wx.chooseMessageFile({
+  chooseImage() {
+    wx.chooseMedia({
       count: 1,
-      type: 'file',
+      mediaType: ['image'],
+      sourceType: ['album', 'camera'],
+      sizeType: ['compressed'],
       success: (res) => {
         const file = res.tempFiles[0]
-        const ext = this.getExt(file.name).toLowerCase()
-        const typeInfo = this.getFileType(ext)
+        const ext = '.jpg'
+        const typeInfo = { type: 'image', icon: '🖼️', name: 'JPG 图片' }
         
-        let formats = []
-        
-        const extToCategory = {
-          '.pdf': 'pdf',
-          '.docx': 'docx', '.doc': 'docx',
-          '.xlsx': 'xlsx', '.xls': 'xlsx',
-          '.pptx': 'pptx', '.ppt': 'pptx',
-          '.jpg': 'image', '.jpeg': 'image', '.png': 'image',
-          '.webp': 'image', '.gif': 'image', '.bmp': 'image',
-          '.txt': 'text', '.md': 'text', '.xml': 'text',
-          '.json': 'json',
-          '.csv': 'csv',
-          '.html': 'web', '.htm': 'web'
-        }
-        
-        const categoryKey = extToCategory[ext] || typeInfo.type
-        formats = this.data.formatCategories[categoryKey] || this.data.formatCategories.other
-        
+        const formats = this.data.formatCategories.image || []
         const firstFmt = formats.length > 0 ? formats[0] : null
         
         this.setData({
           selectedFile: file,
-          filePath: file.path,
-          fileName: file.name,
+          filePath: file.tempFilePath,
+          fileName: file.tempFilePath.split('/').pop() || ('image_' + Date.now() + '.jpg'),
           fileSize: file.size,
-          fileSizeText: this.formatFileSize(file.size),
+          fileSizeText: this.formatFileSize(file.size || 0),
           fileExt: ext,
           fileType: typeInfo.type,
-          isImage: typeInfo.type === 'image',
-          isTextFile: ['text', 'json', 'csv', 'web'].includes(typeInfo.type),
+          isImage: true,
+          isTextFile: false,
           availableFormats: formats,
           targetFormat: firstFmt ? firstFmt.value : '',
           targetFormatName: firstFmt ? firstFmt.fullName : '',
@@ -170,19 +164,275 @@ Page({
           convertResult: null,
           convertType: '',
           conversionLog: [],
-          fileContent: ''
+          fileContent: '',
+          hasInput: true,
+          canShowFormats: true,
+          canConvert: !!firstFmt
         })
 
-        if (typeInfo.type === 'image') {
-          this.loadImageInfo(file.path)
-        }
+        this.loadImageInfo(file.tempFilePath)
+        wx.showToast({ title: '图片已选择', icon: 'success' })
+      },
+      fail: () => {}
+    })
+  },
 
-        if (['text', 'json', 'csv'].includes(typeInfo.type)) {
-          this.loadFileContent(file.path)
+  chooseDocument() {
+    const self = this
+    
+    console.log('[FileConverter] 开始选择文件...')
+    this.setData({ isChoosingFile: true })
+    
+    wx.showActionSheet({
+      itemList: ['📱 从聊天记录选择', '💾 从手机本地选择'],
+      success: function(res) {
+        console.log('[FileConverter] 用户选择了方式:', res.tapIndex)
+        
+        if (res.tapIndex === 0) {
+          self.chooseFromChat()
+        } else {
+          self.chooseFromLocal()
         }
-
-        wx.showToast({ title: '文件已选择', icon: 'success' })
+      },
+      fail: function(err) {
+        console.log('[FileConverter] 取消选择:', err)
+        self.setData({ isChoosingFile: false })
       }
+    })
+  },
+
+  chooseFromChat() {
+    const self = this
+    
+    console.log('[FileConverter] 方式1: 从聊天记录选择...')
+    
+    wx.chooseMessageFile({
+      count: 1,
+      type: 'file',
+      extension: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'json', 'csv', 'html', 'xml', 'md'],
+      success: (res) => {
+        console.log('[FileConverter] 聊天选择成功, 完整res:', JSON.stringify(res).substring(0, 500))
+        console.log('[FileConverter] tempFiles数量:', res.tempFiles ? res.tempFiles.length : 'undefined')
+        
+        if (res.tempFiles && res.tempFiles.length > 0) {
+          const file = res.tempFiles[0]
+          console.log('[FileConverter] 文件详情 - name:', file.name, '| path:', file.path, '| size:', file.size, '| type:', file.type)
+        }
+        
+        self.handleSelectedFile(res)
+      },
+      fail: (err) => {
+        console.error('[FileConverter] 聊天选择失败:', JSON.stringify(err))
+        self.handleChooseError(err, 'chat')
+      },
+      complete: () => {
+        setTimeout(() => { 
+          if (self.data.isChoosingFile && !self.data.selectedFile) {
+            console.log('[FileConverter] complete超时检查: isChoosingFile仍为true但无selectedFile, 重置状态')
+            self.setData({ isChoosingFile: false }) 
+          }
+        }, 2000)
+      }
+    })
+  },
+
+  chooseFromLocal() {
+    const self = this
+    
+    console.log('[FileConverter] 方式2: 从手机本地选择...')
+    
+    if (wx.getFileSystemManager && wx.getFileSystemManager().chooseFile) {
+      try {
+        wx.getFileSystemManager().chooseFile({
+          count: 1,
+          type: 'file',
+          extension: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'json', 'csv', 'html', 'xml', 'md', 'jpg', 'png', 'jpeg', 'webp', 'gif'],
+          success: (res) => {
+            console.log('[FileConverter] 本地选择成功:', JSON.stringify(res).substring(0, 300))
+            
+            if (!res.tempFiles || res.tempFiles.length === 0) {
+              wx.showToast({ title: '未选择文件', icon: 'none' })
+              self.setData({ isChoosingFile: false })
+              return
+            }
+            
+            const file = res.tempFiles[0]
+            const fakeRes = {
+              tempFiles: [{
+                path: file.path,
+                name: file.name || file.path.split('/').pop(),
+                size: file.size || 0,
+                type: file.type || ''
+              }]
+            }
+            
+            self.handleSelectedFile(fakeRes)
+          },
+          fail: (err) => {
+            console.error('[FileConverter] 本地选择失败:', err)
+            self.handleChooseError(err, 'local')
+          },
+          complete: () => {
+            setTimeout(() => { 
+              if (self.data.isChoosingFile && !self.data.selectedFile) {
+                self.setData({ isChoosingFile: false }) 
+              }
+            }, 1000)
+          }
+        })
+      } catch (e) {
+        console.warn('[FileConverter] chooseFile 不支持，降级到聊天模式')
+        this.setData({ isChoosingFile: false })
+        this.chooseFromChat()
+      }
+    } else {
+      console.log('[FileConverter] 不支持本地文件选择，使用聊天模式')
+      this.setData({ isChoosingFile: false })
+      
+      wx.showModal({
+        title: '提示',
+        content: '当前版本不支持直接从手机本地选择文件。\n\n请使用"从聊天记录选择"方式：\n1. 先将文件发送给"文件传输助手"\n2. 然后在这里选择该聊天中的文件',
+        confirmText: '我知道了',
+        showCancel: false,
+        success: function() {
+          setTimeout(() => self.chooseFromChat(), 500)
+        }
+      })
+    }
+  },
+
+  handleSelectedFile(res) {
+    console.log('[FileConverter] 处理选中的文件, res:', JSON.stringify(res).substring(0, 500))
+    
+    if (!res.tempFiles || res.tempFiles.length === 0) {
+      console.error('[FileConverter] 错误: tempFiles为空或不存在')
+      wx.showToast({ title: '未选择文件', icon: 'none' })
+      this.setData({ isChoosingFile: false })
+      return
+    }
+    
+    const file = res.tempFiles[0]
+    console.log('[FileConverter] 文件信息:', JSON.stringify(file))
+    console.log('[FileConverter] 文件名:', file.name, '| 大小:', file.size, '| 路径:', file.path)
+    
+    if (!file.path) {
+      console.error('[FileConverter] 错误: 文件path为空')
+      wx.showToast({ title: '文件路径异常，请重试', icon: 'none' })
+      this.setData({ isChoosingFile: false })
+      return
+    }
+    
+    if (!file.name) {
+      console.warn('[FileConverter] 警告: 文件name为空, 使用路径生成名称')
+    }
+    
+    const fileName = file.name || file.path.split('/').pop() || ('unknown_' + Date.now())
+    const ext = this.getExt(fileName).toLowerCase()
+    const typeInfo = this.getFileType(ext)
+    
+    console.log('[FileConverter] 解析结果 - fileName:', fileName, '| ext:', ext, '| typeInfo:', typeInfo.type)
+    
+    let formats = []
+    const extToCategory = {
+      '.pdf': 'pdf', '.docx': 'docx', '.doc': 'docx',
+      '.xlsx': 'xlsx', '.xls': 'xlsx', '.pptx': 'pptx', '.ppt': 'pptx',
+      '.jpg': 'image', '.jpeg': 'image', '.png': 'image', '.webp': 'image', '.gif': 'image', '.bmp': 'image',
+      '.txt': 'text', '.md': 'text', '.xml': 'text',
+      '.json': 'json', '.csv': 'csv', '.html': 'web', '.htm': 'web'
+    }
+    
+    const categoryKey = extToCategory[ext] || typeInfo.type
+    formats = this.data.formatCategories[categoryKey] || this.data.formatCategories.other
+    const firstFmt = formats.length > 0 ? formats[0] : null
+    
+    this.setData({
+      selectedFile: file,
+      filePath: file.path,
+      fileName: fileName,
+      fileSize: file.size || 0,
+      fileSizeText: this.formatFileSize(file.size),
+      fileExt: ext,
+      fileType: typeInfo.type,
+      isImage: typeInfo.type === 'image',
+      isTextFile: ['text', 'json', 'csv', 'web'].includes(typeInfo.type),
+      availableFormats: formats,
+      targetFormat: firstFmt ? firstFmt.value : '',
+      targetFormatName: firstFmt ? firstFmt.fullName : '',
+      hasConverted: false, convertedPath: '', convertResult: null,
+      convertType: '', conversionLog: [], fileContent: '',
+      hasInput: true, canShowFormats: true, canConvert: !!firstFmt,
+      inputMode: 'wechat',
+      isChoosingFile: false
+    })
+
+    if (typeInfo.type === 'image') { this.loadImageInfo(file.path) }
+    if (['text', 'json', 'csv'].includes(typeInfo.type)) { this.loadFileContent(file.path) }
+
+    wx.showToast({ title: '已选择 ' + ext.toUpperCase(), icon: 'success' })
+  },
+
+  handleChooseError(err, source) {
+    console.error('[FileConverter] 选择失败 | 来源:', source, '| 错误:', JSON.stringify(err))
+    this.setData({ isChoosingFile: false })
+    
+    const errMsg = err.errMsg || ''
+    
+    if (errMsg.includes('cancel')) {
+      console.log('[FileConverter] 用户主动取消')
+      return
+    }
+    
+    if (errMsg.includes('msgFiles is null') || errMsg.includes('no file') || errMsg.includes('empty') || errMsg.includes('no such file')) {
+      wx.showModal({
+        title: '未找到可用文件',
+        content: source === 'chat' 
+          ? '该聊天中没有可选择的文档文件。\n\n常见原因：\n• 文件在收藏夹中（收藏夹文件无法直接选择）\n• 未向该聊天发送过文件\n• 文件类型不支持\n\n✅ 解决方法：\n1. 先将PDF/Word等文件发送给"文件传输助手"\n2. 然后在这里选择"从聊天记录选择"\n3. 选择"文件传输助手"聊天\n4. 选择刚发送的文件'
+          : '未找到可用的文件。',
+        confirmText: '重试',
+        cancelText: '换一种方式',
+        success: (res) => {
+          if (res.confirm) {
+            setTimeout(() => this.chooseDocument(), 300)
+          }
+        }
+      })
+      return
+    }
+    
+    if (errMsg.includes('permission') || errMsg.includes('deny') || errMsg.includes('auth')) {
+      wx.showModal({
+        title: '需要权限',
+        content: '请在设置中允许访问文件权限。',
+        confirmText: '去设置',
+        success: (res) => {
+          if (res.confirm) {
+            wx.openSetting()
+          }
+        }
+      })
+      return
+    }
+    
+    if (!errMsg || errMsg === '' || errMsg.includes('fail') || errMsg.includes('error')) {
+      wx.showModal({
+        title: '选择文件异常',
+        content: '选择文件时发生了未知错误。\n\n可能原因：\n• 从收藏夹选择文件（不支持）\n• 微信版本过低\n• 文件过大或格式特殊\n\n建议操作：\n1. 将文件先发送给"文件传输助手"\n2. 再从聊天记录中选择该文件',
+        confirmText: '我知道了',
+        cancelText: '重试',
+        success: (res) => {
+          if (res.cancel) {
+            setTimeout(() => this.chooseDocument(), 300)
+          }
+        }
+      })
+      return
+    }
+    
+    wx.showModal({
+      title: '选择文件失败',
+      content: '错误：' + errMsg + '\n\n建议：\n• 尝试另一种选择方式\n• 确保文件已发送到聊天记录（非收藏夹）\n• 重启微信后再试',
+      confirmText: '知道了',
+      showCancel: false
     })
   },
 
@@ -245,14 +495,24 @@ Page({
       targetFormatName: name,
       hasConverted: false,
       convertedPath: '',
-      convertResult: null
+      convertResult: null,
+      canConvert: this.data.hasInput && !!value
     })
   },
 
   convertFile() {
-    if (!this.data.selectedFile) {
-      wx.showToast({ title: '请先选择文件', icon: 'none' })
-      return
+    const isTextMode = this.data.inputMode === 'text'
+    
+    if (isTextMode) {
+      if (!this.data.textContent || this.data.textContent.trim().length === 0) {
+        wx.showToast({ title: '请先输入内容', icon: 'none' })
+        return
+      }
+    } else {
+      if (!this.data.selectedFile) {
+        wx.showToast({ title: '请先选择图片', icon: 'none' })
+        return
+      }
     }
 
     if (!this.data.targetFormat) {
@@ -264,7 +524,10 @@ Page({
 
     const fmt = this.data.targetFormat
 
-    if (this.data.isImage && ['jpg', 'png', 'webp'].includes(fmt)) {
+    if (isTextMode) {
+      this.addLog('开始文本内容转换...')
+      this.convertTextContent()
+    } else if (this.data.isImage && ['jpg', 'png', 'webp'].includes(fmt)) {
       this.convertImage()
     } else if (fmt === 'base64') {
       this.convertToBase64()
@@ -277,6 +540,122 @@ Page({
     } else {
       this.convertGeneric()
     }
+  },
+
+  convertTextContent() {
+    this.addLog('正在处理文本转换...')
+    
+    const content = this.data.textContent
+    const fmt = this.data.targetFormat
+    let newContent = ''
+    let newExt = ''
+    let newFileName = ''
+
+    switch (fmt) {
+      case 'docx':
+        newContent = this.generateDocxFile(content, '文档')
+        newExt = '.docx'
+        newFileName = 'document_converted.docx'
+        this.addLog('已生成Word文档')
+        break
+      case 'pdf':
+        newContent = this.textToPdfHtml(content, '文档')
+        newExt = '.html'
+        newFileName = 'document_pdf.html'
+        this.addLog('已生成可打印HTML(可用浏览器打印为PDF)')
+        break
+      case 'html':
+        newContent = this.textToHtml(content, '文档')
+        newExt = '.html'
+        newFileName = 'document.html'
+        this.addLog('已转换为HTML格式')
+        break
+      case 'json':
+        newContent = this.textToJson(content, '文档')
+        newExt = '.json'
+        newFileName = 'document.json'
+        this.addLog('已转换为JSON格式')
+        break
+      case 'formatted':
+        try {
+          const parsed = JSON.parse(content)
+          newContent = JSON.stringify(parsed, null, 2)
+          this.addLog('JSON格式化完成')
+        } catch (e) {
+          newContent = content
+          this.addLog('JSON解析失败，保持原样')
+        }
+        newExt = '_formatted.json'
+        newFileName = 'formatted.json'
+        break
+      case 'minified':
+        try {
+          const parsed = JSON.parse(content)
+          newContent = JSON.stringify(parsed)
+          this.addLog('JSON压缩完成')
+        } catch (e) {
+          newContent = content.replace(/\s+/g, '').trim()
+          this.addLog('已完成压缩处理')
+        }
+        newExt = '_min.json'
+        newFileName = 'minified.json'
+        break
+      case 'csv':
+        newContent = this.jsonToCsv(content)
+        newExt = '.csv'
+        newFileName = 'data.csv'
+        this.addLog('已转换为CSV格式')
+        break
+      case 'base64':
+        const encoded = Buffer.from(content, 'utf-8').toString('base64')
+        newContent = `data:text/plain;base64,\n${encoded}`
+        newExt = '_base64.txt'
+        newFileName = 'encoded_base64.txt'
+        this.addLog('Base64编码完成')
+        break
+      default:
+        newContent = content
+        newExt = '.txt'
+        newFileName = 'output.txt'
+        this.addLog('完成基本转换')
+    }
+
+    const fs = wx.getFileSystemManager()
+    const self = this
+    const tempFilePath = `${wx.env.USER_DATA_PATH}/${newFileName}`
+
+    setTimeout(() => {
+      fs.writeFile({
+        filePath: tempFilePath,
+        data: newContent,
+        encoding: 'utf8',
+        success: () => {
+          self.setData({
+            convertedPath: tempFilePath,
+            convertedFileName: newFileName,
+            convertResult: {
+              originalSize: self.formatFileSize(content.length),
+              newSize: self.formatFileSize(newContent.length),
+              savedSize: '-',
+              ratio: '-',
+              isGuide: false,
+              previewText: newContent.substring(0, 800) + (newContent.length > 800 ? '\n\n...(更多内容)' : ''),
+              isTextResult: true,
+              contentLength: newContent.length
+            },
+            isConverting: false,
+            hasConverted: true,
+            convertType: 'text'
+          })
+          
+          wx.showToast({ title: '转换成功！', icon: 'success' })
+        },
+        fail: () => {
+          self.setData({ isConverting: false })
+          wx.showToast({ title: '保存失败', icon: 'none' })
+        }
+      })
+    }, 200)
   },
 
   convertImage() {
@@ -1753,6 +2132,202 @@ Page({
       conversionLog: [],
       fileContent: ''
     })
+  },
+
+  clearAll() {
+    wx.vibrateShort({ type: 'light' })
+    this.clearFile()
+    this.setData({
+      textContent: '',
+      contentType: 'auto'
+    })
+  },
+
+  switchMode(e) {
+    const mode = e.currentTarget.dataset.mode
+    wx.vibrateShort({ type: 'light' })
+    
+    const hasInput = mode === 'text' ? (this.data.textContent.length > 0) : (mode === 'image' || mode === 'wechat') ? !!this.data.selectedFile : false
+    
+    this.setData({
+      inputMode: mode,
+      hasConverted: false,
+      convertResult: null,
+      convertedPath: '',
+      targetFormat: '',
+      targetFormatName: '',
+      availableFormats: [],
+      conversionLog: [],
+      hasInput: hasInput,
+      canShowFormats: hasInput,
+      canConvert: false
+    })
+    
+    if (mode === 'text') {
+      this.updateFormatsForText()
+    } else if (mode === 'image') {
+      if (this.data.selectedFile && this.data.isImage) {
+        this.updateFormatsForImage()
+      }
+    } else if (mode === 'wechat') {
+      if (this.data.selectedFile) {
+        this.updateFormatsForWechat()
+      }
+    }
+  },
+
+  updateFormatsForWechat() {
+    const ext = this.data.fileExt
+    const fileType = this.data.fileType
+    
+    const extToCategory = {
+      '.pdf': 'pdf',
+      '.docx': 'docx', '.doc': 'docx',
+      '.xlsx': 'xlsx', '.xls': 'xlsx',
+      '.pptx': 'pptx', '.ppt': 'pptx',
+      '.jpg': 'image', '.jpeg': 'image', '.png': 'image',
+      '.webp': 'image', '.gif': 'image', '.bmp': 'image',
+      '.txt': 'text', '.md': 'text', '.xml': 'text',
+      '.json': 'json',
+      '.csv': 'csv',
+      '.html': 'web', '.htm': 'web'
+    }
+    
+    const categoryKey = extToCategory[ext] || fileType
+    const formats = this.data.formatCategories[categoryKey] || this.data.formatCategories.other
+    const firstFmt = formats.length > 0 ? formats[0] : null
+    
+    this.setData({
+      availableFormats: formats,
+      targetFormat: firstFmt ? firstFmt.value : '',
+      targetFormatName: firstFmt ? firstFmt.fullName : '',
+      canShowFormats: true,
+      canConvert: !!firstFmt
+    })
+  },
+
+  updateFormatsForText() {
+    const content = this.data.textContent
+    let detectedType = this.data.contentType
+    
+    if (detectedType === 'auto' && content.trim().length > 0) {
+      if (content.trim().startsWith('{') || content.trim().startsWith('[')) {
+        detectedType = 'json'
+      } else if (content.includes('\t') || (content.split(',').length > 3 && content.split('\n').length > 1)) {
+        detectedType = 'csv'
+      } else if (content.includes('<') && content.includes('>')) {
+        detectedType = 'html'
+      } else {
+        detectedType = 'txt'
+      }
+    }
+    
+    const categoryMap = { txt: 'text', json: 'json', csv: 'csv', html: 'text', xml: 'text' }
+    const categoryKey = categoryMap[detectedType] || 'text'
+    const formats = this.data.formatCategories[categoryKey] || this.data.formatCategories.text
+    const firstFmt = formats.length > 0 ? formats[0] : null
+    
+    this.setData({
+      availableFormats: formats,
+      targetFormat: firstFmt ? firstFmt.value : '',
+      targetFormatName: firstFmt ? firstFmt.fullName : '',
+      canShowFormats: content.trim().length > 0,
+      hasInput: true,
+      canConvert: content.trim().length > 0 && !!firstFmt
+    })
+  },
+
+  updateFormatsForImage() {
+    const formats = this.data.formatCategories.image || []
+    const firstFmt = formats.length > 0 ? formats[0] : null
+    this.setData({
+      availableFormats: formats,
+      targetFormat: firstFmt ? firstFmt.value : '',
+      targetFormatName: firstFmt ? firstFmt.fullName : ''
+    })
+  },
+
+  onTextInput(e) {
+    const content = e.detail.value || ''
+    this.setData({ textContent: content })
+    
+    if (content.length > 0 && !this.data.selectedFile) {
+      this.updateFormatsForText()
+    } else if (content.length === 0) {
+      this.setData({
+        canShowFormats: false,
+        hasInput: false,
+        canConvert: false,
+        availableFormats: [],
+        targetFormat: '',
+        targetFormatName: ''
+      })
+    }
+  },
+
+  pasteContent() {
+    wx.vibrateShort({ type: 'light' })
+    wx.getClipboardData({
+      success: (res) => {
+        if (res.data) {
+          this.setData({ 
+            textContent: res.data, 
+            textFocus: true 
+          })
+          this.updateFormatsForText()
+          wx.showToast({ title: '已粘贴内容', icon: 'success' })
+        } else {
+          wx.showToast({ title: '剪贴板为空', icon: 'none' })
+        }
+      },
+      fail: () => {
+        wx.showToast({ title: '无法读取剪贴板', icon: 'none' })
+      }
+    })
+  },
+
+  clearText() {
+    wx.vibrateShort({ type: 'light' })
+    this.setData({ textContent: '' })
+    wx.showToast({ title: '已清空', icon: 'none' })
+  },
+
+  loadSample() {
+    wx.vibrateShort({ type: 'light' })
+    
+    let sample = ''
+    const type = this.data.contentType === 'auto' ? 'json' : this.data.contentType
+    
+    switch(type) {
+      case 'json':
+        sample = JSON.stringify({
+          name: '百宝工具箱',
+          version: '2.0.0',
+          tools: ['汇率换算', '单位换算', '房贷计算器'],
+          author: 'Yangyang',
+          tags: ['实用', '便捷', '多功能']
+        }, null, 2)
+        break
+      case 'csv':
+        sample = '名称,类型,分类,热度\n汇率换算,计算器,金融,高\n单位换算,转换器,通用,高\n房贷计算器,计算器,生活,中\n图片处理,工具,媒体,中\n文件转换,工具,文档,新'
+        break
+      case 'html':
+        sample = '<!DOCTYPE html>\n<html>\n<head>\n  <title>示例文档</title>\n</head>\n<body>\n  <h1>百宝工具箱</h1>\n  <p>这是一个示例HTML文档</p>\n</body>\n</html>'
+        break
+      default:
+        sample = '百宝工具箱\n\n一款实用的微信小程序工具集合。\n\n功能包括：\n- 汇率换算\n- 单位换算\n- 房贷计算器\n- 图片处理\n- 文件格式转换\n\n让生活更便捷！'
+    }
+    
+    this.setData({ textContent: sample, textFocus: true })
+    this.updateFormatsForText()
+    wx.showToast({ title: '已加载示例', icon: 'success' })
+  },
+
+  setContentType(e) {
+    const type = e.currentTarget.dataset.type
+    wx.vibrateShort({ type: 'light' })
+    this.setData({ contentType: type })
+    this.updateFormatsForText()
   },
 
   formatFileSize(bytes) {

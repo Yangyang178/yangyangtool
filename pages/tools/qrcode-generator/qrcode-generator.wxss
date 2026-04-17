@@ -25,8 +25,8 @@ page { background-color: #F8FAFC; }
 
 /* 二维码区域 */
 .qrcode-section { background: #FFFFFF; border-radius: 24px; padding: 32px 20px; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15); margin-bottom: 24px; text-align: center; }
-.qrcode-wrapper { width: 240px; height: 240px; margin: 0 auto 20px; border: 3px dashed #E2E8F0; border-radius: 16px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-.qrcode-canvas { width: 240px; height: 240px; position: absolute; top: 0; left: 0; }
+.qrcode-wrapper { width: 280px; height: 280px; margin: 0 auto 20px; border: 3px dashed #E2E8F0; border-radius: 16px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.qrcode-canvas { width: 280px; height: 280px; position: absolute; top: 0; left: 0; }
 .qrcode-placeholder { z-index: 10; text-align: center; }
 .placeholder-text { font-size: 18px; font-weight: 600; color: #8B5CF6; display: block; margin-bottom: 8px; }
 .placeholder-sub { font-size: 13px; color: #94A3B8; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }

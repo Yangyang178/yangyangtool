@@ -101,44 +101,111 @@ Page({
 
   chooseImage() {
     const maxCount = this.data.currentFunction === 'stitch' ? 9 : 1
+    const self = this
     
-    wx.chooseMedia({
+    console.log('[ImageProcessor] 开始选择图片 | 最大数量:', maxCount)
+    
+    wx.chooseImage({
       count: maxCount,
-      mediaType: ['image'],
+      sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
-      success: (res) => {
-        const newImages = res.tempFiles.map((file) => ({
-          path: file.tempFilePath,
-          size: file.size,
-          sizeText: this.formatFileSize(file.size),
+      success: function(res) {
+        console.log('[ImageProcessor] 选择成功 | 文件数:', res.tempFilePaths.length)
+        
+        if (!res.tempFilePaths || res.tempFilePaths.length === 0) {
+          wx.showToast({ title: '未选择图片', icon: 'none' })
+          return
+        }
+        
+        const newImages = res.tempFilePaths.map((path) => ({
+          path: path,
+          size: 0,
+          sizeText: '加载中...',
           width: 0,
           height: 0
         }))
 
-        if (this.data.currentFunction === 'stitch') {
-          this.setData({
-            stitchImages: [...this.data.stitchImages, ...newImages]
+        self.handleSelectedImages(newImages)
+      },
+      fail: function(err) {
+        const errMsg = err.errMsg || ''
+        
+        if (errMsg.includes('cancel')) {
+          console.log('[ImageProcessor] 用户取消选择')
+          return
+        }
+        
+        if (errMsg.includes('deny') || errMsg.includes('denied') || errMsg.includes('auth')) {
+          wx.showModal({
+            title: '需要相册权限',
+            content: '请在设置中允许访问相册和相机权限',
+            confirmText: '去设置',
+            success: function(res) {
+              if (res.confirm) {
+                wx.openSetting()
+              }
+            }
           })
         } else {
-          this.setData({
-            images: newImages,
-            currentImageIndex: 0,
-            processedImagePath: '',
-            compressResult: null,
-            stitchResult: null
-          })
-
-          if (newImages.length > 0) {
-            this.loadImageInfo(0)
-          }
+          wx.showToast({ title: '选择失败', icon: 'none', duration: 2000 })
         }
-
-        wx.showToast({ 
-          title: newImages.length > 1 ? `已选择${newImages.length}张图片` : '图片加载成功', 
-          icon: 'success' 
-        })
+        
+        console.error('[ImageProcessor] 选择失败:', JSON.stringify(err))
       }
     })
+  },
+
+  handleSelectedImages(newImages) {
+    console.log('[ImageProcessor] 处理选中的图片 | 数量:', newImages.length)
+    
+    if (this.data.currentFunction === 'stitch') {
+      const currentStitchImages = [...this.data.stitchImages, ...newImages]
+      this.setData({
+        stitchImages: currentStitchImages
+      })
+      
+      if (newImages.length > 0) {
+        this.loadStitchImagesInfo(currentStitchImages.length - newImages.length)
+      }
+    } else {
+      this.setData({
+        images: newImages,
+        currentImageIndex: 0,
+        processedImagePath: '',
+        compressResult: null,
+        stitchResult: null
+      })
+
+      if (newImages.length > 0) {
+        this.loadImageInfo(0)
+      }
+    }
+
+    wx.showToast({ 
+      title: newImages.length > 1 ? `已选择${newImages.length}张图片` : '图片加载成功', 
+      icon: 'success' 
+    })
+  },
+
+  loadStitchImagesInfo(startIndex) {
+    const images = [...this.data.stitchImages]
+    
+    for (let i = startIndex; i < images.length; i++) {
+      wx.getImageInfo({
+        src: images[i].path,
+        success: (imgInfo) => {
+          images[i] = {
+            ...images[i],
+            width: imgInfo.width,
+            height: imgInfo.height
+          }
+          this.setData({ stitchImages: images })
+        },
+        fail: () => {
+          console.warn(`Failed to load image info for index ${i}`)
+        }
+      })
+    }
   },
 
   loadImageInfo(index) {
@@ -194,6 +261,31 @@ Page({
     let stitchImages = [...this.data.stitchImages]
     stitchImages.splice(index, 1)
     this.setData({ stitchImages })
+  },
+
+  clearStitchImages() {
+    if (this.data.stitchImages.length === 0) return
+    
+    wx.vibrateShort({ type: 'medium' })
+    
+    wx.showModal({
+      title: '确认清除',
+      content: `确定要清除全部 ${this.data.stitchImages.length} 张图片吗？`,
+      confirmText: '确认清除',
+      confirmColor: '#EF4444',
+      success: (res) => {
+        if (res.confirm) {
+          this.setData({
+            stitchImages: [],
+            stitchResult: null
+          })
+          wx.showToast({ 
+            title: '已清除全部图片', 
+            icon: 'success' 
+          })
+        }
+      }
+    })
   },
 
   clearAllImages() {
@@ -401,6 +493,13 @@ Page({
       return
     }
 
+    const unloadedImages = this.data.stitchImages.filter(img => img.width === 0 || img.height === 0)
+    if (unloadedImages.length > 0) {
+      wx.showToast({ title: '图片加载中，请稍候...', icon: 'none' })
+      setTimeout(() => this.stitchImages(), 500)
+      return
+    }
+
     this.setData({ isProcessing: true })
 
     const mode = this.data.stitchMode
@@ -549,6 +648,12 @@ Page({
       return
     }
 
+    if (!image.width || !image.height) {
+      wx.showToast({ title: '图片加载中，请稍候...', icon: 'none' })
+      setTimeout(() => this.cropImage(), 500)
+      return
+    }
+
     this.setData({ isProcessing: true })
 
     const mode = this.data.cropMode
@@ -634,14 +739,26 @@ Page({
     })
   },
 
-  rotateImage(angle) {
-    if (!angle) {
+  rotateImage(e) {
+    let angle
+    
+    if (typeof e === 'object' && e.currentTarget) {
       angle = parseInt(e.currentTarget.dataset.angle) || 90
+    } else if (typeof e === 'number') {
+      angle = e
+    } else {
+      angle = 90
     }
     
     const image = this.getCurrentImage()
     if (!image.path) {
       wx.showToast({ title: '请先选择图片', icon: 'none' })
+      return
+    }
+
+    if (!image.width || !image.height) {
+      wx.showToast({ title: '图片加载中，请稍候...', icon: 'none' })
+      setTimeout(() => this.rotateImage(angle), 500)
       return
     }
 
@@ -655,25 +772,37 @@ Page({
     const newWidth = Math.ceil(image.width * cos + image.height * sin)
     const newHeight = Math.ceil(image.width * sin + image.height * cos)
 
+    console.log('[Rotate] 角度:', angle, '° | 原始尺寸:', image.width, '×', image.height, '| 新尺寸:', newWidth, '×', newHeight)
+
     this.drawCanvas({
       width: newWidth,
       height: newHeight,
       drawCallback: function(ctx, canvas) {
+        ctx.save()
         ctx.translate(newWidth / 2, newHeight / 2)
         ctx.rotate(radians)
         
         const img = canvas.createImage()
         img.onload = function() {
-          ctx.drawImage(img, -image.width / 2, -image.height / 2, image.width, image.height)
-          
-          setTimeout(function() {
-            self.exportToTempFile(canvas, newWidth, newHeight, function(path) {
-              self.setData({ processedImagePath: path, isProcessing: false })
-              wx.showToast({ title: '旋转完成！', icon: 'success' })
-            })
-          }, 50)
+          try {
+            console.log('[Rotate] 图片加载成功，开始绘制')
+            ctx.drawImage(img, -image.width / 2, -image.height / 2, image.width, image.height)
+            ctx.restore()
+            
+            setTimeout(function() {
+              self.exportToTempFile(canvas, newWidth, newHeight, function(path) {
+                self.setData({ processedImagePath: path, isProcessing: false })
+                wx.showToast({ title: '旋转完成！', icon: 'success' })
+              })
+            }, 100)
+          } catch (drawErr) {
+            console.error('[Rotate] 绘制失败:', drawErr)
+            self.setData({ isProcessing: false })
+            wx.showToast({ title: '旋转绘制失败', icon: 'none' })
+          }
         }
-        img.onerror = function() {
+        img.onerror = function(err) {
+          console.error('[Rotate] 图片加载失败:', err)
           self.setData({ isProcessing: false })
           wx.showToast({ title: '图片加载失败', icon: 'none' })
         }
@@ -687,10 +816,16 @@ Page({
   },
 
   flipImage(e) {
-    const direction = e.currentTarget.dataset.direction
+    const direction = e && e.currentTarget ? e.currentTarget.dataset.direction : 'horizontal'
     const image = this.getCurrentImage()
     if (!image.path) {
       wx.showToast({ title: '请先选择图片', icon: 'none' })
+      return
+    }
+
+    if (!image.width || !image.height) {
+      wx.showToast({ title: '图片加载中，请稍候...', icon: 'none' })
+      setTimeout(() => this.flipImage(e), 500)
       return
     }
 
@@ -698,10 +833,14 @@ Page({
 
     const self = this
 
+    console.log('[Flip] 方向:', direction, '| 尺寸:', image.width, '×', image.height)
+
     this.drawCanvas({
       width: image.width,
       height: image.height,
       drawCallback: function(ctx, canvas) {
+        ctx.save()
+        
         if (direction === 'horizontal') {
           ctx.translate(image.width, 0)
           ctx.scale(-1, 1)
@@ -712,16 +851,25 @@ Page({
 
         const img = canvas.createImage()
         img.onload = function() {
-          ctx.drawImage(img, 0, 0, image.width, image.height)
-          
-          setTimeout(function() {
-            self.exportToTempFile(canvas, image.width, image.height, function(path) {
-              self.setData({ processedImagePath: path, isProcessing: false })
-              wx.showToast({ title: '翻转完成！', icon: 'success' })
-            })
-          }, 50)
+          try {
+            console.log('[Flip] 图片加载成功，开始绘制')
+            ctx.drawImage(img, 0, 0, image.width, image.height)
+            ctx.restore()
+            
+            setTimeout(function() {
+              self.exportToTempFile(canvas, image.width, image.height, function(path) {
+                self.setData({ processedImagePath: path, isProcessing: false })
+                wx.showToast({ title: '翻转完成！', icon: 'success' })
+              })
+            }, 100)
+          } catch (drawErr) {
+            console.error('[Flip] 绘制失败:', drawErr)
+            self.setData({ isProcessing: false })
+            wx.showToast({ title: '翻转绘制失败', icon: 'none' })
+          }
         }
-        img.onerror = function() {
+        img.onerror = function(err) {
+          console.error('[Flip] 图片加载失败:', err)
           self.setData({ isProcessing: false })
           wx.showToast({ title: '图片加载失败', icon: 'none' })
         }
@@ -736,7 +884,8 @@ Page({
 
   selectTargetFormat(e) {
     wx.vibrateShort({ type: 'light' })
-    const format = e.detail.value
+    const format = e.currentTarget.dataset.value || e.detail.value
+    if (!format) return
     this.setData({ targetFormat: format })
     this.updateFormatInfo(format)
   },
@@ -844,13 +993,21 @@ Page({
       drawCallback, success, fail
     } = options
 
+    console.log('[Canvas] 开始绘制 | 尺寸:', width, '×', height)
+
+    if (!width || !height || width <= 0 || height <= 0) {
+      console.error('[Canvas] 无效的画布尺寸:', width, height)
+      if (fail) fail()
+      return
+    }
+
     try {
       const query = wx.createSelectorQuery()
       query.select('#imageCanvas')
         .fields({ node: true, size: true })
         .exec(function(res) {
           if (!res || !res[0]) {
-            console.error('Canvas not found')
+            console.error('[Canvas] Canvas 元素未找到')
             if (fail) fail()
             return
           }
@@ -861,6 +1018,8 @@ Page({
 
             canvas.width = width
             canvas.height = height
+
+            console.log('[Canvas] 画布已初始化 | 实际尺寸:', canvas.width, '×', canvas.height)
 
             if (bgColor && bgColor !== 'transparent') {
               ctx.fillStyle = bgColor

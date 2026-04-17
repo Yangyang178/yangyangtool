@@ -1,4 +1,4 @@
-<navigation-bar title="文档格式转换" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="文件格式转换" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
 
 <scroll-view class="tool-page" scroll-y>
   <view class="container">
@@ -8,25 +8,92 @@
         <text class="tool-icon">📁</text>
       </view>
       <text class="tool-title">文件格式转换器</text>
-      <text class="tool-desc">上传文件 · 选择格式 · 真实转换</text>
+      <text class="tool-desc">选择来源 · 输入内容 · 真实转换</text>
     </view>
 
-    <!-- 文件选择区 -->
-    <view class="upload-section">
-      <view class="upload-area {{selectedFile ? 'has-file' : ''}}" bindtap="chooseFile" wx:if="{{!selectedFile}}">
-        <text class="upload-icon">📎</text>
-        <text class="upload-text">点击选择文件</text>
-        <text class="upload-hint">支持图片、PDF、Word、Excel、TXT、JSON、CSV等20+种格式</text>
+    <!-- 选择输入方式 -->
+    <view class="mode-section">
+      <text class="section-title">选择输入方式</text>
+      <view class="mode-tabs">
+        <view class="mode-tab {{inputMode === 'image' ? 'active' : ''}}" bindtap="switchMode" data-mode="image">
+          <text class="tab-icon">📷</text>
+          <text class="tab-name">图片</text>
+          <text class="tab-hint">从相册选择</text>
+        </view>
+        <view class="mode-tab {{inputMode === 'text' ? 'active' : ''}}" bindtap="switchMode" data-mode="text">
+          <text class="tab-icon">📝</text>
+          <text class="tab-name">文本内容</text>
+          <text class="tab-hint">直接输入/粘贴</text>
+        </view>
+        <view class="mode-tab {{inputMode === 'wechat' ? 'active' : ''}}" bindtap="switchMode" data-mode="wechat">
+          <text class="tab-icon">📁</text>
+          <text class="tab-name">微信文件</text>
+          <text class="tab-hint">PDF/Word/Excel等</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 图片模式 -->
+    <view class="input-section" wx:if="{{inputMode === 'image'}}">
+      <view class="image-upload-area {{selectedFile ? 'has-file' : ''}}" bindtap="chooseImage" wx:if="{{!selectedFile}}">
+        <text class="upload-big-icon">📷</text>
+        <text class="upload-main-text">点击选择图片</text>
+        <text class="upload-sub-text">支持 JPG / PNG / WebP / GIF 格式</text>
+        <text class="upload-tip">从手机相册或拍照获取图片</text>
+      </view>
+
+      <!-- 已选图片信息 -->
+      <view class="file-info-card image-card" wx:if="{{selectedFile && inputMode === 'image'}}">
+        <view class="file-info-top">
+          <view class="file-type-badge image">{{fileExt.toUpperCase()}}</view>
+          <view class="file-name-box">
+            <text class="file-name">{{fileName}}</text>
+          </view>
+          <view class="clear-btn" bindtap="clearAll">✕</view>
+        </view>
+
+        <view class="file-details">
+          <view class="detail-item">
+            <text class="detail-label">大小</text>
+            <text class="detail-value">{{fileSizeText}}</text>
+          </view>
+          <view class="detail-item" wx:if="{{imageInfo}}">
+            <text class="detail-label">尺寸</text>
+            <text class="detail-value">{{imageInfo.width}}×{{imageInfo.height}}</text>
+          </view>
+        </view>
+
+        <image wx:if="{{filePath}}" src="{{filePath}}" mode="widthFix" class="preview-img"/>
+      </view>
+    </view>
+
+    <!-- 微信文件模式 -->
+    <view class="input-section" wx:if="{{inputMode === 'wechat'}}">
+      <view class="wechat-upload-area {{selectedFile ? 'has-file' : ''}} {{isChoosingFile ? 'loading' : ''}}" bindtap="chooseDocument" wx:if="{{!selectedFile && !isChoosingFile}}">
+        <text class="upload-big-icon">📁</text>
+        <text class="upload-main-text">点击选择文件</text>
+        <text class="upload-sub-text">支持 PDF / Word / Excel / TXT / JSON / CSV / 图片等</text>
+        <view class="step-hint highlight">
+          <text class="step-icon">💡</text>
+          <text class="step-text">点击后将弹出两种方式供你选择</text>
+        </view>
+      </view>
+
+      <!-- 加载状态 -->
+      <view class="wechat-upload-area loading" wx:if="{{isChoosingFile && !selectedFile}}">
+        <text class="upload-big-icon">⏳</text>
+        <text class="upload-main-text">正在打开文件选择器...</text>
+        <text class="upload-sub-text">请稍候，即将弹出微信文件列表</text>
       </view>
 
       <!-- 已选文件信息 -->
-      <view class="file-info-card" wx:if="{{selectedFile}}">
+      <view class="file-info-card wechat-card" wx:if="{{selectedFile && inputMode === 'wechat'}}">
         <view class="file-info-top">
           <view class="file-type-badge {{fileType}}">{{fileExt.toUpperCase()}}</view>
           <view class="file-name-box">
             <text class="file-name">{{fileName}}</text>
           </view>
-          <view class="clear-btn" bindtap="clearFile">✕</view>
+          <view class="clear-btn" bindtap="clearAll">✕</view>
         </view>
 
         <view class="file-details">
@@ -40,7 +107,7 @@
           </view>
           <view class="detail-item">
             <text class="detail-label">类型</text>
-            <text class="detail-value">{{fileType === 'image' ? '图片' : fileType === 'document' ? '文档' : fileType === 'text' ? '文本' : fileType === 'json' ? 'JSON数据' : fileType === 'csv' ? 'CSV表格' : fileType === 'web' ? '网页' : '其他'}}</text>
+            <text class="detail-value">{{fileType === 'document' ? '文档' : fileType === 'json' ? 'JSON数据' : fileType === 'csv' ? 'CSV表格' : fileType === 'text' ? '文本' : fileType === 'web' ? '网页' : '其他'}}</text>
           </view>
         </view>
 
@@ -53,10 +120,90 @@
           <text class="preview-content">{{fileContent.length > 150 ? fileContent.substring(0, 150) + '...' : fileContent}}</text>
         </view>
       </view>
+      
+      <!-- 微信上传提示 -->
+      <view class="wechat-tip-card" wx:if="{{!selectedFile && !isChoosingFile}}">
+        <text class="tip-title">📋 使用说明</text>
+        <view class="tip-list">
+          <text class="tip-item important">⚠️ 重要：收藏夹中的文件无法直接选择！</text>
+          <text class="tip-item">✅ 方式1：从聊天记录选择（推荐）</text>
+          <text class="tip-item sub">• 先将文件发送给"文件传输助手"或任意聊天</text>
+          <text class="tip-item sub">• 然后在这里选择该聊天，再选择文件</text>
+          <text class="tip-item">✅ 方式2：从手机本地选择（如支持）</text>
+          <text class="tip-item sub">• 直接从手机文件管理器中选择文件</text>
+        </view>
+        <view class="tip-prep">
+          <text class="prep-title">🔧 推荐操作步骤：</text>
+          <text class="prep-item">① 在微信中打开"文件传输助手"</text>
+          <text class="prep-item">② 点击"+"号 → 选择"文件"→ 选择要转换的 PDF/Word 等</text>
+          <text class="prep-item">③ 发送成功后，回到本工具点击"选择文件"</text>
+          <text class="prep-item">④ 选择"从聊天记录选择"→ 选择"文件传输助手"→ 选择刚发送的文件</text>
+        </view>
+        <view class="tip-warning">
+          <text class="warning-title">❌ 不要这样操作：</text>
+          <text class="warning-item">• 不要从"我的收藏"中选择文件（会失败）</text>
+          <text class="warning-item">• 不要直接转发收藏文件到小程序（不支持）</text>
+        </view>
+      </view>
     </view>
 
-    <!-- 格式选择（所有文件） -->
-    <view class="format-section" wx:if="{{selectedFile && availableFormats.length > 0}}">
+    <!-- 文本模式 -->
+    <view class="input-section" wx:if="{{inputMode === 'text'}}">
+      <view class="text-input-area">
+        <view class="input-header-row">
+          <text class="input-label">📝 输入要转换的内容</text>
+          <view class="input-actions">
+            <text class="action-link" bindtap="pasteContent">📋 粘贴</text>
+            <text class="action-link" bindtap="clearText">🗑️ 清空</text>
+            <text class="action-link" bindtap="loadSample">📄 示例</text>
+          </view>
+        </view>
+        
+        <textarea 
+          class="content-editor" 
+          placeholder="在此输入或粘贴文本、JSON、CSV、HTML等内容..."
+          placeholder-class="editor-placeholder"
+          value="{{textContent}}"
+          bindinput="onTextInput"
+          auto-height
+          maxlength="-1"
+          focus="{{textFocus}}"
+        ></textarea>
+        
+        <view class="input-footer">
+          <text class="char-count">{{textContent.length}} 字符</text>
+          <text class="line-count">{{textContent.split('\n').length}} 行</text>
+        </view>
+      </view>
+
+      <!-- 内容类型选择 -->
+      <view class="content-type-section">
+        <text class="section-title-sm">内容类型（帮助识别格式）</text>
+        <view class="type-chips">
+          <view class="type-chip {{contentType === 'auto' ? 'active' : ''}}" bindtap="setContentType" data-type="auto">
+            <text>🤖 自动识别</text>
+          </view>
+          <view class="type-chip {{contentType === 'txt' ? 'active' : ''}}" bindtap="setContentType" data-type="txt">
+            <text>📄 纯文本</text>
+          </view>
+          <view class="type-chip {{contentType === 'json' ? 'active' : ''}}" bindtap="setContentType" data-type="json">
+            <text>{ } JSON</text>
+          </view>
+          <view class="type-chip {{contentType === 'csv' ? 'active' : ''}}" bindtap="setContentType" data-type="csv">
+            <text>📊 CSV</text>
+          </view>
+          <view class="type-chip {{contentType === 'html' ? 'active' : ''}}" bindtap="setContentType" data-type="html">
+            <text>🌐 HTML</text>
+          </view>
+          <view class="type-chip {{contentType === 'xml' ? 'active' : ''}}" bindtap="setContentType" data-type="xml">
+            <text>📋 XML</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 格式选择 -->
+    <view class="format-section" wx:if="{{canShowFormats}}">
       <text class="section-title">选择目标格式</text>
       <view class="format-options">
         <view class="format-opt {{targetFormat === item.value ? 'active' : ''}}"
@@ -77,8 +224,8 @@
 
     <!-- 转换按钮 -->
     <view class="action-row">
-      <button class="convert-btn {{isConverting ? 'disabled' : ''}}" bindtap="convertFile" disabled="{{isConverting}}">
-        <text>{{isConverting ? '⏳ 处理中...' : (targetFormat ? ('转换为 ' + (targetFormatName || targetFormat.toUpperCase())) : '开始转换')}}</text>
+      <button class="convert-btn {{isConverting || !canConvert ? 'disabled' : ''}}" bindtap="convertFile" disabled="{{isConverting || !canConvert}}">
+        <text>{{isConverting ? '⏳ 处理中...' : (!hasInput ? '请先输入内容' : (targetFormat ? ('转换为 ' + (targetFormatName || targetFormat.toUpperCase())) : '选择目标格式'))}}</text>
       </button>
     </view>
 
@@ -148,7 +295,6 @@
         </view>
       </view>
 
-      <!-- 内容预览 -->
       <view class="content-preview" wx:if="{{convertResult.previewText}}">
         <text class="preview-label">📄 内容预览：</text>
         <scroll-view scroll-y class="preview-scroll">
@@ -164,46 +310,13 @@
 
     <!-- 支持的格式说明 -->
     <view class="support-section">
-      <text class="support-title">✨ 智能格式转换</text>
-      <view class="support-grid">
-        <view class="support-tag" wx:for="{{supportTypes}}" wx:key="ext">
-          <text class="tag-icon">{{item.icon}}</text>
-          <text class="tag-text">{{item.name}}</text>
-        </view>
-      </view>
+      <text class="support-title">✨ 支持的转换</text>
       <view class="support-note">
-        <text class="note-text">📄 PDF → Word/Excel/PPT/TXT/HTML/图片 (智能生成)</text>
-        <text class="note-text">📘 Word → PDF/TXT/HTML/图片 (多格式导出)</text>
-        <text class="note-text">📗 Excel → PDF/CSV/TXT/JSON/HTML (数据转换)</text>
-        <text class="note-text">📙 PPT → PDF/TXT/图片 (演示文稿处理)</text>
-        <text class="note-text">🖼️ 图片 → JPG/PNG/WebP/Base64 (格式互转)</text>
-        <text class="note-text">{ } JSON → 美化/压缩/CSV/Word (数据处理)</text>
-        <text class="note-text">📊 CSV → Excel/JSON/HTML/TXT (表格转换)</text>
-        <text class="note-text">📝 TXT → Word/PDF/HTML/JSON (文档生成)</text>
-        <text class="note-text">🌐 网页 → PDF/Word/TXT/图片 (内容提取)</text>
-      </view>
-      
-      <!-- 转换模式说明 -->
-      <view class="mode-legend">
-        <text class="legend-title">🏷️ 转换模式说明</text>
-        <view class="legend-items">
-          <view class="legend-item">
-            <view class="legend-badge direct"></view>
-            <text class="legend-text">直接转换 - 原生API实时处理</text>
-          </view>
-          <view class="legend-item">
-            <view class="legend-badge generate"></view>
-            <text class="legend-text">智能生成 - AI辅助生成新文件</text>
-          </view>
-          <view class="legend-item">
-            <view class="legend-badge extract"></view>
-            <text class="legend-text">内容提取 - 从源文件提取信息</text>
-          </view>
-          <view class="legend-item">
-            <view class="legend-badge encode"></view>
-            <text class="legend-text">编码转换 - 格式编码互相转换</text>
-          </view>
-        </view>
+        <text class="note-text">🖼️ 图片 → JPG / PNG / WebP / Base64</text>
+        <text class="note-text">📝 文本 → Word / PDF / HTML / JSON</text>
+        <text class="note-text">{ } JSON → 美化 / 压缩 / CSV / Word</text>
+        <text class="note-text">📊 CSV → JSON / HTML / Excel表格</text>
+        <text class="note-text">🌐 HTML → TXT / PDF / Word文档</text>
       </view>
     </view>
   </view>

@@ -6,6 +6,7 @@ Page({
     searchKeyword: '',
     currentCategory: 'all',
     isRefreshing: false,
+    scrollTop: 0,
     categories: [
       { id: 'all', name: '全部' },
       { id: 'calculator', name: '计算转换' },
@@ -83,16 +84,6 @@ Page({
         iconBg: 'linear-gradient(135deg, #CCFBF1 0%, #99F6E4 100%)',
         category: 'text',
         isHot: false,
-        isFavorite: false
-      },
-      {
-        id: 8,
-        name: '二维码生成器',
-        description: '文字/链接生成二维码',
-        icon: '📱',
-        iconBg: 'linear-gradient(135deg, #DDD6FE 0%, #C4B5FD 100%)',
-        category: 'text',
-        isHot: true,
         isFavorite: false
       },
       {
@@ -225,18 +216,7 @@ Page({
         isHot: true,
         isFavorite: false
       },
-      {
-        id: 22,
-        name: '文件格式转换',
-        description: '格式查询/兼容性/转换指南',
-        icon: '📁',
-        iconBg: 'linear-gradient(135deg, #2DD4BF 0%, #14B8A6 100%)',
-        category: 'dev',
-        isHot: true,
-        isFavorite: false
-      }
-    ],
-    filteredTools: []
+    ]
   },
 
   onLoad() {
@@ -336,7 +316,6 @@ Page({
       5: '/pages/tools/word-count/word-count',
       6: '/pages/tools/case-converter/case-converter',
       7: '/pages/tools/base64-tool/base64-tool',
-      8: '/pages/tools/qrcode-generator/qrcode-generator',
       9: '/pages/tools/pomodoro/pomodoro',
       10: '/pages/tools/water-reminder/water-reminder',
       11: '/pages/tools/random-decision/random-decision',
@@ -349,8 +328,7 @@ Page({
       18: '/pages/tools/color-converter/color-converter',
       19: '/pages/tools/url-encoder/url-encoder',
       20: '/pages/tools/regex-tester/regex-tester',
-      21: '/pages/tools/image-processor/image-processor',
-      22: '/pages/tools/file-converter/file-converter'
+      21: '/pages/tools/image-processor/image-processor'
     }
     
     const url = urlMap[tool.id]
@@ -450,5 +428,26 @@ Page({
       wx.stopPullDownRefresh()
       wx.showToast({ title: '刷新成功', icon: 'success' })
     }, 1000)
+  },
+
+  onScrollToUpper() {
+    this.setData({ scrollTop: 1 })
+    setTimeout(() => {
+      this.setData({ scrollTop: 0 })
+    }, 50)
+  },
+
+  onPageScroll(e) {
+    const scrollTop = e.detail && e.detail.scrollTop !== undefined ? e.detail.scrollTop : (e.detail && e.detail.scrollY !== undefined ? e.detail.scrollY : 0)
+    if (scrollTop < 5 && scrollTop > -50) {
+      if (!this._scrollFixTimer) {
+        this._scrollFixTimer = setTimeout(() => {
+          this._scrollFixTimer = null
+          if (this.data.scrollTop !== 0) {
+            this.setData({ scrollTop: 0 })
+          }
+        }, 100)
+      }
+    }
   }
 })

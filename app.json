@@ -10,7 +10,6 @@
     "pages/tools/word-count/word-count",
     "pages/tools/case-converter/case-converter",
     "pages/tools/base64-tool/base64-tool",
-    "pages/tools/qrcode-generator/qrcode-generator",
     "pages/tools/pomodoro/pomodoro",
     "pages/tools/water-reminder/water-reminder",
     "pages/tools/random-decision/random-decision",
@@ -23,8 +22,7 @@
     "pages/tools/color-converter/color-converter",
     "pages/tools/url-encoder/url-encoder",
     "pages/tools/regex-tester/regex-tester",
-    "pages/tools/image-processor/image-processor",
-    "pages/tools/file-converter/file-converter"
+    "pages/tools/image-processor/image-processor"
   ],
   "window": {
     "navigationBarTextStyle": "black",

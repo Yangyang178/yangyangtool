@@ -43,11 +43,11 @@ page { background-color: #F8FAFC; }
 
 .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #F1F5F9; }
 .setting-item:last-child { border-bottom: none; }
-.setting-label { font-size: 15px; color: #1E293B; font-weight: 500; }
-.setting-picker { font-size: 15px; color: #EF4444; font-weight: 600; padding: 6px 12px; background: #FEF2F2; border-radius: 10px; }
+.setting-label { font-size: 15px; color: #1E293B; font-weight: 500; flex-shrink: 0; margin-right: 12px; }
+.setting-picker { font-size: 15px; color: #EF4444; font-weight: 600; padding: 6px 12px; background: #FEF2F2; border-radius: 10px; flex-shrink: 0; }
 
-.round-selector { display: flex; gap: 8px; }
-.round-btn { width: 42px; height: 34px; border-radius: 17px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; border: 2px solid #E2E8F0; background: #FFFFFF; color: #64748B; padding: 0; line-height: 1; }
+.round-selector { display: flex; gap: 5px; flex-wrap: nowrap; flex-shrink: 0; }
+.round-btn { width: 32px; height: 28px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; border: 1.5px solid #E2E8F0; background: #FFFFFF; color: #64748B; line-height: 1; box-sizing: border-box; padding: 0; }
 .round-btn.active { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); color: #FFFFFF; border-color: #EF4444; }
 
 /* 历史记录 */
