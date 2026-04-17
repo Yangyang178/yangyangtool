@@ -216,6 +216,46 @@ Page({
         isHot: true,
         isFavorite: false
       },
+      {
+        id: 22,
+        name: '密码生成器',
+        description: '自定义长度/字符类型，一键生成强密码',
+        icon: '🔐',
+        iconBg: 'linear-gradient(135deg, #CCFBF1 0%, #99F6E4 100%)',
+        category: 'dev',
+        isHot: false,
+        isFavorite: false
+      },
+      {
+        id: 23,
+        name: 'BMI 计算器',
+        description: '身高体重→BMI指数+健康建议',
+        icon: '⚖️',
+        iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)',
+        category: 'life',
+        isHot: true,
+        isFavorite: false
+      },
+      {
+        id: 24,
+        name: '文本对比',
+        description: '两段文本差异对比，高亮显示不同处',
+        icon: '🔄',
+        iconBg: 'linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%)',
+        category: 'text',
+        isHot: false,
+        isFavorite: false
+      },
+      {
+        id: 25,
+        name: '个税计算器',
+        description: '2024最新个税专项扣除，月薪→税后工资',
+        icon: '💰',
+        iconBg: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
+        category: 'calculator',
+        isHot: true,
+        isFavorite: false
+      },
     ]
   },
 
@@ -328,7 +368,11 @@ Page({
       18: '/pages/tools/color-converter/color-converter',
       19: '/pages/tools/url-encoder/url-encoder',
       20: '/pages/tools/regex-tester/regex-tester',
-      21: '/pages/tools/image-processor/image-processor'
+      21: '/pages/tools/image-processor/image-processor',
+      22: '/pages/tools/password-generator/password-generator',
+      23: '/pages/tools/bmi-calculator/bmi-calculator',
+      24: '/pages/tools/text-diff/text-diff',
+      25: '/pages/tools/tax-calculator/tax-calculator'
     }
     
     const url = urlMap[tool.id]

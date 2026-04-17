@@ -1,0 +1,53 @@
+page { background-color: var(--pageBg,#F8FAFC); }
+.tool-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.container { padding: 20px; }
+
+.tool-header { text-align: center; margin-bottom: 20px; }
+.icon-wrapper { width: 80px; height: 80px; border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; background: linear-gradient(135deg, var(--gradientBlueStart,#DBEAFE) 0%, var(--gradientBlueEnd,#BFDBFE) 100%); }
+.tool-icon { font-size: 40px; }
+.tool-title { font-size: 24px; font-weight: 700; color: var(--textPrimary,#1E293B); display: block; margin-bottom: 8px; }
+.tool-desc { font-size: 14px; color: var(--textSecondary,#64748B); }
+
+.text-areas { display: flex; gap: 12px; margin-bottom: 16px; }
+.text-area-wrapper { flex: 1; }
+.area-label { font-size: 13px; font-weight: 600; color: var(--textPrimary,#1E293B); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.clear-btn { font-size: 12px; color: var(--accentRed,#EF4444); padding: 2px 6px; }
+.text-area { width: 100%; height: 300px; background: var(--cardBg,#FFFFFF); border-radius: 12px; border: 1.5px solid var(--borderLight,#E2E8F0); padding: 14px; font-size: 14px; line-height: 1.7; color: var(--textPrimary,#1E293B); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, monospace; }
+.text-area:focus { border-color: var(--accentBlue,#3B82F6); }
+
+.action-row { display: flex; gap: 10px; margin-bottom: 20px; }
+.compare-btn { flex: 2; height: 48px; border-radius: 24px; font-size: 15px; font-weight: 700; color: var(--cardBg,#FFFFFF); border: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, #2563EB 100%); box-shadow: 0 4px 14px rgba(59,130,246,0.3); transition: all 0.2s ease; }
+.swap-btn { flex: 1; height: 48px; border-radius: 24px; font-size: 14px; font-weight: 600; color: var(--textSecondary,#64748B); border: none; display: flex; align-items: center; justify-content: center; background: var(--surfaceBg,#F1F5F9); }
+.btn-icon { font-size: 18px; margin-right: 6px; }
+
+.result-card { background: var(--cardBg,#FFFFFF); border-radius: 16px; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); margin-bottom: 16px; overflow: hidden; }
+.diff-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--borderFaint,#F1F5F9); }
+.diff-title { font-size: 14px; font-weight: 600; color: var(--textPrimary,#1E293B); }
+.diff-stats { display: flex; gap: 12px; font-size: 12px; }
+.stat-item { display: flex; align-items: center; gap: 4px; }
+.stat-dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot-added { background: var(--accentGreen,#10B981); }
+.dot-removed { background: var(--accentRed,#EF4444); }
+.dot-changed { background: var(--accentYellow,#F59E0B); }
+.stat-text { color: var(--textSecondary,#64748B); font-weight: 500; }
+
+.diff-line { display: flex; padding: 5px 10px; border-radius: 4px; margin-bottom: 2px; font-family: 'Courier New', Consolas, monospace; font-size: 12px; line-height: 1.5; word-break: break-all; white-space: pre-wrap; }
+.line-num { width: 28px; color: var(--textMuted,#CBD5E1); font-size: 11px; flex-shrink: 0; text-align: right; user-select: none; }
+.line-content { flex: 1; }
+.line-added { background: rgba(16,185,129,0.12); color: #065F46; }
+.line-removed { background: rgba(239,68,68,0.12); color: #991B1B; }
+.line-same { color: var(--textSecondary,#64748B); opacity: 0.7; }
+.added-prefix { color: var(--accentGreen,#10B981); margin-right: 6px; font-weight: bold; }
+.removed-prefix { color: var(--accentRed,#EF4444); margin-right: 6px; font-weight: bold; }
+
+.empty-result { text-align: center; padding: 30px; }
+.empty-icon { font-size: 48px; display: block; margin-bottom: 10px; opacity: 0.5; }
+.empty-text { font-size: 14px; color: var(--textTertiary,#94A3B8); }
+
+.tips-card { background: var(--bgTipBlue,#EFF6FF); border-radius: 12px; padding: 14px 16px; border-left: 4px solid var(--accentBlue,#3B82F6); margin-top: 16px; }
+.tips-title { font-size: 13px; font-weight: 600; color: var(--accentBlue,#3B82F6); display: block; margin-bottom: 6px; }
+.tips-text { font-size: 12px; color: var(--accentBlue,#3B82F6); line-height: 1.5; }

@@ -1,0 +1,70 @@
+<navigation-bar title="文本对比" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper"><text class="tool-icon">🔄</text></view>
+      <text class="tool-title">文本对比</text>
+      <text class="tool-desc">两段文本差异对比，高亮显示不同处</text>
+    </view>
+
+    <view class="text-areas">
+      <view class="text-area-wrapper">
+        <view class="area-label">
+          <text>原始文本</text>
+          <text class="clear-btn" bindtap="clearText" data-num="1">清空</text>
+        </view>
+        <textarea class="text-area" value="{{text1}}" bindinput="onInput1" placeholder="输入或粘贴第一段文本..." maxlength="-1"/>
+      </view>
+      <view class="text-area-wrapper">
+        <view class="area-label">
+          <text>对比文本</text>
+          <text class="clear-btn" bindtap="clearText" data-num="2">清空</text>
+        </view>
+        <textarea class="text-area" value="{{text2}}" bindinput="onInput2" placeholder="输入或粘贴第二段文本..." maxlength="-1"/>
+      </view>
+    </view>
+
+    <view class="action-row">
+      <button class="compare-btn" bindtap="compare" hover-class="btn-hover">
+        <text class="btn-icon">🔍</text>开始对比
+      </button>
+      <button class="swap-btn" bindtap="swapText" hover-class="btn-hover">
+        ⇄ 交换
+      </button>
+    </view>
+
+    <view class="result-card" wx:if="{{diffResult.length > 0}}">
+      <view class="diff-header">
+        <text class="diff-title">对比结果</text>
+        <view class="diff-stats">
+          <view class="stat-item"><view class="stat-dot dot-added"></view><text class="stat-text">+{{stats.added}}</text></view>
+          <view class="stat-item"><view class="stat-dot dot-removed"></view><text class="stat-text">-{{stats.removed}}</text></view>
+        </view>
+      </view>
+
+      <scroll-view scroll-y style="max-height:400px;">
+        <block wx:for="{{diffResult}}" wx:key="index">
+          <view class="diff-line {{item.type === 'added' ? 'line-added' : item.type === 'removed' ? 'line-removed' : 'line-same'}}">
+            <text class="line-num">{{item.num || ''}}</text>
+            <view class="line-content">
+              <text wx:if="{{item.type === 'added'}}" class="added-prefix">+</text>
+              <text wx:if="{{item.type === 'removed'}}" class="removed-prefix">-</text>
+              <text>{{item.content}}</text>
+            </view>
+          </view>
+        </block>
+      </scroll-view>
+    </view>
+
+    <view class="empty-result" wx:if="{{diffResult.length === 0}}">
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">输入两段文本后点击"开始对比"</text>
+    </view>
+
+    <view class="tips-card">
+      <text class="tips-title">💡 使用说明</text>
+      <text class="tips-text">• 支持逐行对比差异，绿色表示新增行，红色表示删除行\n• 使用 LCS（最长公共子序列）算法进行智能比对\n• 支持长文本，自动滚动查看完整对比结果</text>
+    </view>
+  </view>
+</scroll-view>

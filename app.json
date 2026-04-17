@@ -22,7 +22,11 @@
     "pages/tools/color-converter/color-converter",
     "pages/tools/url-encoder/url-encoder",
     "pages/tools/regex-tester/regex-tester",
-    "pages/tools/image-processor/image-processor"
+    "pages/tools/image-processor/image-processor",
+    "pages/tools/password-generator/password-generator",
+    "pages/tools/bmi-calculator/bmi-calculator",
+    "pages/tools/text-diff/text-diff",
+    "pages/tools/tax-calculator/tax-calculator"
   ],
   "window": {
     "navigationBarTextStyle": "black",
