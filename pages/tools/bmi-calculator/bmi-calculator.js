@@ -17,6 +17,13 @@ Page({
     ]
   },
 
+  onLoad() {
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
+  },
+
   onHeightInput(e) { this.setData({ height: e.detail.value }) },
   onWeightInput(e) { this.setData({ weight: e.detail.value }) },
 

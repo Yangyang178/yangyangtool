@@ -20,6 +20,11 @@ Page({
 
   onLoad() {
     this.generatePassword()
+
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
   },
 
   onLengthChange(e) {

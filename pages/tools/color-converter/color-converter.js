@@ -25,7 +25,7 @@ const colorPalette = [
 Page({
   data: {
     currentColor: '#3B82F6',
-    
+
     hexInput: '3B82F6',
     rValue: '59',
     gValue: '130',
@@ -33,21 +33,149 @@ Page({
     hValue: '217',
     sValue: '91',
     lValue: '60',
-    
+
     hexValue: '#3B82F6',
     rgbValue: 'rgb(59, 130, 246)',
     hslValue: 'hsl(217, 91%, 60%)',
     cmykValue: '76%, 47%, 0%, 4%',
-    
+
     colorName: '蓝色 (Blue)',
     contrastRatio: '12.63:1',
-    
+
     presetColors,
-    colorPalette
+    colorPalette,
+
+    showPicker: false,
+    pickerHue: 217,
+    pickerS: 91,
+    pickerV: 60,
+    pickerHuePos: 60.3,
+    pickerColor: '#3B82F6'
   },
 
   onLoad() {
     this.initColor('#3B82F6')
+  },
+
+  initPicker() {
+    const hsl = this.rgbToHsl(59, 130, 246)
+    this.setData({
+      pickerHue: hsl.h,
+      pickerS: hsl.s,
+      pickerV: hsl.l,
+      pickerHuePos: (hsl.h / 360) * 100
+    })
+  },
+
+  showColorPicker() {
+    wx.vibrateShort({ type: 'light' })
+    const hsl = this.rgbToHsl(
+      parseInt(this.data.rValue) || 0,
+      parseInt(this.data.gValue) || 0,
+      parseInt(this.data.bValue) || 0
+    )
+    this.setData({
+      showPicker: true,
+      pickerHue: hsl.h,
+      pickerS: hsl.s,
+      pickerV: hsl.l,
+      pickerHuePos: (hsl.h / 360) * 100
+    })
+  },
+
+  hideColorPicker() {
+    this.setData({ showPicker: false })
+  },
+
+  updatePickerColor() {
+    const rgb = this.hsvToRgb(
+      this.data.pickerHue,
+      this.data.pickerS,
+      this.data.pickerV
+    )
+    const hex = this.rgbToHex(rgb.r, rgb.g, rgb.b)
+    this.initColor(hex)
+    this.setData({
+      pickerColor: `#${hex}`
+    })
+  },
+
+  pickQuickColor(e) {
+    wx.vibrateShort({ type: 'light' })
+    const hex = e.currentTarget.dataset.hex
+    this.initColor(hex)
+  },
+
+  hsvToRgb(h, s, v) {
+    h /= 360
+    s /= 100
+    v /= 100
+    let r, g, b
+    const i = Math.floor(h * 6)
+    const f = h * 6 - i
+    const p = v * (1 - s)
+    const q = v * (1 - f * s)
+    const t = v * (1 - (1 - f) * s)
+    switch (i % 6) {
+      case 0: r = v; g = t; b = p; break
+      case 1: r = q; g = v; b = p; break
+      case 2: r = p; g = v; b = t; break
+      case 3: r = p; g = q; b = v; break
+      case 4: r = t; g = p; b = v; break
+      case 5: r = v; g = p; b = q; break
+    }
+    return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) }
+  },
+
+  onSvTouchStart(e) {
+    this.handleSvTouch(e)
+  },
+
+  onSvTouchMove(e) {
+    this.handleSvTouch(e)
+  },
+
+  handleSvTouch(e) {
+    const touch = e.touches[0]
+    const query = wx.createSelectorQuery().in(this)
+    query.select('.sv-container').boundingClientRect().exec(res => {
+      if (!res[0]) return
+      const rect = res[0]
+      let s = ((touch.clientX - rect.left) / rect.width) * 100
+      let v = (1 - (touch.clientY - rect.top) / rect.height) * 100
+
+      s = Math.max(0, Math.min(100, s))
+      v = Math.max(0, Math.min(100, v))
+
+      this.setData({ pickerS: s, pickerV: v })
+      this.updatePickerColor()
+    })
+  },
+
+  onHueTouchStart(e) {
+    this.handleHueTouch(e)
+  },
+
+  onHueTouchMove(e) {
+    this.handleHueTouch(e)
+  },
+
+  handleHueTouch(e) {
+    const touch = e.touches[0]
+    const query = wx.createSelectorQuery().in(this)
+    query.select('.hue-container').boundingClientRect().exec(res => {
+      if (!res[0]) return
+      const rect = res[0]
+      let hue = ((touch.clientX - rect.left) / rect.width) * 360
+
+      hue = Math.max(0, Math.min(360, hue))
+
+      this.setData({
+        pickerHue: hue,
+        pickerHuePos: (hue / 360) * 100
+      })
+      this.updatePickerColor()
+    })
   },
 
   initColor(hex) {

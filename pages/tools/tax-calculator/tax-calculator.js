@@ -12,6 +12,13 @@ Page({
     breakdown: []
   },
 
+  onLoad() {
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
+  },
+
   onSalaryInput(e) { this.setData({ salary: e.detail.value }) },
   onDeductionChange(e) {
     const key = e.currentTarget.dataset.key

@@ -12,8 +12,9 @@
 
     <!-- 颜色预览区域 -->
     <view class="color-preview-section">
-      <view class="color-preview-large" style="background-color: {{currentColor}};">
+      <view class="color-preview-large" style="background-color: {{currentColor}};" bindtap="showColorPicker">
         <text class="preview-hex">{{hexValue}}</text>
+        <view class="pick-hint">点击取色</view>
       </view>
       
       <view class="color-info-row">
@@ -215,6 +216,47 @@
       </view>
       <view class="action-btn invert" bindtap="invertColor">
         <text>🔄 反转颜色</text>
+      </view>
+    </view>
+
+    <!-- 颜色选择器弹窗 -->
+    <view class="color-picker-mask" wx:if="{{showPicker}}" bindtap="hideColorPicker"></view>
+    <view class="color-picker-panel {{showPicker ? 'show' : ''}}">
+      <view class="picker-header">
+        <text class="picker-title">🎨 选择颜色</text>
+        <text class="picker-close" bindtap="hideColorPicker">✕</text>
+      </view>
+
+      <!-- SV色板 - 使用CSS渐变 -->
+      <view class="sv-container">
+        <view class="sv-canvas-css" style="--hue-color: hsl({{pickerHue}}, 100%, 50%);" bindtouchstart="onSvTouchStart" bindtouchmove="onSvTouchMove">
+          <view class="sv-indicator" style="left: {{pickerS}}%; top: {{100 - pickerV}}%; background: {{pickerColor}};"></view>
+        </view>
+      </view>
+
+      <!-- 色相条 - 使用CSS渐变 -->
+      <view class="hue-container">
+        <view class="hue-canvas-css" bindtouchstart="onHueTouchStart" bindtouchmove="onHueTouchMove">
+          <view class="hue-indicator" style="left: {{pickerHuePos}}%;"></view>
+        </view>
+      </view>
+
+      <!-- 当前颜色预览 -->
+      <view class="picker-preview-row">
+        <view class="picker-color-box" style="background: {{currentColor}};"></view>
+        <text class="picker-hex-text">{{hexValue}}</text>
+      </view>
+
+      <!-- 快捷颜色 -->
+      <view class="picker-quick-colors">
+        <view class="quick-pick-item" style="background:#EF4444;" data-hex="#EF4444" bindtap="pickQuickColor"></view>
+        <view class="quick-pick-item" style="background:#F97316;" data-hex="#F97316" bindtap="pickQuickColor"></view>
+        <view class="quick-pick-item" style="background:#F59E0B;" data-hex="#F59E0B" bindtap="pickQuickColor"></view>
+        <view class="quick-pick-item" style="background:#10B981;" data-hex="#10B981" bindtap="pickQuickColor"></view>
+        <view class="quick-pick-item" style="background:#3B82F6;" data-hex="#3B82F6" bindtap="pickQuickColor"></view>
+        <view class="quick-pick-item" style="background:#8B5CF6;" data-hex="#8B5CF6" bindtap="pickQuickColor"></view>
+        <view class="quick-pick-item" style="background:#EC4899;" data-hex="#EC4899" bindtap="pickQuickColor"></view>
+        <view class="quick-pick-item" style="background:#000000;" data-hex="#000000" bindtap="pickQuickColor"></view>
       </view>
     </view>
   </view>

@@ -7,12 +7,22 @@ Page({
     hasDiff: false
   },
 
+  onLoad() {
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
+  },
+
   onInput1(e) { this.setData({ text1: e.detail.value }) },
   onInput2(e) { this.setData({ text2: e.detail.value }) },
 
-  clearText(num) {
-    if (num === 1) this.setData({ text1: '' })
-    else this.setData({ text2: '' })
+  clearText1() {
+    this.setData({ text1: '' })
+  },
+
+  clearText2() {
+    this.setData({ text2: '' })
   },
 
   swapTexts() {

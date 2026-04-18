@@ -3,6 +3,7 @@ page {
   background-color: var(--pageBg,#F8FAFC);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .main-scroll {
@@ -17,6 +18,7 @@ page {
   padding-bottom: 100px;
   min-height: calc(100vh - 100px);
   position: relative;
+  box-sizing: border-box;
 }
 
 .nav-placeholder {
@@ -282,5 +284,6 @@ page {
 }
 
 .bottom-safe-area {
-  height: 40px;
+  height: 80px;
+  flex-shrink: 0;
 }
