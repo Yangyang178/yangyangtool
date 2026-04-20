@@ -1,6 +1,7 @@
 App({
   globalData: {
     userInfo: null,
+    isDarkMode: false,
     tools: [
       { id: 1, name: '汇率换算', category: 'calculator' },
       { id: 2, name: '单位换算', category: 'calculator' },
@@ -37,6 +38,66 @@ App({
     if (!wx.getStorageSync('recentTools')) {
       wx.setStorageSync('recentTools', [])
     }
+
+    this.applyTheme()
+  },
+
+  applyTheme() {
+    const isDark = wx.getStorageSync('darkMode') === true
+    this.globalData.isDarkMode = isDark
+
+    if (isDark) {
+      wx.setBackgroundColor({
+        backgroundColor: '#0F172A',
+        backgroundColorTop: '#0F172A',
+        backgroundColorBottom: '#0F172A'
+      })
+      wx.setNavigationBarColor({
+        frontColor: '#ffffff',
+        backgroundColor: '#0F172A'
+      })
+      wx.setTabBarStyle({
+        color: '#64748B',
+        selectedColor: '#60A5FA',
+        backgroundColor: '#1E293B',
+        borderStyle: 'black'
+      })
+    } else {
+      wx.setBackgroundColor({
+        backgroundColor: '#F8FAFC',
+        backgroundColorTop: '#F8FAFC',
+        backgroundColorBottom: '#F8FAFC'
+      })
+      wx.setNavigationBarColor({
+        frontColor: '#000000',
+        backgroundColor: '#F8FAFC'
+      })
+      wx.setTabBarStyle({
+        color: '#94A3B8',
+        selectedColor: '#3B82F6',
+        backgroundColor: '#FFFFFF',
+        borderStyle: 'white'
+      })
+    }
+
+    const pages = getCurrentPages()
+    pages.forEach(page => {
+      if (page && page.setData) {
+        page.setData({ isDarkMode: isDark })
+      }
+    })
+  },
+
+  lightTheme: {
+    pageBg: '#F8FAFC', cardBg: '#FFFFFF', surfaceBg: '#F1F5F9',
+    textPrimary: '#1E293B', textSecondary: '#64748B', textTertiary: '#94A3B8',
+    borderLight: '#E2E8F0', borderFaint: '#F1F5F9'
+  },
+
+  darkTheme: {
+    pageBg: '#0F172A', cardBg: '#1E293B', surfaceBg: '#1E293B',
+    textPrimary: '#F1F5F9', textSecondary: '#94A3B8', textTertiary: '#64748B',
+    borderLight: '#334155', borderFaint: '#1E293B'
   },
 
   onShareAppMessage() {

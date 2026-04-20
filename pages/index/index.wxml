@@ -1,6 +1,6 @@
-<navigation-bar title="" back="{{false}}" color="black" background="transparent"></navigation-bar>
+<navigation-bar title="" back="{{false}}" color="{{isDarkMode ? 'white' : 'black'}}" background="{{isDarkMode ? '#0F172A' : 'transparent'}}"></navigation-bar>
 
-<scroll-view class="main-scroll" scroll-y enhanced show-scrollbar="{{false}}" bounces="{{false}}" refresher-enabled="{{true}}" refresher-triggered="{{isRefreshing}}" bindrefresherrefresh="onPullDownRefresh" scroll-top="{{scrollTop}}" bindscrolltoupper="onScrollToUpper" bindscroll="onPageScroll" lower-threshold="0">
+<scroll-view class="main-scroll {{isDarkMode ? 'dark-mode' : ''}}" scroll-y enhanced show-scrollbar="{{false}}" bounces="{{false}}" refresher-enabled="{{true}}" refresher-triggered="{{isRefreshing}}" bindrefresherrefresh="onPullDownRefresh" scroll-top="{{scrollTop}}" bindscrolltoupper="onScrollToUpper" bindscroll="onPageScroll" lower-threshold="0">
   <view class="page-container">
     <!-- 顶部安全区域占位 -->
     <view class="nav-placeholder"></view>

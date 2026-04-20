@@ -1,5 +1,32 @@
 const app = getApp()
 
+const urlMap = {
+  1: '/pages/tools/exchange-rate/exchange-rate',
+  2: '/pages/tools/unit-converter/unit-converter',
+  3: '/pages/tools/mortgage-calculator/mortgage-calculator',
+  4: '/pages/tools/tip-calculator/tip-calculator',
+  5: '/pages/tools/word-count/word-count',
+  6: '/pages/tools/case-converter/case-converter',
+  7: '/pages/tools/base64-tool/base64-tool',
+  9: '/pages/tools/pomodoro/pomodoro',
+  10: '/pages/tools/water-reminder/water-reminder',
+  11: '/pages/tools/random-decision/random-decision',
+  12: '/pages/tools/garbage-sorting/garbage-sorting',
+  13: '/pages/tools/date-calculator/date-calculator',
+  14: '/pages/tools/countdown/countdown',
+  15: '/pages/tools/world-clock/world-clock',
+  16: '/pages/tools/age-calculator/age-calculator',
+  17: '/pages/tools/json-formatter/json-formatter',
+  18: '/pages/tools/color-converter/color-converter',
+  19: '/pages/tools/url-encoder/url-encoder',
+  20: '/pages/tools/regex-tester/regex-tester',
+  21: '/pages/tools/image-processor/image-processor',
+  22: '/pages/tools/password-generator/password-generator',
+  23: '/pages/tools/bmi-calculator/bmi-calculator',
+  24: '/pages/tools/text-diff/text-diff',
+  25: '/pages/tools/tax-calculator/tax-calculator'
+}
+
 Page({
   data: {
     greetingText: '',
@@ -7,6 +34,7 @@ Page({
     currentCategory: 'all',
     isRefreshing: false,
     scrollTop: 0,
+    isDarkMode: false,
     categories: [
       { id: 'all', name: '全部' },
       { id: 'calculator', name: '计算转换' },
@@ -271,6 +299,9 @@ Page({
 
     this.setData({ tools, filteredTools: tools })
 
+    wx.setStorageSync('allTools', this.data.tools)
+    wx.setStorageSync('urlMap', urlMap)
+
     wx.showShareMenu({
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline']
@@ -279,6 +310,15 @@ Page({
 
   onShow() {
     this.updateGreeting()
+    this.applyCurrentTheme()
+  },
+
+  applyCurrentTheme() {
+    const app = getApp()
+    if (app) {
+      const isDark = app.globalData.isDarkMode || wx.getStorageSync('darkMode') === true
+      this.setData({ isDarkMode: isDark })
+    }
   },
 
   updateGreeting() {
@@ -347,34 +387,7 @@ Page({
     wx.vibrateShort({ type: 'light' })
     
     this.saveRecentTool(tool)
-    
-    const urlMap = {
-      1: '/pages/tools/exchange-rate/exchange-rate',
-      2: '/pages/tools/unit-converter/unit-converter',
-      3: '/pages/tools/mortgage-calculator/mortgage-calculator',
-      4: '/pages/tools/tip-calculator/tip-calculator',
-      5: '/pages/tools/word-count/word-count',
-      6: '/pages/tools/case-converter/case-converter',
-      7: '/pages/tools/base64-tool/base64-tool',
-      9: '/pages/tools/pomodoro/pomodoro',
-      10: '/pages/tools/water-reminder/water-reminder',
-      11: '/pages/tools/random-decision/random-decision',
-      12: '/pages/tools/garbage-sorting/garbage-sorting',
-      13: '/pages/tools/date-calculator/date-calculator',
-      14: '/pages/tools/countdown/countdown',
-      15: '/pages/tools/world-clock/world-clock',
-      16: '/pages/tools/age-calculator/age-calculator',
-      17: '/pages/tools/json-formatter/json-formatter',
-      18: '/pages/tools/color-converter/color-converter',
-      19: '/pages/tools/url-encoder/url-encoder',
-      20: '/pages/tools/regex-tester/regex-tester',
-      21: '/pages/tools/image-processor/image-processor',
-      22: '/pages/tools/password-generator/password-generator',
-      23: '/pages/tools/bmi-calculator/bmi-calculator',
-      24: '/pages/tools/text-diff/text-diff',
-      25: '/pages/tools/tax-calculator/tax-calculator'
-    }
-    
+
     const url = urlMap[tool.id]
     
     if (url) {
@@ -422,10 +435,14 @@ Page({
       id: tool.id,
       name: tool.name,
       icon: tool.icon,
+      iconBg: tool.iconBg,
       usedAt: new Date().getTime()
     })
     recentTools = recentTools.slice(0, 20)
     wx.setStorageSync('recentTools', recentTools)
+
+    const currentCount = wx.getStorageSync('totalUsageCount') || 0
+    wx.setStorageSync('totalUsageCount', currentCount + 1)
   },
 
   showMoreMenu() {

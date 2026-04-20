@@ -8,3 +8,291 @@ page {
   margin: 0 auto;
   padding: 0 20px;
 }
+
+/* ==================== 暗黑模式全局样式 ==================== */
+.dark-mode {
+  background-color: #0F172A !important;
+}
+
+.dark-mode .page-container,
+.dark-mode .container,
+.dark-mode .tool-page {
+  background-color: #0F172A !important;
+}
+
+/* 卡片/区块 - 统一背景色消除方框感 */
+.dark-mode .section-block,
+.dark-mode .card,
+.dark-mode .tool-item,
+.dark-mode .input-card,
+.dark-mode .result-card,
+.dark-mode .tips-card,
+.dark-mode .advice-card,
+.dark-mode .color-preview-section,
+.dark-mode .text-areas,
+.dark-mode .action-buttons,
+.dark-mode .action-row,
+.dark-mode .history-section,
+.dark-mode .settings-list,
+.dark-mode .banner-ad,
+.dark-mode .user-section,
+.dark-mode .empty-state,
+.dark-mode .header-section,
+.dark-mode .search-bar,
+.dark-mode .category-tabs,
+.dark-mode .tools-grid,
+.dark-mode .bottom-info,
+.dark-mode .nav-placeholder {
+  background-color: #0F172A !important;
+  box-shadow: none !important;
+}
+
+/* 白色背景的输入框容器 */
+.dark-mode .input-box,
+.dark-mode .password-display,
+.dark-mode .deduction-grid,
+.dark-mode .deduction-item,
+.dark-mode .deduction-value-box,
+.dark-mode .text-area-wrapper,
+.dark-mode .bmi-value-display,
+.dark-mode .result-detail-item,
+.dark-mode .diff-header,
+.dark-mode .diff-line {
+  background-color: #0F172A !important;
+  border-color: rgba(148,163,184,0.15) !important;
+  border-width: 1px !important;
+}
+
+.dark-mode .search-input-wrapper {
+  background-color: #0F172A !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 彻底消除input默认边框/底线 */
+.dark-mode input,
+.dark-mode textarea {
+  background-color: transparent !important;
+  color: #F1F5F9 !important;
+  border: none !important;
+  border-bottom: none !important;
+  outline: none !important;
+  -webkit-appearance: none !important;
+  caret-color: #60A5FA !important;
+}
+
+/* 搜索input专项 - 消除顽固底线 */
+.dark-mode .search-input {
+  background-color: transparent !important;
+  color: #F1F5F9 !important;
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: inherit !important;
+}
+
+/* 搜索框容器内部 - 用伪元素遮盖顽固底线 */
+.dark-mode .search-input-wrapper::after {
+  display: none !important;
+}
+.dark-mode .search-input-wrapper .search-input::after {
+  display: none !important;
+  border: none !important;
+}
+
+/* 主文字 */
+.dark-mode .page-title,
+.dark-mode .tool-title,
+.dark-mode .app-title,
+.dark-mode .section-title,
+.dark-mode .item-name,
+.dark-mode .recent-name,
+.dark-mode .tool-name,
+.dark-mode .card-title,
+.dark-mode .result-main-label,
+.dark-mode .result-main-value,
+.dark-mode .detail-label,
+.dark-mode .detail-value,
+.dark-mode .input-field,
+.dark-mode .password-display,
+.dark-mode .text-area,
+.dark-mode .greeting-text,
+.dark-mode .user-nickname,
+.dark-mode .setting-name,
+.dark-mode .fav-names,
+.dark-mode .picker-hex-text,
+.dark_mode .bmi-value,
+.dark-mode .status-text,
+.dark-mode .advice-text,
+.dark-mode .tips-title,
+.dark-mode .tips-text,
+.dark-mode .tip-text,
+.dark-mode .banner-text,
+.dark-mode .empty-text,
+.dark-mode .clear-btn text,
+.dark-mode .see-all-btn text,
+.dark-mode .category-tab.active,
+.dark-mode .tool-desc,
+.dark-mode .item-desc,
+.dark-mode .recent-time,
+.dark-mode .setting-value,
+.dark-mode .section-subtitle,
+.dark-mode .page-subtitle,
+.dark-mode .user-stats,
+.dark-mode .input-label,
+.dark-mode .area-label,
+.dark-mode .deduction-name,
+.dark-mode .deduction-unit,
+.dark-mode .text-placeholder,
+.darkmode .diff-added,
+.darkmode .diff-removed,
+.darkmode .line-same,
+.dark-mode .card-desc {
+  color: #F1F5F9 !important;
+}
+
+/* 次要文字 */
+.dark-mode .tool-desc,
+.dark-mode .item-desc,
+.dark-mode .recent-time,
+.dark-mode .setting-value,
+.dark-mode .section-subtitle,
+.dark-mode .page-subtitle,
+.dark-mode .user-stats,
+.dark-mode .input-label,
+.dark-mode .area-label,
+.dark-mode .deduction-name,
+.dark-mode .deduction-unit,
+.dark-mode .text-placeholder,
+.dark-mode .empty-subtext,
+.dark-mode .tip-icon,
+.dark-mode .diff-added,
+.dark-mode .diff-removed,
+.dark-mode .line-same {
+  color: #94A3B8 !important;
+}
+
+/* 边框 */
+.dark-mode .section-block,
+.dark-mode .card,
+.dark-mode .tool-item,
+.dark-mode .input-card,
+.dark-mode .search-bar,
+.dark-mode .input-box,
+.dark-mode .text-area,
+.dark-mode .password-display,
+.dark-mode .deduction-grid .deduction-item,
+.dark-mode .deduction-value-box,
+.dark-mode .result-card,
+.dark-mode .tips-card,
+.dark-mode .advice-card,
+.dark-mode .color-preview-section,
+.dark-mode .banner-ad,
+.dark-mode .category-tabs,
+.dark-mode .tools-grid .tool-card,
+.dark-mode .see-all-btn,
+.dark-mode .settings-list .setting-item {
+  border-color: rgba(148,163,184,0.15) !important;
+}
+
+/* 分割线 */
+.dark-mode .section-header,
+.dark-mode .diff-header,
+.dark-mode .result-header {
+  border-bottom-color: rgba(148,163,184,0.15) !important;
+}
+
+/* 按钮特殊处理 */
+.dark-mode .compare-btn,
+.dark-mode .calc-btn,
+.dark-mode .swap-btn,
+.dark-mode .empty-btn,
+.dark-mode .action-btn,
+.dark-mode .category-tab.active {
+  opacity: 0.95;
+}
+
+/* 搜索框 */
+.dark-mode .search-input {
+  background-color: #1E293B !important;
+  color: #F1F5F9 !important;
+}
+
+/* 工具卡片 */
+.dark-mode .tool-card {
+  background-color: #1E293B !important;
+  border: 1px solid #334155 !important;
+}
+
+/* 底部安全区 */
+.dark-mode .bottom-safe-area {
+  background-color: #0F172A !important;
+}
+
+/* 导航栏组件 */
+.dark-mode navigation-bar {
+  background-color: #0F172A !important;
+}
+
+/* icon wrapper 背景微调 */
+.dark-mode .icon-wrapper {
+  filter: brightness(0.85);
+}
+
+/* 首页渐变背景 - 暗黑模式去除 */
+.dark-mode .main-scroll {
+  background: #0F172A !important;
+}
+
+/* 工具卡片内部 */
+.dark-mode .tool-card {
+  background-color: #0F172A !important;
+  border: 1px solid rgba(148,163,184,0.15) !important;
+}
+
+.dark-mode .tool-card .card-title,
+.dark-mode .tool-card .card-desc {
+  color: #F1F5F9 !important;
+}
+
+.dark-mode .tool-card .card-desc {
+  color: #94A3B8 !important;
+}
+
+/* 分类标签 */
+.dark-mode .category-tab {
+  color: #94A3B8 !important;
+  background-color: transparent !important;
+}
+
+.dark-mode .category-tab.active {
+  color: #60A5FA !important;
+  background-color: rgba(96,165,250,0.15) !important;
+}
+
+/* 收藏星标 */
+.dark-mode .card-favorite text {
+  color: #64748B !important;
+}
+.dark-mode .tool-card.favorite .card-favorite text {
+  color: #FBBF24 !important;
+}
+
+/* 收藏夹提示条 */
+.dark-mode .favorite-tip {
+  background: rgba(66,32,6,0.6) !important;
+  border-left-color: #D97706 !important;
+}
+.dark-mode .tip-icon { font-size: 16px; }
+.dark-mode .tip-text {
+  color: #FCD34D !important;
+}
+
+/* 底部安全区 */
+.dark-mode .bottom-safe-area {
+  background-color: #0F172A !important;
+}

@@ -1,49 +1,221 @@
-<navigation-bar title="最近使用" back="{{false}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="我的" back="{{false}}" color="{{isDarkMode ? 'white' : 'black'}}" background="{{isDarkMode ? '#0F172A' : '#F8FAFC'}}"></navigation-bar>
 
-<scroll-view class="main-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+<scroll-view class="main-scroll {{isDarkMode ? 'dark-mode' : ''}}" scroll-y enhanced show-scrollbar="{{false}}" bounces="{{false}}">
   <view class="page-container">
-    <view class="header-section">
-      <text class="page-title">最近使用</text>
-      <view class="clear-btn" wx:if="{{recentTools.length > 0}}" bindtap="clearRecent">
-        <text>清空记录</text>
+
+    <!-- 用户信息区 -->
+    <view class="user-section" bindtap="openEditProfile">
+      <view class="user-avatar" style="{{userInfo.avatarBg ? 'background:' + userInfo.avatarBg : ''}}">
+        <image wx:if="{{userInfo.avatarUrl}}" class="avatar-img" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+        <text wx:else class="avatar-icon">👤</text>
+      </view>
+      <view class="user-info">
+        <view class="user-name-row">
+          <text class="user-nickname">{{userInfo.nickname}}</text>
+          <text class="edit-icon">✏️</text>
+        </view>
+        <text class="user-stats">累计使用 {{totalUsage}} 次</text>
       </view>
     </view>
 
-    <!-- 最近使用列表 -->
-    <view class="tools-list" wx:if="{{recentTools.length > 0}}">
-      <view 
-        wx:for="{{recentTools}}" 
-        wx:key="id"
-        class="tool-item"
-        data-tool="{{item}}"
-        bindtap="onToolClick"
-        hover-class="tool-item-hover"
-        hover-stay-time="100"
-      >
-        <view class="item-icon-wrapper">
-          <text class="item-icon">{{item.icon}}</text>
+    <!-- 编辑用户信息弹窗 -->
+    <view class="profile-mask" wx:if="{{showEditProfile}}" bindtap="closeEditProfile"></view>
+    <view class="profile-panel {{showEditProfile ? 'show' : ''}}">
+      <view class="profile-header">
+        <text class="profile-title">✏️ 编辑资料</text>
+        <text class="profile-close" bindtap="closeEditProfile">✕</text>
+      </view>
+
+      <!-- 头像选择 -->
+      <view class="profile-avatar-area" bindtap="chooseAvatar">
+        <view class="profile-avatar-preview" style="{{userInfo.avatarBg ? 'background:' + userInfo.avatarBg : ''}}">
+          <image wx:if="{{tempAvatarUrl}}" class="avatar-img-large" src="{{tempAvatarUrl}}" mode="aspectFill"></image>
+          <text wx:elif="{{userInfo.avatarUrl}}" class="avatar-img-large-wrap"><image class="avatar-img-large" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image></text>
+          <text wx:else class="avatar-placeholder-large">📷</text>
         </view>
-        
-        <view class="item-content">
-          <text class="item-name">{{item.name}}</text>
-          <text class="item-time">{{item.timeText}}</text>
+        <text class="avatar-hint">点击更换头像</text>
+      </view>
+
+      <!-- 昵称输入 -->
+      <view class="profile-input-group">
+        <text class="profile-input-label">昵称</text>
+        <input class="profile-input" value="{{editNickname}}" placeholder="请输入昵称" maxlength="12" bindinput="onNicknameInput"/>
+      </view>
+
+      <!-- 头像背景色选择 -->
+      <view class="profile-color-section">
+        <text class="profile-input-label">头像背景色</text>
+        <view class="color-options">
+          <view wx:for="{{avatarColors}}" wx:key="color"
+            class="color-option {{selectedAvatarColor === item.color ? 'selected' : ''}}"
+            style="background: {{item.color}}"
+            data-color="{{item.color}}"
+            data-bg="{{item.bg}}"
+            bindtap="selectAvatarColor">
+            <text wx:if="{{selectedAvatarColor === item.color}}" class="check-mark">✓</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 保存按钮 -->
+      <button class="save-profile-btn" bindtap="saveProfile" hover-class="btn-hover">
+        保存
+      </button>
+    </view>
+
+    <!-- 意见反馈弹窗 -->
+    <view class="feedback-mask" wx:if="{{showFeedback}}" bindtap="closeFeedback"></view>
+    <view class="feedback-panel {{showFeedback ? 'show' : ''}}">
+      <view class="feedback-header">
+        <text class="feedback-title">💬 意见反馈</text>
+        <text class="feedback-close" bindtap="closeFeedback">✕</text>
+      </view>
+
+      <view class="feedback-form">
+        <!-- 反馈类型 -->
+        <view class="form-group">
+          <text class="form-label">反馈类型</text>
+          <view class="type-options">
+            <view wx:for="{{feedbackTypes}}" wx:key="value"
+              class="type-option {{feedbackType === item.value ? 'active' : ''}}"
+              data-value="{{item.value}}"
+              bindtap="selectFeedbackType">
+              <text>{{item.label}}</text>
+            </view>
+          </view>
         </view>
 
-        <view class="item-index" wx:if="{{index < 3}}">
-          <text>{{index + 1}}</text>
+        <!-- 联系方式（可选） -->
+        <view class="form-group">
+          <text class="form-label">联系方式（选填）</text>
+          <input class="form-input" value="{{contactInfo}}" placeholder="微信号/邮箱，方便我们回复您"
+            maxlength="50" bindinput="onContactInput"/>
+        </view>
+
+        <!-- 反馈内容 -->
+        <view class="form-group">
+          <text class="form-label">反馈内容 <text class="required">*</text></text>
+          <textarea class="form-textarea" value="{{feedbackContent}}" placeholder="请详细描述您的问题或建议..."
+            maxlength="500" auto-height bindinput="onFeedbackInput"></textarea>
+          <text class="char-count">{{feedbackContent.length}}/500</text>
+        </view>
+      </view>
+
+      <!-- 提交按钮 -->
+      <button class="submit-feedback-btn {{isSubmitting ? 'disabled' : ''}}"
+        bindtap="submitFeedback" disabled="{{isSubmitting}}">
+        {{isSubmitting ? '提交中...' : '提交反馈'}}
+      </button>
+    </view>
+
+    <!-- 最近使用 -->
+    <view class="section-block">
+      <view class="section-header">
+        <view class="section-title-row">
+          <text class="section-icon">📌</text>
+          <text class="section-title">最近使用</text>
+        </view>
+        <text class="section-subtitle">(最近7条)</text>
+      </view>
+
+      <view class="recent-list" wx:if="{{recentTools.length > 0}}">
+        <view
+          wx:for="{{recentTools}}"
+          wx:key="id"
+          wx:if="{{index < 7}}"
+          class="recent-item"
+          data-tool="{{item}}"
+          bindtap="onToolClick"
+          hover-class="recent-item-hover"
+          hover-stay-time="100"
+        >
+          <view class="recent-icon-wrapper" style="background: {{item.iconBg}}">
+            <text class="recent-icon">{{item.icon}}</text>
+          </view>
+          <view class="recent-content">
+            <text class="recent-name">{{item.name}}</text>
+            <text class="recent-time">{{item.timeText}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="empty-mini" wx:if="{{recentTools.length === 0}}">
+        <text>暂无使用记录，去首页试试吧~</text>
+      </view>
+
+      <view class="see-all-btn" bindtap="goToRecentFull" wx:if="{{recentTools.length > 0}}">
+        <text>查看全部最近使用 ></text>
+      </view>
+    </view>
+
+    <!-- 我的收藏 -->
+    <view class="section-block">
+      <view class="section-header">
+        <view class="section-title-row">
+          <text class="section-icon">⭐</text>
+          <text class="section-title">我的收藏</text>
+        </view>
+        <text class="section-subtitle">({{favoriteTools.length}}个)</text>
+      </view>
+
+      <view class="fav-preview" wx:if="{{favoriteTools.length > 0}}">
+        <text class="fav-names">{{favoritePreviewNames}}</text>
+      </view>
+      <view class="empty-mini" wx:else>
+        <text>还没有收藏工具哦</text>
+      </view>
+
+      <view class="see-all-btn" bindtap="goToFavorites">
+        <text>查看全部收藏 ></text>
+      </view>
+    </view>
+
+    <!-- 设置 -->
+    <view class="section-block">
+      <view class="section-header">
+        <view class="section-title-row">
+          <text class="section-icon">⚙️</text>
+          <text class="section-title">设置</text>
+        </view>
+      </view>
+
+      <view class="settings-list">
+        <view class="setting-item" bindtap="toggleDarkMode" hover-class="setting-hover">
+          <view class="setting-left">
+            <text class="setting-icon">🌙</text>
+            <text class="setting-name">夜间模式</text>
+          </view>
+          <view class="setting-right">
+            <text class="setting-value">{{isDarkMode ? '已开启' : '未开启'}}</text>
+            <text class="setting-arrow">›</text>
+          </view>
+        </view>
+
+        <view class="setting-item" bindtap="clearCache" hover-class="setting-hover">
+          <view class="setting-left">
+            <text class="setting-icon">🗑️</text>
+            <text class="setting-name">清理缓存</text>
+          </view>
+          <view class="setting-right">
+            <text class="setting-value">{{cacheSize}}</text>
+            <text class="setting-arrow">›</text>
+          </view>
+        </view>
+
+        <view class="setting-item" bindtap="onFeedback" hover-class="setting-hover">
+          <view class="setting-left">
+            <text class="setting-icon">💬</text>
+            <text class="setting-name">意见反馈</text>
+          </view>
+          <view class="setting-right">
+            <text class="setting-arrow">›</text>
+          </view>
         </view>
       </view>
     </view>
 
-    <!-- 空状态 -->
-    <view class="empty-state" wx:if="{{recentTools.length === 0}}">
-      <text class="empty-icon">🕐</text>
-      <text class="empty-text">暂无使用记录</text>
-      <text class="empty-subtext">使用过的工具会显示在这里</text>
-      <view class="empty-btn" bindtap="goToHome">
-        <text>去使用工具</text>
-      </view>
-    </view>
+    <!-- Banner广告位 -->
+    <view class="banner-ad"></view>
 
     <view class="bottom-safe-area"></view>
   </view>

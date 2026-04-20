@@ -3,6 +3,7 @@ page {
   background-color: var(--pageBg,#F8FAFC);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .main-scroll {
@@ -144,4 +145,26 @@ page {
 
 .bottom-safe-area {
   height: 40px;
+}
+
+.favorite-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 20px;
+  margin-top: 24px;
+  background: linear-gradient(135deg, var(--bgTipYellowDeep,#FEF3C7) 0%, var(--bgTipYellow,#FEF9C3) 100%);
+  border-radius: 12px;
+  border-left: 4px solid var(--accentYellow,#F59E0B);
+}
+
+.tip-icon {
+  font-size: 16px;
+}
+
+.tip-text {
+  font-size: 13px;
+  color: var(--accentYellowDark,#D97706);
+  font-weight: 500;
 }
