@@ -45,12 +45,12 @@ Page({
     ],
     tools: [
       {
-        id: 1,
-        name: '汇率换算',
-        description: '实时汇率，快速换汇',
-        icon: '💱',
-        iconBg: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)',
-        category: 'calculator',
+        id: 21,
+        name: '图片处理',
+        description: '压缩/转换/裁剪/信息查看',
+        icon: '🖼️',
+        iconBg: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)',
+        category: 'dev',
         isHot: true,
         isFavorite: false
       },
@@ -65,6 +65,16 @@ Page({
         isFavorite: false
       },
       {
+        id: 1,
+        name: '汇率换算',
+        description: '实时汇率，快速换汇',
+        icon: '💱',
+        iconBg: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)',
+        category: 'calculator',
+        isHot: true,
+        isFavorite: false
+      },
+      {
         id: 3,
         name: '房贷计算器',
         description: '月供、利息一目了然',
@@ -75,16 +85,6 @@ Page({
         isFavorite: false
       },
       {
-        id: 4,
-        name: '小费计算器',
-        description: '快速计算小费金额',
-        icon: '💰',
-        iconBg: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
-        category: 'calculator',
-        isHot: false,
-        isFavorite: false
-      },
-      {
         id: 5,
         name: '字数统计',
         description: '中英文字符精准统计',
@@ -92,6 +92,36 @@ Page({
         iconBg: 'linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%)',
         category: 'text',
         isHot: true,
+        isFavorite: false
+      },
+      {
+        id: 13,
+        name: '日期计算器',
+        description: '间隔天数精确计算',
+        icon: '📅',
+        iconBg: 'linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)',
+        category: 'datetime',
+        isHot: true,
+        isFavorite: false
+      },
+      {
+        id: 11,
+        name: '随机决定',
+        description: '抽签做决定不再纠结',
+        icon: '🎲',
+        iconBg: 'linear-gradient(135deg, #FECDD3 0%, #FDA4AF 100%)',
+        category: 'life',
+        isHot: false,
+        isFavorite: false
+      },
+      {
+        id: 4,
+        name: '小费计算器',
+        description: '快速计算小费金额',
+        icon: '💰',
+        iconBg: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
+        category: 'calculator',
+        isHot: false,
         isFavorite: false
       },
       {
@@ -135,16 +165,6 @@ Page({
         isFavorite: false
       },
       {
-        id: 11,
-        name: '随机决定',
-        description: '抽签做决定不再纠结',
-        icon: '🎲',
-        iconBg: 'linear-gradient(135deg, #FECDD3 0%, #FDA4AF 100%)',
-        category: 'life',
-        isHot: false,
-        isFavorite: false
-      },
-      {
         id: 12,
         name: '垃圾分类查询',
         description: '智能识别垃圾类型',
@@ -152,16 +172,6 @@ Page({
         iconBg: 'linear-gradient(135deg, #BBF7D0 0%, #86EFAC 100%)',
         category: 'life',
         isHot: false,
-        isFavorite: false
-      },
-      {
-        id: 13,
-        name: '日期计算器',
-        description: '间隔天数精确计算',
-        icon: '📅',
-        iconBg: 'linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)',
-        category: 'datetime',
-        isHot: true,
         isFavorite: false
       },
       {
@@ -232,16 +242,6 @@ Page({
         iconBg: 'linear-gradient(135deg, #C4B5FD 0%, #A78BFA 100%)',
         category: 'dev',
         isHot: false,
-        isFavorite: false
-      },
-      {
-        id: 21,
-        name: '图片处理',
-        description: '压缩/转换/裁剪/信息查看',
-        icon: '🖼️',
-        iconBg: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)',
-        category: 'dev',
-        isHot: true,
         isFavorite: false
       },
       {
