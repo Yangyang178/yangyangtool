@@ -81,6 +81,221 @@ page {
   color: var(--textSecondary,#64748B);
 }
 
+/* ==================== 趣味化统计卡片 ==================== */
+.fun-stats-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+}
+
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.stats-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+}
+
+.stats-subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.stats-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 16px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-item.highlight {
+  transform: scale(1.05);
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stat-icon-large {
+  font-size: 32px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.progress-section {
+  margin-top: 12px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.progress-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px rgba(245, 87, 108, 0.5);
+}
+
+/* ==================== 使用足迹图表 ==================== */
+.footprint-section {
+  padding: 20px 16px !important;
+}
+
+.chart-container {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+  padding: 12px;
+  background: var(--surfaceBg,#F8FAFC);
+  border-radius: 12px;
+}
+
+.chart-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4px 0;
+  width: 24px;
+}
+
+.y-label {
+  font-size: 10px;
+  color: var(--textTertiary,#94A3B8);
+  text-align: right;
+}
+
+.chart-bars {
+  flex: 1;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 140px;
+  gap: 6px;
+}
+
+.bar-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  max-width: 40px;
+}
+
+.bar-container {
+  width: 100%;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+}
+
+.bar {
+  width: 70%;
+  min-height: 4px;
+  background: linear-gradient(180deg, #60A5FA 0%, #3B82F6 100%);
+  border-radius: 4px 4px 0 0;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.bar.active {
+  background: linear-gradient(180deg, #f5576c 0%, #f093fb 100%);
+  box-shadow: 0 0 12px rgba(245, 87, 108, 0.4);
+}
+
+.bar-value {
+  position: absolute;
+  top: -20px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--textPrimary,#1E293B);
+  white-space: nowrap;
+}
+
+.x-label {
+  font-size: 11px;
+  color: var(--textTertiary,#94A3B8);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.x-label.active {
+  color: #f5576c;
+  font-weight: 700;
+}
+
+.footprint-summary {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 14px;
+  border-top: 1px solid var(--borderFaint,#F1F5F9);
+  margin-top: 8px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.summary-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accentBlue,#3B82F6);
+}
+
+.summary-label {
+  font-size: 11px;
+  color: var(--textTertiary,#94A3B8);
+}
+
 /* 区块通用 */
 .section-block {
   background: var(--cardBg,#FFFFFF);
@@ -284,6 +499,133 @@ page {
 
 .bottom-safe-area {
   height: 40px;
+}
+
+/* ==================== 夜间模式优化 ==================== */
+.dark-mode {
+  background-color: #0F172A !important;
+}
+
+.dark-mode .page-container {
+  background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+}
+
+.dark-mode .user-avatar {
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+}
+
+.dark-mode .user-section {
+  border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+.dark-mode .section-block {
+  background: rgba(30, 41, 59, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(51, 65, 85, 0.4);
+}
+
+.dark-mode .recent-icon-wrapper {
+  filter: brightness(1.15) saturate(0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .recent-item {
+  background: transparent;
+}
+
+.dark-mode .recent-item-hover {
+  background: rgba(51, 65, 85, 0.6) !important;
+}
+
+.dark-mode .setting-item {
+  border-bottom-color: rgba(51, 65, 85, 0.5);
+}
+
+.dark-mode .setting-hover {
+  background: rgba(51, 65, 85, 0.6) !important;
+}
+
+.dark-mode .banner-ad {
+  background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+  border-color: rgba(51, 65, 85, 0.6);
+}
+
+.dark-mode .see-all-btn {
+  border-top-color: rgba(51, 65, 85, 0.5);
+}
+
+/* 弹窗夜间模式 */
+.dark-mode .profile-panel,
+.dark-mode .feedback-panel,
+.dark-mode .cache-panel {
+  background: #1E293B;
+}
+
+.dark-mode .profile-mask,
+.dark-mode .feedback-mask,
+.dark-mode .cache-mask {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.dark-mode .profile-input,
+.dark-mode .form-input,
+.dark-mode .form-textarea {
+  background: #0F172A;
+  color: #F1F5F9;
+  border: 1px solid rgba(51, 65, 85, 0.6);
+}
+
+.dark-mode .type-option {
+  background: #0F172A;
+  border-color: rgba(51, 65, 85, 0.6);
+  color: #94A3B8;
+}
+
+.dark-mode .type-option.active {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: #3B82F6;
+  color: #60A5FA;
+}
+
+.dark-mode .cache-overview {
+  background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+}
+
+.dark-mode .cache-item {
+  background: #0F172A;
+  border-color: rgba(51, 65, 85, 0.6);
+}
+
+.dark-mode .item-icon {
+  background: #1E293B;
+}
+
+.dark-mode .item-action {
+  background: rgba(239, 68, 68, 0.15);
+  color: #FCA5A5;
+}
+
+.dark-mode .color-option.selected {
+  border-color: #60A5FA;
+  box-shadow: 0 0 8px rgba(96, 165, 250, 0.4);
+}
+
+/* 趣味化统计卡片 - 夜间模式 */
+.dark-mode .fun-stats-card {
+  background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
+  box-shadow: 0 8px 24px rgba(76, 81, 191, 0.4);
+}
+
+.dark-mode .bar-value {
+  color: #F1F5F9;
+}
+
+.dark-mode .chart-container {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.dark-mode .summary-value {
+  color: #60A5FA;
 }
 
 /* ==================== 编辑资料弹窗 ==================== */

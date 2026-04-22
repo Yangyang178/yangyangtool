@@ -4,10 +4,29 @@ Page({
   data: {
     userInfo: { nickname: '微信用户', avatarUrl: '', avatarBg: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)' },
     totalUsage: 0,
+    
+    funStats: {
+      savedTime: '0分钟',
+      operationCount: 0,
+      efficiencyLevel: '新手',
+      levelIcon: '🌱',
+      progressPercent: 0
+    },
+    
+    weeklyData: {
+      labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+      values: [0, 0, 0, 0, 0, 0, 0],
+      maxValue: 10,
+      totalWeekUsage: 0,
+      mostUsedDay: '-',
+      averageDaily: 0
+    },
+    
     recentTools: [],
     favoriteTools: [],
     favoritePreviewNames: '',
     isDarkMode: false,
+    darkModeSetting: 'system',
     cacheSize: '0 KB',
     showClearCache: false,
     cacheInfo: {
@@ -63,10 +82,16 @@ Page({
     this.loadFavorites()
     this.calculateCacheSize()
     this.checkDarkMode()
+    this.calculateFunStats()
+    this.loadWeeklyData()
     const app = getApp()
     if (app) {
       const isDark = app.globalData.isDarkMode || wx.getStorageSync('darkMode') === true
-      this.setData({ isDarkMode: isDark })
+      const setting = wx.getStorageSync('darkModeSetting') || 'system'
+      this.setData({ 
+        isDarkMode: isDark,
+        darkModeSetting: setting
+      })
     }
   },
 
@@ -98,6 +123,111 @@ Page({
         this.setData({ 'userInfo.nickname': '微信用户' })
       }
     }
+  },
+
+  calculateFunStats() {
+    const totalCount = wx.getStorageSync('totalUsageCount') || 0
+    const savedMinutes = Math.floor(totalCount * 2.5)
+    
+    let savedTimeText = ''
+    if (savedMinutes < 60) {
+      savedTimeText = `${savedMinutes}分钟`
+    } else if (savedMinutes < 1440) {
+      const hours = Math.floor(savedMinutes / 60)
+      const mins = savedMinutes % 60
+      savedTimeText = `${hours}小时${mins > 0 ? mins + '分钟' : ''}`
+    } else {
+      const days = Math.floor(savedMinutes / 1440)
+      const hours = Math.floor((savedMinutes % 1440) / 60)
+      savedTimeText = `${days}天${hours > 0 ? hours + '小时' : ''}`
+    }
+
+    let level, icon, progress
+    if (totalCount < 10) {
+      level = '新手'
+      icon = '🌱'
+      progress = Math.min(totalCount * 10, 100)
+    } else if (totalCount < 50) {
+      level = '入门'
+      icon = '🌿'
+      progress = 10 + Math.min((totalCount - 10) * 2.25, 90)
+    } else if (totalCount < 100) {
+      level = '熟练'
+      icon = '🌳'
+      progress = 100
+    } else if (totalCount < 200) {
+      level = '精通'
+      icon = '🎯'
+      progress = 100
+    } else {
+      level = '大师'
+      icon = '👑'
+      progress = 100
+    }
+
+    this.setData({
+      funStats: {
+        savedTime: savedTimeText,
+        operationCount: totalCount,
+        efficiencyLevel: level,
+        levelIcon: icon,
+        progressPercent: progress
+      }
+    })
+  },
+
+  loadWeeklyData() {
+    const weeklyRecord = wx.getStorageSync('weeklyUsage') || {}
+    const today = new Date()
+    const dayOfWeek = today.getDay()
+    const monday = new Date(today)
+    monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1))
+    
+    const labels = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+    const values = [0, 0, 0, 0, 0, 0, 0]
+    
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(monday)
+      date.setDate(monday.getDate() + i)
+      const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+      values[i] = weeklyRecord[dateKey] || 0
+    }
+
+    const totalWeek = values.reduce((a, b) => a + b, 0)
+    const maxValue = Math.max(...values, 1)
+    const maxIndex = values.indexOf(maxValue)
+    const averageDaily = totalWeek > 0 ? (totalWeek / 7).toFixed(1) : 0
+
+    this.setData({
+      weeklyData: {
+        labels: labels,
+        values: values,
+        maxValue: maxValue,
+        totalWeekUsage: totalWeek,
+        mostUsedDay: values[maxIndex] > 0 ? labels[maxIndex] : '-',
+        averageDaily: parseFloat(averageDaily)
+      }
+    })
+  },
+
+  recordWeeklyUsage() {
+    const today = new Date()
+    const dateKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+    
+    const weeklyRecord = wx.getStorageSync('weeklyUsage') || {}
+    weeklyRecord[dateKey] = (weeklyRecord[dateKey] || 0) + 1
+    
+    const oneWeekAgo = new Date()
+    oneWeekAgo.setDate(today.getDate() - 7)
+    Object.keys(weeklyRecord).forEach(key => {
+      const [year, month, day] = key.split('-').map(Number)
+      const keyDate = new Date(year, month - 1, day)
+      if (keyDate < oneWeekAgo) {
+        delete weeklyRecord[key]
+      }
+    })
+    
+    wx.setStorageSync('weeklyUsage', weeklyRecord)
   },
 
   openEditProfile() {
@@ -299,9 +429,22 @@ Page({
   },
 
   checkDarkMode() {
-    this.setData({
-      isDarkMode: wx.getStorageSync('darkMode') === true
-    })
+    const setting = wx.getStorageSync('darkModeSetting') || 'system'
+    this.setData({ darkModeSetting: setting })
+
+    if (setting === 'system') {
+      wx.getSystemInfo({
+        success: (res) => {
+          const isDark = res.theme === 'dark'
+          this.setData({ isDarkMode: isDark })
+          wx.setStorageSync('darkMode', isDark)
+        }
+      })
+    } else {
+      const isDark = setting === 'dark'
+      this.setData({ isDarkMode: isDark })
+      wx.setStorageSync('darkMode', isDark)
+    }
   },
 
   onToolClick(e) {
@@ -310,6 +453,8 @@ Page({
 
     const currentCount = wx.getStorageSync('totalUsageCount') || 0
     wx.setStorageSync('totalUsageCount', currentCount + 1)
+    
+    this.recordWeeklyUsage()
 
     const urlMap = wx.getStorageSync('urlMap') || {}
     const targetUrl = urlMap[tool.id]
@@ -336,17 +481,43 @@ Page({
 
   toggleDarkMode() {
     wx.vibrateShort({ type: 'light' })
-    const newValue = !this.data.isDarkMode
-    wx.setStorageSync('darkMode', newValue)
-    this.setData({ isDarkMode: newValue })
+    
+    const modes = ['system', 'light', 'dark']
+    const currentIndex = modes.indexOf(this.data.darkModeSetting)
+    const nextIndex = (currentIndex + 1) % modes.length
+    const newSetting = modes[nextIndex]
+    
+    wx.setStorageSync('darkModeSetting', newSetting)
+    this.setData({ darkModeSetting: newSetting })
+
+    if (newSetting === 'system') {
+      wx.getSystemInfo({
+        success: (res) => {
+          const isDark = res.theme === 'dark'
+          this.setData({ isDarkMode: isDark })
+          wx.setStorageSync('darkMode', isDark)
+          this.applyThemeGlobal(isDark)
+        }
+      })
+      wx.showToast({ title: '已切换至跟随系统 🔄', icon: 'success' })
+    } else if (newSetting === 'light') {
+      this.setData({ isDarkMode: false })
+      wx.setStorageSync('darkMode', false)
+      this.applyThemeGlobal(false)
+      wx.showToast({ title: '已切换至白天模式 ☀️', icon: 'success' })
+    } else {
+      this.setData({ isDarkMode: true })
+      wx.setStorageSync('darkMode', true)
+      this.applyThemeGlobal(true)
+      wx.showToast({ title: '已切换至夜间模式 🌙', icon: 'success' })
+    }
+  },
+
+  applyThemeGlobal(isDark) {
     const app = getApp()
     if (app && app.applyTheme) {
       app.applyTheme()
     }
-    wx.showToast({
-      title: newValue ? '已开启夜间模式 🌙' : '已关闭夜间模式 ☀️',
-      icon: 'success'
-    })
   },
 
   clearCache() {

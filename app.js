@@ -40,11 +40,34 @@ App({
     }
 
     this.applyTheme()
+
+    if (wx.onThemeChange) {
+      wx.onThemeChange((result) => {
+        const setting = wx.getStorageSync('darkModeSetting') || 'system'
+        if (setting === 'system') {
+          this.applyTheme()
+        }
+      })
+    }
   },
 
   applyTheme() {
-    const isDark = wx.getStorageSync('darkMode') === true
+    const setting = wx.getStorageSync('darkModeSetting') || 'system'
+    let isDark = false
+
+    if (setting === 'system') {
+      try {
+        const res = wx.getSystemInfoSync()
+        isDark = res.theme === 'dark'
+      } catch (e) {
+        isDark = false
+      }
+    } else {
+      isDark = setting === 'dark'
+    }
+
     this.globalData.isDarkMode = isDark
+    wx.setStorageSync('darkMode', isDark)
 
     if (isDark) {
       wx.setBackgroundColor({

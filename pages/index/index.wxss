@@ -373,3 +373,36 @@ page {
   height: 80px;
   flex-shrink: 0;
 }
+
+/* ==================== 夜间模式搜索面板优化 ==================== */
+.main-scroll.dark-mode .search-panel {
+  background: #1E293B;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+}
+
+.main-scroll.dark-mode .section-title {
+  color: #F1F5F9;
+  font-weight: 700;
+}
+
+.main-scroll.dark-mode .clear-history {
+  color: #60A5FA;
+}
+
+.main-scroll.dark-mode .history-tag,
+.main-scroll.dark-mode .hot-tag {
+  background: rgba(51, 65, 85, 0.8);
+  color: #E2E8F0;
+  border: 1px solid rgba(71, 85, 105, 0.6);
+}
+
+.main-scroll.dark-mode .history-tag:active,
+.main-scroll.dark-mode .hot-tag:active {
+  background: rgba(59, 130, 246, 0.3);
+  color: #93C5FD;
+}
+
+.main-scroll.dark-mode .hot-icon {
+  filter: brightness(1.2);
+}

@@ -14,7 +14,99 @@
           <text class="user-nickname">{{userInfo.nickname}}</text>
           <text class="edit-icon">✏️</text>
         </view>
-        <text class="user-stats">累计使用 {{totalUsage}} 次</text>
+        <text class="user-stats">{{funStats.levelIcon}} {{funStats.efficiencyLevel}} · 已节省 {{funStats.savedTime}}</text>
+      </view>
+    </view>
+
+    <!-- 趣味化统计卡片 -->
+    <view class="fun-stats-card">
+      <view class="stats-header">
+        <text class="stats-title">⚡ 效率统计</text>
+        <text class="stats-subtitle">本月数据</text>
+      </view>
+      
+      <view class="stats-main">
+        <view class="stat-item highlight">
+          <text class="stat-number">{{funStats.operationCount}}</text>
+          <text class="stat-label">次操作</text>
+        </view>
+        
+        <view class="stat-divider"></view>
+        
+        <view class="stat-item">
+          <text class="stat-number">{{funStats.savedTime}}</text>
+          <text class="stat-label">已节省</text>
+        </view>
+        
+        <view class="stat-divider"></view>
+        
+        <view class="stat-item">
+          <text class="stat-icon-large">{{funStats.levelIcon}}</text>
+          <text class="stat-label">{{funStats.efficiencyLevel}}</text>
+        </view>
+      </view>
+
+      <view class="progress-section">
+        <view class="progress-label">
+          <text>效率进度</text>
+          <text>{{funStats.progressPercent}}%</text>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{funStats.progressPercent}}%"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 使用足迹图表 -->
+    <view class="section-block footprint-section">
+      <view class="section-header">
+        <view class="section-title-row">
+          <text class="section-icon">📊</text>
+          <text class="section-title">使用足迹</text>
+        </view>
+        <text class="section-subtitle">(本周)</text>
+      </view>
+
+      <!-- 图表区域 -->
+      <view class="chart-container">
+        <view class="chart-y-axis">
+          <text class="y-label">{{weeklyData.maxValue}}</text>
+          <text class="y-label">{{Math.floor(weeklyData.maxValue * 0.5)}}</text>
+          <text class="y-label">0</text>
+        </view>
+        
+        <view class="chart-bars">
+          <view 
+            wx:for="{{weeklyData.labels}}" 
+            wx:key="index"
+            class="bar-wrapper"
+          >
+            <view class="bar-container">
+              <view 
+                class="bar {{item === weeklyData.mostUsedDay ? 'active' : ''}}"
+                style="height: {{weeklyData.values[index] > 0 ? (weeklyData.values[index] / weeklyData.maxValue * 100) : 2}}%"
+              ></view>
+              <text class="bar-value" wx:if="{{weeklyData.values[index] > 0}}">{{weeklyData.values[index]}}</text>
+            </view>
+            <text class="x-label {{item === weeklyData.mostUsedDay ? 'active' : ''}}">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 统计摘要 -->
+      <view class="footprint-summary">
+        <view class="summary-item">
+          <text class="summary-value">{{weeklyData.totalWeekUsage}}</text>
+          <text class="summary-label">本周总次数</text>
+        </view>
+        <view class="summary-item">
+          <text class="summary-value">{{weeklyData.averageDaily}}</text>
+          <text class="summary-label">日均使用</text>
+        </view>
+        <view class="summary-item">
+          <text class="summary-value">{{weeklyData.mostUsedDay}}</text>
+          <text class="summary-label">最活跃日</text>
+        </view>
       </view>
     </view>
 
@@ -260,11 +352,11 @@
       <view class="settings-list">
         <view class="setting-item" bindtap="toggleDarkMode" hover-class="setting-hover">
           <view class="setting-left">
-            <text class="setting-icon">🌙</text>
-            <text class="setting-name">夜间模式</text>
+            <text class="setting-icon">{{darkModeSetting === 'dark' ? '🌙' : darkModeSetting === 'light' ? '☀️' : '🔄'}}</text>
+            <text class="setting-name">外观模式</text>
           </view>
           <view class="setting-right">
-            <text class="setting-value">{{isDarkMode ? '已开启' : '未开启'}}</text>
+            <text class="setting-value">{{darkModeSetting === 'system' ? '跟随系统' : darkModeSetting === 'dark' ? '夜间模式' : '白天模式'}}</text>
             <text class="setting-arrow">›</text>
           </view>
         </view>
