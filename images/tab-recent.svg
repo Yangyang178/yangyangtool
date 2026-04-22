@@ -1,6 +1,4 @@
-<!-- 最近使用图标 - 未选中状态 -->
-<svg width="81" height="81" viewBox="0 0 81 81" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="40.5" cy="40.5" r="22" stroke="#94A3B8" stroke-width="3" fill="none"/>
-  <polyline points="30,40.5 38,48.5 52,33" stroke="#94A3B8" stroke-width="3" fill="none" 
-            stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="81" height="81" viewBox="0 0 81 81">
+  <circle cx="40.5" cy="24" r="12" fill="none" stroke="#94A3B8" stroke-width="4"/>
+  <path d="M20 68 C20 50 30 40 40.5 40 C51 40 61 50 61 68" fill="none" stroke="#94A3B8" stroke-width="4" stroke-linecap="round"/>
 </svg>
