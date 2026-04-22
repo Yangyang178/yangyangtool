@@ -31,6 +31,9 @@ Page({
   data: {
     greetingText: '',
     searchKeyword: '',
+    searchHistory: [],
+    hotSearchWords: ['汇率', '房贷', 'BMI', '个税', '字数', '番茄', 'JSON', '图片', '密码', '随机'],
+    showSearchPanel: false,
     currentCategory: 'all',
     isRefreshing: false,
     scrollTop: 0,
@@ -290,7 +293,7 @@ Page({
   onLoad() {
     this.updateGreeting()
     this.filterTools()
-
+    
     const favorites = wx.getStorageSync('favorites') || []
     const tools = this.data.tools.map(tool => ({
       ...tool,
@@ -302,15 +305,91 @@ Page({
     wx.setStorageSync('allTools', this.data.tools)
     wx.setStorageSync('urlMap', urlMap)
 
-    wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage', 'shareTimeline']
+    const history = wx.getStorageSync('searchHistory') || []
+    this.setData({ searchHistory: history })
+  },
+
+  getPinyinFirstLetter(str) {
+    if (!str) return ''
+    const pinyinMap = {
+      'a': 'a', 'b': 'b', 'c': 'c', 'd': 'd', 'e': 'e', 'f': 'f', 'g': 'g', 'h': 'h',
+      'i': 'i', 'j': 'j', 'k': 'k', 'l': 'l', 'm': 'm', 'n': 'n', 'o': 'o', 'p': 'p',
+      'q': 'q', 'r': 'r', 's': 's', 't': 't', 'u': 'u', 'v': 'v', 'w': 'w', 'x': 'x',
+      'y': 'y', 'z': 'z',
+      '阿': 'a', '啊': 'a', '爱': 'a',
+      '把': 'b', '百': 'b', '半': 'b',
+      '查': 'c', '重': 'c',
+      '大': 'd', '단': 'd', '当': 'd',
+      '二': 'e',
+      '发': 'f', '房': 'f',
+      '高': 'g', '个': 'g',
+      '还': 'h', '黄': 'h',
+      '计': 'j', '加': 'j', '解': 'j', '今': 'j', '经': 'j',
+      '开': 'k', '空': 'k',
+      '两': 'l', '量': 'l', '楼': 'l', '历': 'l',
+      '米': 'm', '码': 'm', '面': 'm',
+      '年': 'n', '农': 'n',
+      '排': 'p', '评': 'p',
+      '期': 'q', '区': 'q',
+      '日': 'r', '任': 'r',
+      '三': 's', '时': 's', '数': 's', '删': 's',
+      '体': 't', '天': 't', '图': 't',
+      '文': 'w', '网': 'w',
+      '下': 'x', '信': 'x', '姓': 'x', '小': 'x',
+      '颜': 'y', '一': 'y', '用': 'y',
+      '在': 'z', '中': 'z', '字': 'z', '转': 'z'
+    }
+    const firstChar = str.charAt(0).toLowerCase()
+    return pinyinMap[firstChar] || firstChar
+  },
+
+  addToSearchHistory(keyword) {
+    if (!keyword.trim()) return
+    let history = wx.getStorageSync('searchHistory') || []
+    history = history.filter(k => k !== keyword)
+    history.unshift(keyword)
+    history = history.slice(0, 10)
+    wx.setStorageSync('searchHistory', history)
+    this.setData({ searchHistory: history })
+  },
+
+  clearSearchHistory() {
+    wx.showModal({
+      title: '清空搜索历史',
+      content: '确定要清空所有搜索历史吗？',
+      confirmText: '清空',
+      confirmColor: '#EF4444',
+      success: (res) => {
+        if (res.confirm) {
+          wx.removeStorageSync('searchHistory')
+          this.setData({ searchHistory: [] })
+          wx.showToast({ title: '已清空', icon: 'success' })
+        }
+      }
     })
+  },
+
+  onHotSearchClick(e) {
+    const keyword = e.currentTarget.dataset.word
+    this.setData({ searchKeyword: keyword })
+    this.addToSearchHistory(keyword)
+    this.filterTools()
+  },
+
+  onHistoryClick(e) {
+    const keyword = e.currentTarget.dataset.word
+    this.setData({ searchKeyword: keyword })
+    this.filterTools()
   },
 
   onShow() {
     this.updateGreeting()
     this.applyCurrentTheme()
+    
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
   },
 
   applyCurrentTheme() {
@@ -353,13 +432,13 @@ Page({
   },
 
   clearSearch() {
-    this.setData({ searchKeyword: '' })
+    this.setData({ searchKeyword: '', showSearchPanel: false })
     this.filterTools()
   },
 
   onCategoryChange(e) {
     const categoryId = e.currentTarget.dataset.id
-    this.setData({ currentCategory: categoryId })
+    this.setData({ currentCategory: categoryId, showSearchPanel: false })
     this.filterTools()
   },
 
@@ -372,13 +451,30 @@ Page({
     
     if (this.data.searchKeyword) {
       const keyword = this.data.searchKeyword.toLowerCase()
-      filtered = filtered.filter(tool => 
-        tool.name.toLowerCase().includes(keyword) || 
-        tool.description.toLowerCase().includes(keyword)
-      )
+      const pinyinKeyword = this.getPinyinFirstLetter(keyword)
+      
+      filtered = filtered.filter(tool => {
+        const nameMatch = tool.name.toLowerCase().includes(keyword)
+        const descMatch = tool.description.toLowerCase().includes(keyword)
+        const pinyinMatch = this.getPinyinFirstLetter(tool.name).toLowerCase().includes(pinyinKeyword)
+        
+        return nameMatch || descMatch || pinyinMatch
+      })
+      
+      this.addToSearchHistory(this.data.searchKeyword)
     }
     
     this.setData({ filteredTools: filtered })
+  },
+
+  onSearchFocus() {
+    this.setData({ showSearchPanel: true })
+  },
+
+  onSearchBlur() {
+    setTimeout(() => {
+      this.setData({ showSearchPanel: false })
+    }, 200)
   },
 
   onToolClick(e) {
@@ -426,6 +522,33 @@ Page({
     
     this.setData({ tools })
     this.filterTools()
+    
+    if (favorites.includes(id)) {
+      this.showHeartAnimation()
+    }
+  },
+
+  onToolLongPress(e) {
+    wx.vibrateShort({ type: 'medium' })
+    const tool = e.currentTarget.dataset.tool
+    this.setData({
+      showMenu: true,
+      menuTool: tool
+    })
+  },
+
+  closeMenu() {
+    this.setData({
+      showMenu: false,
+      menuTool: null
+    })
+  },
+
+  showHeartAnimation() {
+    this.setData({ showHeart: true })
+    setTimeout(() => {
+      this.setData({ showHeart: false })
+    }, 800)
   },
 
   saveRecentTool(tool) {

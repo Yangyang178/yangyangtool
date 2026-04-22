@@ -9,6 +9,14 @@ Page({
     favoritePreviewNames: '',
     isDarkMode: false,
     cacheSize: '0 KB',
+    showClearCache: false,
+    cacheInfo: {
+      total: '0 KB',
+      data: '0 KB',
+      images: '0 KB',
+      history: '0 KB'
+    },
+    clearHistory: [],
     
     showEditProfile: false,
     editNickname: '',
@@ -53,7 +61,7 @@ Page({
     this.loadUserInfo()
     this.loadRecentTools()
     this.loadFavorites()
-    this.calcCacheSize()
+    this.calculateCacheSize()
     this.checkDarkMode()
     const app = getApp()
     if (app) {
@@ -237,16 +245,57 @@ Page({
     return `${date.getMonth() + 1}月${date.getDate()}日`
   },
 
-  calcCacheSize() {
+  calculateCacheSize() {
     try {
-      const info = wx.getStorageInfoSync()
-      const sizeKB = Math.round(info.currentSize / 1024)
-      let display = sizeKB + ' KB'
-      if (sizeKB > 1024) display = (sizeKB / 1024).toFixed(1) + ' MB'
-      this.setData({ cacheSize: display })
+      this.calculateDetailedCache()
     } catch (e) {
       this.setData({ cacheSize: '未知' })
     }
+  },
+
+  calculateDetailedCache() {
+    try {
+      let dataSize = 0
+      let historyCount = 0
+
+      const keys = ['favorites', 'recentTools', 'totalUsageCount', 'userProfile', 'darkMode', 'urlMap', 'allTools', 'feedbackHistory']
+      keys.forEach(key => {
+        try {
+          const data = wx.getStorageSync(key)
+          if (data !== '' && data !== undefined && data !== null) {
+            dataSize += JSON.stringify(data).length * 2
+          }
+        } catch(e) {}
+      })
+
+      const recentTools = wx.getStorageSync('recentTools') || []
+      historyCount = recentTools.length
+
+      const favorites = wx.getStorageSync('favorites') || []
+      historyCount += favorites.length
+
+      const feedbackHistory = wx.getStorageSync('feedbackHistory') || []
+      historyCount += feedbackHistory.length
+
+      const displayTotal = this.formatSize(dataSize)
+
+      this.setData({
+        cacheSize: displayTotal,
+        cacheInfo: {
+          total: displayTotal,
+          data: this.formatSize(dataSize),
+          images: '0 KB',
+          history: `${historyCount} 条`
+        }
+      })
+    } catch(e) {}
+  },
+
+  formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B'
+    const kb = Math.round(bytes / 1024)
+    if (kb < 1024) return kb + ' KB'
+    return (kb / 1024).toFixed(1) + ' MB'
   },
 
   checkDarkMode() {
@@ -302,17 +351,155 @@ Page({
 
   clearCache() {
     wx.vibrateShort({ type: 'light' })
+    this.calculateDetailedCache()
+    this.setData({ showClearCache: true })
+  },
+
+  closeClearCache() {
+    this.setData({ showClearCache: false })
+  },
+
+  clearAllData() {
+    wx.vibrateShort({ type: 'medium' })
     wx.showModal({
-      title: '清理缓存',
-      content: `当前缓存大小：${this.data.cacheSize}\n确定要清理吗？`,
-      confirmText: '清理',
+      title: '⚠️ 清理所有数据',
+      content: '确定要清理所有数据吗？\n包括：收藏记录、使用历史、用户设置等',
+      confirmText: '全部清理',
       confirmColor: '#EF4444',
       success: (res) => {
         if (res.confirm) {
           wx.clearStorageSync()
-          this.setData({ cacheSize: '0 KB', recentTools: [], favoriteTools: [], favoritePreviewNames: '' })
-          wx.showToast({ title: '缓存已清理', icon: 'success' })
+          this.setData({
+            cacheSize: '0 KB',
+            showClearCache: false,
+            recentTools: [],
+            favoriteTools: [],
+            favoritePreviewNames: '',
+            cacheInfo: { total: '0 B', data: '0 B', images: '0 B', history: '0 条' }
+          })
+          wx.showToast({ title: '已清理全部数据', icon: 'success' })
           setTimeout(() => this.loadAllData(), 1000)
+        }
+      }
+    })
+  },
+
+  clearHistoryData() {
+    wx.vibrateShort({ type: 'medium' })
+    wx.showModal({
+      title: '🗑️ 清理历史记录',
+      content: '确定要清理所有历史记录吗？\n包括：最近使用、收藏夹、反馈历史',
+      confirmText: '清理',
+      confirmColor: '#EF4444',
+      success: (res) => {
+        if (res.confirm) {
+          const keysToRemove = ['recentTools', 'favorites', 'feedbackHistory']
+          keysToRemove.forEach(key => wx.removeStorageSync(key))
+          
+          this.calculateDetailedCache()
+          this.setData({
+            recentTools: [],
+            favoriteTools: [],
+            favoritePreviewNames: ''
+          })
+          wx.showToast({ title: '历史记录已清理', icon: 'success' })
+        }
+      }
+    })
+  },
+
+  clearTempData() {
+    wx.vibrateShort({ type: 'medium' })
+    wx.showModal({
+      title: '📋 清理暂存数据',
+      content: '确定要清理临时缓存数据吗？',
+      confirmText: '清理',
+      confirmColor: '#EF4444',
+      success: (res) => {
+        if (res.confirm) {
+          try {
+            wx.getStorageInfo({
+              success: (info) => {
+                info.keys.forEach(key => {
+                  if (key.startsWith('temp_') || key.startsWith('cache_')) {
+                    wx.removeStorageSync(key)
+                  }
+                })
+                this.calculateDetailedCache()
+                wx.showToast({ title: '暂存数据已清理', icon: 'success' })
+              }
+            })
+          } catch(e) {
+            wx.showToast({ title: '清理失败', icon: 'none' })
+          }
+        }
+      }
+    })
+  },
+
+  clearClipboardTemp() {
+    wx.vibrateShort({ type: 'medium' })
+    wx.showModal({
+      title: '📎 清理剪贴板暂存',
+      content: '确定要清理剪贴板暂存数据吗？',
+      confirmText: '清理',
+      confirmColor: '#EF4444',
+      success: (res) => {
+        if (res.confirm) {
+          wx.setClipboardData({ data: '' })
+          setTimeout(() => {
+            wx.showToast({ title: '剪贴板已清空', icon: 'success' })
+          }, 500)
+        }
+      }
+    })
+  },
+
+  clearUserData() {
+    wx.vibrateShort({ type: 'medium' })
+    wx.showModal({
+      title: '💾 清空数据缓存',
+      content: '确定要清空数据缓存吗？\n包括：用户设置、收藏记录、使用次数等\n（不会删除历史记录）',
+      confirmText: '清空',
+      confirmColor: '#EF4444',
+      success: (res) => {
+        if (res.confirm) {
+          const keysToRemove = ['userProfile', 'totalUsageCount', 'urlMap', 'allTools']
+          keysToRemove.forEach(key => wx.removeStorageSync(key))
+          
+          this.calculateDetailedCache()
+          wx.showToast({ title: '数据缓存已清空', icon: 'success' })
+        }
+      }
+    })
+  },
+
+  clearImageCache() {
+    wx.vibrateShort({ type: 'medium' })
+    wx.showModal({
+      title: '🖼️ 清空图片缓存',
+      content: '确定要清空图片缓存吗？\n包括：用户头像、临时图片等',
+      confirmText: '清空',
+      confirmColor: '#EF4444',
+      success: (res) => {
+        if (res.confirm) {
+          try {
+            wx.getStorageInfo({
+              success: (info) => {
+                let cleared = 0
+                info.keys.forEach(key => {
+                  if (key.includes('avatar') || key.includes('image') || key.includes('temp_')) {
+                    wx.removeStorageSync(key)
+                    cleared++
+                  }
+                })
+                this.calculateDetailedCache()
+                wx.showToast({ title: '图片缓存已清空', icon: 'success' })
+              }
+            })
+          } catch(e) {
+            wx.showToast({ title: '清空失败', icon: 'none' })
+          }
         }
       }
     })

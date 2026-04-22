@@ -3,11 +3,13 @@ const app = getApp()
 Page({
   data: {
     favoriteTools: [],
+    popularTools: [],
     isDarkMode: false
   },
 
   onLoad() {
     this.loadFavorites()
+    this.loadPopularTools()
 
     wx.showShareMenu({
       withShareTicket: true,
@@ -17,11 +19,36 @@ Page({
 
   onShow() {
     this.loadFavorites()
+    this.loadPopularTools()
     const app = getApp()
     if (app) {
       const isDark = app.globalData.isDarkMode || wx.getStorageSync('darkMode') === true
       this.setData({ isDarkMode: isDark })
     }
+  },
+
+  loadPopularTools() {
+    const allTools = [
+      { id: 1, name: '汇率换算', description: '实时汇率，快速换汇', icon: '💱', iconBg: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)', isHot: true },
+      { id: 2, name: '单位换算', description: '长度/重量/温度等转换', icon: '📏', iconBg: 'linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%)', isHot: false },
+      { id: 3, name: '房贷计算器', description: '月供、利息一目了然', icon: '🏠', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', isHot: true },
+      { id: 5, name: '字数统计', description: '中英文字符精准统计', icon: '#️⃣', iconBg: 'linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%)', isHot: true },
+      { id: 9, name: '番茄计时', description: '专注工作25分钟', icon: '🍅', iconBg: 'linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%)', isHot: true },
+      { id: 11, name: '随机决定', description: '抽签做决定不再纠结', icon: '🎲', iconBg: 'linear-gradient(135deg, #FECDD3 0%, #FDA4AF 100%)', isHot: false },
+      { id: 13, name: '日期计算器', description: '间隔天数精确计算', icon: '📅', iconBg: 'linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)', isHot: true },
+      { id: 17, name: 'JSON格式化', description: 'JSON美化压缩工具', icon: '{}', iconBg: 'linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)', isHot: true },
+      { id: 21, name: '图片处理', description: '压缩/转换/裁剪/信息查看', icon: '🖼️', iconBg: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)', isHot: true },
+      { id: 23, name: 'BMI 计算器', description: '身高体重→BMI指数+健康建议', icon: '⚖️', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', isHot: true },
+      { id: 25, name: '个税计算器', description: '2024最新个税专项扣除', icon: '💰', iconBg: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)', isHot: true }
+    ]
+    
+    const favorites = wx.getStorageSync('favorites') || []
+    const toolsWithFav = allTools.map(tool => ({
+      ...tool,
+      isFavorite: favorites.includes(tool.id)
+    }))
+    
+    this.setData({ popularTools: toolsWithFav })
   },
 
   loadFavorites() {
@@ -83,6 +110,28 @@ Page({
         }
       }
     })
+  },
+
+  toggleFavorite(e) {
+    const id = e.currentTarget.dataset.id
+    let favorites = wx.getStorageSync('favorites') || []
+    
+    const index = favorites.indexOf(id)
+    if (index > -1) {
+      favorites.splice(index, 1)
+    } else {
+      favorites.push(id)
+      wx.vibrateShort({ type: 'light' })
+      wx.showToast({
+        title: '已收藏 ❤️',
+        icon: 'success',
+        duration: 1200
+      })
+    }
+    
+    wx.setStorageSync('favorites', favorites)
+    this.loadFavorites()
+    this.loadPopularTools()
   },
 
   removeFavorite(e) {

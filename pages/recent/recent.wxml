@@ -108,6 +108,84 @@
       </button>
     </view>
 
+    <!-- 缓存清理弹窗 -->
+    <view class="cache-mask" wx:if="{{showClearCache}}" bindtap="closeClearCache"></view>
+    <view class="cache-panel {{showClearCache ? 'show' : ''}}">
+      <view class="cache-header">
+        <text class="cache-title">🗑️ 清理缓存</text>
+        <text class="cache-close" bindtap="closeClearCache">✕</text>
+      </view>
+
+      <view class="cache-overview">
+        <view class="cache-total">
+          <text class="total-label">总缓存大小</text>
+          <text class="total-value">{{cacheInfo.total}}</text>
+        </view>
+      </view>
+
+      <view class="cache-items">
+        <view class="cache-item">
+          <view class="item-left">
+            <text class="item-icon">💾</text>
+            <view class="item-info">
+              <text class="item-name">数据缓存</text>
+              <text class="item-desc">用户设置、收藏、使用记录等</text>
+            </view>
+          </view>
+          <view class="item-right">
+            <text class="item-size">{{cacheInfo.data}}</text>
+            <text class="item-action" catchtap="clearUserData">清空</text>
+          </view>
+        </view>
+
+        <view class="cache-item">
+          <view class="item-left">
+            <text class="item-icon">🖼️</text>
+            <view class="item-info">
+              <text class="item-name">图片缓存</text>
+              <text class="item-desc">头像、工具图标等临时图片</text>
+            </view>
+          </view>
+          <view class="item-right">
+            <text class="item-size">{{cacheInfo.images}}</text>
+            <text class="item-action" catchtap="clearImageCache">清空</text>
+          </view>
+        </view>
+
+        <view class="cache-item">
+          <view class="item-left">
+            <text class="item-icon">📜</text>
+            <view class="item-info">
+              <text class="item-name">历史记录</text>
+              <text class="item-desc">最近使用、收藏夹、反馈历史</text>
+            </view>
+          </view>
+          <view class="item-right">
+            <text class="item-size">{{cacheInfo.history}}</text>
+            <text class="item-action" catchtap="clearHistoryData">清空</text>
+          </view>
+        </view>
+
+        <view class="cache-item">
+          <view class="item-left">
+            <text class="item-icon">📋</text>
+            <view class="item-info">
+              <text class="item-name">剪贴板暂存</text>
+              <text class="item-desc">反馈内容临时存储</text>
+            </view>
+          </view>
+          <view class="item-right">
+            <text class="item-action" bindtap="clearClipboardTemp">清空</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="cache-actions">
+        <button class="cache-btn secondary" bindtap="clearHistoryData">清理历史</button>
+        <button class="cache-btn danger" bindtap="clearAllData">全部清理</button>
+      </view>
+    </view>
+
     <!-- 最近使用 -->
     <view class="section-block">
       <view class="section-header">

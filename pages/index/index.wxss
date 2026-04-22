@@ -82,7 +82,93 @@ page {
 }
 
 .search-bar {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 10;
+}
+
+/* 搜索面板 */
+.search-panel {
+  margin-top: 8px;
+  background: var(--cardBg,#FFFFFF);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  padding: 16px;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-section {
+  margin-bottom: 16px;
+}
+
+.search-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--textPrimary,#1E293B);
+}
+
+.clear-history {
+  font-size: 12px;
+  color: var(--accentBlue,#3B82F6);
+}
+
+.history-tags, .hot-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.history-tag, .hot-tag {
+  padding: 6px 14px;
+  background: var(--surfaceBg,#F1F5F9);
+  border-radius: 16px;
+  font-size: 13px;
+  color: var(--textPrimary,#1E293B);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.history-tag:active, .hot-tag:active {
+  opacity: 0.7;
+  background: var(--accentBlue,#3B82F6);
+  color: white;
+}
+
+.hot-icon {
+  font-size: 12px;
+}
+
+.hot-tag {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  color: #92400E;
+}
+
+.hot-tag:nth-child(1), .hot-tag:nth-child(2), .hot-tag:nth-child(3) {
+  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+  color: #991B1B;
 }
 
 .search-input-wrapper {
@@ -92,7 +178,6 @@ page {
   display: flex;
   align-items: center;
   box-shadow: 0 2px 12px rgba(59, 130, 246, 0.08);
-  position: relative;
 }
 
 .search-icon {
@@ -180,6 +265,7 @@ page {
   position: relative;
   transition: all 0.15s ease;
   overflow: hidden;
+  height: fit-content;
 }
 
 .tool-card-hover {

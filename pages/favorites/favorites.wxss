@@ -132,15 +132,49 @@ page {
 }
 
 .empty-btn {
-  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, var(--accentBlue,#3B82F6) 100%);
+  margin-top: 20px;
   padding: 12px 32px;
-  border-radius: 25px;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  border-radius: 24px;
+  box-shadow: 0 4px 14px rgba(59,130,246,0.3);
 }
 
 .empty-btn text {
+  color: white;
   font-size: 15px;
-  color: var(--cardBg,#FFFFFF);
   font-weight: 600;
+}
+
+.popular-section {
+  padding: 0 16px 20px;
+}
+
+.popular-section .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.popular-section .section-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.popular-section .section-icon {
+  font-size: 18px;
+}
+
+.popular-section .section-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--textPrimary,#1E293B);
+}
+
+.popular-section .section-subtitle {
+  font-size: 13px;
+  color: var(--textSecondary,#64748B);
 }
 
 .bottom-safe-area {
