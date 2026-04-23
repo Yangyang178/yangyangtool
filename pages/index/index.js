@@ -38,6 +38,16 @@ Page({
     isRefreshing: false,
     scrollTop: 0,
     isDarkMode: false,
+    
+    isEditMode: false,
+    isDragging: false,
+    dragIndex: -1,
+    
+    selectedToolIndex: -1,
+    
+    customToolOrder: [],
+    hiddenTools: [],
+    hiddenToolsList: [],
     categories: [
       { id: 'all', name: '全部' },
       { id: 'calculator', name: '计算转换' },
@@ -292,6 +302,7 @@ Page({
 
   onLoad() {
     this.updateGreeting()
+    this.loadCustomLayout()
     this.filterTools()
     
     const favorites = wx.getStorageSync('favorites') || []
@@ -307,6 +318,229 @@ Page({
 
     const history = wx.getStorageSync('searchHistory') || []
     this.setData({ searchHistory: history })
+  },
+
+  loadCustomLayout() {
+    const customOrder = wx.getStorageSync('customToolOrder') || []
+    const hiddenTools = wx.getStorageSync('hiddenTools') || []
+    
+    this.setData({
+      customToolOrder: customOrder,
+      hiddenTools: hiddenTools
+    })
+
+    if (customOrder.length > 0) {
+      let tools = this.data.tools
+      
+      const orderedTools = customOrder
+        .filter(id => !hiddenTools.includes(id))
+        .map(id => tools.find(t => t.id === id))
+        .filter(t => t !== undefined)
+      
+      const remainingTools = tools.filter(t => 
+        !customOrder.includes(t.id) && !hiddenTools.includes(t.id)
+      )
+      
+      this.setData({ 
+        tools: [...orderedTools, ...remainingTools],
+        filteredTools: [...orderedTools, ...remainingTools]
+      })
+    } else if (hiddenTools.length > 0) {
+      const visibleTools = this.data.tools.filter(t => !hiddenTools.includes(t.id))
+      this.setData({
+        tools: visibleTools,
+        filteredTools: visibleTools
+      })
+    }
+    
+    this.updateHiddenToolsList(hiddenTools)
+  },
+
+  toggleEditMode() {
+    wx.vibrateShort({ type: 'light' })
+    
+    if (!this.data.isEditMode) {
+      wx.showModal({
+        title: '📝 编辑模式',
+        content: '点击工具卡片选中\n再次点击另一个卡片可交换位置\n点击眼睛图标可隐藏工具',
+        showCancel: false,
+        confirmText: '我知道了',
+        confirmColor: '#3B82F6'
+      })
+    }
+    
+    this.setData({ 
+      isEditMode: !this.data.isEditMode,
+      selectedToolIndex: -1
+    })
+    
+    if (!this.data.isEditMode) {
+      this.saveCustomLayout()
+      wx.showToast({ 
+        title: '布局已保存 ✅', 
+        icon: 'success',
+        duration: 1500
+      })
+    }
+  },
+
+  onEditToolClick(e) {
+    if (!this.data.isEditMode) return
+    
+    const index = e.currentTarget.dataset.index
+    const currentSelected = this.data.selectedToolIndex
+    
+    if (currentSelected === -1) {
+      wx.vibrateShort({ type: 'light' })
+      this.setData({ selectedToolIndex: index })
+      return
+    }
+    
+    if (currentSelected === index) {
+      wx.vibrateShort({ type: 'light' })
+      this.setData({ selectedToolIndex: -1 })
+      return
+    }
+    
+    wx.vibrateShort({ type: 'medium' })
+    
+    const filteredTools = [...this.data.filteredTools]
+    
+    if (!filteredTools[currentSelected] || !filteredTools[index]) {
+      console.warn('Invalid index for swap')
+      return
+    }
+    
+    const temp = filteredTools[currentSelected]
+    filteredTools[currentSelected] = filteredTools[index]
+    filteredTools[index] = temp
+    
+    this.setData({
+      filteredTools: filteredTools,
+      selectedToolIndex: -1
+    })
+    
+    this.saveCustomLayout()
+    
+    wx.showToast({
+      title: '已交换位置',
+      icon: 'success',
+      duration: 800
+    })
+  },
+
+  toggleToolVisibility(e) {
+    if (!this.data.isEditMode) return
+    
+    wx.vibrateShort({ type: 'light' })
+    
+    const id = e.currentTarget.dataset.id
+    let hiddenTools = [...this.data.hiddenTools]
+    
+    if (hiddenTools.includes(id)) {
+      hiddenTools = hiddenTools.filter(toolId => toolId !== id)
+      wx.showToast({ title: '已显示 ✓', icon: 'none', duration: 1000 })
+    } else {
+      hiddenTools.push(id)
+      wx.showToast({ title: '已隐藏 👁️', icon: 'none', duration: 1000 })
+    }
+    
+    this.updateHiddenToolsList(hiddenTools)
+    
+    const visibleTools = this.data.filteredTools.filter(t => !hiddenTools.includes(t.id))
+    this.setData({ 
+      hiddenTools: hiddenTools,
+      filteredTools: visibleTools
+    })
+  },
+
+  restoreHiddenTool(e) {
+    wx.vibrateShort({ type: 'light' })
+    
+    const id = e.currentTarget.dataset.id
+    let hiddenTools = [...this.data.hiddenTools]
+    
+    hiddenTools = hiddenTools.filter(toolId => toolId !== id)
+    
+    this.updateHiddenToolsList(hiddenTools)
+    
+    const allTools = this.data.tools
+    const restoredTool = allTools.find(t => t.id === id)
+    
+    let visibleTools = [...this.data.filteredTools]
+    if (restoredTool && !visibleTools.find(t => t.id === id)) {
+      visibleTools.push(restoredTool)
+    }
+    
+    this.setData({
+      hiddenTools: hiddenTools,
+      filteredTools: visibleTools
+    })
+    
+    wx.showToast({ 
+      title: `${restoredTool ? restoredTool.name : '工具'} 已恢复 ✓`, 
+      icon: 'success',
+      duration: 1000
+    })
+  },
+
+  updateHiddenToolsList(hiddenTools) {
+    if (!hiddenTools || hiddenTools.length === 0) {
+      this.setData({ hiddenToolsList: [] })
+      return
+    }
+    
+    const allTools = this.data.tools
+    const hiddenList = allTools.filter(t => hiddenTools.includes(t.id))
+    
+    this.setData({ hiddenToolsList: hiddenList })
+  },
+
+  saveCustomLayout() {
+    const currentOrder = this.data.filteredTools.map(t => t.id)
+    wx.setStorageSync('customToolOrder', currentOrder)
+    wx.setStorageSync('hiddenTools', this.data.hiddenTools)
+    
+    this.setData({
+      customToolOrder: currentOrder
+    })
+  },
+
+  resetLayout() {
+    wx.vibrateShort({ type: 'medium' })
+    
+    wx.showModal({
+      title: '⚠️ 重置布局',
+      content: '确定要恢复默认布局吗？\n所有自定义排序和隐藏设置将被清除。',
+      confirmText: '重置',
+      cancelText: '取消',
+      confirmColor: '#EF4444',
+      success: (res) => {
+        if (res.confirm) {
+          wx.removeStorageSync('customToolOrder')
+          wx.removeStorageSync('hiddenTools')
+          
+          this.setData({
+            customToolOrder: [],
+            hiddenTools: [],
+            isEditMode: false
+          })
+          
+          const favorites = wx.getStorageSync('favorites') || []
+          const defaultTools = this.data.tools.map(tool => ({
+            ...tool,
+            isFavorite: favorites.includes(tool.id)
+          }))
+          
+          this.setData({
+            tools: defaultTools,
+            filteredTools: defaultTools
+          })
+          
+          wx.showToast({ title: '已恢复默认布局', icon: 'success' })
+        }
+      }
+    })
   },
 
   getPinyinFirstLetter(str) {

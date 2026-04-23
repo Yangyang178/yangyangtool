@@ -369,6 +369,274 @@ page {
   color: var(--textTertiary,#94A3B8);
 }
 
+/* ==================== 编辑模式样式 ==================== */
+.edit-mode-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.edit-mode-btn.active,
+.edit-mode-btn:active {
+  transform: scale(0.95);
+  background: linear-gradient(135deg, #93C5FD 0%, #60A5FA 100%);
+}
+
+.edit-icon {
+  font-size: 18px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-action-btn {
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.done-btn {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: white;
+}
+
+.reset-btn {
+  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+  color: #DC2626;
+}
+
+.edit-tip-bar {
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border-radius: 12px;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: all 0.3s ease;
+  display: none;
+}
+
+.edit-tip-bar.show {
+  opacity: 1;
+  transform: translateY(0);
+  display: block;
+}
+
+.tip-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #92400E;
+  display: block;
+  text-align: center;
+}
+
+.tools-grid.edit-mode .tool-card {
+  cursor: grab;
+  position: relative;
+}
+
+.tools-grid.edit-mode .tool-card:active {
+  cursor: grabbing;
+}
+
+.tool-card.selected {
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+  z-index: 100;
+  border: 3px solid #3B82F6;
+  animation: selectedPulse 1s ease infinite;
+}
+
+@keyframes selectedPulse {
+  0%, 100% { box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4); }
+  50% { box-shadow: 0 8px 32px rgba(59, 130, 246, 0.6); }
+}
+
+.tool-card-edit-hover {
+  opacity: 0.9;
+  transform: scale(0.98);
+}
+
+.card-visibility {
+  position: absolute;
+  top: 10px;
+  right: 40px;
+  z-index: 10;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.card-visibility text {
+  font-size: 14px;
+}
+
+.card-visibility.hidden-tool {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #EF4444;
+}
+
+.selected-badge {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+  animation: badgeBounce 0.3s ease;
+}
+
+@keyframes badgeBounce {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.selected-badge text {
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+}
+
+/* ==================== 已隐藏工具管理区 ==================== */
+.hidden-tools-section {
+  margin-top: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+  border-radius: 16px;
+  display: none;
+}
+
+.hidden-tools-section.show {
+  display: block;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hidden-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.hidden-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #991B1B;
+}
+
+.hidden-hint {
+  font-size: 12px;
+  color: #DC2626;
+  background: rgba(220, 38, 38, 0.1);
+  padding: 4px 10px;
+  border-radius: 10px;
+}
+
+.hidden-tools-scroll {
+  white-space: nowrap;
+  margin: 0 -4px;
+}
+
+.hidden-tools-list {
+  display: inline-flex;
+  gap: 10px;
+  padding: 4px;
+}
+
+.hidden-tool-item {
+  width: 90px;
+  padding: 12px 8px;
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.hidden-tool-item:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hidden-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  filter: grayscale(50%);
+}
+
+.hidden-icon {
+  font-size: 22px;
+}
+
+.hidden-name {
+  font-size: 11px;
+  color: #64748B;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  line-height: 1.2;
+}
+
+.restore-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+}
+
+.no-hidden-tools {
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+  color: #94A3B8;
+}
+
 .bottom-safe-area {
   height: 80px;
   flex-shrink: 0;
@@ -405,4 +673,59 @@ page {
 
 .main-scroll.dark-mode .hot-icon {
   filter: brightness(1.2);
+}
+
+/* 编辑模式 - 夜间模式 */
+.dark-mode .edit-mode-btn {
+  background: linear-gradient(135deg, #1E3A5F 0%, #1E40AF 100%);
+}
+
+.dark-mode .edit-tip-bar {
+  background: linear-gradient(135deg, #78350F 0%, #92400E 100%);
+}
+
+.dark-mode .tip-text {
+  color: #FEF3C7;
+}
+
+.dark-mode .card-visibility {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(51, 65, 85, 0.8);
+}
+
+.dark-mode .card-visibility.hidden-tool {
+  background: rgba(127, 29, 29, 0.3);
+  border-color: #EF4444;
+}
+
+.dark-mode .tool-card.selected {
+  border-color: #60A5FA;
+  box-shadow: 0 8px 32px rgba(96, 165, 250, 0.5);
+}
+
+.dark-mode .selected-badge {
+  background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+}
+
+/* 已隐藏工具区 - 夜间模式 */
+.dark-mode .hidden-tools-section {
+  background: linear-gradient(135deg, #450A0A 0%, #7F1D1D 100%);
+}
+
+.dark-mode .hidden-title {
+  color: #FCA5A5;
+}
+
+.dark-mode .hidden-hint {
+  color: #FCA5A5;
+  background: rgba(248, 113, 113, 0.15);
+}
+
+.dark-mode .hidden-tool-item {
+  background: #1E293B;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .hidden-name {
+  color: #94A3B8;
 }
