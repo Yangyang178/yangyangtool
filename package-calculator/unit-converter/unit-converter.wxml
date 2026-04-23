@@ -1,0 +1,106 @@
+<navigation-bar title="单位换算" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper red-gradient">
+        <text class="tool-icon">📏</text>
+      </view>
+      <text class="tool-title">智能单位换算</text>
+      <text class="tool-desc">10大类别 · 100+单位 · 一键精准转换</text>
+    </view>
+
+    <!-- 分类选择 -->
+    <view class="category-tabs">
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        class="tab-item {{currentCategory === item.id ? 'active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onCategoryChange"
+      >
+        <text>{{item.icon}} {{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 输入区域 -->
+    <view class="input-section">
+      <view class="input-card">
+        <text class="card-label">输入数值</text>
+        <view class="value-input-wrapper">
+          <input 
+            class="value-input" 
+            type="digit"
+            placeholder="请输入数值"
+            value="{{inputValue}}"
+            bindinput="onInput"
+          />
+          <view class="unit-selector" bindtap="showFromUnit">
+            <text>{{fromUnit}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 转换方向 -->
+      <view class="convert-arrow">
+        <text>↓</text>
+      </view>
+
+      <!-- 目标单位 -->
+      <view class="output-card">
+        <text class="card-label">转换结果</text>
+        <view class="result-display">
+          <text class="result-value">{{resultValue}}</text>
+          <view class="unit-selector" bindtap="showToUnit">
+            <text>{{toUnit}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 常用换算表 -->
+    <view class="conversion-table" wx:if="{{showTable}}">
+      <text class="table-title">常用换算参考</text>
+      <view class="table-list">
+        <view class="table-row" wx:for="{{conversionList}}" wx:key="index">
+          <text class="table-from">{{item.from}}</text>
+          <text class="table-equal">=</text>
+          <text class="table-to">{{item.to}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-btns">
+      <button class="primary-btn" bindtap="copyResult">
+        <text>复制结果</text>
+      </button>
+      <button class="secondary-btn" bindtap="swapUnits">
+        <text>交换单位</text>
+      </button>
+    </view>
+
+    <!-- 自定义单位选择器弹窗 -->
+    <view class="unit-picker-mask" wx:if="{{showUnitPicker}}" bindtap="hideUnitPicker"></view>
+    <view class="unit-picker-popup {{showUnitPicker ? 'show' : ''}}">
+      <view class="picker-header">
+        <text class="picker-title">选择{{pickerType === 'from' ? '源' : '目标'}}单位</text>
+        <view class="picker-close" bindtap="hideUnitPicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <scroll-view scroll-y class="picker-list">
+        <view
+          class="picker-item {{item.name === (pickerType === 'from' ? fromUnit : toUnit) ? 'selected' : ''}}"
+          wx:for="{{currentUnits}}"
+          wx:key="name"
+          data-name="{{item.name}}"
+          bindtap="selectUnit"
+        >
+          <text class="picker-item-text">{{item.name}}</text>
+          <text class="picker-check" wx:if="{{item.name === (pickerType === 'from' ? fromUnit : toUnit)}}">✓</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</scroll-view>

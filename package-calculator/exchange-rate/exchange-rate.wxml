@@ -1,0 +1,86 @@
+<navigation-bar title="汇率换算" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page" scroll-y>
+  <view class="container">
+    <!-- 工具标题区 -->
+    <view class="tool-header">
+      <view class="icon-wrapper blue-gradient">
+        <text class="tool-icon">💱</text>
+      </view>
+      <text class="tool-title">实时汇率换算</text>
+      <text class="tool-desc">支持多国货币，快速精准换算</text>
+    </view>
+
+    <!-- 金额输入 -->
+    <view class="input-section">
+      <view class="input-group">
+        <text class="input-label">转换金额</text>
+        <view class="amount-input-wrapper">
+          <text class="currency-symbol">{{fromSymbol}}</text>
+          <input
+            class="amount-input"
+            type="digit"
+            placeholder="请输入金额"
+            value="{{amount}}"
+            bindinput="onAmountInput"
+          />
+        </view>
+      </view>
+    </view>
+
+    <!-- 货币选择 -->
+    <view class="currency-section">
+      <view class="currency-selector">
+        <view class="selector-box" bindtap="showFromCurrency">
+          <text class="currency-code">{{fromCurrency}}</text>
+          <text class="currency-name">{{fromCurrencyName}}</text>
+        </view>
+        
+        <view class="swap-btn" bindtap="swapCurrency">
+          <text class="swap-icon">⇄</text>
+        </view>
+        
+        <view class="selector-box" bindtap="showToCurrency">
+          <text class="currency-code">{{toCurrency}}</text>
+          <text class="currency-name">{{toCurrencyName}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 换算结果 -->
+    <view class="result-section">
+      <view class="result-card">
+        <text class="result-amount">{{resultAmount}}</text>
+        <text class="result-label">= {{toCurrency}} {{toCurrencyName}}</text>
+        <text class="rate-info">汇率: 1 {{fromCurrency}} = {{exchangeRate}} {{toCurrency}}</text>
+      </view>
+      
+      <!-- 常用货币快速查看 -->
+      <view class="quick-rates">
+        <text class="section-title">常用汇率参考</text>
+        <view class="rate-list">
+          <view class="rate-item" wx:for="{{quickRates}}" wx:key="code" bindtap="selectQuickRate" data-currency="{{item.code}}">
+            <view class="rate-left">
+              <text class="rate-code">{{item.code}}</text>
+              <text class="rate-name">{{item.name}}</text>
+            </view>
+            <view class="rate-right">
+              <text class="rate-symbol">{{item.symbol}}</text>
+              <text class="rate-value">{{item.rate}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-btns">
+      <button class="primary-btn" bindtap="copyResult">
+        <text>复制结果</text>
+      </button>
+      <button class="secondary-btn" bindtap="resetCalculator">
+        <text>重新计算</text>
+      </button>
+    </view>
+  </view>
+</scroll-view>

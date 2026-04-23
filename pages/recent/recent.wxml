@@ -384,6 +384,123 @@
       </view>
     </view>
 
+    <!-- UGC需求收集入口 -->
+    <view class="ugc-entry" bindtap="openToolRequest" hover-class="ugc-hover">
+      <view class="ugc-icon-wrapper">
+        <text class="ugc-icon">💡</text>
+      </view>
+      <view class="ugc-content">
+        <text class="ugc-title">想增加什么工具？</text>
+        <text class="ugc-subtitle">告诉我们你的需求，我们来实现 ✨</text>
+      </view>
+      <text class="ugc-arrow">→</text>
+    </view>
+
+    <!-- UGC需求收集弹窗 -->
+    <view class="ugc-mask" wx:if="{{showToolRequest}}" bindtap="closeToolRequest"></view>
+    <view class="ugc-panel {{showToolRequest ? 'show' : ''}}" style="padding-top: {{menuButtonInfo.top + menuButtonInfo.height + 16}}px;">
+      <view class="ugc-header">
+        <text class="ugc-panel-title">💡 工具需求建议</text>
+        <text class="ugc-close" bindtap="closeToolRequest">✕</text>
+      </view>
+
+      <view class="ugc-form">
+        <!-- 快速分类选择 -->
+        <view class="ugc-category-section">
+          <text class="ugc-form-label">工具类型（选填）</text>
+          <view class="category-chips">
+            <view 
+              wx:for="{{toolCategories}}" 
+              wx:key="value"
+              class="chip {{selectedCategory === item.value ? 'active' : ''}}"
+              data-value="{{item.value}}"
+              bindtap="selectToolCategory"
+            >
+              <text>{{item.icon}} {{item.label}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 需求描述 -->
+        <view class="ugc-input-group">
+          <text class="ugc-form-label">需求描述 <text class="required">*</text></text>
+          <textarea 
+            class="ugc-textarea" 
+            value="{{toolRequestContent}}" 
+            placeholder="请详细描述您希望添加的工具功能...&#10;例如：我想一个可以计算房贷利率对比的工具"
+            maxlength="300" 
+            auto-height
+            bindinput="onToolRequestInput"
+          ></textarea>
+          <text class="char-count">{{toolRequestContent.length}}/300</text>
+        </view>
+
+        <!-- 优先级 -->
+        <view class="ugc-priority-section">
+          <text class="ugc-form-label">优先级</text>
+          <view class="priority-options">
+            <view 
+              wx:for="{{priorityLevels}}" 
+              wx:key="value"
+              class="priority-option {{selectedPriority === item.value ? 'active' : ''}}"
+              data-value="{{item.value}}"
+              bindtap="selectPriority"
+            >
+              <text>{{item.icon}}</text>
+              <text>{{item.label}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 联系方式（可选） -->
+        <view class="ugc-input-group">
+          <text class="ugc-form-label">联系方式（选填）</text>
+          <input 
+            class="ugc-input" 
+            value="{{toolRequestContact}}" 
+            placeholder="微信号/邮箱，方便我们联系您"
+            maxlength="50"
+            bindinput="onToolRequestContactInput"
+          />
+        </view>
+      </view>
+
+      <!-- 提交按钮 -->
+      <button 
+        class="submit-ugc-btn {{isSubmittingUGC ? 'disabled' : ''}}" 
+        bindtap="submitToolRequest" 
+        disabled="{{isSubmittingUGC}}"
+      >
+        {{isSubmittingUGC ? '提交中...' : '提交需求 💪'}}
+      </button>
+
+      <!-- 备用关闭按钮 -->
+      <view class="close-ugc-bottom" bindtap="closeToolRequest">
+        <text class="close-ugc-text">关闭</text>
+      </view>
+
+      <!-- 已提交的需求列表 -->
+      <view class="submitted-list" wx:if="{{submittedRequests.length > 0}}">
+        <view class="submitted-header">
+          <text class="submitted-title">我已提交 ({{submittedRequests.length}})</text>
+        </view>
+        <view 
+          wx:for="{{submittedRequests}}" 
+          wx:key="id"
+          class="submitted-item"
+        >
+          <view class="submitted-left">
+            <text class="status-dot {{item.status === 'pending' ? 'pending' : 'done'}}"></text>
+            <view class="submitted-info">
+              <text class="submitted-content">{{item.content}}</text>
+              <text class="submitted-time">{{item.time}}</text>
+            </view>
+          </view>
+          <text class="status-tag">{{item.status === 'pending' ? '审核中' : '已采纳'}}</text>
+        </view>
+      </view>
+    </view>
+
     <!-- Banner广告位 -->
     <view class="banner-ad"></view>
 

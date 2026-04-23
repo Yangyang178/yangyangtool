@@ -2,32 +2,75 @@
   "pages": [
     "pages/index/index",
     "pages/favorites/favorites",
-    "pages/recent/recent",
-    "pages/tools/exchange-rate/exchange-rate",
-    "pages/tools/unit-converter/unit-converter",
-    "pages/tools/mortgage-calculator/mortgage-calculator",
-    "pages/tools/tip-calculator/tip-calculator",
-    "pages/tools/word-count/word-count",
-    "pages/tools/case-converter/case-converter",
-    "pages/tools/base64-tool/base64-tool",
-    "pages/tools/pomodoro/pomodoro",
-    "pages/tools/water-reminder/water-reminder",
-    "pages/tools/random-decision/random-decision",
-    "pages/tools/garbage-sorting/garbage-sorting",
-    "pages/tools/date-calculator/date-calculator",
-    "pages/tools/countdown/countdown",
-    "pages/tools/world-clock/world-clock",
-    "pages/tools/age-calculator/age-calculator",
-    "pages/tools/json-formatter/json-formatter",
-    "pages/tools/color-converter/color-converter",
-    "pages/tools/url-encoder/url-encoder",
-    "pages/tools/regex-tester/regex-tester",
-    "pages/tools/image-processor/image-processor",
-    "pages/tools/password-generator/password-generator",
-    "pages/tools/bmi-calculator/bmi-calculator",
-    "pages/tools/text-diff/text-diff",
-    "pages/tools/tax-calculator/tax-calculator"
+    "pages/recent/recent"
   ],
+  
+  "subpackages": [
+    {
+      "root": "package-calculator",
+      "name": "calculator",
+      "pages": [
+        "exchange-rate/exchange-rate",
+        "unit-converter/unit-converter",
+        "mortgage-calculator/mortgage-calculator",
+        "tip-calculator/tip-calculator",
+        "bmi-calculator/bmi-calculator",
+        "tax-calculator/tax-calculator",
+        "age-calculator/age-calculator"
+      ]
+    },
+    {
+      "root": "package-text",
+      "name": "text",
+      "pages": [
+        "word-count/word-count",
+        "case-converter/case-converter",
+        "base64-tool/base64-tool",
+        "text-diff/text-diff",
+        "url-encoder/url-encoder",
+        "regex-tester/regex-tester"
+      ]
+    },
+    {
+      "root": "package-life",
+      "name": "life",
+      "pages": [
+        "pomodoro/pomodoro",
+        "water-reminder/water-reminder",
+        "random-decision/random-decision",
+        "garbage-sorting/garbage-sorting",
+        "date-calculator/date-calculator",
+        "countdown/countdown",
+        "world-clock/world-clock"
+      ]
+    },
+    {
+      "root": "package-dev",
+      "name": "dev",
+      "pages": [
+        "json-formatter/json-formatter",
+        "color-converter/color-converter",
+        "image-processor/image-processor",
+        "password-generator/password-generator"
+      ]
+    }
+  ],
+  
+  "preloadRule": {
+    "pages/index/index": {
+      "network": "all",
+      "packages": ["calculator", "text", "life", "dev"]
+    },
+    "pages/favorites/favorites": {
+      "network": "all",
+      "packages": ["calculator", "text", "life", "dev"]
+    },
+    "pages/recent/recent": {
+      "network": "all",
+      "packages": ["calculator", "text", "life", "dev"]
+    }
+  },
+
   "window": {
     "navigationBarTextStyle": "black",
     "navigationStyle": "custom",

@@ -1,0 +1,139 @@
+<navigation-bar title="JSON格式化" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper" style="background: linear-gradient(135deg, #64748B33 0%, #64748B66 100%);">
+        <text class="tool-icon">{}</text>
+      </view>
+      <text class="tool-title">JSON格式化</text>
+      <text class="tool-desc">美化、压缩、验证JSON数据</text>
+    </view>
+
+    <view class="input-section">
+      <view class="section-label">
+        <text class="label-text">📝 输入 JSON</text>
+        <view class="input-actions">
+          <view class="action-tag paste" bindtap="pasteFromClipboard">
+            <text>📋 粘贴</text>
+          </view>
+          <view class="action-tag sample" bindtap="loadSample">
+            <text>📄 示例</text>
+          </view>
+          <view class="action-tag clear" bindtap="clearInput">
+            <text>🗑️ 清空</text>
+          </view>
+        </view>
+      </view>
+
+      <textarea 
+        class="json-input"
+        placeholder='请输入JSON数据，例如：{"name": "张三", "age": 25}'
+        value="{{inputJson}}"
+        bindinput="onInputChange"
+        auto-height
+        maxlength="-1"
+      ></textarea>
+
+      <view wx:if="{{errorMsg}}" class="error-banner">
+        <text class="error-icon">❌</text>
+        <text class="error-msg">{{errorMsg}}</text>
+      </view>
+
+      <view wx:if="{{!errorMsg && inputJson}}" class="success-banner">
+        <text class="success-icon">✅</text>
+        <text class="success-msg">JSON格式正确 ({{jsonSize}} 字符)</text>
+      </view>
+    </view>
+
+    <view class="button-group">
+      <view class="main-btn format" bindtap="formatJson">
+        <text>🎨 格式化</text>
+      </view>
+      <view class="main-btn compress" bindtap="compressJson">
+        <text>🗜️ 压缩</text>
+      </view>
+      <view class="main-btn validate" bindtap="validateJson">
+        <text>✅ 验证</text>
+      </view>
+    </view>
+
+    <view wx:if="{{outputJson}}" class="output-section">
+      <view class="section-label">
+        <text class="label-text">📤 输出结果</text>
+        <view class="output-actions">
+          <view class="action-tag copy" bindtap="copyOutput">
+            <text>📋 复制</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="output-container">
+        <scroll-view class="json-output-scroll" scroll-x scroll-y>
+          <text class="json-output">{{outputJson}}</text>
+        </scroll-view>
+      </view>
+
+      <view class="stats-row">
+        <view class="stat-item">
+          <text class="stat-value">{{outputStats.chars}}</text>
+          <text class="stat-label">字符数</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{outputStats.lines}}</text>
+          <text class="stat-label">行数</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{outputStats.size}}</text>
+          <text class="stat-label">大小</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="features-section">
+      <text class="features-title">✨ 功能特点</text>
+      <view class="features-grid">
+        <view class="feature-card">
+          <text class="feature-icon">🎨</text>
+          <text class="feature-name">智能缩进</text>
+          <text class="feature-desc">2空格缩进，层次分明</text>
+        </view>
+        <view class="feature-card">
+          <text class="feature-icon">🗜️</text>
+          <text class="feature-name">一键压缩</text>
+          <text class="feature-desc">去除多余空格换行</text>
+        </view>
+        <view class="feature-card">
+          <text class="feature-icon">🔍</text>
+          <text class="feature-name">错误定位</text>
+          <text class="feature-desc">精确指出语法错误位置</text>
+        </view>
+        <view class="feature-card">
+          <text class="feature-icon">📊</text>
+          <text class="feature-name">统计信息</text>
+          <text class="feature-desc">字符、行数、大小统计</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{historyList.length > 0}}" class="history-section">
+      <view class="section-header">
+        <text class="section-title">历史记录</text>
+        <text class="clear-history" bindtap="clearHistory">清空</text>
+      </view>
+      <view class="history-list">
+        <view 
+          class="history-item"
+          wx:for="{{historyList}}"
+          wx:key="time"
+          bindtap="loadHistoryItem"
+          data-index="{{index}}"
+        >
+          <text class="history-preview">{{item.preview}}</text>
+          <text class="history-time">{{item.timeText}}</text>
+          <text class="history-type {{item.type}}">{{item.typeText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</scroll-view>

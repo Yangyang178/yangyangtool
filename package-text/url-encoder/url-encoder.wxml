@@ -1,0 +1,186 @@
+<navigation-bar title="URL编解码" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper" style="background: linear-gradient(135deg, #06B6D433 0%, #06B6D466 100%);">
+        <text class="tool-icon">🔗</text>
+      </view>
+      <text class="tool-title">URL编解码</text>
+      <text class="tool-desc">URL编码/解码/Base64转换</text>
+    </view>
+
+    <!-- 模式切换 -->
+    <view class="mode-tabs">
+      <view 
+        class="mode-tab {{currentMode === 'encode' ? 'active' : ''}}"
+        data-mode="encode"
+        bindtap="switchMode"
+      >
+        <text>🔒 URL编码</text>
+      </view>
+      <view 
+        class="mode-tab {{currentMode === 'decode' ? 'active' : ''}}"
+        data-mode="decode"
+        bindtap="switchMode"
+      >
+        <text>🔓 URL解码</text>
+      </view>
+      <view 
+        class="mode-tab {{currentMode === 'base64' ? 'active' : ''}}"
+        data-mode="base64"
+        bindtap="switchMode"
+      >
+        <text>📦 Base64</text>
+      </view>
+    </view>
+
+    <!-- 输入区域 -->
+    <view class="input-section">
+      <view class="section-header-row">
+        <text class="section-label">{{inputLabel}}</text>
+        <view class="input-actions">
+          <view class="action-tag paste" bindtap="pasteFromClipboard">
+            <text>📋 粘贴</text>
+          </view>
+          <view class="action-tag sample" bindtap="loadSample">
+            <text>📄 示例</text>
+          </view>
+          <view class="action-tag clear" bindtap="clearInput">
+            <text>🗑️ 清空</text>
+          </view>
+        </view>
+      </view>
+
+      <textarea 
+        class="url-input"
+        placeholder="{{inputPlaceholder}}"
+        value="{{inputText}}"
+        bindinput="onInputChange"
+        auto-height
+        maxlength="-1"
+      ></textarea>
+
+      <view wx:if="{{inputText}}" class="input-stats">
+        <text class="stat-item">字符数: {{inputLength}}</text>
+        <text class="stat-item">字节数: {{inputBytes}}</text>
+      </view>
+    </view>
+
+    <!-- 转换按钮 -->
+    <view class="convert-btn" bindtap="convert">
+      <text>{{convertBtnText}}</text>
+    </view>
+
+    <!-- 输出区域 -->
+    <view wx:if="{{outputText}}" class="output-section">
+      <view class="section-header-row">
+        <text class="section-label">{{outputLabel}}</text>
+        <view class="output-actions">
+          <view class="action-tag copy-main" bindtap="copyOutput">
+            <text>📋 复制</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="output-container">
+        <scroll-view scroll-x scroll-y class="output-scroll">
+          <text class="output-text">{{outputText}}</text>
+        </scroll-view>
+      </view>
+
+      <view class="output-stats">
+        <text class="stat-item">字符数: {{outputLength}}</text>
+        <text class="stat-item">变化率: {{changeRate}}</text>
+      </view>
+    </view>
+
+    <!-- URL解析区域 -->
+    <view wx:if="{{parsedUrl}}" class="parse-section">
+      <text class="parse-title">🔍 URL解析结果</text>
+      
+      <view class="parse-card">
+        <view class="parse-item">
+          <text class="parse-label">协议 (Protocol)</text>
+          <text class="parse-value">{{parsedUrl.protocol}}</text>
+        </view>
+        <view class="parse-item">
+          <text class="parse-label">主机 (Host)</text>
+          <text class="parse-value">{{parsedUrl.host}}</text>
+        </view>
+        <view class="parse-item">
+          <text class="parse-label">端口 (Port)</text>
+          <text class="parse-value">{{parsedUrl.port || '默认'}}</text>
+        </view>
+        <view class="parse-item">
+          <text class="parse-label">路径 (Path)</text>
+          <text class="parse-value">{{parsedUrl.pathname}}</text>
+        </view>
+        
+        <view wx:if="{{parsedUrl.search}}" class="parse-item full-width">
+          <text class="parse-label">查询参数 (Query)</text>
+          <view class="params-list">
+            <view 
+              class="param-item"
+              wx:for="{{parsedUrl.params}}"
+              wx:key="key"
+            >
+              <text class="param-key">{{item.key}}</text>
+              <text class="param-equal">=</text>
+              <text class="param-value">{{item.value}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{parsedUrl.hash}}" class="parse-item">
+          <text class="parse-label">锚点 (Hash)</text>
+          <text class="parse-value">#{{parsedUrl.hash}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 常见编码对照表 -->
+    <view class="reference-section">
+      <text class="ref-title">📚 常见字符编码对照</text>
+      <view class="ref-table">
+        <view class="ref-header">
+          <text class="ref-cell header">字符</text>
+          <text class="ref-cell header">编码</text>
+          <text class="ref-cell header">说明</text>
+        </view>
+        <view 
+          class="ref-row"
+          wx:for="{{commonEncodings}}"
+          wx:key="char"
+        >
+          <text class="ref-cell char">{{item.char}}</text>
+          <text class="ref-cell encoded">{{item.encoded}}</text>
+          <text class="ref-cell desc">{{item.desc}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 使用说明 -->
+    <view class="tips-section">
+      <text class="tips-title">💡 使用说明</text>
+      <view class="tips-list">
+        <view class="tip-item">
+          <text class="tip-bullet">•</text>
+          <text class="tip-text"><b>URL编码</b>: 将特殊字符转换为%XX格式，用于安全传输</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-bullet">•</text>
+          <text class="tip-text"><b>URL解码</b>: 将%XX格式还原为原始字符</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-bullet">•</text>
+          <text class="tip-text"><b>Base64</b>: 二进制数据转文本，常用于图片、文件传输</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-bullet">•</text>
+          <text class="tip-text">输入完整URL可自动<strong>解析URL结构</strong></text>
+        </view>
+      </view>
+    </view>
+  </view>
+</scroll-view>

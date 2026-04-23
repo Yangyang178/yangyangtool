@@ -5,6 +5,11 @@ Page({
     userInfo: { nickname: '微信用户', avatarUrl: '', avatarBg: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)' },
     totalUsage: 0,
     
+    menuButtonInfo: {
+      top: 0,
+      height: 44
+    },
+    
     funStats: {
       savedTime: '0分钟',
       operationCount: 0,
@@ -61,6 +66,29 @@ Page({
       { value: 'bug', label: '🐛 问题反馈' },
       { value: 'suggestion', label: '💡 功能建议' },
       { value: 'other', label: '💬 其他' }
+    ],
+
+    showToolRequest: false,
+    toolRequestContent: '',
+    toolRequestContact: '',
+    selectedCategory: '',
+    selectedPriority: 'medium',
+    isSubmittingUGC: false,
+    submittedRequests: [],
+    
+    toolCategories: [
+      { value: 'calculator', icon: '🧮', label: '计算转换' },
+      { value: 'text', icon: '📝', label: '文本处理' },
+      { value: 'life', icon: '🏠', label: '生活助手' },
+      { value: 'datetime', icon: '⏰', label: '日期时间' },
+      { value: 'dev', icon: '💻', label: '开发调试' },
+      { value: 'other', icon: '✨', label: '其他类型' }
+    ],
+    
+    priorityLevels: [
+      { value: 'low', icon: '😊', label: '一般' },
+      { value: 'medium', icon: '💪', label: '需要' },
+      { value: 'high', icon: '🔥', label: '急需' }
     ]
   },
 
@@ -84,6 +112,7 @@ Page({
     this.checkDarkMode()
     this.calculateFunStats()
     this.loadWeeklyData()
+    this.loadSubmittedRequests()
     const app = getApp()
     if (app) {
       const isDark = app.globalData.isDarkMode || wx.getStorageSync('darkMode') === true
@@ -795,6 +824,168 @@ ${feedbackContent}
         })
       }
     })
+  },
+
+  openToolRequest() {
+    wx.vibrateShort({ type: 'light' })
+    
+    try {
+      const menuButton = wx.getMenuButtonBoundingClientRect()
+      this.setData({
+        'menuButtonInfo.top': menuButton.top,
+        'menuButtonInfo.height': menuButton.height
+      })
+    } catch (e) {
+      console.log('获取菜单按钮位置失败', e)
+    }
+    
+    this.setData({
+      showToolRequest: true,
+      toolRequestContent: '',
+      toolRequestContact: '',
+      selectedCategory: '',
+      selectedPriority: 'medium'
+    })
+  },
+
+  closeToolRequest() {
+    this.setData({ showToolRequest: false })
+  },
+
+  selectToolCategory(e) {
+    wx.vibrateShort({ type: 'light' })
+    const value = e.currentTarget.dataset.value
+    this.setData({ 
+      selectedCategory: value === this.data.selectedCategory ? '' : value 
+    })
+  },
+
+  selectPriority(e) {
+    wx.vibrateShort({ type: 'light' })
+    const value = e.currentTarget.dataset.value
+    this.setData({ selectedPriority: value })
+  },
+
+  onToolRequestInput(e) {
+    this.setData({ toolRequestContent: e.detail.value })
+  },
+
+  onToolRequestContactInput(e) {
+    this.setData({ toolRequestContact: e.detail.value })
+  },
+
+  loadSubmittedRequests() {
+    const requests = wx.getStorageSync('toolRequests') || []
+    this.setData({ submittedRequests: requests.slice(0, 10) })
+  },
+
+  submitToolRequest() {
+    const { toolRequestContent, toolRequestContact, selectedCategory, selectedPriority } = this.data
+
+    if (!toolRequestContent.trim()) {
+      wx.showToast({ title: '请输入需求描述', icon: 'none' })
+      return
+    }
+
+    if (toolRequestContent.trim().length < 5) {
+      wx.showToast({ title: '需求描述至少5个字', icon: 'none' })
+      return
+    }
+
+    wx.vibrateShort({ type: 'medium' })
+    this.setData({ isSubmittingUGC: true })
+
+    const now = new Date()
+    const timeStr = `${now.getMonth() + 1}月${now.getDate()}日 ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+
+    const categoryLabel = this.data.toolCategories.find(c => c.value === selectedCategory)
+    const priorityLabel = this.data.priorityLevels.find(p => p.value === selectedPriority)
+
+    const requestData = {
+      id: Date.now(),
+      content: toolRequestContent,
+      category: selectedCategory || 'other',
+      categoryName: categoryLabel ? categoryLabel.label : '其他',
+      priority: selectedPriority,
+      priorityLabel: priorityLabel ? priorityLabel.label : '需要',
+      contact: toolRequestContact || '未填写',
+      time: timeStr,
+      timestamp: now.getTime(),
+      status: 'pending'
+    }
+
+    let requests = wx.getStorageSync('toolRequests') || []
+    requests.unshift(requestData)
+    
+    if (requests.length > 20) {
+      requests = requests.slice(0, 20)
+    }
+    
+    wx.setStorageSync('toolRequests', requests)
+
+    const mailSubject = `【百宝工具箱】新工具需求 - ${timeStr}`
+    const priorityEmoji = selectedPriority === 'high' ? '🔥' : selectedPriority === 'medium' ? '💪' : '😊'
+    
+    const mailBody = `
+════════════════════════════════
+  📦 百宝工具箱 - 新工具需求建议
+════════════════════════════════
+
+📋 需求详情
+─────────────────────────────
+需求描述：${toolRequestContent}
+
+工具类型：${categoryLabel ? categoryLabel.label : '未选择'}
+优先级：${priorityEmoji} ${priorityLabel ? priorityLabel.label : '需要'}
+联系方式：${toolRequestContact || '未填写'}
+
+⏰ 提交时间：${timeStr}
+
+📱 设备信息
+─────────────────────────────
+设备型号：${wx.getSystemInfoSync().model}
+微信版本：${wx.getSystemInfoSync().version}
+系统平台：${wx.getSystemInfoSync().platform}
+屏幕尺寸：${wx.getSystemInfoSync().windowWidth}×${wx.getSystemInfoSync().windowHeight}
+
+════════════════════════════════
+来自百宝工具箱微信小程序用户
+邮箱接收时间：${new Date().toLocaleString()}
+════════════════════════════════`.trim()
+
+    setTimeout(() => {
+      this.setData({ 
+        isSubmittingUGC: false,
+        showToolRequest: false,
+        toolRequestContent: '',
+        toolRequestContact: '',
+        selectedCategory: '',
+        selectedPriority: 'medium',
+        submittedRequests: requests.slice(0, 10)
+      })
+
+      wx.setClipboardData({
+        data: mailBody,
+        success: () => {
+          wx.showModal({
+            title: '✅ 需求已提交并发送到邮箱',
+            content: `感谢您的宝贵建议！❤️\n\n📧 需求信息已自动复制到剪贴板\n\n请按以下步骤发送邮件给我们：\n\n1️⃣ 打开QQ邮箱网页版（mail.qq.com）\n2️⃣ 点击"写信"按钮\n3️⃣ 收件人填写：yhz123456718@qq.com\n4️⃣ 主题已准备好，直接粘贴\n5️⃣ 正文处粘贴完整内容\n6️⃣ 点击"发送" ✅\n\n我们会尽快评估并回复您！`,
+            showCancel: false,
+            confirmText: '我知道了',
+            confirmColor: '#F59E0B'
+          })
+        },
+        fail: () => {
+          wx.showModal({
+            title: '💾 需求已保存到本地',
+            content: `您的需求已成功提交！\n\n由于剪贴板权限问题，请手动记录以下信息后发送邮件：\n\n📧 收件人：yhz123456718@qq.com\n📝 主题：${mailSubject}\n\n需求内容：\n${toolRequestContent}\n\n您可以在"我的-想增加什么工具"中查看已提交的需求记录。`,
+            showCancel: false,
+            confirmText: '好的',
+            confirmColor: '#F59E0B'
+          })
+        }
+      })
+    }, 800)
   },
 
   onShareAppMessage() {

@@ -1,0 +1,151 @@
+<navigation-bar title="年龄计算器" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper" style="background: linear-gradient(135deg, #EC489933 0%, #EC489966 100%);">
+        <text class="tool-icon">👶</text>
+      </view>
+      <text class="tool-title">年龄计算器</text>
+      <text class="tool-desc">精确到天的年龄与生命统计</text>
+    </view>
+
+    <view class="input-section">
+      <view class="input-card">
+        <view class="input-group">
+          <text class="input-label">🎂 选择出生日期</text>
+          <picker mode="date" value="{{birthDate}}" end="{{today}}" bindchange="onBirthDateChange">
+            <view class="date-picker-box">
+              <text>{{birthDate || '请选择您的出生日期'}}</text>
+              <text class="picker-icon">📅</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="quick-birthdays">
+          <text class="quick-label">快捷选择：</text>
+          <view class="quick-btn" bindtap="setTodayBirthday">今天生日</view>
+          <view class="quick-btn" bindtap="setYesterdayBirthday">昨天生日</view>
+          <view class="quick-btn" bindtap="setWeekAgo">一周前</view>
+          <view class="quick-btn" bindtap="setMonthAgo">一月前</view>
+          <view class="quick-btn" bindtap="setYearAgo">一年前</view>
+        </view>
+
+        <view class="calculate-btn" bindtap="calculateAge">
+          <text>🔢 计算年龄</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{showResult}}" class="result-section">
+      <view class="age-display-card">
+        <view class="age-header">
+          <text class="zodiac-emoji">{{zodiacEmoji}}</text>
+          <view class="zodiac-info">
+            <text class="zodiac-name">{{zodiacName}}</text>
+            <text class="constellation-name">{{constellationName}}座</text>
+          </view>
+        </view>
+        
+        <view class="age-main">
+          <view class="age-number">
+            <text class="age-value">{{ageYears}}</text>
+            <text class="age-unit">岁</text>
+          </view>
+          <view class="age-detail">
+            <text class="detail-text">{{ageMonths}}个月 {{ageDays}}天</text>
+          </view>
+        </view>
+
+        <view class="next-birthday-info">
+          <view class="birthday-countdown">
+            <text class="countdown-label">🎉 距离下次生日还有</text>
+            <text class="countdown-days">{{nextBirthdayDays}}</text>
+            <text class="countdown-unit">天</text>
+          </view>
+          <text class="next-birthday-date">{{nextBirthdayDate}}</text>
+        </view>
+      </view>
+
+      <view class="life-stats-grid">
+        <view class="stat-card">
+          <text class="stat-icon">📅</text>
+          <text class="stat-value">{{totalDays}}</text>
+          <text class="stat-label">总天数</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-icon">⏰</text>
+          <text class="stat-value">{{totalHours}}</text>
+          <text class="stat-label">总小时</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-icon">⏱️</text>
+          <text class="stat-value">{{totalMinutes}}</text>
+          <text class="stat-label">总分钟</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-icon">💓</text>
+          <text class="stat-value">{{heartbeats}}</text>
+          <text class="stat-label">心跳次数</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-icon">😮‍💨</text>
+          <text class="stat-value">{{breaths}}</text>
+          <text class="stat-label">呼吸次数</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-icon">🌙</text>
+          <text class="stat-value">{{sleepNights}}</text>
+          <text class="stat-label">睡眠夜晚</text>
+        </view>
+      </view>
+
+      <view class="milestone-section">
+        <text class="milestone-title">🏆 人生里程碑</text>
+        <view class="milestone-list">
+          <view 
+            class="milestone-item {{item.passed ? 'passed' : 'future'}}"
+            wx:for="{{milestones}}"
+            wx:key="name"
+          >
+            <view class="milestone-status">
+              <text>{{item.passed ? '✅' : '⏳'}}</text>
+            </view>
+            <view class="milestone-content">
+              <text class="milestone-age">{{item.age}}</text>
+              <text class="milestone-name">{{item.name}}</text>
+            </view>
+            <text class="milestone-date">{{item.date}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="action-buttons">
+        <view class="action-btn copy" bindtap="copyResult">
+          <text>📋 复制结果</text>
+        </view>
+        <view class="action-btn share" bindtap="shareResult">
+          <text>📤 分享</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{historyList.length > 0}}" class="history-section">
+      <view class="section-header">
+        <text class="section-title">计算历史</text>
+        <text class="clear-history" bindtap="clearHistory">清空</text>
+      </view>
+      <view class="history-list">
+        <view 
+          class="history-item"
+          wx:for="{{historyList}}"
+          wx:key="time"
+        >
+          <text class="history-birth">{{item.birthDate}}</text>
+          <text class="history-age">{{item.ageText}}</text>
+          <text class="history-time">{{item.timeText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</scroll-view>

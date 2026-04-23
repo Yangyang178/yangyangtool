@@ -1,0 +1,127 @@
+<navigation-bar title="个税计算器" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper"><text class="tool-icon">💰</text></view>
+      <text class="tool-title">个税计算器</text>
+      <text class="tool-desc">2024最新个税专项扣除，月薪→税后工资</text>
+    </view>
+
+    <view class="input-card">
+      <text class="section-title">收入信息</text>
+      <view class="input-row">
+        <view class="input-group">
+          <text class="input-label">税前月薪（元）</text>
+          <view class="input-box">
+            <input class="input-field" type="digit" placeholder="请输入" value="{{salary}}" bindinput="onSalaryInput"/>
+            <text class="input-unit">元/月</text>
+          </view>
+        </view>
+      </view>
+
+      <text class="section-subtitle">专项附加扣除</text>
+      <view class="deduction-grid">
+        <view class="deduction-item">
+          <view class="deduction-left">
+            <text class="deduction-icon">👶</text>
+            <text class="deduction-name">子女教育</text>
+          </view>
+          <view class="deduction-value-box">
+            <input class="deduction-input" type="digit" value="{{deductions.children}}" data-key="children" bindinput="onDeductionChange"/>
+            <text class="deduction-unit">元</text>
+          </view>
+        </view>
+
+        <view class="deduction-item">
+          <view class="deduction-left">
+            <text class="deduction-icon">🎓</text>
+            <text class="deduction-name">继续教育</text>
+          </view>
+          <view class="deduction-value-box">
+            <input class="deduction-input" type="digit" value="{{deductions.education}}" data-key="education" bindinput="onDeductionChange"/>
+            <text class="deduction-unit">元</text>
+          </view>
+        </view>
+
+        <view class="deduction-item">
+          <view class="deduction-left">
+            <text class="deduction-icon">🏠</text>
+            <text class="deduction-name">住房租金</text>
+          </view>
+          <view class="deduction-value-box">
+            <input class="deduction-input" type="digit" value="{{deductions.housing}}" data-key="housing" bindinput="onDeductionChange"/>
+            <text class="deduction-unit">元</text>
+          </view>
+        </view>
+
+        <view class="deduction-item">
+          <view class="deduction-left">
+            <text class="deduction-icon">👴</text>
+            <text class="deduction-name">赡养老人</text>
+          </view>
+          <view class="deduction-value-box">
+            <input class="deduction-input" type="digit" value="{{deductions.elderly}}" data-key="elderly" bindinput="onDeductionChange"/>
+            <text class="deduction-unit">元</text>
+          </view>
+        </view>
+
+        <view class="deduction-item" style="grid-column: span 2;">
+          <view class="deduction-left">
+            <text class="deduction-icon">➕</text>
+            <text class="deduction-name">其他扣除</text>
+          </view>
+          <view class="deduction-value-box">
+            <input class="deduction-input" type="digit" value="{{deductions.other}}" data-key="other" bindinput="onDeductionChange"/>
+            <text class="deduction-unit">元</text>
+          </view>
+        </view>
+      </view>
+
+      <button class="calc-btn" bindtap="calculate" hover-class="btn-hover">
+        💵 计算个税
+      </button>
+    </view>
+
+    <view class="result-card" wx:if="{{result}}">
+      <view class="result-header">
+        <text class="result-main-label">税后月薪</text>
+        <text class="result-main-value">{{result.afterTax}} 元</text>
+      </view>
+
+      <view class="result-detail-grid">
+        <view class="detail-item">
+          <text class="detail-label">应缴个税</text>
+          <text class="detail-value tax">{{result.tax}} 元</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">实际税率</text>
+          <text class="detail-value">{{result.effectiveRate}}%</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">年税前收入</text>
+          <text class="detail-value">{{result.annualSalary}} 元</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">年税后收入</text>
+          <text class="detail-value highlight">{{result.annualAfterTax}} 元</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="breakdown-card" wx:if="{{breakdown.length > 0}}">
+      <text class="breakdown-title">📊 计算明细</text>
+      <block wx:for="{{breakdown}}" wx:key="label">
+        <view class="breakdown-row">
+          <text class="breakdown-label">{{item.label}}</text>
+          <text class="breakdown-val {{item.cls}}">{{item.val}}</text>
+        </view>
+      </block>
+    </view>
+
+    <view class="tips-card">
+      <text class="tips-title">💡 说明</text>
+      <text class="tips-text">• 采用2024年最新个人所得税税率表（综合所得适用）\n• 起征点为5000元/月\n• 子女教育：每子女每月2000元\n• 继续教育：学历每月400元，职业资格每月3600元\n• 住房租金：直辖市/省会城市1500元，其他1100元/月\n• 赡养老人：独生子女每月2000元，非独每月1000元</text>
+    </view>
+  </view>
+</scroll-view>

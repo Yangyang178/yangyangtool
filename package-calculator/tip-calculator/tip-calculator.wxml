@@ -1,0 +1,105 @@
+<navigation-bar title="小费计算器" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper yellow-gradient">
+        <text class="tool-icon">💰</text>
+      </view>
+      <text class="tool-title">小费快速计算</text>
+      <text class="tool-desc">输入账单金额，一键算出小费和总额</text>
+    </view>
+
+    <!-- 账单输入 -->
+    <view class="input-section">
+      <text class="section-label">账单金额</text>
+      <view class="amount-input-wrapper">
+        <text class="currency-symbol">$</text>
+        <input 
+          class="amount-input" 
+          type="digit"
+          placeholder="0.00"
+          value="{{billAmount}}"
+          bindinput="onBillInput"
+        />
+      </view>
+    </view>
+
+    <!-- 小费比例 -->
+    <view class="tip-section">
+      <text class="section-label">选择小费比例</text>
+      <view class="tip-options">
+        <view 
+          wx:for="{{tipOptions}}" 
+          wx:key="value"
+          class="tip-option {{selectedTip === item.value ? 'active' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="selectTip"
+        >
+          <text class="tip-value">{{item.value}}%</text>
+        </view>
+        <view class="tip-option {{isCustomTip ? 'active' : ''}}" bindtap="showCustomTip">
+          <text class="tip-value">自定义</text>
+        </view>
+      </view>
+
+      <!-- 自定义小费输入 -->
+      <view class="custom-tip-input" wx:if="{{isCustomTip}}">
+        <input 
+          type="digit"
+          placeholder="输入百分比"
+          value="{{customTipValue}}"
+          bindinput="onCustomTipInput"
+        />
+        <text class="percent-sign">%</text>
+      </view>
+    </view>
+
+    <!-- 分割人数 -->
+    <view class="split-section">
+      <text class="section-label">分割人数（可选）</text>
+      <view class="people-selector">
+        <button class="minus-btn" bindtap="decreasePeople">−</button>
+        <text class="people-count">{{peopleCount}}</text>
+        <button class="plus-btn" bindtap="increasePeople">+</button>
+      </view>
+    </view>
+
+    <!-- 计算结果 -->
+    <view class="result-section">
+      <view class="result-card main-result">
+        <text class="result-title">{{peopleCount > 1 ? '每人应付' : '总金额'}}</text>
+        <text class="result-amount">${{totalPerPerson}}</text>
+      </view>
+
+      <view class="result-details">
+        <view class="detail-item">
+          <text class="detail-label">账单金额</text>
+          <text class="detail-value">${{billAmount || '0.00'}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">小费 ({{currentTipPercent}}%)</text>
+          <text class="detail-value tip-color">${{tipAmount}}</text>
+        </view>
+        <view class="detail-item total-row">
+          <text class="detail-label">总计</text>
+          <text class="detail-value total-color">${{totalAmount}}</text>
+        </view>
+        <view class="detail-item" wx:if="{{peopleCount > 1}}">
+          <text class="detail-label">× {{peopleCount}}人</text>
+          <text class="detail-value">${{totalPerPerson}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 快捷操作 -->
+    <view class="action-buttons">
+      <button class="copy-btn" bindtap="copyResult">
+        <text>📋 复制结果</text>
+      </button>
+      <button class="reset-btn" bindtap="resetCalculator">
+        <text>🔄 重置</text>
+      </button>
+    </view>
+  </view>
+</scroll-view>

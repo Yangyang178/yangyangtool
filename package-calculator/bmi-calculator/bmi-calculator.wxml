@@ -1,0 +1,77 @@
+<navigation-bar title="BMI 计算器" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper"><text class="tool-icon">⚖️</text></view>
+      <text class="tool-title">BMI 计算器</text>
+      <text class="tool-desc">身高体重 → BMI指数 + 健康建议</text>
+    </view>
+
+    <view class="result-card" wx:if="{{bmi !== null}}">
+      <text class="bmi-value" style="color: {{status === '正常' ? '#10B981' : status === '偏胖' ? '#F59E0B' : status === '肥胖' ? '#EF4444' : '#3B82F6'}}">{{bmi}}</text>
+      <text class="bmi-label">身体质量指数 (BMI)</text>
+      <view class="bmi-status {{statusClass}}">{{status}}</view>
+
+      <view class="bmi-scale">
+        <view class="bmi-pointer" style="left: {{pointerLeft}}"></view>
+      </view>
+      <view class="scale-labels">
+        <text>偏瘦</text><text>正常</text><text>偏胖</text><text>肥胖</text>
+      </view>
+    </view>
+
+    <view class="input-card">
+      <text class="section-title">输入数据</text>
+
+      <view class="unit-toggle">
+        <view class="unit-option {{unitType === 'metric' ? 'active' : ''}}" data-type="metric" bindtap="switchUnit">公制 (cm/kg)</view>
+        <view class="unit-option {{unitType === 'imperial' ? 'active' : ''}}" data-type="imperial" bindtap="switchUnit">英制 (in/lb)</view>
+      </view>
+
+      <view class="input-row">
+        <view class="input-group">
+          <text class="input-label">{{unitType === 'metric' ? '身高 (cm)' : '身高 (in)'}}</text>
+          <view class="input-box">
+            <input class="input-field" type="digit" placeholder="--" value="{{height}}" bindinput="onHeightInput"/>
+            <text class="input-unit">{{unitType === 'metric' ? 'cm' : 'in'}}</text>
+          </view>
+        </view>
+        <view class="input-group">
+          <text class="input-label">{{unitType === 'metric' ? '体重 (kg)' : '体重 (lb)'}}</text>
+          <view class="input-box">
+            <input class="input-field" type="digit" placeholder="--" value="{{weight}}" bindinput="onWeightInput"/>
+            <text class="input-unit">{{unitType === 'metric' ? 'kg' : 'lb'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <button class="calc-btn" bindtap="calculateBMI" hover-class="btn-hover">
+        计算 BMI
+      </button>
+    </view>
+
+    <view class="info-card" wx:if="{{idealWeight.min}}">
+      <text class="info-title">参考信息</text>
+      <view class="info-grid">
+        <view class="info-item">
+          <text class="info-item-label">标准体重下限</text>
+          <text class="info-item-value">{{idealWeight.min}} kg</text>
+        </view>
+        <view class="info-item">
+          <text class="info-item-label">标准体重上限</text>
+          <text class="info-item-value">{{idealWeight.max}} kg</text>
+        </view>
+      </view>
+      <view class="advice-card">
+        <text class="advice-title">💡 健康建议</text>
+        <text class="advice-text">{{advice}}</text>
+      </view>
+    </view>
+
+    <view class="advice-card" wx:if="{{bmi === null}}">
+      <text class="advice-title">📊 关于 BMI</text>
+      <text class="advice-text">BMI（Body Mass Index）是世界卫生组织推荐的国际通用衡量人体胖瘦程度及是否健康的标准。适用于 18-65 岁人群。</text>
+    </view>
+  </view>
+</scroll-view>

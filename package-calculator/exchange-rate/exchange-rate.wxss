@@ -1,0 +1,302 @@
+page {
+  background-color: var(--pageBg,#F8FAFC);
+}
+
+.tool-page {
+  height: 100vh;
+}
+
+.container {
+  padding: 20px;
+  padding-bottom: 40px;
+}
+
+/* 工具头部 */
+.tool-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.icon-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  background: linear-gradient(135deg, var(--bgTipBlueDeep,#DBEAFE) 0%, var(--bgTipBlueDeep,#DBEAFE) 100%);
+}
+
+.blue-gradient {
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, var(--accentBlue,#3B82F6) 100%);
+}
+
+.tool-icon {
+  font-size: 40px;
+}
+
+.tool-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--textPrimary,#1E293B);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.tool-desc {
+  font-size: 14px;
+  color: var(--textSecondary,#64748B);
+}
+
+/* 输入区域 */
+.input-section {
+  margin-bottom: 24px;
+}
+
+.input-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--textPrimary,#1E293B);
+  display: block;
+  margin-bottom: 12px;
+}
+
+.amount-input-wrapper {
+  background: var(--cardBg,#FFFFFF);
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.amount-input-wrapper:focus-within {
+  border-color: var(--accentBlue,#3B82F6);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.currency-symbol {
+  font-size: 28px;
+  color: var(--accentBlue,#3B82F6);
+  font-weight: 700;
+  margin-right: 12px;
+}
+
+.amount-input {
+  flex: 1;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--textPrimary,#1E293B);
+}
+
+/* 货币选择 */
+.currency-section {
+  margin-bottom: 28px;
+}
+
+.currency-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.selector-box {
+  flex: 1;
+  background: var(--cardBg,#FFFFFF);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.selector-box:active {
+  transform: scale(0.98);
+}
+
+.currency-code {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--textPrimary,#1E293B);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.currency-name {
+  font-size: 13px;
+  color: var(--textSecondary,#64748B);
+}
+
+.swap-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, var(--accentBlue,#3B82F6) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.swap-btn:active {
+  transform: scale(0.95);
+}
+
+.swap-icon {
+  font-size: 24px;
+  color: var(--cardBg,#FFFFFF);
+}
+
+/* 结果区域 */
+.result-section {
+  margin-bottom: 28px;
+}
+
+.result-card {
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, var(--accentBlue,#3B82F6) 100%);
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);
+}
+
+.result-amount {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--cardBg,#FFFFFF);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.result-label {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  display: block;
+  margin-bottom: 12px;
+}
+
+.rate-info {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px 16px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.quick-rates {
+  background: var(--cardBg,#FFFFFF);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--textPrimary,#1E293B);
+  display: block;
+  margin-bottom: 16px;
+}
+
+.rate-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.rate-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: var(--pageBg,#F8FAFC);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.rate-item:active {
+  transform: scale(0.98);
+  background: var(--bgTipBlue,#EFF6FF);
+}
+
+.rate-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rate-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rate-code {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--textPrimary,#1E293B);
+}
+
+.rate-name {
+  font-size: 12px;
+  color: var(--textSecondary,#64748B);
+}
+
+.rate-symbol {
+  font-size: 14px;
+  color: var(--accentBlue,#3B82F6);
+  font-weight: 600;
+}
+
+.rate-value {
+  font-size: 15px;
+  color: var(--accentBlue,#3B82F6);
+  font-weight: 700;
+}
+
+/* 操作按钮 */
+.action-btns {
+  display: flex;
+  gap: 12px;
+}
+
+.primary-btn, .secondary-btn {
+  flex: 1;
+  height: 52px;
+  border-radius: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, var(--accentBlue,#3B82F6) 100%);
+  color: var(--cardBg,#FFFFFF);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.primary-btn:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.secondary-btn {
+  background: var(--surfaceBg,#F1F5F9);
+  color: var(--textSecondary,#64748B);
+}
+
+.secondary-btn:active {
+  transform: scale(0.98);
+  background: var(--borderLight,#E2E8F0);
+}

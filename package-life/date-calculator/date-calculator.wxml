@@ -1,0 +1,235 @@
+<navigation-bar title="日期计算器" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper" style="background: linear-gradient(135deg, #FBBF2433 0%, #FBBF2466 100%);">
+        <text class="tool-icon">📅</text>
+      </view>
+      <text class="tool-title">日期计算器</text>
+      <text class="tool-desc">精确计算日期间隔与差异</text>
+    </view>
+
+    <view class="calc-mode-tabs">
+      <view 
+        class="mode-tab {{calcMode === 'diff' ? 'active' : ''}}"
+        data-mode="diff"
+        bindtap="switchMode"
+      >
+        <text>日期间隔</text>
+      </view>
+      <view 
+        class="mode-tab {{calcMode === 'add' ? 'active' : ''}}"
+        data-mode="add"
+        bindtap="switchMode"
+      >
+        <text>日期加减</text>
+      </view>
+    </view>
+
+    <view wx:if="{{calcMode === 'diff'}}" class="input-section">
+      <view class="date-input-group">
+        <view class="date-label">
+          <text class="label-icon">📌</text>
+          <text>开始日期</text>
+        </view>
+        <picker mode="date" value="{{startDate}}" start="1900-01-01" end="2099-12-31" bindchange="onStartDateChange">
+          <view class="date-picker">
+            <text>{{startDate}}</text>
+            <text class="picker-arrow">📅</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="swap-btn" bindtap="swapDates">
+        <text>⇅</text>
+      </view>
+
+      <view class="date-input-group">
+        <view class="date-label">
+          <text class="label-icon">🎯</text>
+          <text>结束日期</text>
+        </view>
+        <picker mode="date" value="{{endDate}}" start="1900-01-01" end="2099-12-31" bindchange="onEndDateChange">
+          <view class="date-picker">
+            <text>{{endDate}}</text>
+            <text class="picker-arrow">📅</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="quick-dates">
+        <text class="quick-label">快捷选择：</text>
+        <view class="quick-btn" bindtap="setTodayStart">今天</view>
+        <view class="quick-btn" bindtap="setYesterday">昨天</view>
+        <view class="quick-btn" bindtap="setThisWeek">本周</view>
+        <view class="quick-btn" bindtap="setThisMonth">本月</view>
+        <view class="quick-btn" bindtap="setThisYear">今年</view>
+      </view>
+
+      <view class="calculate-btn" bindtap="calculateDiff">
+        <text>计算间隔</text>
+      </view>
+    </view>
+
+    <view wx:if="{{calcMode === 'add'}}" class="input-section">
+      <view class="date-input-group">
+        <view class="date-label">
+          <text class="label-icon">📌</text>
+          <text>基准日期</text>
+        </view>
+        <picker mode="date" value="{{baseDate}}" start="1900-01-01" end="2099-12-31" bindchange="onBaseDateChange">
+          <view class="date-picker">
+            <text>{{baseDate}}</text>
+            <text class="picker-arrow">📅</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="add-subtract-toggle">
+        <view 
+          class="toggle-btn {{addSubtract === 'add' ? 'active' : ''}}"
+          data-type="add"
+          bindtap="toggleAddSubtract"
+        >
+          <text>➕ 加</text>
+        </view>
+        <view 
+          class="toggle-btn {{addSubtract === 'subtract' ? 'active' : ''}}"
+          data-type="subtract"
+          bindtap="toggleAddSubtract"
+        >
+          <text>➖ 减</text>
+        </view>
+      </view>
+
+      <view class="number-inputs">
+        <view class="number-input-item">
+          <text class="number-label">年</text>
+          <input 
+            class="number-input" 
+            type="number" 
+            placeholder="0"
+            value="{{addYears}}"
+            bindinput="onAddYearsChange"
+          />
+        </view>
+        <view class="number-input-item">
+          <text class="number-label">月</text>
+          <input 
+            class="number-input" 
+            type="number" 
+            placeholder="0"
+            value="{{addMonths}}"
+            bindinput="onAddMonthsChange"
+          />
+        </view>
+        <view class="number-input-item">
+          <text class="number-label">日</text>
+          <input 
+            class="number-input" 
+            type="number" 
+            placeholder="0"
+            value="{{addDays}}"
+            bindinput="onAddDaysChange"
+          />
+        </view>
+      </view>
+
+      <view class="calculate-btn" bindtap="calculateAdd">
+        <text>计算结果</text>
+      </view>
+    </view>
+
+    <view wx:if="{{showResult}}" class="result-section">
+      <view class="result-card">
+        <view class="result-header">
+          <text class="result-title">{{calcMode === 'diff' ? '计算结果' : '计算结果'}}</text>
+        </view>
+
+        <view wx:if="{{calcMode === 'diff'}}" class="diff-results">
+          <view class="main-result">
+            <text class="result-number">{{totalDays}}</text>
+            <text class="result-unit">天</text>
+          </view>
+
+          <view class="detail-grid">
+            <view class="detail-item">
+              <text class="detail-value">{{weeks}}</text>
+              <text class="detail-label">周</text>
+            </view>
+            <view class="detail-item">
+              <text class="detail-value">{{months}}</text>
+              <text class="detail-label">个月</text>
+            </view>
+            <view class="detail-item">
+              <text class="detail-value">{{years}}</text>
+              <text class="detail-label">年</text>
+            </view>
+            <view class="detail-item">
+              <text class="detail-value">{{hours}}</text>
+              <text class="detail-label">小时</text>
+            </view>
+          </view>
+
+          <view class="extra-info">
+            <view class="info-row">
+              <text class="info-label">开始日期：</text>
+              <text class="info-value">{{startDateDisplay}}</text>
+            </view>
+            <view class="info-row">
+              <text class="info-label">结束日期：</text>
+              <text class="info-value">{{endDateDisplay}}</text>
+            </view>
+            <view class="info-row">
+              <text class="info-label">星期几：</text>
+              <text class="info-value">{{startWeekday}} → {{endWeekday}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{calcMode === 'add'}}" class="add-result">
+          <view class="main-result">
+            <text class="result-number">{{resultDate}}</text>
+          </view>
+          <view class="weekday-result">
+            <text>星期{{resultWeekday}}</text>
+          </view>
+          <view class="extra-info">
+            <view class="info-row">
+              <text class="info-label">基准日期：</text>
+              <text class="info-value">{{baseDate}}</text>
+            </view>
+            <view class="info-row">
+              <text class="info-label">{{addSubtract === 'add' ? '加上' : '减去'}}：</text>
+              <text class="info-value">{{addYears}}年 {{addMonths}}月 {{addDays}}日</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="action-buttons">
+        <view class="action-btn copy" bindtap="copyResult">
+          <text>📋 复制结果</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{historyList.length > 0}}" class="history-section">
+      <view class="section-header">
+        <text class="section-title">计算历史</text>
+        <text class="clear-history" bindtap="clearHistory">清空</text>
+      </view>
+      <view class="history-list">
+        <view 
+          class="history-item" 
+          wx:for="{{historyList}}" 
+          wx:key="time"
+        >
+          <text class="history-text">{{item.text}}</text>
+          <text class="history-time">{{item.timeText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</scroll-view>
