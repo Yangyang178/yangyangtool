@@ -49,6 +49,38 @@ page {
   color: var(--textSecondary,#64748B);
 }
 
+.rate-source-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+.rate-source-tag:active {
+  transform: scale(0.97);
+}
+.rate-source-tag.demo {
+  background: #FEF3C7;
+  color: #92400E;
+}
+.rate-source-tag.cache {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+.rate-source-tag.real {
+  background: #D1FAE5;
+  color: #065F46;
+}
+.source-icon { font-size: 14px; }
+.source-text { font-weight: 600; }
+.refresh-hint {
+  opacity: 0.7;
+  font-size: 11px;
+}
+
 /* 输入区域 */
 .input-section {
   margin-bottom: 24px;

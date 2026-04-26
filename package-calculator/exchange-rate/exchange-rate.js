@@ -9,6 +9,9 @@ Page({
     toSymbol: '$',
     exchangeRate: '0.1387',
     resultAmount: '0.00',
+    isRefreshing: false,
+    lastUpdateText: '演示数据',
+    rateSource: 'demo',
 
     quickRates: [
       { code: 'USD', name: '美元', rate: '0.1387', symbol: '$' },
@@ -56,22 +59,116 @@ Page({
     ]
   },
 
-  onLoad() {
+  onLoad: function() {
+    this.useCachedOrDemo()
     this.calculateResult()
   },
 
+  tryFetchRealRates: function() {
+    var that = this
+    that.setData({ isRefreshing: true })
+
+    wx.request({
+      url: 'https://api.exchangerate-api.com/v4/latest/CNY',
+      method: 'GET',
+      timeout: 5000,
+      success: function(res) {
+        if (res.data && res.data.rates) {
+          var rates = res.data.rates
+          var timeStr = new Date().toLocaleDateString('zh-CN') + ' ' + new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+          var newCurrencies = []
+          for (var ci2 = 0; ci2 < that.data.currencies.length; ci2++) {
+            var c = that.data.currencies[ci2]
+            var newRate = rates[c.code]
+            if (newRate !== undefined) {
+              var newC = {}
+              for (var ck in c) { newC[ck] = c[ck] }
+              newC.rate = newRate
+              newCurrencies.push(newC)
+            } else {
+              newCurrencies.push(c)
+            }
+          }
+
+          var newQuickRates = []
+          for (var qi = 0; qi < that.data.quickRates.length; qi++) {
+            var q = that.data.quickRates[qi]
+            var qr = rates[q.code]
+            if (qr !== undefined) {
+              var newQ = {}
+              for (var qk in q) { newQ[qk] = q[qk] }
+              newQ.rate = String(qr)
+              newQuickRates.push(newQ)
+            } else {
+              newQuickRates.push(q)
+            }
+          }
+
+          that.setData({
+            currencies: newCurrencies,
+            quickRates: newQuickRates,
+            rateSource: 'real',
+            lastUpdateText: '实时 ' + timeStr,
+            isRefreshing: false
+          })
+
+          that.updateExchangeRate()
+          that.calculateResult()
+
+          wx.setStorageSync('cachedRates', { currencies: newCurrencies, quickRates: newQuickRates, cachedAt: Date.now() })
+        } else {
+          that.useCachedOrDemo()
+        }
+      },
+      fail: function() {
+        that.useCachedOrDemo()
+      }
+    })
+  },
+
+  useCachedOrDemo() {
+    var cached = wx.getStorageSync('cachedRates')
+    if (cached && cached.cachedAt && (Date.now() - cached.cachedAt < 24 * 60 * 60 * 1000)) {
+      var timeStr = new Date(cached.cachedAt).toLocaleDateString('zh-CN')
+      this.setData({
+        currencies: cached.currencies,
+        quickRates: cached.quickRates,
+        rateSource: 'cache',
+        lastUpdateText: '缓存 ' + timeStr,
+        isRefreshing: false
+      })
+    } else {
+      this.setData({
+        rateSource: 'demo',
+        lastUpdateText: '演示数据',
+        isRefreshing: false
+      })
+    }
+    this.updateExchangeRate()
+    this.calculateResult()
+  },
+
+  refreshRates() {
+    wx.vibrateShort({ type: 'light' })
+    this.tryFetchRealRates()
+  },
+
   onAmountInput(e) {
-    const amount = e.detail.value
-    this.setData({ amount })
+    var amount = e.detail.value
+    this.setData({ amount: amount })
     this.calculateResult()
   },
 
   showFromCurrency() {
-    const currencyNames = this.data.currencies.map(c => c.flag + ' ' + c.name + ' (' + c.code + ')')
+    var currencyNames = []
+    for (var ci = 0; ci < this.data.currencies.length; ci++) {
+      var c = this.data.currencies[ci]
+      currencyNames.push(c.flag + ' ' + c.name + ' (' + c.code + ')')
+    }
     wx.showActionSheet({
       itemList: currencyNames,
-      success: (res) => {
-        const selected = this.data.currencies[res.tapIndex]
+      success: function(res) {
+        var selected = this.data.currencies[res.tapIndex]
         this.setData({
           fromCurrency: selected.code,
           fromCurrencyName: selected.name,
@@ -79,16 +176,20 @@ Page({
         })
         this.updateExchangeRate()
         this.calculateResult()
-      }
+      }.bind(this)
     })
   },
 
   showToCurrency() {
-    const currencyNames = this.data.currencies.map(c => c.flag + ' ' + c.name + ' (' + c.code + ')')
+    var currencyNames2 = []
+    for (var ci2 = 0; ci2 < this.data.currencies.length; ci2++) {
+      var c2 = this.data.currencies[ci2]
+      currencyNames2.push(c2.flag + ' ' + c2.name + ' (' + c2.code + ')')
+    }
     wx.showActionSheet({
-      itemList: currencyNames,
-      success: (res) => {
-        const selected = this.data.currencies[res.tapIndex]
+      itemList: currencyNames2,
+      success: function(res) {
+        var selected = this.data.currencies[res.tapIndex]
         this.setData({
           toCurrency: selected.code,
           toCurrencyName: selected.name,
@@ -96,16 +197,16 @@ Page({
         })
         this.updateExchangeRate()
         this.calculateResult()
-      }
+      }.bind(this)
     })
   },
 
   swapCurrency() {
     wx.vibrateShort({ type: 'light' })
 
-    const temp = this.data.fromCurrency
-    const tempName = this.data.fromCurrencyName
-    const tempSymbol = this.data.fromSymbol
+    var temp = this.data.fromCurrency
+    var tempName = this.data.fromCurrencyName
+    var tempSymbol = this.data.fromSymbol
 
     this.setData({
       fromCurrency: this.data.toCurrency,
@@ -121,11 +222,17 @@ Page({
   },
 
   updateExchangeRate() {
-    const fromCurr = this.data.currencies.find(c => c.code === this.data.fromCurrency)
-    const toCurr = this.data.currencies.find(c => c.code === this.data.toCurrency)
-    
+    var fromCurr = null
+    for (var fci = 0; fci < this.data.currencies.length; fci++) {
+      if (this.data.currencies[fci].code === this.data.fromCurrency) { fromCurr = this.data.currencies[fci]; break }
+    }
+    var toCurr = null
+    for (var tci = 0; tci < this.data.currencies.length; tci++) {
+      if (this.data.currencies[tci].code === this.data.toCurrency) { toCurr = this.data.currencies[tci]; break }
+    }
+
     if (fromCurr && toCurr) {
-      const rate = (toCurr.rate / fromCurr.rate).toFixed(4)
+      var rate = (toCurr.rate / fromCurr.rate).toFixed(4)
       this.setData({ exchangeRate: rate })
     }
   },
@@ -135,20 +242,21 @@ Page({
       this.setData({ resultAmount: '0.00' })
       return
     }
-    
-    const amount = parseFloat(this.data.amount)
-    const result = (amount * parseFloat(this.data.exchangeRate)).toFixed(2)
+
+    var amount = parseFloat(this.data.amount)
+    var result = (amount * parseFloat(this.data.exchangeRate)).toFixed(2)
     this.setData({ resultAmount: result })
   },
 
   copyResult() {
     wx.vibrateShort({ type: 'light' })
-    
-    const text = `${this.data.amount} ${this.data.fromCurrency} = ${this.data.resultAmount} ${this.data.toCurrency}`
-    
+
+    var sourceTag = this.data.rateSource === 'demo' ? ' [演示汇率]' : ''
+    var text = this.data.amount + ' ' + this.data.fromCurrency + ' = ' + this.data.resultAmount + ' ' + this.data.toCurrency + sourceTag
+
     wx.setClipboardData({
       data: text,
-      success: () => {
+      success: function() {
         wx.showToast({
           title: '已复制到剪贴板',
           icon: 'success'
@@ -167,8 +275,11 @@ Page({
   },
 
   selectQuickRate(e) {
-    const currencyCode = e.currentTarget.dataset.currency
-    const selected = this.data.currencies.find(c => c.code === currencyCode)
+    var currencyCode = e.currentTarget.dataset.currency
+    var selected = null
+    for (var sqi = 0; sqi < this.data.currencies.length; sqi++) {
+      if (this.data.currencies[sqi].code === currencyCode) { selected = this.data.currencies[sqi]; break }
+    }
 
     if (selected && selected.code !== this.data.fromCurrency) {
       wx.vibrateShort({ type: 'light' })

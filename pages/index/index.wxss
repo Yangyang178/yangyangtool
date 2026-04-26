@@ -40,21 +40,26 @@ page {
 }
 
 .app-title {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--textPrimary,#1E293B);
   letter-spacing: -0.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .greeting-text {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--textSecondary,#64748B);
+  text-align: right;
+  line-height: 1.4;
 }
 
 .more-icon {

@@ -9,6 +9,11 @@
       </view>
       <text class="tool-title">实时汇率换算</text>
       <text class="tool-desc">支持多国货币，快速精准换算</text>
+      <view class="rate-source-tag {{rateSource === 'demo' ? 'demo' : rateSource === 'cache' ? 'cache' : 'real'}}" bindtap="refreshRates">
+        <text class="source-icon">{{rateSource === 'demo' ? '⚠️' : rateSource === 'cache' ? '💾' : '🌐'}}</text>
+        <text class="source-text">{{lastUpdateText}}</text>
+        <text class="refresh-hint">{{isRefreshing ? '获取中...' : '点击刷新'}}</text>
+      </view>
     </view>
 
     <!-- 金额输入 -->

@@ -22,7 +22,7 @@
     <view class="fun-stats-card">
       <view class="stats-header">
         <text class="stats-title">⚡ 效率统计</text>
-        <text class="stats-subtitle">本月数据</text>
+        <text class="stats-subtitle">累计数据</text>
       </view>
       
       <view class="stats-main">

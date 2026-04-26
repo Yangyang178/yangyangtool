@@ -1,4 +1,4 @@
-const app = getApp()
+var app = getApp()
 
 Page({
   data: {
@@ -38,7 +38,7 @@ Page({
       total: '0 KB',
       data: '0 KB',
       images: '0 KB',
-      history: '0 KB'
+      history: '0 条'
     },
     clearHistory: [],
     
@@ -113,10 +113,10 @@ Page({
     this.calculateFunStats()
     this.loadWeeklyData()
     this.loadSubmittedRequests()
-    const app = getApp()
-    if (app) {
-      const isDark = app.globalData.isDarkMode || wx.getStorageSync('darkMode') === true
-      const setting = wx.getStorageSync('darkModeSetting') || 'system'
+    var appInstance = getApp()
+    if (appInstance) {
+      var isDark = appInstance.globalData.isDarkMode || wx.getStorageSync('darkMode') === true
+      var setting = wx.getStorageSync('darkModeSetting') || 'system'
       this.setData({ 
         isDarkMode: isDark,
         darkModeSetting: setting
@@ -125,10 +125,10 @@ Page({
   },
 
   loadUserInfo() {
-    const usageCount = wx.getStorageSync('totalUsageCount') || 0
+    var usageCount = wx.getStorageSync('totalUsageCount') || 0
     this.setData({ totalUsage: usageCount })
 
-    const savedProfile = wx.getStorageSync('userProfile') || {}
+    var savedProfile = wx.getStorageSync('userProfile') || {}
     if (savedProfile.nickname || savedProfile.avatarUrl || savedProfile.avatarBg) {
       this.setData({
         userInfo: {
@@ -141,12 +141,12 @@ Page({
       try {
         wx.getUserProfile({
           desc: '用于展示用户信息',
-          success: (res) => {
+          success: function(res) {
             this.setData({ 'userInfo.nickname': res.userInfo.nickName || '微信用户' })
-          },
-          fail: () => {
+          }.bind(this),
+          fail: function() {
             this.setData({ 'userInfo.nickname': '微信用户' })
-          }
+          }.bind(this)
         })
       } catch (e) {
         this.setData({ 'userInfo.nickname': '微信用户' })
@@ -155,77 +155,109 @@ Page({
   },
 
   calculateFunStats() {
-    const totalCount = wx.getStorageSync('totalUsageCount') || 0
-    const savedMinutes = Math.floor(totalCount * 2.5)
-    
-    let savedTimeText = ''
-    if (savedMinutes < 60) {
-      savedTimeText = `${savedMinutes}分钟`
-    } else if (savedMinutes < 1440) {
-      const hours = Math.floor(savedMinutes / 60)
-      const mins = savedMinutes % 60
-      savedTimeText = `${hours}小时${mins > 0 ? mins + '分钟' : ''}`
-    } else {
-      const days = Math.floor(savedMinutes / 1440)
-      const hours = Math.floor((savedMinutes % 1440) / 60)
-      savedTimeText = `${days}天${hours > 0 ? hours + '小时' : ''}`
+    var totalUsageCount = wx.getStorageSync('totalUsageCount') || 0
+
+    var operationCount = totalUsageCount
+    var savedTime = Math.round(totalUsageCount * 2.5)
+
+    var efficiencyLevel = '新手'
+    var levelIcon = '🌱'
+
+    if (totalUsageCount >= 2000) {
+      efficiencyLevel = '宗师'
+      levelIcon = '👑'
+    } else if (totalUsageCount >= 1000) {
+      efficiencyLevel = '传奇'
+      levelIcon = '🏆'
+    } else if (totalUsageCount >= 500) {
+      efficiencyLevel = '权威'
+      levelIcon = '💎'
+    } else if (totalUsageCount >= 200) {
+      efficiencyLevel = '专家'
+      levelIcon = '⭐'
+    } else if (totalUsageCount >= 100) {
+      efficiencyLevel = '熟练'
+      levelIcon = '🔥'
+    } else if (totalUsageCount >= 50) {
+      efficiencyLevel = '进阶'
+      levelIcon = '🚀'
+    } else if (totalUsageCount >= 20) {
+      efficiencyLevel = '入门'
+      levelIcon = '📈'
+    } else if (totalUsageCount >= 10) {
+      efficiencyLevel = '初级'
+      levelIcon = '✨'
     }
 
-    let level, icon, progress
-    if (totalCount < 10) {
-      level = '新手'
-      icon = '🌱'
-      progress = Math.min(totalCount * 10, 100)
-    } else if (totalCount < 50) {
-      level = '入门'
-      icon = '🌿'
-      progress = 10 + Math.min((totalCount - 10) * 2.25, 90)
-    } else if (totalCount < 100) {
-      level = '熟练'
-      icon = '🌳'
-      progress = 100
-    } else if (totalCount < 200) {
-      level = '精通'
-      icon = '🎯'
-      progress = 100
-    } else {
-      level = '大师'
-      icon = '👑'
-      progress = 100
+    var currentThreshold = 0
+    var nextThreshold = 10
+    if (totalUsageCount >= 2000) { currentThreshold = 2000; nextThreshold = 5000 }
+    else if (totalUsageCount >= 1000) { currentThreshold = 1000; nextThreshold = 2000 }
+    else if (totalUsageCount >= 500) { currentThreshold = 500; nextThreshold = 1000 }
+    else if (totalUsageCount >= 200) { currentThreshold = 200; nextThreshold = 500 }
+    else if (totalUsageCount >= 100) { currentThreshold = 100; nextThreshold = 200 }
+    else if (totalUsageCount >= 50) { currentThreshold = 50; nextThreshold = 100 }
+    else if (totalUsageCount >= 20) { currentThreshold = 20; nextThreshold = 50 }
+    else if (totalUsageCount >= 10) { currentThreshold = 10; nextThreshold = 20 }
+
+    var progressPercent = 0
+    if (nextThreshold > currentThreshold && totalUsageCount > currentThreshold) {
+      progressPercent = Math.min(99, Math.round(((totalUsageCount - currentThreshold) / (nextThreshold - currentThreshold)) * 100))
+    } else if (totalUsageCount === 0) {
+      progressPercent = 0
+    } else if (totalUsageCount < 10) {
+      progressPercent = Math.min(99, Math.round((totalUsageCount / 10) * 100))
     }
 
     this.setData({
       funStats: {
-        savedTime: savedTimeText,
-        operationCount: totalCount,
-        efficiencyLevel: level,
-        levelIcon: icon,
-        progressPercent: progress
+        operationCount: operationCount,
+        savedTime: savedTime,
+        efficiencyLevel: efficiencyLevel,
+        levelIcon: levelIcon,
+        progressPercent: progressPercent
       }
     })
   },
 
   loadWeeklyData() {
-    const weeklyRecord = wx.getStorageSync('weeklyUsage') || {}
-    const today = new Date()
-    const dayOfWeek = today.getDay()
-    const monday = new Date(today)
+    var weeklyRecord = wx.getStorageSync('weeklyUsage') || {}
+    var today = new Date()
+    var dayOfWeek = today.getDay()
+    var monday = new Date(today)
     monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1))
     
-    const labels = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-    const values = [0, 0, 0, 0, 0, 0, 0]
+    var labels = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+    var values = [0, 0, 0, 0, 0, 0, 0]
     
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(monday)
+    for (var i = 0; i < 7; i++) {
+      var date = new Date(monday)
       date.setDate(monday.getDate() + i)
-      const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+      var y = date.getFullYear()
+      var m = date.getMonth() + 1
+      var d = date.getDate()
+      var mStr = m < 10 ? '0' + m : '' + m
+      var dStr = d < 10 ? '0' + d : '' + d
+      var dateKey = y + '-' + mStr + '-' + dStr
       values[i] = weeklyRecord[dateKey] || 0
     }
 
-    const totalWeek = values.reduce((a, b) => a + b, 0)
-    const maxValue = Math.max(...values, 1)
-    const maxIndex = values.indexOf(maxValue)
-    const averageDaily = totalWeek > 0 ? (totalWeek / 7).toFixed(1) : 0
+    var totalWeek = 0
+    for (var vi = 0; vi < values.length; vi++) {
+      totalWeek += values[vi]
+    }
+
+    var maxValue = 1
+    for (var mi = 0; mi < values.length; mi++) {
+      if (values[mi] > maxValue) maxValue = values[mi]
+    }
+
+    var maxIndex = -1
+    for (var xi = 0; xi < values.length; xi++) {
+      if (values[xi] === maxValue) { maxIndex = xi; break }
+    }
+
+    var averageDaily = totalWeek > 0 ? (totalWeek / 7).toFixed(1) : 0
 
     this.setData({
       weeklyData: {
@@ -240,28 +272,41 @@ Page({
   },
 
   recordWeeklyUsage() {
-    const today = new Date()
-    const dateKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+    var today = new Date()
+    var y = today.getFullYear()
+    var m = today.getMonth() + 1
+    var d = today.getDate()
+    var mStr = m < 10 ? '0' + m : '' + m
+    var dStr = d < 10 ? '0' + d : '' + d
+    var dateKey = y + '-' + mStr + '-' + dStr
     
-    const weeklyRecord = wx.getStorageSync('weeklyUsage') || {}
+    var weeklyRecord = wx.getStorageSync('weeklyUsage') || {}
     weeklyRecord[dateKey] = (weeklyRecord[dateKey] || 0) + 1
     
-    const oneWeekAgo = new Date()
+    var oneWeekAgo = new Date()
     oneWeekAgo.setDate(today.getDate() - 7)
-    Object.keys(weeklyRecord).forEach(key => {
-      const [year, month, day] = key.split('-').map(Number)
-      const keyDate = new Date(year, month - 1, day)
+
+    var keysToRemove = []
+    for (var key in weeklyRecord) {
+      keysToRemove.push(key)
+    }
+    for (var ki = 0; ki < keysToRemove.length; ki++) {
+      var parts = keysToRemove[ki].split('-')
+      var ky = parseInt(parts[0], 10)
+      var km = parseInt(parts[1], 10) - 1
+      var kd = parseInt(parts[2], 10)
+      var keyDate = new Date(ky, km, kd)
       if (keyDate < oneWeekAgo) {
-        delete weeklyRecord[key]
+        delete weeklyRecord[keysToRemove[ki]]
       }
-    })
+    }
     
     wx.setStorageSync('weeklyUsage', weeklyRecord)
   },
 
   openEditProfile() {
     wx.vibrateShort({ type: 'light' })
-    const info = this.data.userInfo
+    var info = this.data.userInfo
     this.setData({
       showEditProfile: true,
       editNickname: info.nickname,
@@ -276,22 +321,24 @@ Page({
 
   extractColorFromBg(bg) {
     if (!bg) return '#DBEAFE'
-    for (let c of this.data.avatarColors) {
-      if (bg.includes(c.color)) return c.color
+    var colors = this.data.avatarColors
+    for (var ci = 0; ci < colors.length; ci++) {
+      if (bg.indexOf(colors[ci].color) > -1) return colors[ci].color
     }
     return '#DBEAFE'
   },
 
   chooseAvatar() {
     wx.vibrateShort({ type: 'light' })
+    var that = this
     wx.chooseMedia({
       count: 1,
       mediaType: ['image'],
       sourceType: ['album', 'camera'],
       sizeType: ['compressed'],
-      success: (res) => {
-        const tempPath = res.tempFiles[0].tempFilePath
-        this.setData({ tempAvatarUrl: tempPath })
+      success: function(res) {
+        var tempPath = res.tempFiles[0].tempFilePath
+        that.setData({ tempAvatarUrl: tempPath })
         wx.showToast({ title: '头像已选择，点击保存生效', icon: 'none', duration: 1500 })
       }
     })
@@ -303,19 +350,19 @@ Page({
 
   selectAvatarColor(e) {
     wx.vibrateShort({ type: 'light' })
-    const { color, bg } = e.currentTarget.dataset
-    this.setData({ selectedAvatarColor: color, 'userInfo.avatarBg': bg })
+    var dataset = e.currentTarget.dataset
+    this.setData({ selectedAvatarColor: dataset.color, 'userInfo.avatarBg': dataset.bg })
   },
 
   saveProfile() {
     wx.vibrateShort({ type: 'light' })
-    const nickname = this.data.editNickname.trim()
+    var nickname = this.data.editNickname.trim()
     if (!nickname) {
       wx.showToast({ title: '请输入昵称', icon: 'none' })
       return
     }
 
-    const profile = {
+    var profile = {
       nickname: nickname,
       avatarUrl: this.data.tempAvatarUrl,
       avatarBg: this.data.userInfo.avatarBg
@@ -333,25 +380,41 @@ Page({
   },
 
   loadRecentTools() {
-    const recentTools = wx.getStorageSync('recentTools') || []
-    const formattedTools = recentTools.map(tool => ({
-      ...tool,
-      timeText: this.formatTime(tool.usedAt)
-    }))
+    var recentTools = wx.getStorageSync('recentTools') || []
+    var formattedTools = []
+    for (var ri = 0; ri < recentTools.length; ri++) {
+      var tool = recentTools[ri]
+      var newTool = {}
+      for (var key in tool) {
+        newTool[key] = tool[key]
+      }
+      newTool.timeText = this.formatTime(tool.usedAt)
+      formattedTools.push(newTool)
+    }
     this.setData({ recentTools: formattedTools })
   },
 
   loadFavorites() {
-    const favoriteIds = wx.getStorageSync('favorites') || []
-    const allTools = this.getAllToolsData()
+    var favoriteIds = wx.getStorageSync('favorites') || []
+    var allTools = this.getAllToolsData()
 
     if (!allTools.length) return
 
-    const favTools = favoriteIds
-      .map(id => allTools.find(t => t.id === id))
-      .filter(Boolean)
+    var favTools = []
+    for (var fi = 0; fi < favoriteIds.length; fi++) {
+      for (var ti = 0; ti < allTools.length; ti++) {
+        if (allTools[ti].id === favoriteIds[fi]) {
+          favTools.push(allTools[ti])
+          break
+        }
+      }
+    }
 
-    const names = favTools.map(t => t.name).join(' · ')
+    var names = ''
+    for (var ni = 0; ni < favTools.length; ni++) {
+      if (ni > 0) names += ' · '
+      names += favTools[ni].name
+    }
     this.setData({
       favoriteTools: favTools,
       favoritePreviewNames: names
@@ -388,20 +451,20 @@ Page({
   },
 
   formatTime(timestamp) {
-    const now = new Date()
-    const date = new Date(timestamp)
-    const diff = now - date
+    var now = new Date()
+    var date = new Date(timestamp)
+    var diff = now - date
 
-    const minutes = Math.floor(diff / (1000 * 60))
-    const hours = Math.floor(diff / (1000 * 60 * 60))
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    var minutes = Math.floor(diff / (1000 * 60))
+    var hours = Math.floor(diff / (1000 * 60 * 60))
+    var days = Math.floor(diff / (1000 * 60 * 60 * 24))
 
     if (minutes < 1) return '刚刚'
-    if (minutes < 60) return `${minutes}分钟前`
-    if (hours < 24) return `${hours}小时前`
-    if (days < 7) return `${days}天前`
+    if (minutes < 60) return minutes + '分钟前'
+    if (hours < 24) return hours + '小时前'
+    if (days < 7) return days + '天前'
 
-    return `${date.getMonth() + 1}月${date.getDate()}日`
+    return (date.getMonth() + 1) + '月' + date.getDate() + '日'
   },
 
   calculateCacheSize() {
@@ -414,29 +477,29 @@ Page({
 
   calculateDetailedCache() {
     try {
-      let dataSize = 0
-      let historyCount = 0
+      var dataSize = 0
+      var historyCount = 0
 
-      const keys = ['favorites', 'recentTools', 'totalUsageCount', 'userProfile', 'darkMode', 'urlMap', 'allTools', 'feedbackHistory']
-      keys.forEach(key => {
+      var keys = ['favorites', 'recentTools', 'totalUsageCount', 'userProfile', 'darkMode', 'urlMap', 'allTools', 'feedbackHistory']
+      for (var ki = 0; ki < keys.length; ki++) {
         try {
-          const data = wx.getStorageSync(key)
+          var data = wx.getStorageSync(keys[ki])
           if (data !== '' && data !== undefined && data !== null) {
             dataSize += JSON.stringify(data).length * 2
           }
         } catch(e) {}
-      })
+      }
 
-      const recentTools = wx.getStorageSync('recentTools') || []
+      var recentTools = wx.getStorageSync('recentTools') || []
       historyCount = recentTools.length
 
-      const favorites = wx.getStorageSync('favorites') || []
+      var favorites = wx.getStorageSync('favorites') || []
       historyCount += favorites.length
 
-      const feedbackHistory = wx.getStorageSync('feedbackHistory') || []
+      var feedbackHistory = wx.getStorageSync('feedbackHistory') || []
       historyCount += feedbackHistory.length
 
-      const displayTotal = this.formatSize(dataSize)
+      var displayTotal = this.formatSize(dataSize)
 
       this.setData({
         cacheSize: displayTotal,
@@ -444,7 +507,7 @@ Page({
           total: displayTotal,
           data: this.formatSize(dataSize),
           images: '0 KB',
-          history: `${historyCount} 条`
+          history: historyCount + ' 条'
         }
       })
     } catch(e) {}
@@ -452,48 +515,49 @@ Page({
 
   formatSize(bytes) {
     if (bytes < 1024) return bytes + ' B'
-    const kb = Math.round(bytes / 1024)
+    var kb = Math.round(bytes / 1024)
     if (kb < 1024) return kb + ' KB'
     return (kb / 1024).toFixed(1) + ' MB'
   },
 
   checkDarkMode() {
-    const setting = wx.getStorageSync('darkModeSetting') || 'system'
+    var setting = wx.getStorageSync('darkModeSetting') || 'system'
     this.setData({ darkModeSetting: setting })
 
     if (setting === 'system') {
+      var that = this
       wx.getSystemInfo({
-        success: (res) => {
-          const isDark = res.theme === 'dark'
-          this.setData({ isDarkMode: isDark })
+        success: function(res) {
+          var isDark = res.theme === 'dark'
+          that.setData({ isDarkMode: isDark })
           wx.setStorageSync('darkMode', isDark)
         }
       })
     } else {
-      const isDark = setting === 'dark'
+      var isDark = setting === 'dark'
       this.setData({ isDarkMode: isDark })
       wx.setStorageSync('darkMode', isDark)
     }
   },
 
   onToolClick(e) {
-    const tool = e.currentTarget.dataset.tool
+    var tool = e.currentTarget.dataset.tool
     wx.vibrateShort({ type: 'light' })
 
-    const currentCount = wx.getStorageSync('totalUsageCount') || 0
+    var currentCount = wx.getStorageSync('totalUsageCount') || 0
     wx.setStorageSync('totalUsageCount', currentCount + 1)
     
     this.recordWeeklyUsage()
 
-    const urlMap = wx.getStorageSync('urlMap') || {}
-    const targetUrl = urlMap[tool.id]
+    var urlMap = wx.getStorageSync('urlMap') || {}
+    var targetUrl = urlMap[tool.id]
     if (!targetUrl) {
       wx.showToast({ title: '工具路径不存在', icon: 'none' })
       return
     }
 
-    if (targetUrl.startsWith('/pages/')) {
-      wx.navigateTo({ url: targetUrl, fail: () => wx.switchTab({ url: targetUrl }) })
+    if (targetUrl.indexOf('/pages/') === 0) {
+      wx.navigateTo({ url: targetUrl, fail: function() { wx.switchTab({ url: targetUrl }) } })
     } else {
       wx.navigateTo({ url: targetUrl })
     }
@@ -511,21 +575,25 @@ Page({
   toggleDarkMode() {
     wx.vibrateShort({ type: 'light' })
     
-    const modes = ['system', 'light', 'dark']
-    const currentIndex = modes.indexOf(this.data.darkModeSetting)
-    const nextIndex = (currentIndex + 1) % modes.length
-    const newSetting = modes[nextIndex]
+    var modes = ['system', 'light', 'dark']
+    var currentIndex = -1
+    for (var mi = 0; mi < modes.length; mi++) {
+      if (modes[mi] === this.data.darkModeSetting) { currentIndex = mi; break }
+    }
+    var nextIndex = (currentIndex + 1) % modes.length
+    var newSetting = modes[nextIndex]
     
     wx.setStorageSync('darkModeSetting', newSetting)
     this.setData({ darkModeSetting: newSetting })
 
+    var that = this
     if (newSetting === 'system') {
       wx.getSystemInfo({
-        success: (res) => {
-          const isDark = res.theme === 'dark'
-          this.setData({ isDarkMode: isDark })
+        success: function(res) {
+          var isDark = res.theme === 'dark'
+          that.setData({ isDarkMode: isDark })
           wx.setStorageSync('darkMode', isDark)
-          this.applyThemeGlobal(isDark)
+          that.applyThemeGlobal(isDark)
         }
       })
       wx.showToast({ title: '已切换至跟随系统 🔄', icon: 'success' })
@@ -543,9 +611,9 @@ Page({
   },
 
   applyThemeGlobal(isDark) {
-    const app = getApp()
-    if (app && app.applyTheme) {
-      app.applyTheme()
+    var appInstance = getApp()
+    if (appInstance && appInstance.applyTheme) {
+      appInstance.applyTheme()
     }
   },
 
@@ -561,15 +629,16 @@ Page({
 
   clearAllData() {
     wx.vibrateShort({ type: 'medium' })
+    var that = this
     wx.showModal({
       title: '⚠️ 清理所有数据',
       content: '确定要清理所有数据吗？\n包括：收藏记录、使用历史、用户设置等',
       confirmText: '全部清理',
       confirmColor: '#EF4444',
-      success: (res) => {
+      success: function(res) {
         if (res.confirm) {
           wx.clearStorageSync()
-          this.setData({
+          that.setData({
             cacheSize: '0 KB',
             showClearCache: false,
             recentTools: [],
@@ -578,7 +647,7 @@ Page({
             cacheInfo: { total: '0 B', data: '0 B', images: '0 B', history: '0 条' }
           })
           wx.showToast({ title: '已清理全部数据', icon: 'success' })
-          setTimeout(() => this.loadAllData(), 1000)
+          setTimeout(function() { that.loadAllData() }, 1000)
         }
       }
     })
@@ -586,18 +655,21 @@ Page({
 
   clearHistoryData() {
     wx.vibrateShort({ type: 'medium' })
+    var that = this
     wx.showModal({
       title: '🗑️ 清理历史记录',
       content: '确定要清理所有历史记录吗？\n包括：最近使用、收藏夹、反馈历史',
       confirmText: '清理',
       confirmColor: '#EF4444',
-      success: (res) => {
+      success: function(res) {
         if (res.confirm) {
-          const keysToRemove = ['recentTools', 'favorites', 'feedbackHistory']
-          keysToRemove.forEach(key => wx.removeStorageSync(key))
+          var keysToRemove = ['recentTools', 'favorites', 'feedbackHistory']
+          for (var kti = 0; kti < keysToRemove.length; kti++) {
+            wx.removeStorageSync(keysToRemove[kti])
+          }
           
-          this.calculateDetailedCache()
-          this.setData({
+          that.calculateDetailedCache()
+          that.setData({
             recentTools: [],
             favoriteTools: [],
             favoritePreviewNames: ''
@@ -610,22 +682,24 @@ Page({
 
   clearTempData() {
     wx.vibrateShort({ type: 'medium' })
+    var that = this
     wx.showModal({
       title: '📋 清理暂存数据',
       content: '确定要清理临时缓存数据吗？',
       confirmText: '清理',
       confirmColor: '#EF4444',
-      success: (res) => {
+      success: function(res) {
         if (res.confirm) {
           try {
             wx.getStorageInfo({
-              success: (info) => {
-                info.keys.forEach(key => {
-                  if (key.startsWith('temp_') || key.startsWith('cache_')) {
+              success: function(info) {
+                for (var iki = 0; iki < info.keys.length; iki++) {
+                  var key = info.keys[iki]
+                  if (key.indexOf('temp_') === 0 || key.indexOf('cache_') === 0) {
                     wx.removeStorageSync(key)
                   }
-                })
-                this.calculateDetailedCache()
+                }
+                that.calculateDetailedCache()
                 wx.showToast({ title: '暂存数据已清理', icon: 'success' })
               }
             })
@@ -639,15 +713,16 @@ Page({
 
   clearClipboardTemp() {
     wx.vibrateShort({ type: 'medium' })
+    var that = this
     wx.showModal({
       title: '📎 清理剪贴板暂存',
       content: '确定要清理剪贴板暂存数据吗？',
       confirmText: '清理',
       confirmColor: '#EF4444',
-      success: (res) => {
+      success: function(res) {
         if (res.confirm) {
           wx.setClipboardData({ data: '' })
-          setTimeout(() => {
+          setTimeout(function() {
             wx.showToast({ title: '剪贴板已清空', icon: 'success' })
           }, 500)
         }
@@ -657,17 +732,20 @@ Page({
 
   clearUserData() {
     wx.vibrateShort({ type: 'medium' })
+    var that = this
     wx.showModal({
       title: '💾 清空数据缓存',
       content: '确定要清空数据缓存吗？\n包括：用户设置、收藏记录、使用次数等\n（不会删除历史记录）',
       confirmText: '清空',
       confirmColor: '#EF4444',
-      success: (res) => {
+      success: function(res) {
         if (res.confirm) {
-          const keysToRemove = ['userProfile', 'totalUsageCount', 'urlMap', 'allTools']
-          keysToRemove.forEach(key => wx.removeStorageSync(key))
+          var keysToRemove = ['userProfile', 'totalUsageCount', 'urlMap', 'allTools']
+          for (var udi = 0; udi < keysToRemove.length; udi++) {
+            wx.removeStorageSync(keysToRemove[udi])
+          }
           
-          this.calculateDetailedCache()
+          that.calculateDetailedCache()
           wx.showToast({ title: '数据缓存已清空', icon: 'success' })
         }
       }
@@ -676,24 +754,26 @@ Page({
 
   clearImageCache() {
     wx.vibrateShort({ type: 'medium' })
+    var that = this
     wx.showModal({
       title: '🖼️ 清空图片缓存',
       content: '确定要清空图片缓存吗？\n包括：用户头像、临时图片等',
       confirmText: '清空',
       confirmColor: '#EF4444',
-      success: (res) => {
+      success: function(res) {
         if (res.confirm) {
           try {
             wx.getStorageInfo({
-              success: (info) => {
-                let cleared = 0
-                info.keys.forEach(key => {
-                  if (key.includes('avatar') || key.includes('image') || key.includes('temp_')) {
+              success: function(info) {
+                var cleared = 0
+                for (var ik = 0; ik < info.keys.length; ik++) {
+                  var key = info.keys[ik]
+                  if (key.indexOf('avatar') > -1 || key.indexOf('image') > -1 || key.indexOf('temp_') === 0) {
                     wx.removeStorageSync(key)
                     cleared++
                   }
-                })
-                this.calculateDetailedCache()
+                }
+                that.calculateDetailedCache()
                 wx.showToast({ title: '图片缓存已清空', icon: 'success' })
               }
             })
@@ -721,7 +801,7 @@ Page({
 
   selectFeedbackType(e) {
     wx.vibrateShort({ type: 'light' })
-    const value = e.currentTarget.dataset.value
+    var value = e.currentTarget.dataset.value
     this.setData({ feedbackType: value })
   },
 
@@ -733,8 +813,10 @@ Page({
     this.setData({ feedbackContent: e.detail.value })
   },
 
-  submitFeedback() {
-    const { feedbackContent, feedbackType, contactInfo } = this.data
+  submitFeedback: function() {
+    var feedbackContent = this.data.feedbackContent
+    var feedbackType = this.data.feedbackType
+    var contactInfo = this.data.contactInfo
 
     if (!feedbackContent.trim()) {
       wx.showToast({ title: '请输入反馈内容', icon: 'none' })
@@ -747,90 +829,77 @@ Page({
     }
 
     wx.vibrateShort({ type: 'medium' })
-    this.setData({ isSubmitting: true })
 
-    const typeLabels = {
-      bug: '问题反馈',
-      suggestion: '功能建议',
-      other: '其他'
+    var typeLabels = { bug: '问题反馈', suggestion: '功能建议', other: '其他' }
+
+    var now = new Date()
+    var h = now.getHours()
+    var min = now.getMinutes()
+    var timeStr = (now.getMonth() + 1) + '/' + now.getDate() + ' ' + (h < 10 ? '0' : '') + h + ':' + (min < 10 ? '0' : '') + min
+
+    var deviceInfo = ''
+    try {
+      deviceInfo = wx.getSystemInfoSync().model + ' / 微信' + wx.getSystemInfoSync().version
+    } catch(e) {
+      deviceInfo = '未知设备'
     }
 
-    const now = new Date()
-    const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+    var sendText = '[百宝工具箱] ' + typeLabels[feedbackType] + '\n时间: ' + timeStr + '\n设备: ' + deviceInfo + '\n联系: ' + (contactInfo || '未填写') + '\n\n反馈内容:\n' + feedbackContent
 
-    const mailSubject = `【百宝工具箱】${typeLabels[feedbackType]} - ${timeStr}`
-    const mailBody = `
-反馈类型：${typeLabels[feedbackType]}
-联系方式：${contactInfo || '未填写'}
-提交时间：${timeStr}
-设备信息：${wx.getSystemInfoSync().model} / 微信 ${wx.getSystemInfoSync().version}
-
-反馈内容：
-${feedbackContent}
----
-来自百宝工具箱微信小程序
-`.trim()
-
-    const feedbackData = {
+    var feedbackData = {
       type: feedbackType,
       content: feedbackContent,
       contact: contactInfo,
       time: timeStr,
-      device: wx.getSystemInfoSync().model
+      device: deviceInfo
     }
 
-    let history = wx.getStorageSync('feedbackHistory') || []
-    history.unshift(feedbackData)
-    if (history.length > 20) history = history.slice(0, 20)
-    wx.setStorageSync('feedbackHistory', history)
+    try {
+      var history = wx.getStorageSync('feedbackHistory') || []
+      history.unshift(feedbackData)
+      if (history.length > 20) history = history.slice(0, 20)
+      wx.setStorageSync('feedbackHistory', history)
+    } catch(e) {}
 
-    this.setData({ isSubmitting: false })
+    this.setData({ isSubmitting: true })
 
-    wx.setClipboardData({
-      data: mailBody,
-      success: () => {
-        wx.showModal({
-          title: '✅ 反馈内容已复制',
-          content: `感谢您的反馈！\n\n反馈已保存并复制到剪贴板。\n\n请按以下步骤发送邮件给我们：\n\n📧 收件人：yhz123456718@qq.com\n📝 主题：${mailSubject}\n\n操作步骤：\n1️⃣ 打开QQ邮箱网页版（mail.qq.com）\n2️⃣ 点击"写信"按钮\n3️⃣ 粘贴收件人和主题（已自动填好格式）\n4️⃣ 在正文处粘贴反馈内容\n5️⃣ 点击发送 ✅`,
-          showCancel: false,
-          confirmText: '我知道了',
-          success: () => {
-            this.setData({
-              showFeedback: false,
-              feedbackContent: '',
-              contactInfo: ''
-            })
-            wx.showToast({
-              title: '感谢您的反馈 ❤️',
-              icon: 'none',
-              duration: 2000
-            })
+    var that = this
+
+    setTimeout(function() {
+      try {
+        wx.setClipboardData({
+          data: sendText,
+          success: function() {
+            that.setData({ isSubmitting: false, showFeedback: false, feedbackContent: '', contactInfo: '' })
+            that.showFeedbackSuccessModal()
+          },
+          fail: function() {
+            that.setData({ isSubmitting: false, showFeedback: false, feedbackContent: '', contactInfo: '' })
+            that.showFeedbackSuccessModal()
           }
         })
-      },
-      fail: () => {
-        wx.showModal({
-          title: '💾 反馈已保存',
-          content: `反馈已保存到本地！\n\n由于剪贴板权限问题，请手动记录以下信息后发送邮件：\n\n📧 收件人：yhz123456718@qq.com\n📝 主题：${mailSubject}\n\n您可以在"我的-设置-清理缓存"中查看历史反馈记录。`,
-          showCancel: false,
-          confirmText: '好的',
-          success: () => {
-            this.setData({
-              showFeedback: false,
-              feedbackContent: '',
-              contactInfo: ''
-            })
-          }
-        })
+      } catch(e) {
+        that.setData({ isSubmitting: false, showFeedback: false, feedbackContent: '', contactInfo: '' })
+        that.showFeedbackSuccessModal()
       }
+    }, 100)
+  },
+
+  showFeedbackSuccessModal: function() {
+    var that = this
+    wx.showModal({
+      title: '反馈已保存',
+      content: '感谢您的宝贵意见！\n\n反馈已保存到本地历史记录。\n\n如需发送给我们，请在"意见反馈"页面查看历史记录，或直接发送至邮箱：yhz123456718@qq.com',
+      showCancel: false,
+      confirmText: '我知道了'
     })
   },
 
-  openToolRequest() {
+  openToolRequest: function() {
     wx.vibrateShort({ type: 'light' })
     
     try {
-      const menuButton = wx.getMenuButtonBoundingClientRect()
+      var menuButton = wx.getMenuButtonBoundingClientRect()
       this.setData({
         'menuButtonInfo.top': menuButton.top,
         'menuButtonInfo.height': menuButton.height
@@ -854,7 +923,7 @@ ${feedbackContent}
 
   selectToolCategory(e) {
     wx.vibrateShort({ type: 'light' })
-    const value = e.currentTarget.dataset.value
+    var value = e.currentTarget.dataset.value
     this.setData({ 
       selectedCategory: value === this.data.selectedCategory ? '' : value 
     })
@@ -862,7 +931,7 @@ ${feedbackContent}
 
   selectPriority(e) {
     wx.vibrateShort({ type: 'light' })
-    const value = e.currentTarget.dataset.value
+    var value = e.currentTarget.dataset.value
     this.setData({ selectedPriority: value })
   },
 
@@ -875,12 +944,15 @@ ${feedbackContent}
   },
 
   loadSubmittedRequests() {
-    const requests = wx.getStorageSync('toolRequests') || []
+    var requests = wx.getStorageSync('toolRequests') || []
     this.setData({ submittedRequests: requests.slice(0, 10) })
   },
 
   submitToolRequest() {
-    const { toolRequestContent, toolRequestContact, selectedCategory, selectedPriority } = this.data
+    var toolRequestContent = this.data.toolRequestContent
+    var toolRequestContact = this.data.toolRequestContact
+    var selectedCategory = this.data.selectedCategory
+    var selectedPriority = this.data.selectedPriority
 
     if (!toolRequestContent.trim()) {
       wx.showToast({ title: '请输入需求描述', icon: 'none' })
@@ -895,13 +967,25 @@ ${feedbackContent}
     wx.vibrateShort({ type: 'medium' })
     this.setData({ isSubmittingUGC: true })
 
-    const now = new Date()
-    const timeStr = `${now.getMonth() + 1}月${now.getDate()}日 ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+    var now = new Date()
+    var timeStr = (now.getMonth() + 1) + '月' + now.getDate() + '日 '
+    var h = now.getHours()
+    var min = now.getMinutes()
+    timeStr += (h < 10 ? '0' + h : '' + h) + ':' + (min < 10 ? '0' + min : '' + min)
 
-    const categoryLabel = this.data.toolCategories.find(c => c.value === selectedCategory)
-    const priorityLabel = this.data.priorityLevels.find(p => p.value === selectedPriority)
+    var categoryLabel = null
+    var categories = this.data.toolCategories
+    for (var ci = 0; ci < categories.length; ci++) {
+      if (categories[ci].value === selectedCategory) { categoryLabel = categories[ci]; break }
+    }
 
-    const requestData = {
+    var priorityLabel = null
+    var levels = this.data.priorityLevels
+    for (var li = 0; li < levels.length; li++) {
+      if (levels[li].value === selectedPriority) { priorityLabel = levels[li]; break }
+    }
+
+    var requestData = {
       id: Date.now(),
       content: toolRequestContent,
       category: selectedCategory || 'other',
@@ -914,7 +998,7 @@ ${feedbackContent}
       status: 'pending'
     }
 
-    let requests = wx.getStorageSync('toolRequests') || []
+    var requests = wx.getStorageSync('toolRequests') || []
     requests.unshift(requestData)
     
     if (requests.length > 20) {
@@ -923,38 +1007,15 @@ ${feedbackContent}
     
     wx.setStorageSync('toolRequests', requests)
 
-    const mailSubject = `【百宝工具箱】新工具需求 - ${timeStr}`
-    const priorityEmoji = selectedPriority === 'high' ? '🔥' : selectedPriority === 'medium' ? '💪' : '😊'
+    var priorityEmoji = selectedPriority === 'high' ? '🔥' : selectedPriority === 'medium' ? '💪' : '😊'
+    var cName = categoryLabel ? categoryLabel.label : '未选择'
+    var pName = priorityLabel ? priorityLabel.label : '需要'
     
-    const mailBody = `
-════════════════════════════════
-  📦 百宝工具箱 - 新工具需求建议
-════════════════════════════════
+    var mailBody = '\u00a0\r\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n  \ud83e\udde6 \u767e\u5b9d\u5de5\u5177\u7bb1 - \u65b0\u5de5\u5177\u9700\u6c42\u5efa\u8bae\r\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n\r\n\ud83d\udccb \u9700\u6c42\u8be6\u60c5\r\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n\u9700\u6c42\u63cf\u8ff0\uff1a' + toolRequestContent + '\r\n\r\n\u5de5\u5177\u7c7b\u578b\uff1a' + cName + '\r\n\u4f18\u5148\u7ea7\uff1a' + priorityEmoji + ' ' + pName + '\r\n\u8054\u7cfb\u65b9\u5f0f\uff1a' + (toolRequestContact || '\u6722\u586b\u5199') + '\r\n\r\n\u23f0 \u63d0\u4ea4\u65f6\u95f4\uff1a' + timeStr + '\r\n\r\n\ud83d\udcf1 \u8bbe\u5907\u4fe1\u606f\r\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n\u8bbe\u5907\u578b\u53f7\uff1a' + wx.getSystemInfoSync().model + '\r\n\u5fae\u4fe1\u7248\u672c\uff1a' + wx.getSystemInfoSync().version + '\r\n\u7cfb\u7edf\u5e73\u53f0\uff1a' + wx.getSystemInfoSync().platform + '\r\n\u5c4f\u5e55\u5c3a\u5bf8\uff1a' + wx.getSystemInfoSync().windowWidth + '\u00d7' + wx.getSystemInfoSync().windowHeight + '\r\n\r\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n\u6765\u81ea\u767e\u5b9d\u5de5\u5177\u7bb1\u5fae\u4fe1\u5c0f\u7a0b\u5e8f\u7528\u6237\r\n\u90ae\u7bb1\u63a5\u6536\u65f6\u95f4\uff1a' + new Date().toLocaleString() + '\r\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500'.trim()
 
-📋 需求详情
-─────────────────────────────
-需求描述：${toolRequestContent}
-
-工具类型：${categoryLabel ? categoryLabel.label : '未选择'}
-优先级：${priorityEmoji} ${priorityLabel ? priorityLabel.label : '需要'}
-联系方式：${toolRequestContact || '未填写'}
-
-⏰ 提交时间：${timeStr}
-
-📱 设备信息
-─────────────────────────────
-设备型号：${wx.getSystemInfoSync().model}
-微信版本：${wx.getSystemInfoSync().version}
-系统平台：${wx.getSystemInfoSync().platform}
-屏幕尺寸：${wx.getSystemInfoSync().windowWidth}×${wx.getSystemInfoSync().windowHeight}
-
-════════════════════════════════
-来自百宝工具箱微信小程序用户
-邮箱接收时间：${new Date().toLocaleString()}
-════════════════════════════════`.trim()
-
-    setTimeout(() => {
-      this.setData({ 
+    var that = this
+    setTimeout(function() {
+      that.setData({ 
         isSubmittingUGC: false,
         showToolRequest: false,
         toolRequestContent: '',
@@ -966,19 +1027,19 @@ ${feedbackContent}
 
       wx.setClipboardData({
         data: mailBody,
-        success: () => {
+        success: function() {
           wx.showModal({
             title: '✅ 需求已提交并发送到邮箱',
-            content: `感谢您的宝贵建议！❤️\n\n📧 需求信息已自动复制到剪贴板\n\n请按以下步骤发送邮件给我们：\n\n1️⃣ 打开QQ邮箱网页版（mail.qq.com）\n2️⃣ 点击"写信"按钮\n3️⃣ 收件人填写：yhz123456718@qq.com\n4️⃣ 主题已准备好，直接粘贴\n5️⃣ 正文处粘贴完整内容\n6️⃣ 点击"发送" ✅\n\n我们会尽快评估并回复您！`,
+            content: '感谢您的宝贵建议！❤️\n\n📧 需求信息已自动复制到剪贴板\n\n请按以下步骤发送邮件给我们：\n\n1️⃣ 打开QQ邮箱网页版（mail.qq.com）\n2️⃣ 点击"写信"按钮\n3️⃣ 收件人填写：yhz123456718@qq.com\n4️⃣ 主题已准备好，直接粘贴\n5️⃣ 正文处粘贴完整内容\n6️⃣ 点击"发送" ✅\n\n我们会尽快评估并回复您！',
             showCancel: false,
             confirmText: '我知道了',
             confirmColor: '#F59E0B'
           })
         },
-        fail: () => {
+        fail: function() {
           wx.showModal({
             title: '💾 需求已保存到本地',
-            content: `您的需求已成功提交！\n\n由于剪贴板权限问题，请手动记录以下信息后发送邮件：\n\n📧 收件人：yhz123456718@qq.com\n📝 主题：${mailSubject}\n\n需求内容：\n${toolRequestContent}\n\n您可以在"我的-想增加什么工具"中查看已提交的需求记录。`,
+            content: '您的需求已成功提交！\n\n由于剪贴板权限问题，请手动记录以下信息后发送邮件：\n\n📧 收件人：yhz123456718@qq.com\n📝 主题：【百宝工具箱】新工具需求 - ' + timeStr + '\n\n需求内容：\n' + toolRequestContent + '\n\n您可以在"我的-想增加什么工具"中查看已提交的需求记录。',
             showCancel: false,
             confirmText: '好的',
             confirmColor: '#F59E0B'

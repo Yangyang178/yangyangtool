@@ -24,11 +24,14 @@ App({
       { id: 19, name: 'URL编解码', category: 'dev' },
       { id: 20, name: '正则表达式测试', category: 'dev' },
       { id: 21, name: '图片处理', category: 'dev' },
-      { id: 22, name: '文档格式转换', category: 'dev' }
+      { id: 22, name: '密码生成器', category: 'dev' },
+      { id: 23, name: 'BMI 计算器', category: 'life' },
+      { id: 24, name: '文本对比', category: 'text' },
+      { id: 25, name: '个税计算器', category: 'calculator' }
     ]
   },
 
-  onLaunch() {
+  onLaunch: function() {
     console.log('百宝工具箱启动')
     
     if (!wx.getStorageSync('favorites')) {
@@ -42,22 +45,22 @@ App({
     this.applyTheme()
 
     if (wx.onThemeChange) {
-      wx.onThemeChange((result) => {
-        const setting = wx.getStorageSync('darkModeSetting') || 'system'
+      wx.onThemeChange(function(result) {
+        var setting = wx.getStorageSync('darkModeSetting') || 'system'
         if (setting === 'system') {
           this.applyTheme()
         }
-      })
+      }.bind(this))
     }
   },
 
   applyTheme() {
-    const setting = wx.getStorageSync('darkModeSetting') || 'system'
-    let isDark = false
+    var setting = wx.getStorageSync('darkModeSetting') || 'system'
+    var isDark = false
 
     if (setting === 'system') {
       try {
-        const res = wx.getSystemInfoSync()
+        var res = wx.getSystemInfoSync()
         isDark = res.theme === 'dark'
       } catch (e) {
         isDark = false
@@ -103,12 +106,13 @@ App({
       })
     }
 
-    const pages = getCurrentPages()
-    pages.forEach(page => {
+    var pages = getCurrentPages()
+    for (var pi = 0; pi < pages.length; pi++) {
+      var page = pages[pi]
       if (page && page.setData) {
         page.setData({ isDarkMode: isDark })
       }
-    })
+    }
   },
 
   lightTheme: {

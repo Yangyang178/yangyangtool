@@ -8,11 +8,12 @@
   },
   "setting": {
     "coverView": true,
-    "es6": true,
+    "es6": false,
     "postcss": true,
     "minified": true,
     "enhance": true,
     "showShadowRootInWxmlPanel": true,
+    "urlCheck": false,
     "packNpmRelationList": [],
     "babelSetting": {
       "ignore": [],

@@ -1,4 +1,4 @@
-const allCities = [
+var allCities = [
   { id: 'beijing', city: '北京', country: '中国', emoji: '🏛️', timezone: 'UTC+8', offset: 8 },
   { id: 'shanghai', city: '上海', country: '中国', emoji: '🌃', timezone: 'UTC+8', offset: 8 },
   { id: 'tokyo', city: '东京', country: '日本', emoji: '🗼', timezone: 'UTC+9', offset: 9 },
@@ -26,7 +26,7 @@ const allCities = [
   { id: 'mumbai', city: '孟买', country: '印度', emoji: '🕌', timezone: 'UTC+5:30', offset: 5.5 },
   { id: 'cairo', city: '开罗', country: '埃及', emoji: '🐪', timezone: 'UTC+2', offset: 2 },
   { id: 'johannesburg', city: '约翰内斯堡', country: '南非', emoji: '🦁', timezone: 'UTC+2', offset: 2 },
-  { id: 'saopaulo', city: '圣保罗', country: '巴西', emoji: '☕', timezone: 'UTC-3', offset: -3 },
+  { id: 'saopaulo', city: '圣保罗', country: '巴西', emoji: '☀️', timezone: 'UTC-3', offset: -3 },
   { id: 'mexicocity', city: '墨西哥城', country: '墨西哥', emoji: '🌮', timezone: 'UTC-6', offset: -6 },
   { id: 'buenosaires', city: '布宜诺斯艾利斯', country: '阿根廷', emoji: '💃', timezone: 'UTC-3', offset: -3 }
 ]
@@ -54,155 +54,175 @@ Page({
     timeUpdateTimer: null
   },
 
-  onLoad() {
+  onLoad: function() {
     this.updateLocalTime()
     this.loadSavedCities()
     this.startTimer()
   },
 
-  onShow() {
+  onShow: function() {
     if (!this.data.timeUpdateTimer) {
       this.startTimer()
     }
   },
 
-  onHide() {
+  onHide: function() {
     this.stopTimer()
   },
 
-  onUnload() {
+  onUnload: function() {
     this.stopTimer()
   },
 
-  startTimer() {
-    this.updateAllTimes()
-    this.data.timeUpdateTimer = setInterval(() => {
-      this.updateLocalTime()
-      this.updateAllTimes()
+  startTimer: function() {
+    var that = this
+    that.updateLocalTime()
+    that.updateAllTimes()
+    that.data.timeUpdateTimer = setInterval(function() {
+      that.updateLocalTime()
+      that.updateAllTimes()
     }, 1000)
   },
 
-  stopTimer() {
+  stopTimer: function() {
     if (this.data.timeUpdateTimer) {
       clearInterval(this.data.timeUpdateTimer)
       this.setData({ timeUpdateTimer: null })
     }
   },
 
-  updateLocalTime() {
-    const now = new Date()
-    
-    const hours = String(now.getHours()).padStart(2, '0')
-    const minutes = String(now.getMinutes()).padStart(2, '0')
-    const seconds = String(now.getSeconds()).padStart(2, '0')
-    
-    const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, '0')
-    const day = String(now.getDate()).padStart(2, '0')
-    
-    const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
-    const weekday = weekdays[now.getDay()]
-    
-    const offset = -now.getTimezoneOffset() / 60
-    const offsetStr = offset >= 0 ? `+${offset}` : `${offset}`
+  updateLocalTime: function() {
+    var now = new Date()
+
+    var hours = String(now.getHours())
+    hours = hours.length === 1 ? '0' + hours : hours
+    var minutes = String(now.getMinutes())
+    minutes = minutes.length === 1 ? '0' + minutes : minutes
+    var seconds = String(now.getSeconds())
+    seconds = seconds.length === 1 ? '0' + seconds : seconds
+
+    var year = now.getFullYear()
+    var month = now.getMonth() + 1
+    month = month < 10 ? '0' + month : '' + month
+    var day = now.getDate()
+    day = day < 10 ? '0' + day : '' + day
+
+    var weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+    var weekday = weekdays[now.getDay()]
+
+    var offset = -now.getTimezoneOffset() / 60
+    var offsetStr = offset >= 0 ? '+' + offset : '' + offset
 
     this.setData({
-      localTime: `${hours}:${minutes}:${seconds}`,
-      localDate: `${year}年${month}月${day}日`,
+      localTime: hours + ':' + minutes + ':' + seconds,
+      localDate: year + '年' + month + '月' + day + '日',
       localOffset: offsetStr,
       localWeekday: weekday
     })
   },
 
-  updateAllTimes() {
-    const cities = this.data.cityList.map(city => {
-      return this.getCityTime(city)
-    })
+  updateAllTimes: function() {
+    var cities = []
+    for (var ui = 0; ui < this.data.cityList.length; ui++) {
+      cities.push(this.getCityTime(this.data.cityList[ui]))
+    }
     this.setData({ cityList: cities })
   },
 
-  getCityTime(city) {
-    const now = new Date()
-    const utc = now.getTime() + (now.getTimezoneOffset() * 60000)
-    const cityTime = new Date(utc + (3600000 * city.offset))
-    
-    const hours = String(cityTime.getHours()).padStart(2, '0')
-    const minutes = String(cityTime.getMinutes()).padStart(2, '0')
-    const seconds = String(cityTime.getSeconds()).padStart(2, '0')
-    
-    const year = cityTime.getFullYear()
-    const month = String(cityTime.getMonth() + 1).padStart(2, '0')
-    const day = String(cityTime.getDate()).padStart(2, '0')
+  getCityTime: function(city) {
+    var now = new Date()
+    var utc = now.getTime() + (now.getTimezoneOffset() * 60000)
+    var cityTime = new Date(utc + (3600000 * city.offset))
 
-    const localOffset = -now.getTimezoneOffset() / 60
-    const diffHours = Math.round(city.offset - localOffset)
+    var hours = String(cityTime.getHours())
+    hours = hours.length === 1 ? '0' + hours : hours
+    var minutes = String(cityTime.getMinutes())
+    minutes = minutes.length === 1 ? '0' + minutes : minutes
+    var seconds = String(cityTime.getSeconds())
+    seconds = seconds.length === 1 ? '0' + seconds : seconds
 
-    let diffType = 'same'
-    let diffText = ''
-    
+    var m = cityTime.getMonth() + 1
+    var d = cityTime.getDate()
+    var dateStr = (m < 10 ? '0' + m : '' + m) + '/' + (d < 10 ? '0' + d : '' + d)
+
+    var localOffset = -now.getTimezoneOffset() / 60
+    var diffHours = Math.round(city.offset - localOffset)
+
+    var diffType = 'same'
+    var diffText = ''
+
     if (diffHours > 0) {
       diffType = 'ahead'
-      diffText = `+${diffHours}小时`
+      diffText = '+' + diffHours + '小时'
     } else if (diffHours < 0) {
       diffType = 'behind'
-      diffText = `${diffHours}小时`
+      diffText = diffHours + '小时'
     } else {
       diffType = 'same'
       diffText = '相同'
     }
 
-    return {
-      ...city,
-      time: `${hours}:${minutes}:${seconds}`,
-      date: `${month}/${day}`,
-      diffType,
-      diffText
-    }
+    var result = {}
+    for (var key in city) { result[key] = city[key] }
+    result.time = hours + ':' + minutes + ':' + seconds
+    result.date = dateStr
+    result.diffType = diffType
+    result.diffText = diffText
+    return result
   },
 
-  showAddCity() {
+  showAddCity: function() {
     wx.vibrateShort({ type: 'light' })
-    this.setData({ 
-      showCityPicker: true, 
+    this.setData({
+      showCityPicker: true,
       searchKeyword: '',
-      filteredCities: allCities 
+      filteredCities: allCities
     })
   },
 
-  hideAddCity() {
+  hideAddCity: function() {
     this.setData({ showCityPicker: false })
   },
 
-  onSearchCity(e) {
-    const keyword = e.detail.value.toLowerCase().trim()
+  onSearchCity: function(e) {
+    var keyword = e.detail.value.toLowerCase().trim()
     this.setData({ searchKeyword: e.detail.value })
-    
+
     if (!keyword) {
       this.setData({ filteredCities: allCities })
       return
     }
 
-    const filtered = allCities.filter(city =>
-      city.city.includes(keyword) || 
-      city.country.includes(keyword) ||
-      city.id.includes(keyword)
-    )
+    var filtered = []
+    for (var fi = 0; fi < allCities.length; fi++) {
+      var c = allCities[fi]
+      if (c.city.indexOf(keyword) > -1 || c.country.indexOf(keyword) > -1 || c.id.indexOf(keyword) > -1) {
+        filtered.push(c)
+      }
+    }
     this.setData({ filteredCities: filtered })
   },
 
-  selectCity(e) {
+  selectCity: function(e) {
     wx.vibrateShort({ type: 'medium' })
-    const city = e.currentTarget.dataset.city
-    
-    const exists = this.data.cityList.find(c => c.id === city.id)
+    var city = e.currentTarget.dataset.city
+
+    var exists = null
+    for (var ei = 0; ei < this.data.cityList.length; ei++) {
+      if (this.data.cityList[ei].id === city.id) { exists = true; break }
+    }
     if (exists) {
       wx.showToast({ title: '该城市已添加', icon: 'none' })
       return
     }
 
-    const cityWithTime = this.getCityTime(city)
-    const cities = [...this.data.cityList, cityWithTime]
-    
+    var cityWithTime = this.getCityTime(city)
+    var cities = []
+    for (var sci = 0; sci < this.data.cityList.length; sci++) {
+      cities.push(this.data.cityList[sci])
+    }
+    cities.push(cityWithTime)
+
     this.setData({
       cityList: cities,
       showCityPicker: false,
@@ -210,55 +230,79 @@ Page({
     })
 
     this.saveCities(cities)
-    wx.showToast({ title: `已添加${city.city}`, icon: 'success' })
+    wx.showToast({ title: '已添加 ' + city.city, icon: 'success' })
   },
 
-  quickAddCity(e) {
+  quickAddCity: function(e) {
     wx.vibrateShort({ type: 'medium' })
-    const cityInfo = e.currentTarget.dataset.city
-    const city = allCities.find(c => c.id === cityInfo.id)
-    
+    var cityInfo = e.currentTarget.dataset.city
+    var city = null
+    for (var qci = 0; qci < allCities.length; qci++) {
+      if (allCities[qci].id === cityInfo.id) { city = allCities[qci]; break }
+    }
+
     if (!city) return
 
-    const exists = this.data.cityList.find(c => c.id === city.id)
+    var exists = null
+    for (var qei = 0; qei < this.data.cityList.length; qei++) {
+      if (this.data.cityList[qei].id === city.id) { exists = true; break }
+    }
     if (exists) {
       wx.showToast({ title: '该城市已添加', icon: 'none' })
       return
     }
 
-    const cityWithTime = this.getCityTime(city)
-    const cities = [...this.data.cityList, cityWithTime]
-    
+    var cityWithTime = this.getCityTime(city)
+    var cities = []
+    for (var qsi = 0; qsi < this.data.cityList.length; qsi++) {
+      cities.push(this.data.cityList[qsi])
+    }
+    cities.push(cityWithTime)
+
     this.setData({ cityList: cities })
     this.saveCities(cities)
-    wx.showToast({ title: `已添加${city.city}`, icon: 'success' })
+    wx.showToast({ title: '已添加 ' + city.city, icon: 'success' })
   },
 
-  removeCity(e) {
-    const cityId = e.currentTarget.dataset.id
+  removeCity: function(e) {
+    var cityId = e.currentTarget.dataset.id
+    var that = this
     wx.showModal({
       title: '确认删除',
       content: '确定要移除这个城市吗？',
-      success: (res) => {
+      confirmText: '删除',
+      confirmColor: '#EF4444',
+      success: function(res) {
         if (res.confirm) {
-          const cities = this.data.cityList.filter(c => c.id !== cityId)
-          this.setData({ cityList: cities })
-          this.saveCities(cities)
+          var cities = []
+          for (var rci = 0; rci < that.data.cityList.length; rci++) {
+            if (that.data.cityList[rci].id !== cityId) {
+              cities.push(that.data.cityList[rci])
+            }
+          }
+          that.setData({ cityList: cities })
+          that.saveCities(cities)
           wx.showToast({ title: '已移除', icon: 'success' })
         }
       }
     })
   },
 
-  loadSavedCities() {
+  loadSavedCities: function() {
     try {
-      const savedIds = wx.getStorageSync('world_clock_cities') || []
+      var savedIds = wx.getStorageSync('world_clock_cities') || []
       if (savedIds.length > 0) {
-        const cities = savedIds.map(id => {
-          const city = allCities.find(c => c.id === id)
-          return city ? this.getCityTime(city) : null
-        }).filter(Boolean)
-        
+        var cities = []
+        for (var lii = 0; lii < savedIds.length; lii++) {
+          var foundCity = null
+          for (var laci = 0; laci < allCities.length; laci++) {
+            if (allCities[laci].id === savedIds[lii]) { foundCity = allCities[laci]; break }
+          }
+          if (foundCity) {
+            cities.push(this.getCityTime(foundCity))
+          }
+        }
+
         this.setData({ cityList: cities })
       }
     } catch (e) {
@@ -266,22 +310,25 @@ Page({
     }
   },
 
-  saveCities(cities) {
+  saveCities: function(cities) {
     try {
-      const ids = cities.map(c => c.id)
+      var ids = []
+      for (var si = 0; si < cities.length; si++) {
+        ids.push(cities[si].id)
+      }
       wx.setStorageSync('world_clock_cities', ids)
     } catch (e) {
       console.log('保存失败:', e)
     }
   },
 
-  onShareAppMessage() {
+  onShareAppMessage: function() {
     return {
       title: '世界时钟 - 百宝工具箱',
       path: '/pages/tools/world-clock/world-clock'
     }
   },
-  onShareTimeline() {
+  onShareTimeline: function() {
     return { title: '' }
   }
 })

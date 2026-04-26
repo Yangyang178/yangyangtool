@@ -1,0 +1,69 @@
+<view class="guide-mask" wx:if="{{show}}" catchtouchmove="preventMove">
+  <swiper class="guide-swiper" indicator-dots="{{true}}" indicator-color="rgba(255,255,255,0.4)" indicator-active-color="#FFFFFF" autoplay="{{false}}" current="{{current}}" bindchange="onSwiperChange">
+    
+    <swiper-item class="guide-item">
+      <view class="guide-content center">
+        <view class="guide-icon-wrap" style="background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)">
+          <text class="guide-emoji">🧰</text>
+        </view>
+        <text class="guide-title">欢迎使用百宝工具箱</text>
+        <text class="guide-desc">22+ 实用小工具，即用即走，轻量高效</text>
+      </view>
+    </swiper-item>
+
+    <swiper-item class="guide-item">
+      <view class="guide-content">
+        <view class="guide-highlight-box">
+          <view class="highlight-search">
+            <text class="highlight-icon">🔍</text>
+            <text class="highlight-text">搜索工具...</text>
+          </view>
+          <view class="highlight-arrow-down"></view>
+        </view>
+        <text class="guide-title">快速搜索</text>
+        <text class="guide-desc">输入关键词即可找到需要的工具\n支持搜索历史和热门推荐</text>
+      </view>
+    </swiper-item>
+
+    <swiper-item class="guide-item">
+      <view class="guide-content">
+        <view class="guide-highlight-box">
+          <view class="highlight-tabs">
+            <view class="highlight-tab active"><text>全部</text></view>
+            <view class="highlight-tab"><text>计算</text></view>
+            <view class="highlight-tab"><text>文本</text></view>
+            <view class="highlight-tab"><text>生活</text></view>
+          </view>
+          <view class="highlight-arrow-down"></view>
+        </view>
+        <text class="guide-title">分类浏览</text>
+        <text class="guide-desc">按类别快速筛选工具\n计算转换 / 文本处理 / 生活助手等</text>
+      </view>
+    </swiper-item>
+
+    <swiper-item class="guide-item">
+      <view class="guide-content">
+        <view class="guide-highlight-box">
+          <view class="highlight-fav">
+            <text class="highlight-star">★</text>
+            <text class="highlight-fav-text">我的收藏</text>
+          </view>
+          <view class="highlight-arrow-down"></view>
+        </view>
+        <text class="guide-title">收藏常用</text>
+        <text class="guide-desc">点击卡片上的 ☆ 收藏常用工具\n在「我的」页面随时查看和访问</text>
+      </view>
+    </swiper-item>
+
+  </swiper>
+
+  <view class="guide-footer">
+    <view class="skip-btn" bindtap="onSkip" wx:if="{{current < 3}}">
+      <text>跳过</text>
+    </view>
+    <view class="start-btn {{current === 3 ? 'active' : ''}}" bindtap="{{current === 3 ? 'onStart' : 'onNext'}}">
+      <text>{{current === 3 ? '立即体验' : '下一步'}}</text>
+      <text class="btn-arrow" wx:if="{{current < 3}}">→</text>
+    </view>
+  </view>
+</view>
