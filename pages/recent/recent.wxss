@@ -896,8 +896,8 @@ page {
 }
 
 .dark-mode .banner-ad {
-  background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
-  border-color: rgba(51, 65, 85, 0.6);
+  background: transparent;
+  border-color: transparent;
 }
 
 .dark-mode .see-all-btn {
@@ -922,7 +922,20 @@ page {
 .dark-mode .form-textarea {
   background: #0F172A;
   color: #F1F5F9;
-  border: 1px solid rgba(51, 65, 85, 0.6);
+  border: 2px solid rgba(71, 85, 105, 0.8);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .form-placeholder {
+  color: #94A3B8;
+}
+
+.dark-mode .form-group {
+  border-bottom-color: rgba(51, 65, 85, 0.5);
+}
+
+.dark-mode .form-label {
+  color: #E2E8F9;
 }
 
 .dark-mode .type-option {
@@ -939,6 +952,14 @@ page {
 
 .dark-mode .cache-overview {
   background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+}
+
+.dark-mode .total-label {
+  color: #94A3B8;
+}
+
+.dark-mode .total-value {
+  color: #F1F5F9;
 }
 
 .dark-mode .cache-item {
@@ -1317,6 +1338,10 @@ page {
   color: var(--textPrimary,#1E293B);
   box-sizing: border-box;
   line-height: 1.6;
+}
+
+.form-placeholder {
+  color: #94A3B8;
 }
 
 .char-count {

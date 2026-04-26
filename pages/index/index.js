@@ -717,6 +717,7 @@ Page({
     wx.vibrateShort({ type: 'light' })
     
     this.saveRecentTool(tool)
+    this.recordWeeklyUsage()
 
     const url = urlMap[tool.id]
     
@@ -783,6 +784,26 @@ Page({
     setTimeout(() => {
       this.setData({ showHeart: false })
     }, 800)
+  },
+
+  recordWeeklyUsage() {
+    const today = new Date()
+    const dateKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+    
+    const weeklyRecord = wx.getStorageSync('weeklyUsage') || {}
+    weeklyRecord[dateKey] = (weeklyRecord[dateKey] || 0) + 1
+    
+    const oneWeekAgo = new Date()
+    oneWeekAgo.setDate(today.getDate() - 7)
+    Object.keys(weeklyRecord).forEach(key => {
+      const [year, month, day] = key.split('-').map(Number)
+      const keyDate = new Date(year, month - 1, day)
+      if (keyDate < oneWeekAgo) {
+        delete weeklyRecord[key]
+      }
+    })
+    
+    wx.setStorageSync('weeklyUsage', weeklyRecord)
   },
 
   saveRecentTool(tool) {
