@@ -1027,17 +1027,17 @@ Page({
         ctx.fillText('即用即走 · 轻量高效 · 实用便捷', 250, 105)
 
         var tools = [
-          { icon: '💱', name: '汇率' },
+          { icon: '💹', name: '汇率' },
           { icon: '📐', name: '单位' },
           { icon: '🏠', name: '房贷' },
           { icon: '💰', name: '小费' },
-          { icon: '#️⃣', name: '字数' },
+          { icon: '🔢', name: '字数' },
           { icon: '🔤', name: '大小写' },
           { icon: '🔐', name: 'Base64' },
           { icon: '🍅', name: '番茄钟' },
           { icon: '💧', name: '喝水' },
           { icon: '🎲', name: '随机' },
-          { icon: '♻️', name: '垃圾分类' },
+          { icon: '🗑️', name: '垃圾分类' },
           { icon: '📅', name: '日期' }
         ]
 
