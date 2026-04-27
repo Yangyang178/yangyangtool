@@ -15,7 +15,7 @@
     <view class="timer-section">
       <!-- 圆形进度条 -->
       <view class="progress-ring-wrapper">
-        <canvas canvas-id="progressRing" class="progress-canvas"></canvas>
+        <canvas type="2d" id="progressRing" class="progress-canvas"></canvas>
         
         <view class="timer-display">
           <text class="time-text">{{displayTime}}</text>

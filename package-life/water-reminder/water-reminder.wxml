@@ -60,7 +60,7 @@
 
       <view class="status-display" wx:if="{{isRunning}}">
         <view class="countdown-ring">
-          <canvas canvas-id="countdownRing" class="countdown-canvas"></canvas>
+          <canvas type="2d" id="countdownRing" class="countdown-canvas"></canvas>
           <text class="countdown-text">{{nextRemainTime}}</text>
         </view>
         <text class="status-label">下次提醒倒计时</text>

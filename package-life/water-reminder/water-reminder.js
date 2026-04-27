@@ -11,9 +11,9 @@ Page({
       { value: 15, unit: '分钟' },
       { value: 30, unit: '分钟' },
       { value: 45, unit: '分钟' },
-      { value: 60, unit: '小时' },
+      { value: 60, unit: '分钟' },
       { value: 90, unit: '分钟' },
-      { value: 120, unit: '小时' }
+      { value: 120, unit: '分钟' }
     ],
     
     // 状态
@@ -155,32 +155,43 @@ Page({
   },
 
   drawCountdownRing(progress) {
-    const ctx = wx.createCanvasContext('countdownRing', this)
-    const centerX = 70
-    const centerY = 70
-    const radius = 58
-    const lineWidth = 6
+    var query = wx.createSelectorQuery()
+    query.select('#countdownRing')
+      .fields({ node: true, size: true })
+      .exec(function(res) {
+        if (!res || !res[0]) return
+        var canvas = res[0].node
+        var ctx = canvas.getContext('2d')
+        var dpr = wx.getSystemInfoSync().pixelRatio
 
-    ctx.clearRect(0, 0, 140, 140)
+        canvas.width = res[0].width * dpr
+        canvas.height = res[0].height * dpr
+        ctx.scale(dpr, dpr)
 
-    // 背景圆环
-    ctx.beginPath()
-    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
-    ctx.setStrokeStyle('#E2E8F0')
-    ctx.setLineWidth(lineWidth)
-    ctx.stroke()
+        var w = res[0].width
+        var h = res[0].height
+        var centerX = w / 2
+        var centerY = h / 2
+        var radius = Math.min(w, h) / 2 - 6
+        var lineWidth = 6
 
-    // 进度圆环（逆时针）
-    if (progress > 0) {
-      ctx.beginPath()
-      ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress)
-      ctx.setStrokeStyle('#06B6D4')
-      ctx.setLineWidth(lineWidth)
-      ctx.setLineCap('round')
-      ctx.stroke()
-    }
+        ctx.clearRect(0, 0, w, h)
 
-    ctx.draw()
+        ctx.beginPath()
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+        ctx.strokeStyle = '#E2E8F0'
+        ctx.lineWidth = lineWidth
+        ctx.stroke()
+
+        if (progress > 0) {
+          ctx.beginPath()
+          ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress)
+          ctx.strokeStyle = '#06B6D4'
+          ctx.lineWidth = lineWidth
+          ctx.lineCap = 'round'
+          ctx.stroke()
+        }
+      })
   },
 
   triggerReminder() {

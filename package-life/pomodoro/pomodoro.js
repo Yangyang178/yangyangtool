@@ -1,47 +1,95 @@
 Page({
   data: {
-    // 计时器状态
     isRunning: false,
     isPaused: false,
-    timeLeft: 25 * 60, // 秒
+    timeLeft: 25 * 60,
     totalTime: 25 * 60,
     displayTime: '25:00',
     statusText: '准备开始',
-    
-    // 统计
+
     completedCount: 0,
     totalMinutes: 0,
     currentRound: 1,
     totalRounds: 4,
-    
-    // 当前模式：work 或 break
-    currentMode: 'work', // work = 工作, break = 休息
-    
-    // 时间配置
+
+    currentMode: 'work',
+
     workDurations: [15, 20, 25, 30, 45, 60],
-    workDurationIndex: 2, // 默认25分钟
+    workDurationIndex: 2,
     shortBreaks: [3, 5, 10],
-    shortBreakIndex: 1, // 默认5分钟
+    shortBreakIndex: 1,
     longBreaks: [15, 20, 30],
-    longBreakIndex: 0, // 默认15分钟
-    
+    longBreakIndex: 0,
+
     todayRecords: [],
-    
-    timerInterval: null
+
+    timerInterval: null,
+
+    timerStartTime: 0,
+    timerStartLeft: 0
   },
 
-  onLoad() {
+  onLoad: function() {
     this.loadTodayRecords()
-    this.drawProgressRing(1) // 初始绘制完整圆环
+    this.drawProgressRing(1)
   },
 
-  onUnload() {
-    if (this.data.timerInterval) {
-      clearInterval(this.data.timerInterval)
+  onUnload: function() {
+    this.clearTimer()
+  },
+
+  onShow: function() {
+    if (this.data.isRunning && this.data.timerStartTime > 0) {
+      this.syncTimeFromTimestamp()
     }
   },
 
-  toggleTimer() {
+  onHide: function() {
+    if (this.data.isRunning) {
+      this.syncTimeFromTimestamp()
+    }
+  },
+
+  clearTimer: function() {
+    if (this.data.timerInterval) {
+      clearInterval(this.data.timerInterval)
+      this.setData({ timerInterval: null })
+    }
+  },
+
+  syncTimeFromTimestamp: function() {
+    if (this.data.timerStartTime <= 0) return
+
+    var now = Date.now()
+    var elapsed = Math.floor((now - this.data.timerStartTime) / 1000)
+    var actualLeft = this.data.timerStartLeft - elapsed
+
+    if (actualLeft <= 0) {
+      this.clearTimer()
+      this.setData({
+        isRunning: false,
+        isPaused: false,
+        timeLeft: 0,
+        displayTime: '00:00'
+      })
+      this.drawProgressRing(0)
+      this.timerComplete()
+      return
+    }
+
+    var minutes = Math.floor(actualLeft / 60)
+    var seconds = actualLeft % 60
+    var displayTime = minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0')
+    var progress = actualLeft / this.data.totalTime
+
+    this.setData({
+      timeLeft: actualLeft,
+      displayTime: displayTime
+    })
+    this.drawProgressRing(progress)
+  },
+
+  toggleTimer: function() {
     if (this.data.isRunning) {
       this.pauseTimer()
     } else {
@@ -49,79 +97,70 @@ Page({
     }
   },
 
-  startTimer() {
+  startTimer: function() {
     wx.vibrateShort({ type: 'medium' })
-    
-    const that = this
+    wx.setKeepScreenOn({ keepScreenOn: true })
+
+    var that = this
+    var startTime = Date.now()
+
     this.setData({
       isRunning: true,
       isPaused: false,
-      statusText: this.data.currentMode === 'work' ? '🍅 专注中...' : '☕ 休息中...'
+      statusText: this.data.currentMode === 'work' ? '\uD83C\uDF45 \u4E13\u6CE8\u4E2D...' : '\u2615 \u4F11\u606F\u4E2D...',
+      timerStartTime: startTime,
+      timerStartLeft: this.data.timeLeft
     })
 
-    this.data.timerInterval = setInterval(() => {
-      let newTimeLeft = that.data.timeLeft - 1
-      
-      if (newTimeLeft <= 0) {
-        that.timerComplete()
-        return
-      }
+    this.clearTimer()
 
-      const minutes = Math.floor(newTimeLeft / 60)
-      const seconds = newTimeLeft % 60
-      const displayTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-      
-      const progress = newTimeLeft / that.data.totalTime
-      
-      that.setData({
-        timeLeft: newTimeLeft,
-        displayTime: displayTime
-      })
-      
-      that.drawProgressRing(progress)
+    this.data.timerInterval = setInterval(function() {
+      that.syncTimeFromTimestamp()
     }, 1000)
   },
 
-  pauseTimer() {
+  pauseTimer: function() {
     wx.vibrateShort({ type: 'light' })
-    
-    if (this.data.timerInterval) {
-      clearInterval(this.data.timerInterval)
-      this.data.timerInterval = null
-    }
-    
+    wx.setKeepScreenOn({ keepScreenOn: false })
+
+    this.clearTimer()
+
+    this.syncTimeFromTimestamp()
+
     this.setData({
       isRunning: false,
       isPaused: true,
-      statusText: '已暂停'
+      statusText: '\u5DF2\u6682\u505C',
+      timerStartTime: 0,
+      timerStartLeft: 0
     })
   },
 
-  resetTimer() {
+  resetTimer: function() {
     wx.vibrateShort({ type: 'light' })
-    
-    if (this.data.timerInterval) {
-      clearInterval(this.data.timerInterval)
-      this.data.timerInterval = null
-    }
+    wx.setKeepScreenOn({ keepScreenOn: false })
 
-    const duration = this.getDurationForMode()
-    
+    this.clearTimer()
+
+    var duration = this.getDurationForMode()
+
     this.setData({
       isRunning: false,
       isPaused: false,
       timeLeft: duration,
       totalTime: duration,
       displayTime: this.formatTime(duration),
-      statusText: '准备开始'
+      statusText: '\u51C6\u5907\u5F00\u59CB',
+      timerStartTime: 0,
+      timerStartLeft: 0
     })
 
     this.drawProgressRing(1)
   },
 
-  skipToBreak() {
+  skipToBreak: function() {
     wx.vibrateShort({ type: 'medium' })
-    
+
     if (this.data.currentMode === 'work') {
       this.switchToBreakMode()
     } else {
@@ -129,45 +168,40 @@ Page({
     }
   },
 
-  timerComplete() {
-    // 停止计时器
-    if (this.data.timerInterval) {
-      clearInterval(this.data.timerInterval)
-      this.data.timerInterval = null
-    }
-
-    // 震动提醒
+  timerComplete: function() {
+    this.clearTimer()
+    wx.setKeepScreenOn({ keepScreenOn: false })
     wx.vibrateLong()
 
-    // 显示完成提示
+    var that = this
     wx.showModal({
-      title: this.data.currentMode === 'work' ? '🎉 专注完成！' : '☕ 休息结束！',
-      content: this.data.currentMode === 'work' ? '休息一下吧~' : '准备好继续了吗？',
-      confirmText: this.data.currentMode === 'work' ? '开始休息' : '开始工作',
-      cancelText: '稍后',
-      success: (res) => {
+      title: that.data.currentMode === 'work' ? '\uD83C\uDF89 \u4E13\u6CE8\u5B8C\u6210\uFF01' : '\u2615 \u4F11\u606F\u7ED3\u675F\uFF01',
+      content: that.data.currentMode === 'work' ? '\u4F11\u606F\u4E00\u4E0B\u5427~' : '\u51C6\u5907\u597D\u7EE7\u7EED\u4E86\u5417\uFF1F',
+      confirmText: that.data.currentMode === 'work' ? '\u5F00\u59CB\u4F11\u606F' : '\u5F00\u59CB\u5DE5\u4F5C',
+      cancelText: '\u7A0D\u540E',
+      success: function(res) {
         if (res.confirm) {
-          if (this.data.currentMode === 'work') {
-            this.switchToBreakMode()
+          if (that.data.currentMode === 'work') {
+            that.switchToBreakMode()
           } else {
-            this.switchToWorkMode()
+            that.switchToWorkMode()
           }
         } else {
-          // 稍后处理，重置状态
-          this.resetTimer()
+          that.resetTimer()
         }
       }
     })
 
-    // 记录到历史
     this.addRecord()
   },
 
-  switchToBreakMode() {
-    const breakDuration = this.data.completedCount > 0 && 
-                         (this.data.completedCount + 1) % this.data.totalRounds === 0 
-                           ? this.data.longBreaks[this.data.longBreakIndex] * 60 
-                           : this.data.shortBreaks[this.data.shortBreakIndex] * 60
+  switchToBreakMode: function() {
+    var breakDuration = 0
+    if (this.data.completedCount > 0 && (this.data.completedCount + 1) % this.data.totalRounds === 0) {
+      breakDuration = this.data.longBreaks[this.data.longBreakIndex] * 60
+    } else {
+      breakDuration = this.data.shortBreaks[this.data.shortBreakIndex] * 60
+    }
 
     this.setData({
       currentMode: 'break',
@@ -180,14 +214,14 @@ Page({
 
     this.drawProgressRing(1)
 
-    // 自动开始休息
-    setTimeout(() => {
-      this.startTimer()
+    var that = this
+    setTimeout(function() {
+      that.startTimer()
     }, 500)
   },
 
-  switchToWorkMode() {
-    const workDuration = this.data.workDurations[this.data.workDurationIndex] * 60
+  switchToWorkMode: function() {
+    var workDuration = this.data.workDurations[this.data.workDurationIndex] * 60
 
     this.setData({
       currentMode: 'work',
@@ -199,12 +233,13 @@ Page({
 
     this.drawProgressRing(1)
 
-    setTimeout(() => {
-      this.startTimer()
+    var that = this
+    setTimeout(function() {
+      that.startTimer()
     }, 500)
   },
 
-  getDurationForMode() {
+  getDurationForMode: function() {
     if (this.data.currentMode === 'work') {
       return this.data.workDurations[this.data.workDurationIndex] * 60
     } else {
@@ -212,54 +247,65 @@ Page({
     }
   },
 
-  formatTime(seconds) {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+  formatTime: function(seconds) {
+    var mins = Math.floor(seconds / 60)
+    var secs = seconds % 60
+    return mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0')
   },
 
-  drawProgressRing(progress) {
-    const ctx = wx.createCanvasContext('progressRing', this)
-    const centerX = 120
-    const centerY = 120
-    const radius = 100
-    const lineWidth = 12
+  drawProgressRing: function(progress) {
+    var that = this
+    var query = wx.createSelectorQuery()
+    query.select('#progressRing')
+      .fields({ node: true, size: true })
+      .exec(function(res) {
+        if (!res || !res[0]) return
+        var canvas = res[0].node
+        var ctx = canvas.getContext('2d')
+        var dpr = wx.getSystemInfoSync().pixelRatio
 
-    // 清空画布
-    ctx.clearRect(0, 0, 240, 240)
+        canvas.width = res[0].width * dpr
+        canvas.height = res[0].height * dpr
+        ctx.scale(dpr, dpr)
 
-    // 背景圆环（灰色）
-    ctx.beginPath()
-    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
-    ctx.setStrokeStyle('#E2E8F0')
-    ctx.setLineWidth(lineWidth)
-    ctx.setLineCap('round')
-    ctx.stroke()
+        var w = res[0].width
+        var h = res[0].height
+        var centerX = w / 2
+        var centerY = h / 2
+        var radius = Math.min(w, h) / 2 - 12
+        var lineWidth = 12
 
-    // 进度圆环
-    if (progress > 0) {
-      ctx.beginPath()
-      ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress)
-      
-      if (this.data.currentMode === 'work') {
-        ctx.setStrokeStyle('#EF4444') // 红色-工作模式
-      } else {
-        ctx.setStrokeStyle('#10B981') // 绿色-休息模式
-      }
-      
-      ctx.setLineWidth(lineWidth)
-      ctx.setLineCap('round')
-      ctx.stroke()
-    }
+        ctx.clearRect(0, 0, w, h)
 
-    ctx.draw()
+        ctx.beginPath()
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+        ctx.strokeStyle = '#E2E8F0'
+        ctx.lineWidth = lineWidth
+        ctx.lineCap = 'round'
+        ctx.stroke()
+
+        if (progress > 0) {
+          ctx.beginPath()
+          ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress)
+
+          if (that.data.currentMode === 'work') {
+            ctx.strokeStyle = '#EF4444'
+          } else {
+            ctx.strokeStyle = '#10B981'
+          }
+
+          ctx.lineWidth = lineWidth
+          ctx.lineCap = 'round'
+          ctx.stroke()
+        }
+      })
   },
 
-  onWorkDurationChange(e) {
-    const index = e.detail.value
+  onWorkDurationChange: function(e) {
+    var index = e.detail.value
     this.setData({ workDurationIndex: index })
     if (!this.data.isRunning && !this.data.isPaused) {
-      const duration = this.data.workDurations[index] * 60
+      var duration = this.data.workDurations[index] * 60
       this.setData({
         timeLeft: duration,
         totalTime: duration,
@@ -270,27 +316,27 @@ Page({
     wx.vibrateShort({ type: 'light' })
   },
 
-  onShortBreakChange(e) {
+  onShortBreakChange: function(e) {
     this.setData({ shortBreakIndex: e.detail.value })
     wx.vibrateShort({ type: 'light' })
   },
 
-  onLongBreakChange(e) {
+  onLongBreakChange: function(e) {
     this.setData({ longBreakIndex: e.detail.value })
     wx.vibrateShort({ type: 'light' })
   },
 
-  changeTotalRounds(e) {
-    const round = parseInt(e.currentTarget.dataset.round)
+  changeTotalRounds: function(e) {
+    var round = parseInt(e.currentTarget.dataset.round)
     this.setData({ totalRounds: round })
     wx.vibrateShort({ type: 'light' })
   },
 
-  addRecord() {
-    const now = new Date()
-    const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
-    
-    const record = {
+  addRecord: function() {
+    var now = new Date()
+    var timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0')
+
+    var record = {
       type: this.data.currentMode,
       time: timeStr,
       duration: this.data.currentMode === 'work' 
@@ -298,13 +344,16 @@ Page({
                 : this.data.shortBreaks[this.data.shortBreakIndex]
     }
 
-    const records = [...this.data.todayRecords, record]
+    var records = []
+    for (var i = 0; i < this.data.todayRecords.length; i++) {
+      records.push(this.data.todayRecords[i])
+    }
+    records.push(record)
     this.setData({ todayRecords: records })
 
-    // 保存到本地存储
     try {
-      const today = new Date().toDateString()
-      let allRecords = wx.getStorageSync('pomodoro_records') || {}
+      var today = new Date().toDateString()
+      var allRecords = wx.getStorageSync('pomodoro_records') || {}
       allRecords[today] = records
       wx.setStorageSync('pomodoro_records', allRecords)
     } catch (e) {
@@ -312,20 +361,21 @@ Page({
     }
   },
 
-  loadTodayRecords() {
+  loadTodayRecords: function() {
     try {
-      const today = new Date().toDateString()
-      const allRecords = wx.getStorageSync('pomodoro_records') || {}
-      const todayRecords = allRecords[today] || []
-      this.setData({ todayRecords })
+      var today = new Date().toDateString()
+      var allRecords = wx.getStorageSync('pomodoro_records') || {}
+      var todayRecords = allRecords[today] || []
+      this.setData({ todayRecords: todayRecords })
     } catch (e) {
       console.error('Load records error:', e)
     }
   },
-  onShareAppMessage() {
-    return { title: '番茄计时 - 好用方便的工具集', path: '/pages/index/index' }
+
+  onShareAppMessage: function() {
+    return { title: '\u756a\u8304\u8BA1\u65F6 - \u597D\u7528\u65B9\u4FBF\u7684\u5DE5\u5177\u96C6', path: '/pages/index/index' }
   },
-  onShareTimeline() {
+  onShareTimeline: function() {
     return { title: '' }
   }
 })
