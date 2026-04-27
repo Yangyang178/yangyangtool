@@ -4,6 +4,8 @@
 
 <guide-overlay show="{{showGuide}}" bindclose="onGuideClose"></guide-overlay>
 
+<skeleton show="{{isLoading}}" type="tools" dark="{{isDarkMode}}"></skeleton>
+
 <scroll-view class="main-scroll {{isDarkMode ? 'dark-mode' : ''}}" scroll-y enhanced show-scrollbar="{{false}}" bounces="{{false}}" refresher-enabled="{{!isEditMode}}" refresher-triggered="{{isRefreshing}}" bindrefresherrefresh="onPullDownRefresh" scroll-top="{{scrollTop}}" bindscrolltoupper="onScrollToUpper" bindscroll="onPageScroll" lower-threshold="0">
   <view class="page-container">
     <!-- 顶部安全区域占位 -->
@@ -24,11 +26,18 @@
             <text class="dot"></text>
           </view>
           <view class="edit-actions" wx:if="{{isEditMode}}">
-            <view class="edit-action-btn done-btn" catchtap="toggleEditMode">
-              <text>完成</text>
+            <view class="edit-row-top">
+              <view class="edit-action-btn done-btn" catchtap="toggleEditMode">
+                <text>完成</text>
+              </view>
+              <view class="edit-action-btn reset-btn" catchtap="resetLayout">
+                <text>重置</text>
+              </view>
             </view>
-            <view class="edit-action-btn reset-btn" catchtap="resetLayout">
-              <text>重置</text>
+            <view class="edit-row-bottom">
+              <view class="edit-action-btn undo-btn {{canUndo ? 'can-undo' : ''}}" catchtap="undoLastAction">
+                <text>↩️ 撤销上一步</text>
+              </view>
             </view>
           </view>
         </view>
@@ -133,8 +142,14 @@
         </view>
         
         <!-- 选中标记 -->
-        <view class="selected-badge" wx:if="{{isEditMode && selectedToolIndex === index}}">
-          <text>{{index + 1}}</text>
+        <view class="selected-overlay" wx:if="{{isEditMode && selectedToolIndex === index}}">
+          <view class="selected-ring"></view>
+          <view class="selected-badge">
+            <text>✓ 已选中</text>
+          </view>
+          <view class="selected-hint">
+            <text>点击另一个交换</text>
+          </view>
         </view>
         
         <view class="card-icon-wrapper" style="background: {{item.iconBg}}">

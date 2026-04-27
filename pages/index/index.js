@@ -41,11 +41,16 @@ Page({
     showGuide: false,
     sharePosterPath: '',
 
+    isLoading: true,
+
     isEditMode: false,
     isDragging: false,
     dragIndex: -1,
 
     selectedToolIndex: -1,
+
+    canUndo: false,
+    editHistory: [],
 
     customOrder: [],
     hiddenTools: [],
@@ -172,6 +177,11 @@ Page({
     }
 
     this.drawSharePoster()
+
+    var that = this
+    setTimeout(function() {
+      that.setData({ isLoading: false })
+    }, 600)
   },
 
   loadCustomLayout: function() {
@@ -267,7 +277,9 @@ Page({
 
     this.setData({
       isEditMode: !this.data.isEditMode,
-      selectedToolIndex: -1
+      selectedToolIndex: -1,
+      canUndo: false,
+      editHistory: []
     })
 
     if (!this.data.isEditMode) {
@@ -310,13 +322,16 @@ Page({
       return
     }
 
+    this.pushEditHistory()
+
     var temp = filteredTools[currentSelected]
     filteredTools[currentSelected] = filteredTools[index]
     filteredTools[index] = temp
 
     this.setData({
       filteredTools: filteredTools,
-      selectedToolIndex: -1
+      selectedToolIndex: -1,
+      canUndo: true
     })
 
     this.saveCustomLayout()
@@ -328,10 +343,81 @@ Page({
     })
   },
 
+  pushEditHistory: function() {
+    var snapshot = []
+    for (var i = 0; i < this.data.filteredTools.length; i++) {
+      snapshot.push(this.data.filteredTools[i].id)
+    }
+    var hiddenSnapshot = []
+    for (var j = 0; j < this.data.hiddenTools.length; j++) {
+      hiddenSnapshot.push(this.data.hiddenTools[j])
+    }
+    var history = []
+    for (var h = 0; h < this.data.editHistory.length; h++) {
+      history.push(this.data.editHistory[h])
+    }
+    history.push({
+      order: snapshot,
+      hidden: hiddenSnapshot,
+      timestamp: Date.now()
+    })
+    if (history.length > 20) {
+      history = history.slice(history.length - 20)
+    }
+    this.setData({ editHistory: history })
+  },
+
+  undoLastAction: function() {
+    if (this.data.editHistory.length === 0) {
+      wx.showToast({ title: '没有可撤销的操作', icon: 'none', duration: 1200 })
+      return
+    }
+
+    wx.vibrateShort({ type: 'light' })
+
+    var history = []
+    for (var h = 0; h < this.data.editHistory.length; h++) {
+      history.push(this.data.editHistory[h])
+    }
+    var prevState = history.pop()
+
+    var allTools = this.data.tools
+    var restoredOrder = []
+    for (var oi = 0; oi < prevState.order.length; oi++) {
+      for (var ti = 0; ti < allTools.length; ti++) {
+        if (allTools[ti].id === prevState.order[oi]) {
+          restoredOrder.push(allTools[ti])
+          break
+        }
+      }
+    }
+
+    var restoredHidden = prevState.hidden || []
+
+    this.setData({
+      filteredTools: restoredOrder,
+      hiddenTools: restoredHidden,
+      editHistory: history,
+      canUndo: history.length > 0,
+      selectedToolIndex: -1
+    })
+
+    this.updateHiddenToolsList(restoredHidden)
+    this.saveCustomLayout()
+
+    wx.showToast({
+      title: '已撤销 ↩️',
+      icon: 'none',
+      duration: 800
+    })
+  },
+
   toggleToolVisibility: function(e) {
     if (!this.data.isEditMode) return
 
     wx.vibrateShort({ type: 'light' })
+
+    this.pushEditHistory()
 
     var id = e.currentTarget.dataset.id
     var hiddenTools = []
@@ -369,7 +455,8 @@ Page({
     }
     this.setData({
       hiddenTools: hiddenTools,
-      filteredTools: visibleTools
+      filteredTools: visibleTools,
+      canUndo: true
     })
   },
 
@@ -466,19 +553,23 @@ Page({
     var that = this
     wx.showModal({
       title: '\u26A0\uFE0F 重置布局',
-      content: '确定要恢复默认布局吗？\n所有自定义排序和隐藏设置将被清除。',
+      content: '确定要恢复默认布局吗？\n所有自定义排序和隐藏设置将被清除。\n\n💡 重置后可通过"撤销"按钮恢复',
       confirmText: '重置',
       cancelText: '取消',
       confirmColor: '#EF4444',
       success: function(res) {
         if (res.confirm) {
+          that.pushEditHistory()
+
           wx.removeStorageSync('customToolOrder')
           wx.removeStorageSync('hiddenTools')
 
           that.setData({
             customOrder: [],
             hiddenTools: [],
-            isEditMode: false
+            isEditMode: false,
+            canUndo: true,
+            selectedToolIndex: -1
           })
 
           var favorites = wx.getStorageSync('favorites') || []

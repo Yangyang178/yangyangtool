@@ -1,6 +1,1 @@
-{
-  "usingComponents": {
-    "navigation-bar": "/components/navigation-bar/navigation-bar",
-    "guide-overlay": "/components/guide-overlay/guide-overlay"
-  }
-}
+{"usingComponents": {"navigation-bar": "/components/navigation-bar/navigation-bar", "guide-overlay": "/components/guide-overlay/guide-overlay", "skeleton": "/components/skeleton/skeleton"}}

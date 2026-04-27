@@ -1,0 +1,55 @@
+<view class="skeleton-mask {{dark ? 'dark' : ''}}" wx:if="{{show}}">
+  <view class="sk-container" wx:if="{{type === 'tools'}}">
+    <view class="sk-header">
+      <view class="sk-line sk-title"></view>
+      <view class="sk-line sk-subtitle"></view>
+    </view>
+
+    <view class="sk-search-bar">
+      <view class="sk-circle sk-icon"></view>
+      <view class="sk-line sk-input"></view>
+    </view>
+
+    <view class="sk-grid">
+      <view class="sk-card" wx:for="{{[1,2,3,4,5,6]}}" wx:key="*this">
+        <view class="sk-icon-box"></view>
+        <view class="sk-lines">
+          <view class="sk-line sk-name"></view>
+          <view class="sk-line sk-desc"></view>
+        </view>
+      </view>
+      <view class="sk-card" wx:for="{{[1,2]}}" wx:key="*this">
+        <view class="sk-icon-box"></view>
+        <view class="sk-lines">
+          <view class="sk-line sk-name"></view>
+          <view class="sk-line sk-desc"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="sk-container" wx:if="{{type === 'list'}}">
+    <view class="sk-list-item" wx:for="{{[1,2,3,4]}}" wx:key="*this">
+      <view class="sk-avatar"></view>
+      <view class="sk-list-content">
+        <view class="sk-line sk-list-title"></view>
+        <view class="sk-line sk-list-list-subtitle"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="sk-container" wx:if="{{type === 'detail'}}">
+    <view class="sk-detail-header"></view>
+    <view class="sk-detail-body">
+      <view class="sk-line sk-d-title"></view>
+      <view class="sk-line sk-d-text"></view>
+      <view class="sk-line sk-d-text short"></view>
+      <view class="sk-block sk-d-block"></view>
+      <view class="sk-line sk-d-text short"></view>
+      <view class="sk-btn-row">
+        <view class="sk-btn"></view>
+        <view class="sk-btn"></view>
+      </view>
+    </view>
+  </view>
+</view>
