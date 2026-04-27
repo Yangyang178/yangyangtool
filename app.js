@@ -2,6 +2,7 @@ App({
   globalData: {
     userInfo: null,
     isDarkMode: false,
+    sharePosterPath: '',
     tools: [
       { id: 1, name: '汇率换算', category: 'calculator' },
       { id: 2, name: '单位换算', category: 'calculator' },
@@ -128,16 +129,20 @@ App({
   },
 
   onShareAppMessage() {
+    var poster = this.globalData.sharePosterPath || ''
     return {
-      title: '🧰 百宝工具箱 - 22+实用小工具合集',
-      path: '/pages/index/index'
+      title: '🧰 百宝工具箱 - 24+实用小工具合集',
+      path: '/pages/index/index',
+      imageUrl: poster
     };
   },
 
   onShareTimeline() {
+    var poster = this.globalData.sharePosterPath || ''
     return {
-      title: '🧰 百宝工具箱 - 汇率换算、单位转换等22+实用工具',
-      query: ''
+      title: '🧰 百宝工具箱 - 汇率换算、单位转换等24+实用工具',
+      query: '',
+      imageUrl: poster
     };
   }
 })

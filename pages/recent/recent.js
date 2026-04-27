@@ -1050,18 +1050,22 @@ Page({
   },
 
   onShareAppMessage() {
+    var appInstance = getApp()
+    var poster = (appInstance.globalData && appInstance.globalData.sharePosterPath) || ''
     return {
-      title: '🧰 百宝工具箱 - 实用小工具合集',
+      title: '🧰 百宝工具箱 - 24+实用小工具合集',
       path: '/pages/index/index',
-      imageUrl: ''
+      imageUrl: poster
     }
   },
 
   onShareTimeline() {
+    var appInstance = getApp()
+    var poster = (appInstance.globalData && appInstance.globalData.sharePosterPath) || ''
     return {
-      title: '🧰 百宝工具箱 - 实用小工具合集',
+      title: '🧰 百宝工具箱 - 24+实用小工具，即用即走',
       query: '',
-      imageUrl: ''
+      imageUrl: poster
     }
   }
 })

@@ -202,18 +202,22 @@ Page({
   },
 
   onShareAppMessage() {
+    var appInstance = getApp()
+    var poster = (appInstance.globalData && appInstance.globalData.sharePosterPath) || ''
     return {
       title: '🧰 百宝工具箱 - 我的收藏工具',
       path: '/pages/favorites/favorites',
-      imageUrl: ''
+      imageUrl: poster
     }
   },
 
   onShareTimeline() {
+    var appInstance = getApp()
+    var poster = (appInstance.globalData && appInstance.globalData.sharePosterPath) || ''
     return {
-      title: '🧰 百宝工具箱 - 收藏的实用小工具',
+      title: '🧰 百宝工具箱 - 收藏的24+实用小工具',
       query: '',
-      imageUrl: ''
+      imageUrl: poster
     }
   }
 })
