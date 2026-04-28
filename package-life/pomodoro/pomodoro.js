@@ -359,6 +359,18 @@ Page({
     } catch (e) {
       console.error('Save record error:', e)
     }
+
+    var appInstance = getApp()
+    if (appInstance.cloudSyncPomodoroRecord) {
+      appInstance.cloudSyncPomodoroRecord({
+        type: this.data.currentMode,
+        time: timeStr,
+        duration: this.data.currentMode === 'work' 
+                  ? this.data.workDurations[this.data.workDurationIndex]
+                  : this.data.shortBreaks[this.data.shortBreakIndex],
+        date: today
+      })
+    }
   },
 
   loadTodayRecords: function() {

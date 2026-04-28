@@ -238,7 +238,16 @@ Page({
     this.updateProgress()
     this.saveRecords()
 
-    wx.showToast({ title: `第 ${newCount} 杯水 💪`, icon: 'none' })
+    var appInstance = getApp()
+    if (appInstance.cloudSyncWaterRecord) {
+      appInstance.cloudSyncWaterRecord({
+        count: newCount,
+        time: timeStr,
+        date: new Date().toDateString()
+      })
+    }
+
+    wx.showToast({ title: '\u7B2C ' + newCount + ' \u676F\u6C34 \uD83D\uDCAA', icon: 'none' })
   },
 
   updateProgress() {

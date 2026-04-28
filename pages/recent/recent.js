@@ -861,6 +861,15 @@ Page({
       wx.setStorageSync('feedbackHistory', history)
     } catch(e) {}
 
+    var appInstance = getApp()
+    if (appInstance.cloudSyncFeedback) {
+      appInstance.cloudSyncFeedback({
+        content: feedbackContent,
+        type: feedbackType,
+        contact: contactInfo
+      })
+    }
+
     this.setData({ isSubmitting: true })
 
     var that = this

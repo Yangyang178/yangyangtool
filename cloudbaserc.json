@@ -1,0 +1,1 @@
+{"envId": "cloud1-d0g2mtx6m3bdfdf74d", "version": "2.0", "$schema": "https://framework-1258016615.tcloudbaseapp.com/schema/latest.json", "functionRoot": "cloudfunctions/", "functions": [], "framework": {"name": "javascript", "plugins": {}}}

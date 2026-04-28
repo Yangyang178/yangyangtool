@@ -930,6 +930,11 @@ Page({
 
     var currentCount = wx.getStorageSync('totalUsageCount') || 0
     wx.setStorageSync('totalUsageCount', currentCount + 1)
+
+    var appInstance = getApp()
+    if (appInstance.cloudSyncUsage) {
+      appInstance.cloudSyncUsage(tool.id, tool.name)
+    }
   },
 
   showMoreMenu: function() {

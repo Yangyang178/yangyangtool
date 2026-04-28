@@ -3,6 +3,8 @@ App({
     userInfo: null,
     isDarkMode: false,
     sharePosterPath: '',
+    openid: '',
+    cloudReady: false,
     tools: [
       { id: 1, name: '汇率换算', category: 'calculator' },
       { id: 2, name: '单位换算', category: 'calculator' },
@@ -34,15 +36,9 @@ App({
 
   onLaunch: function() {
     console.log('百宝工具箱启动')
-    
-    if (!wx.getStorageSync('favorites')) {
-      wx.setStorageSync('favorites', [])
-    }
-    
-    if (!wx.getStorageSync('recentTools')) {
-      wx.setStorageSync('recentTools', [])
-    }
 
+    this.initCloud()
+    this.initLocalData()
     this.applyTheme()
 
     if (wx.onThemeChange) {
@@ -55,7 +51,140 @@ App({
     }
   },
 
-  applyTheme() {
+  initCloud: function() {
+    var that = this
+
+    if (!wx.cloud) {
+      console.log('[云开发] 当前版本不支持云开发，使用本地模式')
+      return
+    }
+
+    try {
+      wx.cloud.init({
+        traceUser: true
+      })
+
+      that.globalData.cloudReady = true
+      console.log('[云开发] 初始化成功(自动环境)')
+
+      var db = wx.cloud.database()
+
+      db.collection('tool_records').count({
+        success: function(res) {
+          console.log('[云数据库] 连接成功! tool_records记录数:', res.total)
+        },
+        fail: function(err) {
+          console.log('[云数据库] 连接失败:', err.errMsg || JSON.stringify(err))
+          that.globalData.cloudReady = false
+        }
+      })
+    } catch(e) {
+      console.log('[云开发] 初始化异常:', e.message || e)
+      that.globalData.cloudReady = false
+    }
+  },
+
+  initLocalData: function() {
+    if (!wx.getStorageSync('favorites')) {
+      wx.setStorageSync('favorites', [])
+    }
+
+    if (!wx.getStorageSync('recentTools')) {
+      wx.setStorageSync('recentTools', [])
+    }
+  },
+
+  syncLocalToCloud: function() {
+    var that = this
+    if (!that.globalData.cloudReady) return
+
+    try {
+      var db = wx.cloud.database()
+      var totalUsage = wx.getStorageSync('totalUsageCount') || 0
+      var todayStr = new Date().toDateString()
+      var weeklyRecord = wx.getStorageSync('weeklyUsage') || {}
+      var todayCount = weeklyRecord[todayStr] || 0
+      var recentTools = wx.getStorageSync('recentTools') || []
+
+      db.collection('usage_log').add({
+        data: {
+          date: todayStr,
+          count: todayCount,
+          toolsUsed: recentTools.slice(0, 10),
+          totalUsageCount: totalUsage,
+          createdAt: db.serverDate()
+        }
+      }).then(function() {
+        console.log('[云端同步] usage_log 写入成功')
+      }).catch(function(err) {
+        console.log('[云端同步] usage_log 失败:', err.errMsg)
+      })
+    } catch(e) {}
+  },
+
+  cloudSyncUsage: function(toolId, toolName) {
+    if (!this.globalData.cloudReady) return
+    try {
+      var db = wx.cloud.database()
+      db.collection('usage_log').add({
+        data: {
+          toolId: toolId,
+          toolName: toolName,
+          usedAt: db.serverDate(),
+          date: new Date().toDateString()
+        }
+      }).catch(function() {})
+    } catch(e) {}
+  },
+
+  cloudSyncWaterRecord: function(record) {
+    if (!this.globalData.cloudReady) return
+    try {
+      var db = wx.cloud.database()
+      db.collection('tool_records').add({
+        data: {
+          toolType: 'water_reminder',
+          record: record,
+          createdAt: db.serverDate()
+        }
+      }).catch(function() {})
+    } catch(e) {}
+  },
+
+  cloudSyncPomodoroRecord: function(record) {
+    if (!this.globalData.cloudReady) return
+    try {
+      var db = wx.cloud.database()
+      db.collection('tool_records').add({
+        data: {
+          toolType: 'pomodoro',
+          record: record,
+          createdAt: db.serverDate()
+        }
+      }).catch(function() {})
+    } catch(e) {}
+  },
+
+  cloudSyncFeedback: function(feedback) {
+    if (!this.globalData.cloudReady) return
+    try {
+      var db = wx.cloud.database()
+      db.collection('user_feedbacks').add({
+        data: {
+          content: feedback.content || '',
+          type: feedback.type || 'feedback',
+          contact: feedback.contact || '',
+          createdAt: db.serverDate()
+        }
+      }).then(function() {
+        console.log('[云端同步] 反馈已保存到 user_feedbacks')
+      }).catch(function(err) {
+        console.log('[云端同步] 反馈失败:', err.errMsg)
+      })
+    } catch(e) {}
+  },
+
+  applyTheme: function() {
     var setting = wx.getStorageSync('darkModeSetting') || 'system'
     var isDark = false
 
@@ -74,37 +203,13 @@ App({
     wx.setStorageSync('darkMode', isDark)
 
     if (isDark) {
-      wx.setBackgroundColor({
-        backgroundColor: '#0F172A',
-        backgroundColorTop: '#0F172A',
-        backgroundColorBottom: '#0F172A'
-      })
-      wx.setNavigationBarColor({
-        frontColor: '#ffffff',
-        backgroundColor: '#0F172A'
-      })
-      wx.setTabBarStyle({
-        color: '#64748B',
-        selectedColor: '#60A5FA',
-        backgroundColor: '#1E293B',
-        borderStyle: 'black'
-      })
+      wx.setBackgroundColor({ backgroundColor: '#0F172A', backgroundColorTop: '#0F172A', backgroundColorBottom: '#0F172A' })
+      wx.setNavigationBarColor({ frontColor: '#ffffff', backgroundColor: '#0F172A' })
+      wx.setTabBarStyle({ color: '#64748B', selectedColor: '#60A5FA', backgroundColor: '#1E293B', borderStyle: 'black' })
     } else {
-      wx.setBackgroundColor({
-        backgroundColor: '#F8FAFC',
-        backgroundColorTop: '#F8FAFC',
-        backgroundColorBottom: '#F8FAFC'
-      })
-      wx.setNavigationBarColor({
-        frontColor: '#000000',
-        backgroundColor: '#F8FAFC'
-      })
-      wx.setTabBarStyle({
-        color: '#94A3B8',
-        selectedColor: '#3B82F6',
-        backgroundColor: '#FFFFFF',
-        borderStyle: 'white'
-      })
+      wx.setBackgroundColor({ backgroundColor: '#F8FAFC', backgroundColorTop: '#F8FAFC', backgroundColorBottom: '#F8FAFC' })
+      wx.setNavigationBarColor({ frontColor: '#000000', backgroundColor: '#F8FAFC' })
+      wx.setTabBarStyle({ color: '#94A3B8', selectedColor: '#3B82F6', backgroundColor: '#FFFFFF', borderStyle: 'white' })
     }
 
     var pages = getCurrentPages()
@@ -128,19 +233,19 @@ App({
     borderLight: '#334155', borderFaint: '#1E293B'
   },
 
-  onShareAppMessage() {
+  onShareAppMessage: function() {
     var poster = this.globalData.sharePosterPath || ''
     return {
-      title: '🧰 百宝工具箱 - 24+实用小工具合集',
+      title: '\uD83C\uDFE0 \u767E\u5B9D\u5DE5\u5177\u7BB1 - 24+\u5B9E\u7528\u5C0F\u5DE5\u5177\u5408\u96C6',
       path: '/pages/index/index',
       imageUrl: poster
     };
   },
 
-  onShareTimeline() {
+  onShareTimeline: function() {
     var poster = this.globalData.sharePosterPath || ''
     return {
-      title: '🧰 百宝工具箱 - 汇率换算、单位转换等24+实用工具',
+      title: '\uD83C\uDFE0 \u767E\u5B9D\u5DE5\u5177\u7BB1 - \u6C47\u7387\u6362\u7B97\u3001\u5355\u4F4D\u8F6C\u6362\u7B4924+\u5B9E\u7528\u5DE5\u5177',
       query: '',
       imageUrl: poster
     };
