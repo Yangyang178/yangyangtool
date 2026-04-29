@@ -4,13 +4,19 @@ Page({
     text2: '',
     diffResult: [],
     stats: { added: 0, removed: 0 },
-    hasDiff: false
+    hasDiff: false,
+    isDarkMode: false
   },
 
   onLoad() {
     wx.showShareMenu({
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline']
+    })
+
+    const systemInfo = wx.getSystemInfoSync()
+    this.setData({
+      isDarkMode: systemInfo.theme === 'dark'
     })
   },
 

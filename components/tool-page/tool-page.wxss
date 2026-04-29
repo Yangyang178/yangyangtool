@@ -1,0 +1,236 @@
+.tp-container {
+  padding: 0 20px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.tool-page {
+  background-color: var(--pageBg);
+  height: 100vh;
+}
+
+/* ========== Header ========== */
+.tp-header {
+  text-align: center;
+  padding: 24px 0 20px;
+}
+
+.tp-icon-wrap {
+  width: 64px; height: 64px;
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+  box-shadow: var(--shadowSm);
+}
+
+.tp-icon { font-size: 30px; }
+
+.tp-title {
+  font-size: 22px; font-weight: 700;
+  color: var(--textPrimary);
+  display: block; margin-bottom: 6px;
+}
+
+.tp-desc {
+  font-size: 13px; color: var(--textSecondary);
+  display: block; line-height: 1.4;
+}
+
+.tp-badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 12px; border-radius: 12px;
+  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+}
+.tp-badge text { font-size: 11px; font-weight: 600; color: #DC2626; }
+
+/* ========== Input Area (slot) ========== */
+.tp-input-section,
+.input-area,
+.input-section {
+  background: var(--cardBg);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadowSm);
+}
+
+/* ========== Result Area (slot) ========== */
+.tp-result-section,
+.result-section,
+.result-card,
+.stats-section {
+  background: var(--cardBg);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadowSm);
+}
+
+/* ========== Action Buttons ========== */
+.tp-actions {
+  display: flex; gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.tp-btn {
+  flex: 1; min-width: 120px;
+  padding: 13px 20px;
+  border-radius: 14px;
+  border: none;
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px;
+  font-size: 15px; font-weight: 600;
+  transition: all 0.15s ease;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.tp-btn::after { border: none; }
+
+.tp-btn-hover { opacity: 0.88; transform: scale(0.98); }
+
+.tp-btn-primary {
+  background: linear-gradient(135deg, var(--primaryColor) 0%, #2563EB 100%);
+  color: white;
+  box-shadow: 0 4px 14px rgba(59,130,246,0.35);
+}
+.tp-btn-primary.tp-btn-hover {
+  box-shadow: 0 2px 8px rgba(59,130,246,0.25);
+}
+
+.tp-btn-secondary {
+  background: var(--surfaceBg);
+  color: var(--textPrimary);
+  border: 1px solid var(--borderLight);
+}
+.tp-btn-secondary.tp-btn-hover {
+  background: var(--borderFaint);
+}
+
+.tp-btn-success {
+  background: linear-gradient(135deg, var(--successColor) 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 14px rgba(16,185,129,0.3);
+}
+
+.tp-btn-danger {
+  background: linear-gradient(135deg, var(--dangerColor) 0%, #DC2626 100%);
+  color: white;
+  box-shadow: 0 4px 14px rgba(239,68,68,0.3);
+}
+
+.tp-btn-outline {
+  background: transparent;
+  color: var(--primaryColor);
+  border: 1.5px solid var(--primaryColor);
+}
+
+.tp-btn-ghost {
+  background: transparent;
+  color: var(--textSecondary);
+}
+
+.tp-btn-icon { font-size: 16px; }
+.tp-btn-text { font-size: 15px; font-weight: 600; }
+
+/* ========== Tips Section ========== */
+.tp-tips {
+  background: linear-gradient(135deg, #FEFCE8 0%, #FEF9C3 100%);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  border-left: 4px solid #EAB308;
+}
+
+.tp-tips-title {
+  font-size: 13px; font-weight: 700;
+  color: #854D0E; display: block; margin-bottom: 8px;
+}
+
+.tp-tip-item {
+  font-size: 12px; color: #A16207;
+  line-height: 1.7; display: block;
+}
+
+/* ========== Footer Safe Area ========== */
+.tp-footer-safe { height: 40px; }
+
+/* ========== Dark Mode ========== */
+.dark-mode .tp-container { background: transparent; }
+
+.dark-mode .tp-header .tp-title { color: var(--textPrimary); }
+.dark-mode .tp-header .tp-desc { color: var(--textTertiary); }
+
+.dark-mode .tp-icon-wrap { filter: brightness(0.85); }
+
+.dark-mode .tp-badge {
+  background: linear-gradient(135deg, #450A0A 0%, #7F1D1D 100%);
+}
+.dark-mode .tp-badge text { color: #FCA5A5; }
+
+.dark-mode .tp-tips {
+  background: linear-gradient(135deg, #422006 0%, #713F12 100%);
+  border-left-color: #CA8A04;
+}
+.dark-mode .tp-tips-title { color: #FEF08A; }
+.dark-mode .tp-tip-item { color: #D4AF37; }
+
+.dark-mode .tp-btn-secondary {
+  background: var(--elevatedBg);
+  border-color: var(--borderDark);
+}
+.dark-mode .tp-btn-secondary.tp-btn-hover {
+  background: var(--surfaceBg);
+}
+
+.dark-mode .tp-btn-outline {
+  border-color: #60A5FA;
+  color: #60A5FA;
+}
+
+.dark-mode .tp-btn-ghost { color: var(--textTertiary); }
+
+/* ========== Standard Input Styles (for slot content) ========== */
+.tp-standard-input {
+  width: 100%; padding: 12px 14px;
+  background: var(--inputBg);
+  border: 1px solid var(--inputBorder);
+  border-radius: 10px;
+  font-size: 15px; color: var(--textPrimary);
+  box-sizing: border-box;
+}
+.tp-standard-input::placeholder { color: var(--textMuted); }
+
+.tp-textarea {
+  width: 100%;
+  min-height: 120px; padding: 12px 14px;
+  background: var(--inputBg);
+  border: 1px solid var(--inputBorder);
+  border-radius: 10px;
+  font-size: 15px; color: var(--textPrimary);
+  line-height: 1.6; box-sizing: border-box;
+}
+.tp-textarea::placeholder { color: var(--textMuted); }
+
+.tp-label {
+  font-size: 13px; font-weight: 600;
+  color: var(--textSecondary); display: block; margin-bottom: 8px;
+}
+
+.tp-result-value {
+  font-size: 28px; font-weight: 700;
+  color: var(--primaryColor); text-align: center;
+  word-break: break-all;
+}
+
+.tp-result-label {
+  font-size: 13px; color: var(--textTertiary);
+  text-align: center; display: block; margin-top: 4px;
+}
+
+.tp-divider {
+  height: 1px; background: var(--borderFaint);
+  margin: 14px 0;
+}

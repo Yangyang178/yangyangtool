@@ -1,7 +1,11 @@
 .weui-navigation-bar {
-  --weui-FG-0: rgba(0,0,0,.9);
+  --weui-FG-0: var(--textPrimary);
   --height: 44px;
   --left: 16px;
+  background-color: var(--navBg, var(--pageBg)) !important;
+  border: none;
+  box-shadow: none;
+  outline: none;
 }
 
 .weui-navigation-bar .android {
@@ -25,6 +29,9 @@
   box-sizing: border-box;
   height: auto;
   min-height: 44px;
+  border: none;
+  box-shadow: none;
+  outline: none;
 }
 
 .weui-navigation-bar__left {

@@ -227,12 +227,13 @@ page {
 
 .bar-container {
   width: 100%;
-  height: 120px;
+  height: 110px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
   position: relative;
+  overflow: visible;
 }
 
 .bar {
@@ -251,11 +252,13 @@ page {
 
 .bar-value {
   position: absolute;
-  top: -20px;
-  font-size: 11px;
+  top: -18px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--textPrimary,#1E293B);
   white-space: nowrap;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .x-label {
@@ -424,62 +427,121 @@ page {
   font-weight: 500;
 }
 
-/* 设置列表 */
+/* 设置列表 - 简约设计 */
 .settings-list {
   display: flex;
   flex-direction: column;
+  gap: 0;
 }
 
 .setting-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 4px;
-  border-bottom: 1px solid var(--borderFaint,#F1F5F9);
-  transition: background 0.15s ease;
+  padding: 16px 0;
+  border-bottom: none;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
-.setting-item:last-child {
-  border-bottom: none;
+.setting-item::after {
+  display: none;
+}
+
+.setting-item:last-child::after {
+  display: none;
 }
 
 .setting-hover {
-  background: var(--surfaceBg,#F1F5F9);
-  border-radius: 8px;
+  background: transparent;
+}
+
+.setting-hover .setting-name {
+  color: #3B82F6;
 }
 
 .setting-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .setting-icon {
-  font-size: 18px;
+  font-size: 20px;
+  transition: all 0.25s ease;
+}
+
+.setting-hover .setting-icon {
+  transform: scale(1.15);
 }
 
 .setting-name {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--textPrimary,#1E293B);
+  letter-spacing: 0.2px;
+  transition: color 0.2s ease;
 }
 
 .setting-right {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .setting-value {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--textTertiary,#94A3B8);
+  font-weight: 500;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+  border-radius: 16px;
 }
 
 .setting-arrow {
-  font-size: 18px;
+  font-size: 20px;
   color: var(--textTertiary,#CBD5E1);
   font-weight: 300;
+  transition: transform 0.2s ease;
 }
+
+.setting-hover .setting-arrow {
+  transform: translateX(3px);
+  color: #94A3B8;
+}
+
+/* 设置区域 - 大框架+内部分割线设计 */
+.settings-section {
+  background: var(--cardBg,#FFFFFF) !important;
+  border-radius: 18px !important;
+  box-shadow: 
+    0 2px 12px rgba(0, 0, 0, 0.04),
+    0 4px 20px rgba(0, 0, 0, 0.02) !important;
+  padding: 6px 20px !important;
+  margin-bottom: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.settings-section .section-header {
+  margin-bottom: 16px;
+  padding-top: 8px;
+}
+
+.settings-section .settings-list {
+  margin-top: 0;
+  padding: 4px 0;
+}
+
+.settings-section .setting-item {
+  border-bottom-color: transparent;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.settings-section .setting-item:last-child {
+  border-bottom: none;
+}
+
 
 /* ==================== UGC工具需求收集 ==================== */
 .ugc-entry {
@@ -888,12 +950,55 @@ page {
 }
 
 .dark-mode .setting-item {
-  border-bottom-color: rgba(51, 65, 85, 0.5);
+  border-bottom-color: transparent;
+}
+
+.dark-mode .setting-item::after {
+  display: none;
 }
 
 .dark-mode .setting-hover {
-  background: rgba(51, 65, 85, 0.6) !important;
+  background: transparent !important;
 }
+
+.dark-mode .setting-hover .setting-name {
+  color: #60A5FA;
+}
+
+.dark-mode .setting-icon {
+  /* 图标无背景，纯图标显示 */
+}
+
+.dark-mode .setting-hover .setting-icon {
+  /* 悬停仅放大效果 */
+}
+
+.dark-mode .setting-value {
+  background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+  color: #94A3B8;
+}
+
+.dark-mode .settings-section {
+  background: rgba(30, 41, 59, 0.8) !important;
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid rgba(71, 85, 105, 0.4) !important;
+}
+
+.dark-mode .settings-section .setting-item {
+  border-bottom-color: transparent;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.dark-mode .settings-section .setting-item:last-child {
+  border-bottom: none;
+}
+
 
 .dark-mode .banner-ad {
   background: transparent;

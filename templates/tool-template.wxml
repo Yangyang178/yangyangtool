@@ -1,0 +1,41 @@
+<tool-page
+  title="{{toolTitle}}"
+  desc="{{toolDesc}}"
+  icon="{{toolIcon}}"
+  iconBg="{{iconBg}}"
+  badge="{{badge}}"
+  actions="{{actionButtons}}"
+  tips="{{tipList}}"
+  tipsTitle="💡 使用提示"
+>
+  
+  <!-- 输入区（slot: input） -->
+  <view slot="input" class="tp-input-section">
+    <text class="tp-label">输入内容</text>
+    <input class="tp-standard-input" 
+      type="text"
+      placeholder="请输入..."
+      value="{{inputValue}}"
+      bindinput="onInput"
+    />
+  </view>
+
+  <!-- 结果区（slot: result） -->
+  <view slot="result" class="tp-result-section">
+    <text class="tp-result-value">{{resultValue}}</text>
+    <text class="tp-result-label">{{resultLabel}}</text>
+    
+    <view class="tp-divider"></view>
+    
+    <!-- 详细结果列表 -->
+    <view class="detail-row">
+      <text class="detail-label">项目1</text>
+      <text class="detail-value">{{detail1}}</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">项目2</text>
+      <text class="detail-value">{{detail2}}</text>
+    </view>
+  </view>
+
+</tool-page>

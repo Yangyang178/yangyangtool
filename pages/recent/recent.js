@@ -467,11 +467,32 @@ Page({
     return (date.getMonth() + 1) + '月' + date.getDate() + '日'
   },
 
-  calculateCacheSize() {
+  calculateCacheSize: function() {
+    var that = this
     try {
       this.calculateDetailedCache()
     } catch (e) {
-      this.setData({ cacheSize: '未知' })
+      console.error('Calculate cache size error:', e)
+      that.setData({ cacheSize: '未知' })
+      wx.showToast({ title: '\u7F13\u5B58\u8BA1\u7B97\u5931\u8D25', icon: 'none', duration: 2000 })
+      setTimeout(function() {
+        wx.showModal({
+          title: '\u26A0\uFE0F \u7F13\u5B58\u8BA1\u7B97\u5931\u8D25',
+          content: '\u65E0\u6CD5\u83B7\u53D6\u7CBE\u786E\u7F13\u5B58\u5927\u5C0F\uFF0C\u662F\u5426\u91CD\u65B0\u8BA1\u7B97\uFF1F',
+          confirmText: '\u91CD\u8BD5',
+          cancelText: '\u53D6\u6D88',
+          success: function(res) {
+            if (res.confirm) {
+              try {
+                that.calculateDetailedCache()
+                wx.showToast({ title: '\u91CD\u65B0\u8BA1\u7B97\u6210\u529F', icon: 'success' })
+              } catch(e2) {
+                wx.showToast({ title: '\u4ECD\u7136\u5931\u8D25', icon: 'none' })
+              }
+            }
+          }
+        })
+      }, 2200)
     }
   },
 
@@ -487,7 +508,7 @@ Page({
           if (data !== '' && data !== undefined && data !== null) {
             dataSize += JSON.stringify(data).length * 2
           }
-        } catch(e) {}
+        } catch(e) { console.warn('Skip key:', keys[ki], e); }
       }
 
       var recentTools = wx.getStorageSync('recentTools') || []
@@ -510,7 +531,10 @@ Page({
           history: historyCount + ' 条'
         }
       })
-    } catch(e) {}
+    } catch(e) {
+      console.error('calculateDetailedCache failed:', e)
+      throw e
+    }
   },
 
   formatSize(bytes) {

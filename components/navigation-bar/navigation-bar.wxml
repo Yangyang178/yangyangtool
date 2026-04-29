@@ -1,4 +1,4 @@
-<view class="weui-navigation-bar {{extClass}}">
+<view class="weui-navigation-bar {{extClass}}" style="background: {{background}};">
   <view class="weui-navigation-bar__inner" style="color: {{color}}; background: {{background}}; {{displayStyle}}; padding-top: {{navBarTop}}; {{innerPaddingRight}};">
 
     <view class='weui-navigation-bar__left' style="{{leftWidth}};">

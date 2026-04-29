@@ -358,6 +358,30 @@ Page({
       wx.setStorageSync('pomodoro_records', allRecords)
     } catch (e) {
       console.error('Save record error:', e)
+      wx.showToast({ title: '\u8BB0\u5F55\u4FDD\u5B58\u5931\u8D25', icon: 'none', duration: 2000 })
+      setTimeout(function() {
+        wx.showModal({
+          title: '\u26A0\uFE0F \u6570\u636E\u4FDD\u5B58\u5931\u8D25',
+          content: '\u756a\u8304\u949F\u8BB0\u5F55\u53EF\u80FD\u672A\u6B63\u786E\u4FDD\u5B58\uFF0C\u662F\u5426\u91CD\u8BD5\uFF1F',
+          confirmText: '\u91CD\u8BD5',
+          cancelText: '\u7A0D\u540E',
+          success: function(res) {
+            if (res.confirm) {
+              try {
+                var allRec = wx.getStorageSync('pomodoro_records') || {}
+                var todayKey = new Date().toDateString()
+                var existing = allRec[todayKey] || []
+                existing.push(record)
+                allRec[todayKey] = existing
+                wx.setStorageSync('pomodoro_records', allRec)
+                wx.showToast({ title: '\u91CD\u8BD5\u6210\u529F', icon: 'success' })
+              } catch(e2) {
+                wx.showToast({ title: '\u4ECD\u7136\u5931\u8D25', icon: 'none' })
+              }
+            }
+          }
+        })
+      }, 2200)
     }
 
     var appInstance = getApp()

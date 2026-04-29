@@ -9,6 +9,7 @@ page {
 .main-scroll {
   flex: 1;
   height: 100vh;
+  background-color: var(--pageBg) !important;
 }
 
 .page-container {
@@ -201,4 +202,28 @@ page {
   font-size: 13px;
   color: var(--accentYellowDark,#D97706);
   font-weight: 500;
+}
+
+/* ========== 暗黑模式 ========== */
+.dark-mode .main-scroll {
+  background-color: var(--pageBg) !important;
+}
+
+.dark-mode .page-container {
+  background-color: var(--pageBg);
+}
+
+.dark-mode .tool-item {
+  background: var(--cardBg);
+  border-color: rgba(100,116,139,0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.dark-mode .favorite-tip {
+  background: linear-gradient(135deg, #78350F 0%, #92400E 100%);
+  border-left-color: var(--warningColor);
+}
+
+.dark-mode .tip-text {
+  color: #FEF3C7;
 }

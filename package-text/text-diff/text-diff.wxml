@@ -1,70 +1,152 @@
-<navigation-bar title="文本对比" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="文本对比" back="{{true}}" color="#1a1a2e" background="#fafbff"></navigation-bar>
 
-<scroll-view class="tool-page" scroll-y>
+<scroll-view class="tool-page" scroll-y enhanced show-scrollbar="{{false}}">
   <view class="container">
-    <view class="tool-header">
-      <view class="icon-wrapper"><text class="tool-icon">🔄</text></view>
-      <text class="tool-title">文本对比</text>
-      <text class="tool-desc">两段文本差异对比，高亮显示不同处</text>
+    <view class="hero-section">
+      <view class="hero-icon">
+        <view class="icon-bg"></view>
+        <text class="icon-text">🔄</text>
+      </view>
+      <text class="hero-title">文本对比</text>
+      <text class="hero-subtitle">智能差异分析 · 精准定位变更</text>
     </view>
 
-    <view class="text-areas">
-      <view class="text-area-wrapper">
-        <view class="area-label">
-          <text>原始文本</text>
-          <text class="clear-btn" bindtap="clearText1">清空</text>
-        </view>
-        <textarea class="text-area" value="{{text1}}" bindinput="onInput1" placeholder="请输入文本" placeholder-class="text-placeholder" maxlength="-1"/>
-      </view>
-      <view class="text-area-wrapper">
-        <view class="area-label">
-          <text>对比文本</text>
-          <text class="clear-btn" bindtap="clearText2">清空</text>
-        </view>
-        <textarea class="text-area" value="{{text2}}" bindinput="onInput2" placeholder="请输入文本" placeholder-class="text-placeholder" maxlength="-1"/>
-      </view>
-    </view>
-
-    <view class="action-row">
-      <button class="compare-btn" bindtap="compare" hover-class="btn-hover">
-        <text class="btn-icon">🔍</text>开始对比
-      </button>
-      <button class="swap-btn" bindtap="swapText" hover-class="btn-hover">
-        ⇄ 交换
-      </button>
-    </view>
-
-    <view class="result-card" wx:if="{{diffResult.length > 0}}">
-      <view class="diff-header">
-        <text class="diff-title">对比结果</text>
-        <view class="diff-stats">
-          <view class="stat-item"><view class="stat-dot dot-added"></view><text class="stat-text">+{{stats.added}}</text></view>
-          <view class="stat-item"><view class="stat-dot dot-removed"></view><text class="stat-text">-{{stats.removed}}</text></view>
-        </view>
-      </view>
-
-      <scroll-view scroll-y style="max-height:400px;">
-        <block wx:for="{{diffResult}}" wx:key="index">
-          <view class="diff-line {{item.type === 'added' ? 'line-added' : item.type === 'removed' ? 'line-removed' : 'line-same'}}">
-            <text class="line-num">{{item.num || ''}}</text>
-            <view class="line-content">
-              <text wx:if="{{item.type === 'added'}}" class="added-prefix">+</text>
-              <text wx:if="{{item.type === 'removed'}}" class="removed-prefix">-</text>
-              <text>{{item.content}}</text>
+    <view class="input-section">
+      <view class="input-group">
+        <view class="input-header">
+          <view class="input-label">
+            <view class="label-dot dot-left"></view>
+            <text>原始文本</text>
+          </view>
+          <view class="input-actions">
+            <text class="char-count">{{text1.length}} 字符</text>
+            <view class="action-btn" bindtap="clearText1" wx:if="{{text1.length > 0}}">
+              <text>清空</text>
             </view>
           </view>
-        </block>
+        </view>
+        <textarea
+          class="text-input"
+          value="{{text1}}"
+          bindinput="onInput1"
+          placeholder="粘贴或输入第一段文本..."
+          placeholder-class="placeholder"
+          maxlength="-1"
+          auto-height
+          adjust-position="{{false}}"
+        />
+      </view>
+
+      <view class="divider-line">
+        <view class="divider-dot"></view>
+      </view>
+
+      <view class="input-group">
+        <view class="input-header">
+          <view class="input-label">
+            <view class="label-dot dot-right"></view>
+            <text>对比文本</text>
+          </view>
+          <view class="input-actions">
+            <text class="char-count">{{text2.length}} 字符</text>
+            <view class="action-btn" bindtap="clearText2" wx:if="{{text2.length > 0}}">
+              <text>清空</text>
+            </view>
+          </view>
+        </view>
+        <textarea
+          class="text-input"
+          value="{{text2}}"
+          bindinput="onInput2"
+          placeholder="粘贴或输入第二段文本..."
+          placeholder-class="placeholder"
+          maxlength="-1"
+          auto-height
+          adjust-position="{{false}}"
+        />
+      </view>
+    </view>
+
+    <view class="button-group">
+      <button class="primary-btn" bindtap="compare" hover-class="btn-pressed">
+        <view class="btn-content">
+          <text class="btn-icon">◈</text>
+          <text class="btn-text">开始对比</text>
+        </view>
+        <view class="btn-glow"></view>
+      </button>
+      <button class="secondary-btn" bindtap="swapTexts" hover-class="btn-pressed-secondary">
+        <text class="swap-icon">⇅</text>
+      </button>
+    </view>
+
+    <view class="result-section" wx:if="{{diffResult.length > 0}}">
+      <view class="result-header">
+        <view class="result-title-group">
+          <text class="result-icon">◉</text>
+          <text class="result-title">对比结果</text>
+        </view>
+        <view class="stats-bar">
+          <view class="stat-chip stat-added">
+            <view class="chip-indicator"></view>
+            <text>{{stats.added}} 新增</text>
+          </view>
+          <view class="stat-chip stat-removed">
+            <view class="chip-indicator"></view>
+            <text>{{stats.removed}} 删除</text>
+          </view>
+        </view>
+      </view>
+
+      <scroll-view class="diff-container" scroll-y enhanced show-scrollbar="{{false}}">
+        <view class="diff-list">
+          <block wx:for="{{diffResult}}" wx:key="index">
+            <view class="diff-item {{item.type === 'added' ? 'is-added' : item.type === 'removed' ? 'is-removed' : 'is-same'}}">
+              <view class="item-marker">
+                <text wx:if="{{item.type === 'added'}}">+</text>
+                <text wx:elif="{{item.type === 'removed'}}">−</text>
+                <text wx:else>·</text>
+              </view>
+              <view class="item-content">
+                <text class="content-text">{{item.content || '\u00A0'}}</text>
+              </view>
+            </view>
+          </block>
+        </view>
       </scroll-view>
     </view>
 
-    <view class="empty-result" wx:if="{{diffResult.length === 0}}">
-      <text class="empty-icon">📝</text>
-      <text class="empty-text">输入两段文本后点击"开始对比"</text>
+    <view class="empty-state" wx:if="{{diffResult.length === 0 && (text1 || text2)}}">
+      <view class="empty-illustration">
+        <text class="empty-symbol">◇</text>
+      </view>
+      <text class="empty-hint">点击「开始对比」查看差异</text>
     </view>
 
-    <view class="tips-card">
-      <text class="tips-title">💡 使用说明</text>
-      <text class="tips-text">• 支持逐行对比差异，绿色表示新增行，红色表示删除行\n• 使用 LCS（最长公共子序列）算法进行智能比对\n• 支持长文本，自动滚动查看完整对比结果</text>
+    <view class="welcome-state" wx:if="{{!text1 && !text2 && diffResult.length === 0}}">
+      <view class="welcome-card">
+        <view class="welcome-icon-wrap">
+          <text class="welcome-icon">✦</text>
+        </view>
+        <text class="welcome-title">准备开始</text>
+        <text class="welcome-desc">在上方输入两段文本，即可智能对比差异</text>
+        <view class="feature-list">
+          <view class="feature-item">
+            <text class="feature-bullet">→</text>
+            <text class="feature-text">逐行精准比对</text>
+          </view>
+          <view class="feature-item">
+            <text class="feature-bullet">→</text>
+            <text class="feature-text">LCS 智能算法</text>
+          </view>
+          <view class="feature-item">
+            <text class="feature-bullet">→</text>
+            <text class="feature-text">高亮显示差异</text>
+          </view>
+        </view>
+      </view>
     </view>
+
+    <view class="bottom-spacer"></view>
   </view>
 </scroll-view>

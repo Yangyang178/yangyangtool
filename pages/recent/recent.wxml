@@ -341,7 +341,7 @@
     </view>
 
     <!-- 设置 -->
-    <view class="section-block">
+    <view class="section-block settings-section">
       <view class="section-header">
         <view class="section-title-row">
           <text class="section-icon">⚙️</text>

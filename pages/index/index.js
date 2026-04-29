@@ -143,6 +143,7 @@ Page({
     this.updateGreeting()
     this.loadCustomLayout()
     this.filterTools()
+    this.applyCurrentTheme()
 
     var favorites = wx.getStorageSync('favorites') || []
     var toolsData = this.data.tools
@@ -693,6 +694,17 @@ Page({
     if (appInstance) {
       var isDark = appInstance.globalData.isDarkMode || wx.getStorageSync('darkMode') === true
       this.setData({ isDarkMode: isDark })
+
+      var bgColor = isDark ? '#0F172A' : '#F8FAFC'
+      try {
+        wx.setBackgroundColor({
+          backgroundColor: bgColor,
+          backgroundColorTop: bgColor,
+          backgroundColorBottom: bgColor
+        })
+      } catch(e) {
+        console.log('setBackgroundColor error:', e)
+      }
     }
   },
 

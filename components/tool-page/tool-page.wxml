@@ -1,0 +1,44 @@
+<navigation-bar title="{{title}}" back="{{true}}" color="{{navColor}}" background="{{navBg}}"></navigation-bar>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}}" scroll-y enhanced show-scrollbar="{{false}}">
+  <view class="tp-container">
+    
+    <view class="tp-header" wx:if="{{showHeader}}">
+      <view class="tp-icon-wrap" style="background: {{iconBg || 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)'}};">
+        <text class="tp-icon">{{icon || '🔧'}}</text>
+      </view>
+      <text class="tp-title">{{title}}</text>
+      <text class="tp-desc" wx:if="{{desc}}">{{desc}}</text>
+      <view class="tp-badge" wx:if="{{badge}}">
+        <text>{{badge}}</text>
+      </view>
+    </view>
+
+    <slot name="input"></slot>
+
+    <slot name="result"></slot>
+
+    <view class="tp-actions" wx:if="{{actions.length > 0}}">
+      <block wx:for="{{actions}}" wx:key="type">
+        <button 
+          class="tp-btn tp-btn-{{item.type || 'primary'}}" 
+          bindtap="{{item.bindtap}}"
+          hover-class="tp-btn-hover"
+          data-action="{{item.type}}"
+        >
+          <text wx:if="{{item.icon}}" class="tp-btn-icon">{{item.icon}}</text>
+          <text class="tp-btn-text">{{item.text}}</text>
+        </button>
+      </block>
+    </view>
+
+    <view class="tp-tips" wx:if="{{tips && tips.length > 0}}">
+      <view class="tp-tips-title" wx:if="{{tipsTitle}}">{{tipsTitle}}</view>
+      <view class="tp-tip-item" wx:for="{{tips}}" wx:key="*this">
+        <text>• {{item}}</text>
+      </view>
+    </view>
+
+    <view class="tp-footer-safe"></view>
+  </view>
+</scroll-view>

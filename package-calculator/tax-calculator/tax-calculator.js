@@ -9,7 +9,9 @@ Page({
       other: 0
     },
     result: null,
-    breakdown: []
+    breakdown: [],
+    totalDeduction: '3500',
+    isDarkMode: false
   },
 
   onLoad() {
@@ -17,15 +19,30 @@ Page({
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline']
     })
+
+    const systemInfo = wx.getSystemInfoSync()
+    this.setData({
+      isDarkMode: systemInfo.theme === 'dark'
+    })
+    
+    this.updateTotalDeduction()
   },
 
   onSalaryInput(e) { this.setData({ salary: e.detail.value }) },
+
   onDeductionChange(e) {
     const key = e.currentTarget.dataset.key
     const val = parseFloat(e.detail.value) || 0
     let obj = {}
     obj[`deductions.${key}`] = val
     this.setData(obj)
+    this.updateTotalDeduction()
+  },
+
+  updateTotalDeduction() {
+    const d = this.data.deductions
+    const total = parseFloat(d.children || 0) + parseFloat(d.education || 0) + parseFloat(d.housing || 0) + parseFloat(d.elderly || 0) + parseFloat(d.other || 0)
+    this.setData({ totalDeduction: total.toFixed(0) })
   },
 
   calculate() {
@@ -36,21 +53,21 @@ Page({
     const d = this.data.deductions
 
     const threshold = 5000
-    const totalDeduct = (d.children * 2000) + d.education + d.housing + d.elderly + d.other
+    const totalDeduct = parseFloat(d.children || 0) + parseFloat(d.education || 0) + parseFloat(d.housing || 0) + parseFloat(d.elderly || 0) + parseFloat(d.other || 0)
     const taxable = Math.max(0, s - threshold - totalDeduct)
     
     const tax = this.calcTax(taxable)
     const afterTax = s - tax
     const effectiveRate = s > 0 ? ((tax / s) * 100).toFixed(2) : '0.00'
-    const monthlyAfterTax = (afterTax).toFixed(2)
+    const monthlyAfterTax = afterTax.toFixed(2)
     const annualSalary = (s * 12).toFixed(2)
     const annualTax = (tax * 12).toFixed(2)
     const annualAfterTax = (afterTax * 12).toFixed(2)
 
     const breakdown = [
       { label: '税前月薪', val: s.toFixed(2), cls: '' },
-      { label: '起征点', val: `-${threshold.toFixed(2)}`, cls: 'negative' },
-      { label: '专项扣除合计', val: `-${totalDeduct.toFixed(2)}`, cls: 'negative' },
+      { label: '起征点扣除', val: `-${threshold.toFixed(2)}`, cls: 'negative' },
+      { label: '专项附加扣除', val: `-${totalDeduct.toFixed(2)}`, cls: 'negative' },
       { label: '应纳税所得额', val: taxable.toFixed(2), cls: '' },
       { label: '应纳个税', val: tax.toFixed(2), cls: 'negative' },
       { label: '税后月薪', val: monthlyAfterTax, cls: 'positive' }

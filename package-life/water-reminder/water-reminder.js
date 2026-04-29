@@ -266,6 +266,7 @@ Page({
       wx.setStorageSync('water_records', allRecords)
     } catch (e) {
       console.error('Save water records error:', e)
+      wx.showToast({ title: '\u559D\u6C34\u8BB0\u5F55\u4FDD\u5B58\u5931\u8D25', icon: 'none', duration: 2000 })
     }
   },
 

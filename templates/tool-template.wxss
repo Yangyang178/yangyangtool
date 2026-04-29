@@ -1,0 +1,20 @@
+/* ========== 工具页面特有样式（在 tool-page 组件样式基础上扩展） ========== */
+
+.detail-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--borderFaint);
+}
+.detail-row:last-child { border-bottom: none; }
+
+.detail-label {
+  font-size: 14px; color: var(--textSecondary); font-weight: 500;
+}
+
+.detail-value {
+  font-size: 14px; color: var(--textPrimary); font-weight: 600;
+}
+
+/* ========== 暗黑模式 ========== */
+.dark-mode .detail-row { border-bottom-color: rgba(71,85,105,0.2); }
+.dark-mode .detail-label { color: var(--textTertiary); }
+.dark-mode .detail-value { color: var(--textPrimary); }

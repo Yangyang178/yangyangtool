@@ -1,4 +1,4 @@
-<navigation-bar title="" back="{{false}}" color="{{isDarkMode ? 'white' : 'black'}}" background="{{isDarkMode ? '#0F172A' : 'transparent'}}"></navigation-bar>
+<navigation-bar title="" back="{{false}}" color="{{isDarkMode ? 'white' : 'black'}}" background="{{isDarkMode ? '#0F172A' : '#F8FAFC'}}"></navigation-bar>
 
 <canvas type="2d" id="shareCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>
 
@@ -8,9 +8,6 @@
 
 <scroll-view class="main-scroll {{isDarkMode ? 'dark-mode' : ''}}" scroll-y enhanced show-scrollbar="{{false}}" bounces="{{false}}" refresher-enabled="{{!isEditMode}}" refresher-triggered="{{isRefreshing}}" bindrefresherrefresh="onPullDownRefresh" scroll-top="{{scrollTop}}" bindscrolltoupper="onScrollToUpper" bindscroll="onPageScroll" lower-threshold="0">
   <view class="page-container">
-    <!-- 顶部安全区域占位 -->
-    <view class="nav-placeholder"></view>
-    
     <!-- 应用头部 -->
     <view class="header-section">
       <view class="header-top">
@@ -130,17 +127,17 @@
         <view class="card-favorite" catchtap="toggleFavorite" data-id="{{item.id}}" wx:if="{{!isEditMode}}">
           <text>{{item.isFavorite ? '★' : '☆'}}</text>
         </view>
-        
+
         <!-- 编辑模式：显示/隐藏按钮 -->
-        <view 
-          class="card-visibility {{hiddenTools.indexOf(item.id) !== -1 ? 'hidden-tool' : ''}}" 
-          catchtap="toggleToolVisibility" 
+        <view
+          class="card-visibility {{hiddenTools.indexOf(item.id) !== -1 ? 'hidden-tool' : ''}}"
+          catchtap="toggleToolVisibility"
           data-id="{{item.id}}"
           wx:if="{{isEditMode}}"
         >
           <text>{{hiddenTools.indexOf(item.id) !== -1 ? '👁️‍🗨️' : '👁️'}}</text>
         </view>
-        
+
         <!-- 选中标记 -->
         <view class="selected-overlay" wx:if="{{isEditMode && selectedToolIndex === index}}">
           <view class="selected-ring"></view>
@@ -151,14 +148,14 @@
             <text>点击另一个交换</text>
           </view>
         </view>
-        
+
         <view class="card-icon-wrapper" style="background: {{item.iconBg}}">
           <text class="card-icon">{{item.icon}}</text>
         </view>
-        
+
         <text class="card-title">{{item.name}}</text>
         <text class="card-desc">{{item.description}}</text>
-        
+
         <view class="card-badge" wx:if="{{item.isHot}}">
           <text>热门</text>
         </view>

@@ -1,4 +1,8 @@
+var storageUtil = require('./utils/storage.js')
+
 App({
+  storage: storageUtil,
+
   globalData: {
     userInfo: null,
     isDarkMode: false,
@@ -92,12 +96,14 @@ App({
   },
 
   initLocalData: function() {
-    if (!wx.getStorageSync('favorites')) {
-      wx.setStorageSync('favorites', [])
+    var storage = this.storage
+
+    if (storage.get('favorites') === null) {
+      storage.set('favorites', [])
     }
 
-    if (!wx.getStorageSync('recentTools')) {
-      wx.setStorageSync('recentTools', [])
+    if (storage.get('recentTools') === null) {
+      storage.set('recentTools', [])
     }
   },
 
