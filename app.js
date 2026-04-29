@@ -67,17 +67,24 @@ App({
       that.globalData.cloudReady = true
       console.log('[云开发] 初始化成功(自动环境)')
 
-      var db = wx.cloud.database()
-
-      db.collection('tool_records').count({
-        success: function(res) {
-          console.log('[云数据库] 连接成功! tool_records记录数:', res.total)
-        },
-        fail: function(err) {
-          console.log('[云数据库] 连接失败:', err.errMsg || JSON.stringify(err))
+      setTimeout(function() {
+        try {
+          var db = wx.cloud.database()
+          db.collection('tool_records').count({
+            success: function(res) {
+              console.log('[云数据库] 连接成功! tool_records记录数:', res.total)
+              that.syncLocalToCloud()
+            },
+            fail: function(err) {
+              console.log('[云数据库] 连接失败，使用纯本地模式')
+              that.globalData.cloudReady = false
+            }
+          })
+        } catch(e) {
+          console.log('[云数据库] 检测连接异常:', e.message || e)
           that.globalData.cloudReady = false
         }
-      })
+      }, 2000)
     } catch(e) {
       console.log('[云开发] 初始化异常:', e.message || e)
       that.globalData.cloudReady = false
@@ -98,90 +105,105 @@ App({
     var that = this
     if (!that.globalData.cloudReady) return
 
-    try {
-      var db = wx.cloud.database()
-      var totalUsage = wx.getStorageSync('totalUsageCount') || 0
-      var todayStr = new Date().toDateString()
-      var weeklyRecord = wx.getStorageSync('weeklyUsage') || {}
-      var todayCount = weeklyRecord[todayStr] || 0
-      var recentTools = wx.getStorageSync('recentTools') || []
+    setTimeout(function() {
+      if (!that.globalData.cloudReady) return
+      try {
+        var db = wx.cloud.database()
+        var totalUsage = 0
+        try { totalUsage = wx.getStorageSync('totalUsageCount') || 0; } catch(e) {}
+        var todayStr = new Date().toDateString()
+        var todayCount = 0
+        try { todayCount = (wx.getStorageSync('weeklyUsage') || {})[todayStr] || 0; } catch(e) {}
+        var recentTools = []
+        try { recentTools = wx.getStorageSync('recentTools') || []; } catch(e) {}
 
-      db.collection('usage_log').add({
-        data: {
-          date: todayStr,
-          count: todayCount,
-          toolsUsed: recentTools.slice(0, 10),
-          totalUsageCount: totalUsage,
-          createdAt: db.serverDate()
-        }
-      }).then(function() {
-        console.log('[云端同步] usage_log 写入成功')
-      }).catch(function(err) {
-        console.log('[云端同步] usage_log 失败:', err.errMsg)
-      })
-    } catch(e) {}
+        db.collection('usage_log').add({
+          data: {
+            date: todayStr,
+            count: todayCount,
+            toolsUsed: recentTools.slice(0, 10),
+            totalUsageCount: totalUsage,
+            createdAt: db.serverDate()
+          }
+        }).then(function() {
+          console.log('[云端同步] usage_log 写入成功')
+        }).catch(function(err) {
+          console.log('[云端同步] usage_log 失败:', (err && err.errMsg) || 'unknown')
+        })
+      } catch(e) {}
+    }, 1000)
   },
 
   cloudSyncUsage: function(toolId, toolName) {
     if (!this.globalData.cloudReady) return
-    try {
-      var db = wx.cloud.database()
-      db.collection('usage_log').add({
-        data: {
-          toolId: toolId,
-          toolName: toolName,
-          usedAt: db.serverDate(),
-          date: new Date().toDateString()
-        }
-      }).catch(function() {})
-    } catch(e) {}
+    var that = this
+    setTimeout(function() {
+      if (!that.globalData.cloudReady) return
+      try {
+        var db = wx.cloud.database()
+        db.collection('usage_log').add({
+          data: {
+            toolId: toolId,
+            toolName: toolName,
+            usedAt: db.serverDate(),
+            date: new Date().toDateString()
+          }
+        }).catch(function() {})
+      } catch(e) {}
+    }, 500)
   },
 
   cloudSyncWaterRecord: function(record) {
     if (!this.globalData.cloudReady) return
-    try {
-      var db = wx.cloud.database()
-      db.collection('tool_records').add({
-        data: {
-          toolType: 'water_reminder',
-          record: record,
-          createdAt: db.serverDate()
-        }
-      }).catch(function() {})
-    } catch(e) {}
+    setTimeout(function() {
+      try {
+        var db = wx.cloud.database()
+        db.collection('tool_records').add({
+          data: {
+            toolType: 'water_reminder',
+            record: record,
+            createdAt: db.serverDate()
+          }
+        }).catch(function() {})
+      } catch(e) {}
+    }, 300)
   },
 
   cloudSyncPomodoroRecord: function(record) {
     if (!this.globalData.cloudReady) return
-    try {
-      var db = wx.cloud.database()
-      db.collection('tool_records').add({
-        data: {
-          toolType: 'pomodoro',
-          record: record,
-          createdAt: db.serverDate()
-        }
-      }).catch(function() {})
-    } catch(e) {}
+    setTimeout(function() {
+      try {
+        var db = wx.cloud.database()
+        db.collection('tool_records').add({
+          data: {
+            toolType: 'pomodoro',
+            record: record,
+            createdAt: db.serverDate()
+          }
+        }).catch(function() {})
+      } catch(e) {}
+    }, 300)
   },
 
   cloudSyncFeedback: function(feedback) {
     if (!this.globalData.cloudReady) return
-    try {
-      var db = wx.cloud.database()
-      db.collection('user_feedbacks').add({
-        data: {
-          content: feedback.content || '',
-          type: feedback.type || 'feedback',
-          contact: feedback.contact || '',
-          createdAt: db.serverDate()
-        }
-      }).then(function() {
-        console.log('[云端同步] 反馈已保存到 user_feedbacks')
-      }).catch(function(err) {
-        console.log('[云端同步] 反馈失败:', err.errMsg)
-      })
-    } catch(e) {}
+    setTimeout(function() {
+      try {
+        var db = wx.cloud.database()
+        db.collection('user_feedbacks').add({
+          data: {
+            content: feedback.content || '',
+            type: feedback.type || 'feedback',
+            contact: feedback.contact || '',
+            createdAt: db.serverDate()
+          }
+        }).then(function() {
+          console.log('[云端同步] 反馈已保存到 user_feedbacks')
+        }).catch(function(err) {
+          console.log('[云端同步] 反馈失败:', (err && err.errMsg) || 'unknown')
+        })
+      } catch(e) {}
+    }, 500)
   },
 
   applyTheme: function() {
