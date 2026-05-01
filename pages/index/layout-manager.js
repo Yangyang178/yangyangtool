@@ -5,301 +5,450 @@
 
 module.exports = {
   loadCustomLayout() {
-    const customOrder = wx.getStorageSync('customToolOrder') || []
-    const hiddenTools = wx.getStorageSync('hiddenTools') || []
+    try {
+      let customOrder = wx.getStorageSync('customToolOrder')
+      let hiddenTools = wx.getStorageSync('hiddenTools')
 
-    this.setData({
-      customOrder,
-      hiddenTools
-    })
-
-    if (customOrder.length > 0) {
-      const tools = this.data.tools
-      let orderedTools = []
-
-      for (const orderId of customOrder) {
-        const isHidden = hiddenTools.includes(orderId)
-        if (!isHidden) {
-          const tool = tools.find(t => t.id === orderId)
-          if (tool) orderedTools.push(tool)
-        }
+      if (!Array.isArray(customOrder)) {
+        customOrder = []
+      }
+      if (!Array.isArray(hiddenTools)) {
+        hiddenTools = []
       }
 
-      const remainingTools = tools.filter(tool =>
-        !customOrder.includes(tool.id) && !hiddenTools.includes(tool.id)
-      )
+      this.setData({
+        customOrder: customOrder,
+        hiddenTools: hiddenTools
+      })
 
-      const finalTools = [...orderedTools, ...remainingTools]
-      this.setData({
-        tools: finalTools,
-        filteredTools: finalTools
-      })
-    } else if (hiddenTools.length > 0) {
-      const visibleTools = this.data.tools.filter(
-        tool => !hiddenTools.includes(tool.id)
-      )
-      this.setData({
-        tools: visibleTools,
-        filteredTools: visibleTools
-      })
+      const tools = this.data.tools || []
+      if (!Array.isArray(tools) || tools.length === 0) {
+        console.warn('[layout] tools 为空或不是数组，跳过布局加载')
+        return
+      }
+
+      if (customOrder.length > 0) {
+        let orderedTools = []
+
+        for (let i = 0; i < customOrder.length; i++) {
+          const orderId = customOrder[i]
+          const isHidden = hiddenTools.indexOf(orderId) > -1
+          if (!isHidden) {
+            for (let j = 0; j < tools.length; j++) {
+              if (tools[j].id === orderId) {
+                orderedTools.push(tools[j])
+                break
+              }
+            }
+          }
+        }
+
+        let remainingTools = []
+        for (let k = 0; k < tools.length; k++) {
+          const tool = tools[k]
+          const inOrdered = customOrder.indexOf(tool.id) > -1
+          const isHidden = hiddenTools.indexOf(tool.id) > -1
+          if (!inOrdered && !isHidden) {
+            remainingTools.push(tool)
+          }
+        }
+
+        const finalTools = orderedTools.concat(remainingTools)
+        this.setData({
+          tools: finalTools,
+          filteredTools: finalTools
+        })
+      } else if (hiddenTools.length > 0) {
+        let visibleTools = []
+        for (let v = 0; v < tools.length; v++) {
+          const tool = tools[v]
+          const hFound = hiddenTools.indexOf(tool.id) > -1
+          if (!hFound) {
+            visibleTools.push(tool)
+          }
+        }
+        this.setData({
+          tools: visibleTools,
+          filteredTools: visibleTools
+        })
+      }
+
+      this.updateHiddenToolsList(hiddenTools)
+
+    } catch(e) {
+      console.error('[layout] loadCustomLayout error:', e)
     }
-
-    this.updateHiddenToolsList(hiddenTools)
   },
 
   toggleEditMode() {
-    wx.vibrateShort({ type: 'light' })
+    try {
+      wx.vibrateShort({ type: 'light' })
 
-    if (!this.data.isEditMode) {
-      wx.showModal({
-        title: '📝 编辑模式',
-        content: '点击工具卡片选中\n再次点击另一个卡片可交换位置\n点击眼睛图标可隐藏工具',
-        showCancel: false,
-        confirmText: '我知道了',
-        confirmColor: '#3B82F6'
+      if (!this.data.isEditMode) {
+        wx.showModal({
+          title: '📝 编辑模式',
+          content: '点击工具卡片选中\n再次点击另一个卡片可交换位置\n点击眼睛图标可隐藏工具',
+          showCancel: false,
+          confirmText: '我知道了',
+          confirmColor: '#3B82F6'
+        })
+      }
+
+      this.setData({
+        isEditMode: !this.data.isEditMode,
+        selectedToolIndex: -1,
+        canUndo: false,
+        editHistory: []
       })
-    }
 
-    this.setData({
-      isEditMode: !this.data.isEditMode,
-      selectedToolIndex: -1,
-      canUndo: false,
-      editHistory: []
-    })
-
-    if (!this.data.isEditMode) {
-      this.saveCustomLayout()
-      wx.showToast({
-        title: '布局已保存 ✅',
-        icon: 'success',
-        duration: 1500
-      })
+      if (!this.data.isEditMode) {
+        this.saveCustomLayout()
+        wx.showToast({
+          title: '布局已保存 ✅',
+          icon: 'success',
+          duration: 1500
+        })
+      }
+    } catch(e) {
+      console.error('[layout] toggleEditMode error:', e)
     }
   },
 
   onEditToolClick(e) {
-    if (!this.data.isEditMode) return
+    try {
+      if (!this.data.isEditMode) return
 
-    const index = e.currentTarget.dataset.index
-    const currentSelected = this.data.selectedToolIndex
+      const index = e.currentTarget.dataset.index
+      const currentSelected = this.data.selectedToolIndex
 
-    if (currentSelected === -1) {
-      wx.vibrateShort({ type: 'light' })
-      this.setData({ selectedToolIndex: index })
-      return
+      if (currentSelected === -1) {
+        wx.vibrateShort({ type: 'light' })
+        this.setData({ selectedToolIndex: index })
+        return
+      }
+
+      if (currentSelected === index) {
+        wx.vibrateShort({ type: 'light' })
+        this.setData({ selectedToolIndex: -1 })
+        return
+      }
+
+      wx.vibrateShort({ type: 'medium' })
+
+      const filteredTools = this.data.filteredTools || []
+
+      if (!filteredTools[currentSelected] || !filteredTools[index]) {
+        console.warn('[layout] Invalid index for swap')
+        return
+      }
+
+      this.pushEditHistory()
+
+      const temp = filteredTools[currentSelected]
+      filteredTools[currentSelected] = filteredTools[index]
+      filteredTools[index] = temp
+
+      this.setData({
+        filteredTools: filteredTools,
+        selectedToolIndex: -1,
+        canUndo: true
+      })
+
+      this.saveCustomLayout()
+
+      wx.showToast({
+        title: '已交换位置',
+        icon: 'success',
+        duration: 800
+      })
+    } catch(e) {
+      console.error('[layout] onEditToolClick error:', e)
     }
-
-    if (currentSelected === index) {
-      wx.vibrateShort({ type: 'light' })
-      this.setData({ selectedToolIndex: -1 })
-      return
-    }
-
-    wx.vibrateShort({ type: 'medium' })
-
-    const filteredTools = [...this.data.filteredTools]
-
-    if (!filteredTools[currentSelected] || !filteredTools[index]) {
-      console.warn('Invalid index for swap')
-      return
-    }
-
-    this.pushEditHistory()
-
-    [filteredTools[currentSelected], filteredTools[index]] =
-    [filteredTools[index], filteredTools[currentSelected]]
-
-    this.setData({
-      filteredTools,
-      selectedToolIndex: -1,
-      canUndo: true
-    })
-
-    this.saveCustomLayout()
-
-    wx.showToast({
-      title: '已交换位置',
-      icon: 'success',
-      duration: 800
-    })
   },
 
   pushEditHistory() {
-    const snapshot = this.data.filteredTools.map(tool => tool.id)
-    const hiddenSnapshot = [...this.data.hiddenTools]
-    let history = [...this.data.editHistory]
+    try {
+      const filteredTools = this.data.filteredTools || []
+      const snapshot = []
+      for (let i = 0; i < filteredTools.length; i++) {
+        snapshot.push(filteredTools[i].id)
+      }
 
-    history.push({
-      order: snapshot,
-      hidden: hiddenSnapshot,
-      timestamp: Date.now()
-    })
+      const hiddenTools = this.data.hiddenTools || []
+      const hiddenSnapshot = []
+      for (let j = 0; j < hiddenTools.length; j++) {
+        hiddenSnapshot.push(hiddenTools[j])
+      }
 
-    if (history.length > 20) {
-      history = history.slice(history.length - 20)
+      let history = this.data.editHistory || []
+      history = history.slice()
+
+      history.push({
+        order: snapshot,
+        hidden: hiddenSnapshot,
+        timestamp: Date.now()
+      })
+
+      if (history.length > 20) {
+        history = history.slice(history.length - 20)
+      }
+
+      this.setData({ editHistory: history })
+    } catch(e) {
+      console.error('[layout] pushEditHistory error:', e)
     }
-
-    this.setData({ editHistory: history })
   },
 
   undoLastAction() {
-    if (this.data.editHistory.length === 0) {
-      wx.showToast({ title: '没有可撤销的操作', icon: 'none', duration: 1200 })
-      return
+    try {
+      const history = this.data.editHistory || []
+
+      if (history.length === 0) {
+        wx.showToast({ title: '没有可撤销的操作', icon: 'none', duration: 1200 })
+        return
+      }
+
+      wx.vibrateShort({ type: 'light' })
+
+      const newHistory = history.slice()
+      const prevState = newHistory.pop()
+
+      const allTools = this.data.tools || []
+      const restoredOrder = []
+
+      if (prevState.order && Array.isArray(prevState.order)) {
+        for (let oi = 0; oi < prevState.order.length; oi++) {
+          const orderId = prevState.order[oi]
+          for (let ti = 0; ti < allTools.length; ti++) {
+            if (allTools[ti].id === orderId) {
+              restoredOrder.push(allTools[ti])
+              break
+            }
+          }
+        }
+      }
+
+      const restoredHidden = (prevState.hidden && Array.isArray(prevState.hidden)) ? prevState.hidden : []
+
+      this.setData({
+        filteredTools: restoredOrder,
+        hiddenTools: restoredHidden,
+        editHistory: newHistory,
+        canUndo: newHistory.length > 0,
+        selectedToolIndex: -1
+      })
+
+      this.updateHiddenToolsList(restoredHidden)
+      this.saveCustomLayout()
+
+      wx.showToast({
+        title: '已撤销 ↩️',
+        icon: 'none',
+        duration: 800
+      })
+    } catch(e) {
+      console.error('[layout] undoLastAction error:', e)
     }
-
-    wx.vibrateShort({ type: 'light' })
-
-    const history = [...this.data.editHistory]
-    const prevState = history.pop()
-
-    const allTools = this.data.tools
-    const restoredOrder = prevState.order.map(id => allTools.find(t => t.id === id)).filter(Boolean)
-
-    const restoredHidden = prevState.hidden || []
-
-    this.setData({
-      filteredTools: restoredOrder,
-      hiddenTools: restoredHidden,
-      editHistory: history,
-      canUndo: history.length > 0,
-      selectedToolIndex: -1
-    })
-
-    this.updateHiddenToolsList(restoredHidden)
-    this.saveCustomLayout()
-
-    wx.showToast({
-      title: '已撤销 ↩️',
-      icon: 'none',
-      duration: 800
-    })
   },
 
   toggleToolVisibility(e) {
-    if (!this.data.isEditMode) return
+    try {
+      if (!this.data.isEditMode) return
 
-    wx.vibrateShort({ type: 'light' })
+      wx.vibrateShort({ type: 'light' })
 
-    this.pushEditHistory()
+      this.pushEditHistory()
 
-    const id = e.currentTarget.dataset.id
-    let hiddenTools = [...this.data.hiddenTools]
+      const id = e.currentTarget.dataset.id
+      let hiddenTools = (this.data.hiddenTools || []).slice()
 
-    const foundIdx = hiddenTools.indexOf(id)
+      const foundIdx = hiddenTools.indexOf(id)
 
-    if (foundIdx > -1) {
-      hiddenTools.splice(foundIdx, 1)
-      wx.showToast({ title: '已显示 ✓', icon: 'none', duration: 1000 })
-    } else {
-      hiddenTools.push(id)
-      wx.showToast({ title: '已隐藏 👁', icon: 'none', duration: 1000 })
+      if (foundIdx > -1) {
+        hiddenTools.splice(foundIdx, 1)
+        wx.showToast({ title: '已显示 ✓', icon: 'none', duration: 1000 })
+      } else {
+        hiddenTools.push(id)
+        wx.showToast({ title: '已隐藏 👁', icon: 'none', duration: 1000 })
+      }
+
+      this.updateHiddenToolsList(hiddenTools)
+
+      const filteredTools = this.data.filteredTools || []
+      let visibleTools = []
+      for (let vi = 0; vi < filteredTools.length; vi++) {
+        const tool = filteredTools[vi]
+        const isHidden = hiddenTools.indexOf(tool.id) > -1
+        if (!isHidden) {
+          visibleTools.push(tool)
+        }
+      }
+
+      this.setData({
+        hiddenTools: hiddenTools,
+        filteredTools: visibleTools,
+        canUndo: true
+      })
+    } catch(e) {
+      console.error('[layout] toggleToolVisibility error:', e)
     }
-
-    this.updateHiddenToolsList(hiddenTools)
-
-    const visibleTools = this.data.filteredTools.filter(
-      tool => !hiddenTools.includes(tool.id)
-    )
-
-    this.setData({
-      hiddenTools,
-      filteredTools: visibleTools,
-      canUndo: true
-    })
   },
 
   restoreHiddenTool(e) {
-    wx.vibrateShort({ type: 'light' })
+    try {
+      wx.vibrateShort({ type: 'light' })
 
-    const id = e.currentTarget.dataset.id
-    let hiddenTools = [...this.data.hiddenTools]
-    hiddenTools = hiddenTools.filter(toolId => toolId !== id)
+      const id = e.currentTarget.dataset.id
+      let hiddenTools = (this.data.hiddenTools || []).slice()
+      const newHidden = []
+      for (let nh = 0; nh < hiddenTools.length; nh++) {
+        if (hiddenTools[nh] !== id) {
+          newHidden.push(hiddenTools[nh])
+        }
+      }
+      hiddenTools = newHidden
 
-    this.updateHiddenToolsList(hiddenTools)
+      this.updateHiddenToolsList(hiddenTools)
 
-    const allTools = this.data.tools
-    const restoredTool = allTools.find(t => t.id === id)
+      const allTools = this.data.tools || []
+      let restoredTool = null
+      for (let ai = 0; ai < allTools.length; ai++) {
+        if (allTools[ai].id === id) {
+          restoredTool = allTools[ai]
+          break
+        }
+      }
 
-    let visibleTools = [...this.data.filteredTools]
-    if (restoredTool && !visibleTools.find(t => t.id === id)) {
-      visibleTools.push(restoredTool)
+      let visibleTools = (this.data.filteredTools || []).slice()
+      if (restoredTool) {
+        let alreadyExists = false
+        for (let ve = 0; ve < visibleTools.length; ve++) {
+          if (visibleTools[ve].id === id) {
+            alreadyExists = true
+            break
+          }
+        }
+        if (!alreadyExists) {
+          visibleTools.push(restoredTool)
+        }
+      }
+
+      this.setData({
+        hiddenTools: hiddenTools,
+        filteredTools: visibleTools
+      })
+
+      const displayName = restoredTool ? restoredTool.name : '工具'
+      wx.showToast({
+        title: displayName + ' 已恢复 ✓',
+        icon: 'success',
+        duration: 1000
+      })
+    } catch(e) {
+      console.error('[layout] restoreHiddenTool error:', e)
     }
-
-    this.setData({
-      hiddenTools,
-      filteredTools: visibleTools
-    })
-
-    const displayName = restoredTool ? restoredTool.name : '工具'
-    wx.showToast({
-      title: `${displayName} 已恢复 ✓`,
-      icon: 'success',
-      duration: 1000
-    })
   },
 
   updateHiddenToolsList(hiddenTools) {
-    if (!hiddenTools || hiddenTools.length === 0) {
-      this.setData({ hiddenToolsList: [] })
-      return
+    try {
+      if (!hiddenTools || !Array.isArray(hiddenTools) || hiddenTools.length === 0) {
+        this.setData({ hiddenToolsList: [] })
+        return
+      }
+
+      const allTools = this.data.tools || []
+      const hiddenList = []
+
+      for (let i = 0; i < allTools.length; i++) {
+        for (let j = 0; j < hiddenTools.length; j++) {
+          if (hiddenTools[j] === allTools[i].id) {
+            hiddenList.push(allTools[i])
+            break
+          }
+        }
+      }
+
+      this.setData({ hiddenToolsList: hiddenList })
+    } catch(e) {
+      console.error('[layout] updateHiddenToolsList error:', e)
     }
-
-    const allTools = this.data.tools
-    const hiddenList = allTools.filter(tool => hiddenTools.includes(tool.id))
-
-    this.setData({ hiddenToolsList: hiddenList })
   },
 
   saveCustomLayout() {
-    const currentOrder = this.data.filteredTools.map(tool => tool.id)
-    wx.setStorageSync('customToolOrder', currentOrder)
-    wx.setStorageSync('hiddenTools', this.data.hiddenTools)
+    try {
+      const filteredTools = this.data.filteredTools || []
+      const currentOrder = []
+      for (let i = 0; i < filteredTools.length; i++) {
+        currentOrder.push(filteredTools[i].id)
+      }
 
-    this.setData({
-      customOrder: currentOrder
-    })
+      wx.setStorageSync('customToolOrder', currentOrder)
+      wx.setStorageSync('hiddenTools', this.data.hiddenTools || [])
+
+      this.setData({
+        customOrder: currentOrder
+      })
+    } catch(e) {
+      console.error('[layout] saveCustomLayout error:', e)
+    }
   },
 
   resetLayout() {
-    wx.vibrateShort({ type: 'medium' })
+    try {
+      wx.vibrateShort({ type: 'medium' })
 
-    wx.showModal({
-      title: '⚠️ 重置布局',
-      content: '确定要恢复默认布局吗？\n所有自定义排序和隐藏设置将被清除。\n\n💡 重置后可通过"撤销"按钮恢复',
-      confirmText: '重置',
-      cancelText: '取消',
-      confirmColor: '#EF4444',
-      success: (res) => {
-        if (res.confirm) {
-          this.pushEditHistory()
+      const that = this
 
-          wx.removeStorageSync('customToolOrder')
-          wx.removeStorageSync('hiddenTools')
+      wx.showModal({
+        title: '⚠️ 重置布局',
+        content: '确定要恢复默认布局吗？\n所有自定义排序和隐藏设置将被清除。\n\n💡 重置后可通过"撤销"按钮恢复',
+        confirmText: '重置',
+        cancelText: '取消',
+        confirmColor: '#EF4444',
+        success: function(res) {
+          if (res.confirm) {
+            that.pushEditHistory()
 
-          this.setData({
-            customOrder: [],
-            hiddenTools: [],
-            isEditMode: false,
-            canUndo: true,
-            selectedToolIndex: -1
-          })
+            wx.removeStorageSync('customToolOrder')
+            wx.removeStorageSync('hiddenTools')
 
-          const favorites = wx.getStorageSync('favorites') || []
-          const defaultTools = require('./config').defaultTools
-          const defaultToolsCopy = defaultTools.map(tool => ({
-            ...tool,
-            isFavorite: favorites.includes(tool.id)
-          }))
+            that.setData({
+              customOrder: [],
+              hiddenTools: [],
+              isEditMode: false,
+              canUndo: true,
+              selectedToolIndex: -1
+            })
 
-          this.setData({
-            tools: defaultToolsCopy,
-            filteredTools: defaultToolsCopy
-          })
+            let favorites = wx.getStorageSync('favorites') || []
+            if (!Array.isArray(favorites)) {
+              favorites = []
+            }
 
-          wx.showToast({ title: '已恢复默认布局', icon: 'success' })
+            const defaultTools = require('./config').defaultTools || []
+            const defaultToolsCopy = []
+
+            for (let di = 0; di < defaultTools.length; di++) {
+              const tcopy = {}
+              const sourceTool = defaultTools[di]
+              for (const key in sourceTool) {
+                tcopy[key] = sourceTool[key]
+              }
+              tcopy.isFavorite = favorites.indexOf(tcopy.id) > -1
+              defaultToolsCopy.push(tcopy)
+            }
+
+            that.setData({
+              tools: defaultToolsCopy,
+              filteredTools: defaultToolsCopy
+            })
+
+            wx.showToast({ title: '已恢复默认布局', icon: 'success' })
+          }
         }
-      }
-    })
+      })
+    } catch(e) {
+      console.error('[layout] resetLayout error:', e)
+    }
   }
 }
