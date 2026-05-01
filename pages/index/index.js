@@ -163,10 +163,10 @@ Page({
         }, 100)
       }
     }
-  }
-})
+  },
 
-Object.assign(Page.prototype, layoutManager)
-Object.assign(Page.prototype, searchManager)
-Object.assign(Page.prototype, toolInteraction)
-Object.assign(Page.prototype, shareUtils)
+  ...layoutManager,
+  ...searchManager,
+  ...toolInteraction,
+  ...shareUtils
+})
