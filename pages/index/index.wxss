@@ -943,7 +943,8 @@ page {
 
 /* 底部安全区域 */
 .bottom-safe-area {
-  height: 40px;
+  height: 0px;
+  background: transparent;
 }
 
 /* ===================================
