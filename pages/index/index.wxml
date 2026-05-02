@@ -8,39 +8,86 @@
 
 <scroll-view class="main-scroll {{isDarkMode ? 'dark-mode' : ''}}" scroll-y enhanced show-scrollbar="{{false}}" bounces="{{false}}" refresher-enabled="{{!isEditMode}}" refresher-triggered="{{isRefreshing}}" bindrefresherrefresh="onPullDownRefresh" scroll-top="{{scrollTop}}" bindscrolltoupper="onScrollToUpper" bindscroll="onPageScroll" lower-threshold="0">
   <view class="page-container">
-    <!-- 应用头部 -->
+    <!-- 应用头部 - Hero Section v2 -->
     <view class="header-section">
-      <view class="header-top">
-        <text class="app-title">百宝工具箱</text>
-        <view class="header-right" bindtap="{{isEditMode ? '' : 'showMoreMenu'}}">
-          <text class="greeting-text">{{greetingText}}</text>
-          <view class="edit-mode-btn {{isEditMode ? 'active' : ''}}" catchtap="toggleEditMode" wx:if="{{!isEditMode}}">
-            <text class="edit-icon">✏️</text>
+      <!-- 品牌标识区 -->
+      <view class="header-brand">
+        <text class="brand-logo">🧰</text>
+        <view class="brand-text">
+          <text class="brand-title">百宝工具箱</text>
+          <view class="version-badge">
+            <text>v2.0</text>
           </view>
-          <view class="more-icon" wx:if="{{!isEditMode}}">
-            <text class="dot"></text>
-            <text class="dot"></text>
-            <text class="dot"></text>
+        </view>
+      </view>
+
+      <!-- 价值主张 -->
+      <view class="value-proposition">
+        <text class="slogan">{{isEditMode ? '点击卡片选中，再点击目标位置交换' : '25+ 实用小工具，即用即走'}}</text>
+      </view>
+
+      <!-- Top 3 快捷入口 -->
+      <view class="quick-access" wx:if="{{topTools.length > 0 && !isEditMode}}">
+        <view
+          wx:for="{{topTools}}"
+          wx:key="id"
+          class="quick-tool-item"
+          data-tool="{{item}}"
+          bindtap="onToolClick"
+        >
+          <view class="quick-icon" style="background: {{item.iconBg}}">
+            <text>{{item.icon}}</text>
           </view>
-          <view class="edit-actions" wx:if="{{isEditMode}}">
-            <view class="edit-row-top">
-              <view class="edit-action-btn done-btn" catchtap="toggleEditMode">
-                <text>完成</text>
-              </view>
-              <view class="edit-action-btn reset-btn" catchtap="resetLayout">
-                <text>重置</text>
-              </view>
+          <text class="quick-name">{{item.name}}</text>
+        </view>
+      </view>
+
+      <!-- 数据信任条 -->
+      <view class="trust-bar" wx:if="{{!isEditMode}}">
+        <view class="trust-item">
+          <text class="trust-number">25+</text>
+          <text class="trust-label">实用工具</text>
+        </view>
+        <view class="trust-divider"></view>
+        <view class="trust-item">
+          <text class="trust-number">{{totalUsageDisplay}}</text>
+          <text class="trust-label">累计使用</text>
+        </view>
+        <view class="trust-divider"></view>
+        <view class="trust-item">
+          <text class="trust-number">100%</text>
+          <text class="trust-label">免费使用</text>
+        </view>
+      </view>
+
+      <!-- 右侧操作区域 -->
+      <view class="header-right" bindtap="{{isEditMode ? '' : 'showMoreMenu'}}">
+        <text class="greeting-text">{{greetingText}}</text>
+        <view class="edit-mode-btn {{isEditMode ? 'active' : ''}}" catchtap="toggleEditMode" wx:if="{{!isEditMode}}">
+          <text class="edit-icon">✏️</text>
+        </view>
+        <view class="more-icon" wx:if="{{!isEditMode}}">
+          <text class="dot"></text>
+          <text class="dot"></text>
+          <text class="dot"></text>
+        </view>
+        <view class="edit-actions" wx:if="{{isEditMode}}">
+          <view class="edit-row-top">
+            <view class="edit-action-btn done-btn" catchtap="toggleEditMode">
+              <text>完成</text>
             </view>
-            <view class="edit-row-bottom">
-              <view class="edit-action-btn undo-btn {{canUndo ? 'can-undo' : ''}}" catchtap="undoLastAction">
-                <text>↩️ 撤销上一步</text>
-              </view>
+            <view class="edit-action-btn reset-btn" catchtap="resetLayout">
+              <text>重置</text>
+            </view>
+          </view>
+          <view class="edit-row-bottom">
+            <view class="edit-action-btn undo-btn {{canUndo ? 'can-undo' : ''}}" catchtap="undoLastAction">
+              <text>↩️ 撤销上一步</text>
             </view>
           </view>
         </view>
       </view>
-      <text class="slogan">{{isEditMode ? '点击卡片选中，再点击目标位置交换' : '即用即走 · 轻量实用'}}</text>
-      
+
       <!-- 编辑模式提示条 -->
       <view class="edit-tip-bar {{isEditMode ? 'show' : ''}}" wx:if="{{isEditMode}}">
         <text class="tip-text">👆 点击选中交换 · 👁️ 隐藏/显示 · 👇 下方恢复已隐藏</text>

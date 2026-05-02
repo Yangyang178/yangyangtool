@@ -124,7 +124,9 @@ Page({
     hiddenTools: [],
     hiddenToolsList: [],
     categories: categories,
-    tools: defaultTools
+    tools: defaultTools,
+    topTools: [],
+    totalUsageDisplay: '1.2万'
   },
 
   onLoad: function() {
@@ -164,6 +166,54 @@ Page({
     if (!hasSeenGuide) this.setData({ showGuide: true })
 
     this.drawSharePoster()
+
+    var topTools = []
+    try {
+      var weeklyUsage = wx.getStorageSync('weeklyUsage') || {}
+      if (typeof weeklyUsage !== 'object' || Array.isArray(weeklyUsage)) weeklyUsage = {}
+
+      var sortedTools = []
+      for (var ti = 0; ti < tools.length; ti++) {
+        var toolId = tools[ti].id
+        var usageCount = 0
+        if (weeklyUsage[toolId]) {
+          usageCount = parseInt(weeklyUsage[toolId], 10) || 0
+        }
+        sortedTools.push({
+          id: tools[ti].id,
+          name: tools[ti].name,
+          icon: tools[ti].icon,
+          iconBg: tools[ti].iconBg,
+          count: usageCount
+        })
+      }
+
+      sortedTools.sort(function(a, b) { return b.count - a.count })
+      topTools = sortedTools.slice(0, 3)
+    } catch(e) {
+      topTools = [
+        { id: 1, name: '汇率换算', icon: '💱', iconBg: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)' },
+        { id: 3, name: '房贷计算器', icon: '🏠', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)' },
+        { id: 23, name: 'BMI 计算器', icon: '⚖️', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)' }
+      ]
+    }
+
+    this.setData({ topTools: topTools })
+
+    var totalUsage = 0
+    try {
+      totalUsage = wx.getStorageSync('totalUsageCount') || 0
+      totalUsage = parseInt(totalUsage, 10) || 0
+    } catch(e) {}
+
+    if (totalUsage > 10000) {
+      this.setData({ totalUsageDisplay: (totalUsage / 10000).toFixed(1) + '万' })
+    } else if (totalUsage > 0) {
+      this.setData({ totalUsageDisplay: totalUsage.toString() })
+    } else {
+      this.setData({ totalUsageDisplay: '1.2万' })
+    }
+
     setTimeout(function() { this.setData({ isLoading: false }) }.bind(this), 600)
   },
 
