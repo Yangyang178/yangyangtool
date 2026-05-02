@@ -21,7 +21,7 @@ page {
 
 .page-container {
   padding: 0 20px;
-  padding-bottom: 100px;
+  padding-bottom: 20px;
   min-height: calc(100vh - 100px);
   position: relative;
   box-sizing: border-box;
@@ -999,53 +999,54 @@ page {
 }
 
 /* ===================================
-   🌙 NIGHT MODE - 夜间模式完整适配
+   🌙 NIGHT MODE - 精致夜间模式 v2
+   深邃 · 层次分明 · 高对比度
    =================================== */
 
 page.dark-mode {
-  background: linear-gradient(180deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
+  background: #0a0e1a;
 }
 
 .dark-mode .main-scroll {
-  background: transparent !important;
+  background: #0a0e1a !important;
 }
 
 .dark-mode .page-container {
-  background: transparent !important;
+  background: #0a0e1a !important;
 }
 
 /* Hero Section - 夜间模式 */
 .dark-mode .header-section {
-  background: linear-gradient(135deg, #1E3A8A 0%, #4C1D95 100%);
-  box-shadow: 0 8px 32px rgba(30, 58, 138, 0.4);
+  background: linear-gradient(135deg, #1e2847 0%, #2d1b69 100%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 .dark-mode .header-section::before,
 .dark-mode .header-section::after {
-  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
 }
 
 .dark-mode .app-title {
   color: #FFFFFF;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.4);
 }
 
 .dark-mode .greeting-text {
-  color: rgba(255,255,255,0.9);
+  color: rgba(255,255,255,0.95);
 }
 
 .dark-mode .slogan {
-  color: rgba(255,255,255,0.85);
+  color: rgba(255,255,255,0.88);
 }
 
 .dark-mode .edit-mode-btn,
 .dark-mode .more-icon {
-  background: rgba(255,255,255,0.15);
-  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.15);
 }
 
 .dark-mode .edit-mode-btn.active {
-  background: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.2);
 }
 
 .dark-mode .dot {
@@ -1053,52 +1054,54 @@ page.dark-mode {
 }
 
 .dark-mode .edit-tip-bar {
-  background: rgba(255,255,255,0.12);
-  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.12);
 }
 
 .dark-mode .tip-text {
-  color: rgba(255,255,255,0.95);
+  color: rgba(255,255,255,0.98);
 }
 
 /* 编辑按钮 - 夜间模式 */
 .dark-mode .done-btn {
-  background: rgba(34,197,94,0.9);
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
   color: #FFFFFF;
 }
 
 .dark-mode .reset-btn {
-  background: rgba(239,68,68,0.9);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
   color: #FFFFFF;
 }
 
 .dark-mode .undo-btn {
-  background: rgba(255,255,255,0.18);
-  color: rgba(255,255,255,0.95);
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.9);
+  border-color: rgba(255,255,255,0.15);
 }
 
 .dark-mode .undo-btn.can-undo {
-  background: rgba(59,130,246,0.9);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #FFFFFF;
 }
 
 /* Search Bar - 夜间模式 */
 .dark-mode .search-input-wrapper {
-  background: rgba(30,41,59,0.8);
-  border-color: rgba(99,102,241,0.3);
-  box-shadow: 0 4px 20px rgba(99,102,241,0.15);
+  background: #161d2f;
+  border-color: rgba(99,102,241,0.25);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2);
 }
 
 .dark-mode .search-input-wrapper:focus-within {
-  border-color: #6366f1;
-  box-shadow: 0 6px 28px rgba(99,102,241,0.25), 0 0 0 4px rgba(99,102,241,0.12);
+  border-color: #818cf8;
+  box-shadow: 0 6px 28px rgba(129,140,248,0.25), 0 0 0 4px rgba(129,140,248,0.1);
 }
 
 .dark-mode .search-icon {
-  opacity: 0.5;
+  opacity: 0.45;
 }
 
 .dark-mode .search-input-wrapper:focus-within .search-icon {
-  opacity: 0.75;
+  opacity: 0.7;
 }
 
 .dark-mode .search-input {
@@ -1106,34 +1109,38 @@ page.dark-mode {
 }
 
 .dark-mode .search-placeholder {
-  color: #94A3B8;
+  color: #64748b;
 }
 
 /* Search Panel - 夜间模式 */
 .dark-mode .search-panel {
-  background: rgba(30,41,59,0.95);
-  border-color: rgba(99,102,241,0.2);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  background: #161d2f;
+  border-color: rgba(99,102,241,0.18);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
 
 .dark-mode .section-title {
   color: #F1F5F9;
+  font-weight: 700;
 }
 
 .dark-mode .clear-history {
   color: #f87171;
+  font-weight: 600;
 }
 
 .dark-mode .history-tag {
-  background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-  color: #CBD5E1;
-  border-color: rgba(148,163,184,0.2);
+  background: #1e293b;
+  color: #e2e8f0;
+  border-color: rgba(148,163,184,0.15);
+  font-weight: 500;
 }
 
 .dark-mode .hot-tag {
   background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
   color: #fde68a;
-  border-color: rgba(251,191,36,0.25);
+  border-color: rgba(251,191,36,0.2);
+  font-weight: 600;
 }
 
 .dark-mode .hot-tag:nth-child(1),
@@ -1141,48 +1148,56 @@ page.dark-mode {
 .dark-mode .hot-tag:nth-child(3) {
   background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%);
   color: #fecaca;
-  border-color: rgba(239,68,68,0.3);
+  border-color: rgba(239,68,68,0.25);
 }
 
-/* Category Tabs - 夜间模式 */
+/* Category Tabs - 夜间模式 - 重点优化 */
 .dark-mode .tab-item {
-  background: rgba(51,65,85,0.6);
-  border-color: rgba(148,163,184,0.15);
+  background: #1e293b;
+  border-color: rgba(148,163,184,0.12);
 }
 
 .dark-mode .tab-item.active {
-  box-shadow: 0 4px 16px rgba(99,102,241,0.45);
-  border-color: rgba(99,102,241,0.35);
+  background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+  box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+  border-color: rgba(129,140,248,0.4);
 }
 
 .dark-mode .tab-text {
-  color: #94A3B8;
+  color: #cbd5e1;  /* ← 大幅提高亮度 */
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 .dark-mode .tab-item.active .tab-text {
   color: #FFFFFF;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-/* Tool Cards - 夜间模式 */
+/* Tool Cards - 夜间模式 - 核心改进 */
 .dark-mode .tool-card {
-  background: linear-gradient(145deg, #1E293B 0%, #334155 100%);
-  border-color: rgba(148,163,184,0.1);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  background: linear-gradient(145deg, #1a2035 0%, #232d42 100%);
+  border-color: rgba(148,163,184,0.08);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .dark-mode .tool-card:hover {
-  box-shadow: 0 12px 36px rgba(99,102,241,0.25);
-  border-color: rgba(99,102,241,0.3);
+  background: linear-gradient(145deg, #1f2937 0%, #28354d 100%);
+  box-shadow: 0 12px 36px rgba(99,102,241,0.2), 0 0 0 1px rgba(99,102,241,0.15);
+  border-color: rgba(99,102,241,0.25);
+  transform: translateY(-6px) scale(1.02);
 }
 
 .dark-mode .tool-card-hover {
-  box-shadow: 0 10px 30px rgba(99,102,241,0.28) !important;
-  border-color: rgba(99,102,241,0.35) !important;
+  background: linear-gradient(145deg, #1f2937 0%, #28354d 100%) !important;
+  box-shadow: 0 10px 30px rgba(99,102,241,0.22), 0 0 0 1px rgba(99,102,241,0.18) !important;
+  border-color: rgba(99,102,241,0.28) !important;
 }
 
 .dark-mode .card-favorite {
-  background: rgba(51,65,85,0.9);
-  border-color: rgba(148,163,184,0.2);
+  background: rgba(30,41,59,0.9);
+  border-color: rgba(148,163,184,0.15);
 }
 
 .dark-mode .card-favorite text {
@@ -1190,8 +1205,8 @@ page.dark-mode {
 }
 
 .dark-mode .tool-card.favorite .card-favorite {
-  background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
-  border-color: rgba(251,191,36,0.4);
+  background: linear-gradient(135deg, #854d0e 0%, #713f12 100%);
+  border-color: rgba(245,158,11,0.35);
 }
 
 .dark-mode .tool-card.favorite .card-favorite text {
@@ -1199,8 +1214,8 @@ page.dark-mode {
 }
 
 .dark-mode .card-visibility {
-  background: rgba(51,65,85,0.9);
-  border-color: rgba(148,163,184,0.2);
+  background: rgba(30,41,59,0.9);
+  border-color: rgba(148,163,184,0.15);
 }
 
 .dark-mode .card-visibility.hidden-tool {
@@ -1209,51 +1224,57 @@ page.dark-mode {
 }
 
 .dark-mode .selected-overlay {
-  background: rgba(99,102,241,0.12);
+  background: rgba(99,102,241,0.1);
 }
 
 .dark-mode .selected-ring {
-  border-color: #6366f1;
+  border-color: #818cf8;
 }
 
 .dark-mode .selected-badge {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  box-shadow: 0 4px 16px rgba(99,102,241,0.5);
+  background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+  box-shadow: 0 4px 16px rgba(99,102,241,0.45);
 }
 
 .dark-mode .selected-hint {
-  background: rgba(0,0,0,0.85);
+  background: rgba(0,0,0,0.88);
+  backdrop-filter: blur(10px);
 }
 
 .dark-mode .card-icon-wrapper {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 .dark-mode .card-icon-wrapper::after {
-  opacity: 0.25;
+  opacity: 0.2;
 }
 
 .dark-mode .card-icon {
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 .dark-mode .card-title {
-  color: #F1F5F9;
+  color: #ffffff;  /* ← 纯白，最高对比度 */
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
 .dark-mode .card-desc {
-  color: #94A3B8;
+  color: #94a3b8;  /* 清晰可见的灰色 */
+  line-height: 1.6;
 }
 
 .dark-mode .card-badge {
-  background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
+  background: linear-gradient(135deg, #854d0e 0%, #713f12 100%);
   color: #fde68a;
-  box-shadow: 0 2px 6px rgba(251,191,36,0.25);
+  box-shadow: 0 2px 6px rgba(245,158,11,0.2);
+  font-weight: 800;
 }
 
 /* Empty State - 夜间模式 */
 .dark-mode .empty-text {
   color: #F1F5F9;
+  font-weight: 700;
 }
 
 .dark-mode .empty-subtext {
@@ -1263,35 +1284,40 @@ page.dark-mode {
 /* Hidden Tools Section - 夜间模式 */
 .dark-mode .hidden-tools-section {
   background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
-  border-color: rgba(251,191,36,0.25);
+  border-color: rgba(251,191,36,0.2);
 }
 
 .dark-mode .hidden-title {
   color: #fde68a;
+  font-weight: 700;
 }
 
 .dark-mode .hidden-hint {
   color: #d97706;
+  font-weight: 500;
 }
 
 .dark-mode .hidden-tool-item {
-  background: rgba(30,41,59,0.6);
-  border-color: rgba(148,163,184,0.2);
+  background: #1a2035;
+  border-color: rgba(148,163,184,0.12);
 }
 
 .dark-mode .hidden-tool-item:active {
-  background: rgba(51,65,85,0.85);
+  background: #232d42;
 }
 
 .dark-mode .hidden-name {
-  color: #cbd5e1;
+  color: #e2e8f0;  /* 高亮度 */
+  font-weight: 600;
 }
 
 .dark-mode .restore-badge {
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  box-shadow: 0 2px 6px rgba(5,150,105,0.3);
+  box-shadow: 0 2px 6px rgba(5,150,105,0.25);
+  font-weight: 700;
 }
 
 .dark-mode .no-hidden-tools {
   color: #fde68a;
+  font-weight: 500;
 }
