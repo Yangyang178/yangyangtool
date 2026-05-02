@@ -25,7 +25,7 @@ page {
   min-height: calc(100vh - 100px);
   position: relative;
   box-sizing: border-box;
-  background: transparent !important;
+  background: #FFFFFF;
 }
 
 /* ===================================
