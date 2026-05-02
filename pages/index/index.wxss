@@ -21,7 +21,7 @@ page {
 
 .page-container {
   padding: 0 20px;
-  padding-bottom: 20px;
+  padding-bottom: 120px;
   min-height: calc(100vh - 100px);
   position: relative;
   box-sizing: border-box;
