@@ -209,28 +209,34 @@ page {
   text-align: center;
 }
 
-/* 编辑操作按钮组 */
+/* 编辑操作按钮组 - 优化布局防止溢出 */
 .edit-actions {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-top: 12px;
+  width: 100%;
 }
 
 .edit-row-top, .edit-row-bottom {
   display: flex;
   gap: 8px;
+  width: 100%;
+  flex-wrap: wrap;  /* 允许换行 */
 }
 
 .edit-action-btn {
-  padding: 10px 18px;
+  padding: 9px 14px;  /* 减小内边距 */
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 13px;  /* 稍微减小字号 */
   font-weight: 600;
   text-align: center;
   backdrop-filter: blur(10px);
   transition: all 0.25s ease;
   border: 1px solid rgba(255,255,255,0.3);
+  flex: 1;  /* 弹性伸缩 */
+  min-width: 0;  /* 允许缩小到0 */
+  max-width: none;  /* 移除最大宽度限制 */
 }
 
 .done-btn {
@@ -990,4 +996,302 @@ page {
   50% { transform: scale(1.2) rotate(10deg); }
   75% { transform: scale(1.15) rotate(-5deg); }
   100% { transform: scale(1) rotate(0deg); }
+}
+
+/* ===================================
+   🌙 NIGHT MODE - 夜间模式完整适配
+   =================================== */
+
+page.dark-mode {
+  background: linear-gradient(180deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
+}
+
+.dark-mode .main-scroll {
+  background: transparent !important;
+}
+
+.dark-mode .page-container {
+  background: transparent !important;
+}
+
+/* Hero Section - 夜间模式 */
+.dark-mode .header-section {
+  background: linear-gradient(135deg, #1E3A8A 0%, #4C1D95 100%);
+  box-shadow: 0 8px 32px rgba(30, 58, 138, 0.4);
+}
+
+.dark-mode .header-section::before,
+.dark-mode .header-section::after {
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+}
+
+.dark-mode .app-title {
+  color: #FFFFFF;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.dark-mode .greeting-text {
+  color: rgba(255,255,255,0.9);
+}
+
+.dark-mode .slogan {
+  color: rgba(255,255,255,0.85);
+}
+
+.dark-mode .edit-mode-btn,
+.dark-mode .more-icon {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.dark-mode .edit-mode-btn.active {
+  background: rgba(255,255,255,0.25);
+}
+
+.dark-mode .dot {
+  background-color: rgba(255,255,255,0.9);
+}
+
+.dark-mode .edit-tip-bar {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.dark-mode .tip-text {
+  color: rgba(255,255,255,0.95);
+}
+
+/* 编辑按钮 - 夜间模式 */
+.dark-mode .done-btn {
+  background: rgba(34,197,94,0.9);
+  color: #FFFFFF;
+}
+
+.dark-mode .reset-btn {
+  background: rgba(239,68,68,0.9);
+  color: #FFFFFF;
+}
+
+.dark-mode .undo-btn {
+  background: rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.95);
+}
+
+.dark-mode .undo-btn.can-undo {
+  background: rgba(59,130,246,0.9);
+}
+
+/* Search Bar - 夜间模式 */
+.dark-mode .search-input-wrapper {
+  background: rgba(30,41,59,0.8);
+  border-color: rgba(99,102,241,0.3);
+  box-shadow: 0 4px 20px rgba(99,102,241,0.15);
+}
+
+.dark-mode .search-input-wrapper:focus-within {
+  border-color: #6366f1;
+  box-shadow: 0 6px 28px rgba(99,102,241,0.25), 0 0 0 4px rgba(99,102,241,0.12);
+}
+
+.dark-mode .search-icon {
+  opacity: 0.5;
+}
+
+.dark-mode .search-input-wrapper:focus-within .search-icon {
+  opacity: 0.75;
+}
+
+.dark-mode .search-input {
+  color: #F1F5F9;
+}
+
+.dark-mode .search-placeholder {
+  color: #94A3B8;
+}
+
+/* Search Panel - 夜间模式 */
+.dark-mode .search-panel {
+  background: rgba(30,41,59,0.95);
+  border-color: rgba(99,102,241,0.2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.dark-mode .section-title {
+  color: #F1F5F9;
+}
+
+.dark-mode .clear-history {
+  color: #f87171;
+}
+
+.dark-mode .history-tag {
+  background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+  color: #CBD5E1;
+  border-color: rgba(148,163,184,0.2);
+}
+
+.dark-mode .hot-tag {
+  background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
+  color: #fde68a;
+  border-color: rgba(251,191,36,0.25);
+}
+
+.dark-mode .hot-tag:nth-child(1),
+.dark-mode .hot-tag:nth-child(2),
+.dark-mode .hot-tag:nth-child(3) {
+  background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%);
+  color: #fecaca;
+  border-color: rgba(239,68,68,0.3);
+}
+
+/* Category Tabs - 夜间模式 */
+.dark-mode .tab-item {
+  background: rgba(51,65,85,0.6);
+  border-color: rgba(148,163,184,0.15);
+}
+
+.dark-mode .tab-item.active {
+  box-shadow: 0 4px 16px rgba(99,102,241,0.45);
+  border-color: rgba(99,102,241,0.35);
+}
+
+.dark-mode .tab-text {
+  color: #94A3B8;
+}
+
+.dark-mode .tab-item.active .tab-text {
+  color: #FFFFFF;
+}
+
+/* Tool Cards - 夜间模式 */
+.dark-mode .tool-card {
+  background: linear-gradient(145deg, #1E293B 0%, #334155 100%);
+  border-color: rgba(148,163,184,0.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.dark-mode .tool-card:hover {
+  box-shadow: 0 12px 36px rgba(99,102,241,0.25);
+  border-color: rgba(99,102,241,0.3);
+}
+
+.dark-mode .tool-card-hover {
+  box-shadow: 0 10px 30px rgba(99,102,241,0.28) !important;
+  border-color: rgba(99,102,241,0.35) !important;
+}
+
+.dark-mode .card-favorite {
+  background: rgba(51,65,85,0.9);
+  border-color: rgba(148,163,184,0.2);
+}
+
+.dark-mode .card-favorite text {
+  color: #64748b;
+}
+
+.dark-mode .tool-card.favorite .card-favorite {
+  background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
+  border-color: rgba(251,191,36,0.4);
+}
+
+.dark-mode .tool-card.favorite .card-favorite text {
+  color: #fbbf24;
+}
+
+.dark-mode .card-visibility {
+  background: rgba(51,65,85,0.9);
+  border-color: rgba(148,163,184,0.2);
+}
+
+.dark-mode .card-visibility.hidden-tool {
+  background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%);
+  border-color: rgba(239,68,68,0.3);
+}
+
+.dark-mode .selected-overlay {
+  background: rgba(99,102,241,0.12);
+}
+
+.dark-mode .selected-ring {
+  border-color: #6366f1;
+}
+
+.dark-mode .selected-badge {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  box-shadow: 0 4px 16px rgba(99,102,241,0.5);
+}
+
+.dark-mode .selected-hint {
+  background: rgba(0,0,0,0.85);
+}
+
+.dark-mode .card-icon-wrapper {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.dark-mode .card-icon-wrapper::after {
+  opacity: 0.25;
+}
+
+.dark-mode .card-icon {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.dark-mode .card-title {
+  color: #F1F5F9;
+}
+
+.dark-mode .card-desc {
+  color: #94A3B8;
+}
+
+.dark-mode .card-badge {
+  background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
+  color: #fde68a;
+  box-shadow: 0 2px 6px rgba(251,191,36,0.25);
+}
+
+/* Empty State - 夜间模式 */
+.dark-mode .empty-text {
+  color: #F1F5F9;
+}
+
+.dark-mode .empty-subtext {
+  color: #64748b;
+}
+
+/* Hidden Tools Section - 夜间模式 */
+.dark-mode .hidden-tools-section {
+  background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
+  border-color: rgba(251,191,36,0.25);
+}
+
+.dark-mode .hidden-title {
+  color: #fde68a;
+}
+
+.dark-mode .hidden-hint {
+  color: #d97706;
+}
+
+.dark-mode .hidden-tool-item {
+  background: rgba(30,41,59,0.6);
+  border-color: rgba(148,163,184,0.2);
+}
+
+.dark-mode .hidden-tool-item:active {
+  background: rgba(51,65,85,0.85);
+}
+
+.dark-mode .hidden-name {
+  color: #cbd5e1;
+}
+
+.dark-mode .restore-badge {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 2px 6px rgba(5,150,105,0.3);
+}
+
+.dark-mode .no-hidden-tools {
+  color: #fde68a;
 }
