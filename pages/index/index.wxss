@@ -1000,7 +1000,6 @@ page {
 
 /* ===================================
    🌙 NIGHT MODE - 精致夜间模式 v2
-   深邃 · 层次分明 · 高对比度
    =================================== */
 
 page.dark-mode {
@@ -1015,7 +1014,6 @@ page.dark-mode {
   background: #0a0e1a !important;
 }
 
-/* Hero Section - 夜间模式 */
 .dark-mode .header-section {
   background: linear-gradient(135deg, #1e2847 0%, #2d1b69 100%);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
@@ -1062,7 +1060,6 @@ page.dark-mode {
   color: rgba(255,255,255,0.98);
 }
 
-/* 编辑按钮 - 夜间模式 */
 .dark-mode .done-btn {
   background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
   color: #FFFFFF;
@@ -1084,11 +1081,10 @@ page.dark-mode {
   color: #FFFFFF;
 }
 
-/* Search Bar - 夜间模式 */
 .dark-mode .search-input-wrapper {
   background: #161d2f;
   border-color: rgba(99,102,241,0.25);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 2px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
 .dark-mode .search-input-wrapper:focus-within {
@@ -1112,7 +1108,6 @@ page.dark-mode {
   color: #64748b;
 }
 
-/* Search Panel - 夜间模式 */
 .dark-mode .search-panel {
   background: #161d2f;
   border-color: rgba(99,102,241,0.18);
@@ -1151,7 +1146,6 @@ page.dark-mode {
   border-color: rgba(239,68,68,0.25);
 }
 
-/* Category Tabs - 夜间模式 - 重点优化 */
 .dark-mode .tab-item {
   background: #1e293b;
   border-color: rgba(148,163,184,0.12);
@@ -1164,7 +1158,7 @@ page.dark-mode {
 }
 
 .dark-mode .tab-text {
-  color: #cbd5e1;  /* ← 大幅提高亮度 */
+  color: #cbd5e1;
   font-weight: 600;
   letter-spacing: 0.3px;
 }
@@ -1175,23 +1169,22 @@ page.dark-mode {
   text-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-/* Tool Cards - 夜间模式 - 核心改进 */
 .dark-mode .tool-card {
   background: linear-gradient(145deg, #1a2035 0%, #232d42 100%);
   border-color: rgba(148,163,184,0.08);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.03);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
 }
 
 .dark-mode .tool-card:hover {
   background: linear-gradient(145deg, #1f2937 0%, #28354d 100%);
-  box-shadow: 0 12px 36px rgba(99,102,241,0.2), 0 0 0 1px rgba(99,102,241,0.15);
+  box-shadow: 0 12px 36px rgba(99,102,241,0.2);
   border-color: rgba(99,102,241,0.25);
   transform: translateY(-6px) scale(1.02);
 }
 
 .dark-mode .tool-card-hover {
   background: linear-gradient(145deg, #1f2937 0%, #28354d 100%) !important;
-  box-shadow: 0 10px 30px rgba(99,102,241,0.22), 0 0 0 1px rgba(99,102,241,0.18) !important;
+  box-shadow: 0 10px 30px rgba(99,102,241,0.22) !important;
   border-color: rgba(99,102,241,0.28) !important;
 }
 
@@ -1238,7 +1231,6 @@ page.dark-mode {
 
 .dark-mode .selected-hint {
   background: rgba(0,0,0,0.88);
-  backdrop-filter: blur(10px);
 }
 
 .dark-mode .card-icon-wrapper {
@@ -1254,13 +1246,13 @@ page.dark-mode {
 }
 
 .dark-mode .card-title {
-  color: #ffffff;  /* ← 纯白，最高对比度 */
+  color: #ffffff;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
 .dark-mode .card-desc {
-  color: #94a3b8;  /* 清晰可见的灰色 */
+  color: #94a3b8;
   line-height: 1.6;
 }
 
@@ -1271,7 +1263,6 @@ page.dark-mode {
   font-weight: 800;
 }
 
-/* Empty State - 夜间模式 */
 .dark-mode .empty-text {
   color: #F1F5F9;
   font-weight: 700;
@@ -1281,7 +1272,6 @@ page.dark-mode {
   color: #64748b;
 }
 
-/* Hidden Tools Section - 夜间模式 */
 .dark-mode .hidden-tools-section {
   background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
   border-color: rgba(251,191,36,0.2);
@@ -1307,7 +1297,7 @@ page.dark-mode {
 }
 
 .dark-mode .hidden-name {
-  color: #e2e8f0;  /* 高亮度 */
+  color: #e2e8f0;
   font-weight: 600;
 }
 
