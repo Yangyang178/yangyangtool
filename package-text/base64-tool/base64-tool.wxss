@@ -59,3 +59,130 @@ page { background-color: var(--pageBg,#F8FAFC); }
 .example-label { font-size: 13px; color: var(--textSecondary,#64748B); }
 .example-value { font-size: 13px; color: var(--textPrimary,#1E293B); font-family: monospace; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .example-item:active { transform: scale(0.98); }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 青绿色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(20, 184, 166, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .mode-btn {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .mode-btn.active {
+  background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.25);
+}
+
+.dark-mode .input-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .section-label {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .paste-btn {
+  color: var(--accentTeal,#2DD4BF);
+}
+
+.dark-mode .content-input {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .input-footer {
+  border-top-color: var(--borderLight,#374151);
+}
+
+.dark-mode .char-count {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .clear-btn {
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .action-btn.active {
+  box-shadow: 0 5px 18px rgba(20, 184, 166, 0.25);
+}
+
+.dark-mode .result-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .result-label {
+  color: var(--accentTeal,#2DD4BF);
+}
+
+.dark-mode .copy-result-btn {
+  background: var(--accentTeal,#14B8A6);
+}
+
+.dark-mode .swap-btn {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .result-content {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .result-text {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .result-info {
+  border-top-color: var(--borderLight,#374151);
+}
+
+.dark-mode .info-item {
+  background: var(--elevatedBg,#232d42);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .error-message {
+  background: rgba(239, 68, 68, 0.15);
+  border-left-color: var(--accentRed,#F87171);
+}
+
+.dark-mode .error-text {
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .examples-section {
+  background: rgba(20, 184, 166, 0.1);
+  border-left-color: var(--accentTeal,#2DD4BF);
+}
+
+.dark-mode .examples-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .example-item {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .example-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .example-value {
+  color: var(--textPrimary,#F1F5F9);
+}

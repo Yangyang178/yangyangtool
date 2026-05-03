@@ -389,3 +389,169 @@ page { background-color: var(--pageBg,#F8FAFC); }
   background: var(--bgTipBlueDeep,#DBEAFE);
   color: var(--accentBlue,#3B82F6);
 }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 灰色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(100, 116, 139, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .label-text {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .action-tag.paste {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--accentBlue,#60A5FA);
+}
+
+.dark-mode .action-tag.sample {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .action-tag.clear {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .action-tag.copy {
+  background: linear-gradient(135deg, var(--textSecondary,#64748B) 0%, #475569 100%);
+  color: white;
+}
+
+.dark-mode .json-input {
+  background: var(--cardBg,#1a2035);
+  border-color: var(--borderLight,#374151);
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .json-input:focus {
+  border-color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .error-banner {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.dark-mode .error-msg {
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .success-banner {
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.dark-mode .success-msg {
+  color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .main-btn.format {
+  background: linear-gradient(135deg, #64748B 0%, #475569 100%);
+  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.25);
+}
+
+.dark-mode .main-btn.compress {
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, #2563EB 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.dark-mode .main-btn.validate {
+  background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, #059669 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.dark-mode .output-container {
+  background: #0f1419;
+  border: 1px solid var(--borderLight,#374151);
+}
+
+.dark-mode .json-output {
+  color: var(--borderLight,#CBD5E1);
+}
+
+.dark-mode .stat-item {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .stat-value {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .stat-label {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .features-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .features-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .feature-card {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .feature-name {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .feature-desc {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .history-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .section-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .clear-history {
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .history-item {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .history-item:active {
+  background: var(--borderLight,#374151);
+}
+
+.dark-mode .history-preview {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .history-time {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .history-type.format {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--accentYellow,#FBBF24);
+}
+
+.dark-mode .history-type.compress {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--accentBlue,#60A5FA);
+}

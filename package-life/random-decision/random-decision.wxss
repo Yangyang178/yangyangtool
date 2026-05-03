@@ -83,3 +83,133 @@ page { background-color: var(--pageBg,#F8FAFC); }
 .tips-title { font-size: 15px; font-weight: 600; color: #9A3412; display: block; margin-bottom: 12px; }
 .tips-content { display: flex; flex-direction: column; gap: 6px; }
 .tip-item { font-size: 13px; color: #9A3412; line-height: 1.5; }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 橙色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .section-label {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .option-item {
+  background: var(--cardBg,#1a2035);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .option-item.selected {
+  background: rgba(249, 115, 22, 0.15);
+  border-color: var(--accentOrange,#FB923C);
+}
+
+.dark-mode .option-item.winner {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .option-index {
+  background: var(--elevatedBg,#232d42);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .option-text {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .add-input {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .add-btn {
+  background: linear-gradient(135deg, var(--accentOrange,#F97316) 0%, #EA580C 100%);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+.dark-mode .quick-tag {
+  background: rgba(249, 115, 22, 0.12);
+  color: var(--accentOrange,#FB923C);
+}
+
+.dark-mode .roll-btn.active {
+  background: linear-gradient(135deg, var(--accentOrange,#F97316) 0%, #EA580C 100%);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.35);
+}
+
+.dark-mode .result-card {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, var(--elevatedBg,#232d42) 100%);
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.2);
+}
+
+.dark-mode .result-title {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .answer-text {
+  color: var(--accentOrange,#FB923C);
+}
+
+.dark-mode .result-hint {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .again-btn {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+  border: 1px solid var(--borderLight,#374151);
+}
+
+.dark-mode .share-btn {
+  background: linear-gradient(135deg, var(--accentOrange,#F97316) 0%, #EA580C 100%);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+}
+
+.dark-mode .history-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .history-item {
+  border-bottom-color: var(--borderLight,#374151);
+}
+
+.dark-mode .history-time {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .history-result {
+  color: var(--accentOrange,#FB923C);
+}
+
+.dark-mode .clear-history-btn {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .tips-section {
+  background: rgba(245, 158, 11, 0.1);
+  border-left-color: var(--accentYellow,#FBBF24);
+}
+
+.dark-mode .tips-title {
+  color: var(--accentYellow,#FBBF24);
+}
+
+.dark-mode .tip-item {
+  color: var(--textSecondary,#94A3B8);
+}

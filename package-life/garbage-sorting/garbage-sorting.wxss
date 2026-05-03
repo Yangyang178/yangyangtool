@@ -359,3 +359,104 @@ page { background-color: var(--pageBg,#F8FAFC); }
   background: var(--accentYellow,#F59E0B)20;
   color: var(--accentYellow,#F59E0B);
 }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 绿色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .search-box {
+  background: var(--elevatedBg,#232d42);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .search-input {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .search-btn {
+  background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, #059669 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.dark-mode .category-tab {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .category-tab.active {
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.dark-mode .result-card {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+}
+
+.dark-mode .result-label {
+  color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .result-item-name text {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .result-desc text {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .result-tip {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.dark-mode .tip-text {
+  color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .section-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .section-count {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .item-card {
+  background: var(--cardBg,#1a2035);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode .item-name {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .empty-text {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .clear-history {
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .history-item {
+  background: var(--cardBg,#1a2035);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .history-name {
+  color: var(--textPrimary,#F1F5F9);
+}

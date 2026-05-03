@@ -68,3 +68,131 @@ page { background-color: var(--pageBg,#F8FAFC); }
 .tips-title { font-size: 15px; font-weight: 600; color: var(--textPrimary,#1E293B); display: block; margin-bottom: 12px; }
 .tips-content { display: flex; flex-direction: column; gap: 6px; }
 .tip-item { font-size: 13px; color: var(--textSecondary,#64748B); line-height: 1.5; }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 青色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(20, 184, 166, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .stats-card {
+  background: linear-gradient(135deg, #134e4a 0%, #0f1419 100%);
+  box-shadow: 0 8px 24px rgba(20, 184, 166, 0.2);
+}
+
+.dark-mode .water-count {
+  background: var(--elevatedBg,#232d42);
+  color: var(--accentTeal,#2DD4BF);
+}
+
+.dark-mode .stats-info {
+  opacity: 1;
+}
+
+.dark-mode .settings-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .section-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .interval-btn {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .interval-btn.active {
+  background: linear-gradient(135deg, var(--accentTeal,#14B8A6) 0%, #0d9488 100%);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.25);
+}
+
+.dark-mode .interval-value {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .interval-unit {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .control-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .start-btn {
+  background: linear-gradient(135deg, var(--accentTeal,#14B8A6) 0%, #0d9488 100%);
+  box-shadow: 0 5px 18px rgba(20, 184, 166, 0.25);
+}
+
+.dark-mode .start-btn.running {
+  background: linear-gradient(135deg, var(--accentYellow,#F59E0B) 0%, #D97706 100%);
+  box-shadow: 0 5px 18px rgba(245, 158, 11, 0.25);
+}
+
+.dark-mode .countdown-text {
+  color: var(--accentTeal,#2DD4BF);
+}
+
+.dark-mode .status-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .stopped-text {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .stopped-hint {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .records-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .records-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .clear-btn {
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .record-item {
+  border-bottom-color: var(--borderLight,#374151);
+}
+
+.dark-mode .record-time {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .record-cup {
+  color: var(--accentTeal,#2DD4BF);
+}
+
+.dark-mode .tips-section {
+  background: rgba(20, 184, 166, 0.1);
+  border-left-color: var(--accentTeal,#2DD4BF);
+}
+
+.dark-mode .tips-title {
+  color: var(--accentTeal,#2DD4BF);
+}
+
+.dark-mode .tip-item {
+  color: var(--textSecondary,#94A3B8);
+}

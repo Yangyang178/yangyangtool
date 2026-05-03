@@ -5,6 +5,7 @@
     <!-- 工具头部 -->
     <view class="tool-header">
       <view class="icon-wrapper teal-gradient">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">🔐</text>
       </view>
       <text class="tool-title">Base64 编解码</text>

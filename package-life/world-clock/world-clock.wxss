@@ -401,3 +401,133 @@ page { background-color: var(--pageBg,#F8FAFC); }
 .popular-tag:active {
   transform: scale(0.95);
 }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 紫色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .local-time-card {
+  background: linear-gradient(135deg, #4c1d95 0%, #232d42 100%);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+}
+
+.dark-mode .local-label {
+  color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .time-text {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .date-text {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .timezone, .dark-mode .weekday {
+  color: var(--accentPurple,#C4B5FD);
+}
+
+.dark-mode .section-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .add-btn {
+  background: rgba(139, 92, 246, 0.2);
+  color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .city-card {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .city-name {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .country-name {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .timezone-badge {
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .city-time {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .city-date {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .diff-badge {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .empty-text {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .picker-modal {
+  background: var(--elevatedBg,#232d42);
+}
+
+.dark-mode .picker-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .picker-close {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .search-box {
+  background: var(--cardBg,#1a2035);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .search-input {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .picker-city-item {
+  border-bottom-color: var(--borderLight,#374151);
+}
+
+.dark-mode .picker-city-name {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .picker-country, .dark-mode .picker-timezone {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .no-result {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .popular-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .popular-tag {
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--accentPurple,#A78BFA);
+}

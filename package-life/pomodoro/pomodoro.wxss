@@ -56,3 +56,124 @@ page { background-color: var(--pageBg,#F8FAFC); }
 .record-icon { font-size: 20px; margin-right: 12px; }
 .record-time { flex: 1; font-size: 13px; color: var(--textSecondary,#64748B); }
 .record-duration { font-size: 14px; font-weight: 600; color: var(--textPrimary,#1E293B); }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 红色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .timer-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.15);
+}
+
+.dark-mode .time-text {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .status-text {
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .stat-value {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .stat-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .stat-divider {
+  background: var(--borderLight,#374151);
+}
+
+.dark-mode .main-control-btn {
+  background: linear-gradient(135deg, var(--accentRed,#EF4444) 0%, #DC2626 100%);
+  box-shadow: 0 5px 18px rgba(239, 68, 68, 0.3);
+}
+
+.dark-mode .main-control-btn.running {
+  background: linear-gradient(135deg, var(--accentYellow,#F59E0B) 0%, #D97706 100%);
+  box-shadow: 0 5px 18px rgba(245, 158, 11, 0.3);
+}
+
+.dark-mode .secondary-control-btn {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+  border: 1px solid var(--borderLight,#374151);
+}
+
+.dark-mode .skip-btn {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--accentRed,#F87171);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.dark-mode .settings-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .settings-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .setting-item {
+  border-bottom-color: var(--borderLight,#374151);
+}
+
+.dark-mode .setting-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .setting-picker {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .round-btn {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .round-btn.active {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--accentRed,#F87171);
+  border-color: var(--accentRed,#EF4444);
+}
+
+.dark-mode .history-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .history-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .record-item {
+  border-bottom-color: var(--borderLight,#374151);
+}
+
+.dark-mode .record-time {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .record-duration {
+  color: var(--textPrimary,#F1F5F9);
+}

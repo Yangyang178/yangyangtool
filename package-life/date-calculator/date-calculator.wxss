@@ -448,3 +448,156 @@ page { background-color: var(--pageBg,#F8FAFC); }
   font-size: 12px;
   color: var(--textTertiary,#94A3B8);
 }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 黄色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .mode-tab {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .mode-tab.active {
+  background: linear-gradient(135deg, var(--accentYellow,#F59E0B) 0%, #D97706 100%);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+}
+
+.dark-mode .input-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .date-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .date-picker {
+  background: var(--cardBg,#1a2035);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .date-picker text:first-child {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .quick-btn {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .quick-btn:active {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--accentYellow,#FBBF24);
+}
+
+.dark-mode .calculate-btn {
+  background: linear-gradient(135deg, var(--accentYellow,#F59E0B) 0%, #D97706 100%);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+}
+
+.dark-mode .toggle-btn {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .toggle-btn.active {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--accentYellow,#FBBF24);
+}
+
+.dark-mode .number-input {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .number-label {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .result-card {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
+}
+
+.dark-mode .result-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .detail-item {
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.dark-mode .detail-value {
+  color: var(--accentYellow,#FBBF24);
+}
+
+.dark-mode .detail-label {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .weekday-result {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .extra-info {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .info-row {
+  border-bottom-color: var(--borderLight,#374151);
+}
+
+.dark-mode .info-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .info-value {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .action-btn.copy {
+  background: linear-gradient(135deg, #FBBF24 0%, #D97706 100%);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.25);
+}
+
+.dark-mode .history-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .section-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .clear-history {
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .history-item {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .history-text {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .history-time {
+  color: var(--textMuted,#475569);
+}

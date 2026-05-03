@@ -30,3 +30,63 @@ page { background-color: var(--pageBg,#F8FAFC); }
 .primary-btn, .secondary-btn { flex: 1; height: 52px; border-radius: 26px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; border: none; }
 .primary-btn { background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, var(--accentPink,#EC4899) 100%); color: var(--cardBg,#FFFFFF); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3); }
 .secondary-btn { background: var(--surfaceBg,#F1F5F9); color: var(--textSecondary,#64748B); }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 粉色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .section-label {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .mode-item {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .mode-item.active {
+  background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
+}
+
+.dark-mode .mode-name {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .mode-item.active .mode-name {
+  color: white;
+}
+
+.dark-mode .text-area {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode .result-box {
+  background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+  box-shadow: 0 4px 16px rgba(236, 72, 153, 0.25);
+}
+
+.dark-mode .primary-btn {
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
+}
+
+.dark-mode .secondary-btn {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+}

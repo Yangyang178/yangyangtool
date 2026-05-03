@@ -4,6 +4,7 @@
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper" style="background: linear-gradient(135deg, #64748B33 0%, #64748B66 100%);">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">{}</text>
       </view>
       <text class="tool-title">JSON格式化</text>

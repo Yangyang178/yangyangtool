@@ -4,6 +4,7 @@
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper" style="background: linear-gradient(135deg, #06B6D433 0%, #06B6D466 100%);">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">🔗</text>
       </view>
       <text class="tool-title">URL编解码</text>

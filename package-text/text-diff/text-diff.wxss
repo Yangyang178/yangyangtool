@@ -656,3 +656,129 @@ page {
   height: 60px;
   flex-shrink: 0;
 }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 靛蓝主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .hero-section {
+  background: linear-gradient(135deg, #312e81 0%, #0f1419 100%);
+}
+
+.dark-mode .hero-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .hero-subtitle {
+  color: var(--accentIndigo,#A5B4FC);
+}
+
+.dark-mode .input-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .input-group-label {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .text-input {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .primary-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+}
+
+.dark-mode .secondary-btn {
+  background: var(--cardBg,#1a2035);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .swap-icon {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .result-section {
+  background: var(--elevatedBg,#232d42);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .result-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .result-icon {
+  color: var(--accentIndigo,#818CF8);
+}
+
+.dark-mode .stat-added {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .stat-removed {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .diff-item {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .is-added {
+  background: rgba(16, 185, 129, 0.08);
+  border-left-color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .is-added .content-text {
+  color: #6EE7B7;
+}
+
+.dark-mode .is-removed {
+  background: rgba(239, 68, 68, 0.08);
+  border-left-color: var(--accentRed,#F87171);
+}
+
+.dark-mode .is-removed .content-text {
+  color: #FCA5A5;
+}
+
+.dark-mode .is-same {
+  opacity: 0.3;
+}
+
+.dark-mode .empty-symbol {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .empty-hint {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .welcome-card {
+  background: linear-gradient(135deg, #232d42 0%, #1a2035 100%);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .welcome-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .welcome-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .feature-bullet {
+  color: var(--accentIndigo,#818CF8);
+}
+
+.dark-mode .feature-text {
+  color: var(--textSecondary,#94A3B8);
+}

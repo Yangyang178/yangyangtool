@@ -538,3 +538,148 @@ page { background-color: var(--pageBg,#F8FAFC); }
   color: var(--textSecondary,#64748B);
   font-weight: 500;
 }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 紫色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .section-label {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .regex-input, .dark-mode .test-input {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .flag-tag {
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .main-btn.test {
+  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.dark-mode .main-btn.replace {
+  background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+}
+
+.dark-mode .replace-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .replace-input {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .result-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .stat-badge.success {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .highlighted-text {
+  background: var(--cardBg,#1a2035);
+  border-color: var(--borderLight,#374151);
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .matches-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .match-item {
+  background: var(--cardBg,#1a2035);
+  border-left-color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .match-index {
+  background: var(--accentPurple,#8B5CF6);
+}
+
+.dark-mode .match-value {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .match-position {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .match-groups {
+  border-top-color: var(--borderLight,#374151);
+}
+
+.dark-mode .group-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .group-tag {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--accentBlue,#60A5FA);
+}
+
+.dark-mode .no-match-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode .no-match-text {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .library-title, .dark-mode .tips-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .library-item {
+  background: var(--cardBg,#1a2035);
+  border-left-color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .library-name {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .library-pattern {
+  color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .library-desc {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .tip-card {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .tip-pattern {
+  color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .tip-meaning {
+  color: var(--textSecondary,#94A3B8);
+}

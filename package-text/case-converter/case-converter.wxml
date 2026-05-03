@@ -4,6 +4,7 @@
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper" style="background: linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%);">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">🔤</text>
       </view>
       <text class="tool-title">大小写转换</text>

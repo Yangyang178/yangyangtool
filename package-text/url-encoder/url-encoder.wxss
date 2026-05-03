@@ -403,3 +403,135 @@ page { background-color: var(--pageBg,#F8FAFC); }
   color: var(--textSecondary,#64748B);
   line-height: 1.6;
 }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 青色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .mode-tab {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .mode-tab.active {
+  background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.25);
+}
+
+.dark-mode .input-card {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .input-label {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .url-input {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .convert-btn {
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+.dark-mode .output-container {
+  background: #0f1419;
+  border: 1px solid var(--borderLight,#374151);
+}
+
+.dark-mode .output-text {
+  color: var(--borderLight,#CBD5E1);
+}
+
+.dark-mode .parse-section {
+  background: linear-gradient(135deg, #0e7490 0%, #0f1419 100%);
+  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.2);
+}
+
+.dark-mode .parse-card {
+  background: rgba(26, 32, 53, 0.95);
+}
+
+.dark-mode .parse-item {
+  border-bottom-color: var(--borderLight,#374151);
+}
+
+.dark-mode .parse-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .parse-value {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .param-item {
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.dark-mode .param-key {
+  color: var(--accentBlue,#60A5FA);
+}
+
+.dark-mode .param-value {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .reference-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode .ref-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .ref-header {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .ref-row {
+  border-bottom-color: var(--borderLight,#374151);
+}
+
+.dark-mode .ref-cell {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .ref-cell.header {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .tips-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode .tips-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tip-bullet {
+  color: var(--accentTeal,#2DD4BF);
+}
+
+.dark-mode .tip-text {
+  color: var(--textSecondary,#94A3B8);
+}

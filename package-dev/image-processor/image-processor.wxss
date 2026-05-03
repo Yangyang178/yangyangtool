@@ -263,3 +263,374 @@
 .tips-title { font-size: 14px; font-weight: 600; color: var(--textPrimary,#1E293B); display: block; margin-bottom: 10px; }
 .tips-list { display: flex; flex-direction: column; gap: 6px; }
 .tip-item { font-size: 12px; color: var(--textSecondary,#64748B); line-height: 1.5; }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 紫色主题
+   =================================== */
+.dark-mode .container {
+  background: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .tab-item {
+  background: var(--elevatedBg,#232d42);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .tab-item.active {
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+.dark-mode .current-image-container {
+  background: var(--elevatedBg,#232d42);
+}
+
+.dark-mode .thumbnail.active {
+  border-color: var(--accentPurple,#A78BFA);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25);
+}
+
+.dark-mode .add-more {
+  background: var(--cardBg,#1a2035);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .add-more text {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .upload-area {
+  background: var(--elevatedBg,#232d42);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .upload-area:active {
+  border-color: var(--accentPurple,#8B5CF6);
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.dark-mode .upload-text {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .upload-hint {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .panel {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .section-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .count-hint {
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .clear-all-btn {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.15);
+}
+
+.dark-mode .clear-all-btn text {
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .preset-btn {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .preset-btn.active {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: var(--accentPurple,#8B5CF6);
+}
+
+.dark-mode .preset-label {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .preset-desc {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .format-opt {
+  background: var(--cardBg,#1a2035);
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .format-opt.active {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: var(--accentPurple,#8B5CF6);
+  color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .result-card {
+  background: rgba(16, 185, 129, 0.1);
+  border-left-color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .result-title {
+  color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .result-item {
+  background: rgba(26, 32, 53, 0.7);
+}
+
+.dark-mode .result-item .result-label {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .result-item .result-value {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .scale-preset {
+  background: var(--cardBg,#1a2035);
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .scale-preset.active {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: var(--accentPurple,#8B5CF6);
+  color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .size-box {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .size-label {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .size-input {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .size-separator {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .lock-ratio {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.dark-mode .lock-text {
+  color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .preset-card {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .preset-name {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .preset-size {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .mode-card {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .mode-card.active {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: var(--accentPurple,#8B5CF6);
+}
+
+.dark-mode .mode-name {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .mode-card.active .mode-name {
+  color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .stitch-img-item {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .stitch-img-info text {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .add-images-btn {
+  background: var(--cardBg,#1a2035);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .add-images-btn:active {
+  border-color: var(--accentPurple,#8B5CF6);
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.dark-mode .add-images-btn text {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .stitch-settings {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .setting-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .info-box {
+  background: rgba(59, 130, 246, 0.1);
+  border-left-color: var(--accentBlue,#60A5FA);
+}
+
+.dark-mode .info-text {
+  color: var(--accentBlue,#93C5FD);
+}
+
+.dark-mode .crop-mode {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .crop-mode.active {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: var(--accentPurple,#8B5CF6);
+}
+
+.dark-mode .crop-name {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .crop-mode.active .crop-name {
+  color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .rotation-btn {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .rotation-btn:active {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--accentBlue,#3B82F6);
+}
+
+.dark-mode .rot-name {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .flip-btn {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .flip-btn:active {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: var(--accentYellow,#F59E0B);
+}
+
+.dark-mode .flip-btn text:last-child {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .fmt-card {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .fmt-card.selected {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: var(--accentPurple,#8B5CF6);
+}
+
+.dark-mode .fmt-name {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .fmt-desc {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .format-detail {
+  background: rgba(139, 92, 246, 0.1);
+  border-left-color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .detail-title {
+  color: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .detail-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .tag {
+  background: var(--accentPurple,#A78BFA);
+}
+
+.dark-mode .info-card {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .card-label {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .card-value {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .empty-text {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .result-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .result-preview {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .primary-btn.purple {
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+.dark-mode .action-btn.primary {
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+.dark-mode .action-btn.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .action-btn.danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .tips-section {
+  background: rgba(245, 158, 11, 0.1);
+  border-left-color: var(--accentYellow,#FBBF24);
+}
+
+.dark-mode .tips-title {
+  color: var(--accentYellow,#FBBF24);
+}
+
+.dark-mode .tip-item {
+  color: var(--textMuted,#94A3B8);
+}

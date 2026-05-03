@@ -374,3 +374,135 @@ page { background-color: var(--pageBg,#F8FAFC); }
   font-weight: 700;
   color: var(--accentBlue,#3B82F6);
 }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 蓝色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .text-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .input-card {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .input-label {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .text-input {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .date-picker-box {
+  background: var(--cardBg,#1a2035);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .date-picker-box text:first-child {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .event-tag {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--accentBlue,#60A5FA);
+}
+
+.dark-mode .create-btn {
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, #2563EB 100%);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+}
+
+.dark-mode .event-name {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .event-target-date {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .time-number {
+  color: var(--accentBlue,#60A5FA);
+  text-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.dark-mode .time-unit {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .expired-text {
+  color: var(--accentBlue,#60A5FA);
+}
+
+.dark-mode .expired-sub {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .progress-text {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .progress-bar {
+  background: var(--borderLight,#374151);
+}
+
+.dark-mode .progress-fill {
+  background: linear-gradient(90deg, var(--accentBlue,#3B82F6) 0%, #60A5FA 100%);
+}
+
+.dark-mode .action-btn.edit {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+  border: 1px solid var(--borderLight,#374151);
+}
+
+.dark-mode .action-btn.delete {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .action-btn.share {
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, #2563EB 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.dark-mode .list-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .event-item {
+  background: var(--cardBg,#1a2035);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .event-item.active {
+  border-color: var(--accentBlue,#3B82F6);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.dark-mode .item-name {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .item-date {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .item-days-left {
+  color: var(--accentBlue,#60A5FA);
+}

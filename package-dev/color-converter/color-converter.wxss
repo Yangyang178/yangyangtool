@@ -613,3 +613,148 @@ page { background-color: var(--pageBg,#F8FAFC); }
 .quick-pick-item:active {
   transform: scale(0.9);
 }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 粉色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .color-preview-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .color-name-text {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .contrast-text {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .input-card {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .input-label {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .input-row {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .input-row:focus-within {
+  border-color: var(--accentPink,#EC4899);
+}
+
+.dark-mode .input-prefix {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .color-input {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .rgb-input,
+.dark-mode .hsl-input {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .rgb-input:focus,
+.dark-mode .hsl-input:focus {
+  border-color: var(--accentPink,#EC4899);
+  background: var(--elevatedBg,#232d42);
+}
+
+.dark-mode .hsl-unit {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .result-section {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.8) 0%, rgba(236, 72, 153, 0.6) 100%);
+  box-shadow: 0 4px 16px rgba(236, 72, 153, 0.25);
+}
+
+.dark-mode .result-title {
+  color: white;
+}
+
+.dark-mode .result-item {
+  background: rgba(26, 32, 53, 0.95);
+}
+
+.dark-mode .result-value {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .css-output {
+  background: rgba(26, 32, 53, 0.95);
+}
+
+.dark-mode .css-label {
+  color: var(--accentPink,#F472B6);
+}
+
+.dark-mode .css-code {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .css-item {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .palette-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .palette-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .action-btn.random {
+  background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, #DB2777 100%);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+}
+
+.dark-mode .action-btn.invert {
+  background: linear-gradient(135deg, var(--accentPurple,#8B5CF6) 0%, var(--accentPurpleDark,#7C3AED) 100%);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.dark-mode .color-picker-panel {
+  background: var(--elevatedBg,#232d42);
+}
+
+.dark-mode .picker-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .picker-close {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .picker-hex-text {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .picker-color-box {
+  border-color: var(--borderLight,#374151);
+}
