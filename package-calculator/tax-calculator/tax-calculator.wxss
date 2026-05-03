@@ -7,476 +7,494 @@ page {
 
 .tool-page {
   height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 .container {
-  padding: var(--space-lg, 20px);
-  padding-bottom: calc(var(--space-xl, 40px) + env(safe-area-inset-bottom));
-  min-height: calc(100vh - 44px);
+  padding: 16px;
+  padding-bottom: calc(60px + env(safe-area-inset-bottom));
 }
 
-/* ===================================
-   🎯 工具头部 - 绿色主题 (无动画)
-   =================================== */
-.hero-section {
+/* 头部 */
+.header {
   text-align: center;
-  padding: var(--spaceXxl, 32px) 0 var(--space-xl, 28px);
+  padding: 24px 0 20px;
 }
 
-.icon-wrapper {
-  width: 72px;
-  height: 72px;
-  margin: 0 auto var(--space-lg, 18px);
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-glow {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: var(--radiusLg, 18px);
-  background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, #059669 100%);
-  opacity: 0.12;
-}
-
-.icon-emoji {
-  font-size: 36px;
-  position: relative;
-  z-index: 1;
-  filter: drop-shadow(0 2px 8px rgba(16, 185, 129, 0.35));
-}
-
-.hero-title {
-  font-size: var(--fontSizeHero, 26px);
-  font-weight: var(--fontWeightBlack, 800);
-  color: var(--textPrimary,#0f172a);
-  letter-spacing: -0.5px;
+.header-icon {
+  font-size: 48px;
   display: block;
-  margin-bottom: var(--space-sm, 8px);
+  margin-bottom: 8px;
 }
 
-.hero-subtitle {
-  font-size: var(--fontSizeSm, 13px);
-  color: var(--textSecondary,#64748b);
-  font-weight: var(--fontWeightRegular, 400);
-  letter-spacing: 0.5px;
+.header-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  display: block;
+  margin-bottom: 4px;
 }
 
-/* ===================================
-   📝 输入区域 (无框透明样式)
-   =================================== */
-.input-section { margin-bottom: var(--space-xl, 24px); }
-
-.salary-card,
-.deduction-section {
-  background: transparent;
-  border-radius: 0;
-  padding: 0;
-  box-shadow: none;
-  border: none;
-  margin-bottom: var(--space-xl, 20px);
+.header-sub {
+  font-size: 13px;
+  color: #94a3b8;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-lg, 16px);
-}
-
-.card-label {
-  font-size: var(--fontSizeBase, 15px);
-  font-weight: var(--fontWeightBold, 700);
-  color: var(--textPrimary,#1e293b);
-  letter-spacing: 0.3px;
-}
-
-.card-hint {
-  font-size: var(--fontSizeXs, 12px);
-  color: var(--textTertiary,#94a3b8);
-  font-weight: var(--fontWeightMedium, 500);
-}
-
-/* ===================================
-   🔥 专项附加扣除区域 (修复)
-   =================================== */
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-lg, 16px);
-  padding-bottom: var(--space-md, 12px);
-  border-bottom: 2px solid rgba(16, 185, 129, 0.1);
-}
-
-.section-title-group {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm, 8px);
-}
-
-.section-icon {
-  font-size: 18px;
-}
-
-.section-title {
-  font-size: var(--fontSizeBase, 15px);
-  font-weight: var(--fontWeightBold, 700);
-  color: var(--textPrimary,#1e293b);
-}
-
-.total-deduction {
-  font-size: var(--fontSizeSm, 13px);
-  color: var(--accentGreen,#10B981);
-  font-weight: var(--fontWeightBold, 700);
-  background: rgba(16, 185, 129, 0.1);
-  padding: 4px 12px;
-  border-radius: 20px;
-}
-
-.deduction-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-md, 14px);
-}
-
-.deduction-card {
-  background: #ffffff;
-  border-radius: var(--radiusLg, 14px);
-  padding: var(--space-md, 14px);
-  border: 1px solid #e2e8f0;
-}
-
-.deduction-card:active {
-  transform: scale(0.97);
-  border-color: var(--accentGreen,#10B981);
-}
-
-.deduction-card.card-wide {
-  grid-column: span 2;
-}
-
-.deduction-top {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm, 10px);
-  margin-bottom: var(--space-md, 12px);
-}
-
-.deduction-icon-wrap {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.icon-blue { background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%); }
-.icon-purple { background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%); }
-.icon-orange { background: linear-gradient(135deg, #FFEDD5 0%, #FED7AA 100%); }
-.icon-green { background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); }
-.icon-gray { background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%); }
-
-.ded-icon {
-  font-size: 18px;
-}
-
-.deduction-name {
-  font-size: var(--fontSizeSm, 13px);
-  font-weight: var(--fontWeightSemibold, 600);
-  color: var(--textPrimary,#334155);
-  line-height: 1.3;
-}
-
-.deduction-bottom {
-  display: flex;
-  align-items: center;
+/* 表单区域 */
+.form-section {
   background: #f8fafc;
-  border-radius: var(--radiusMd, 10px);
-  padding: var(--space-xs, 4px) var(--space-sm, 8px) var(--space-xs, 4px) var(--space-md, 12px);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
 }
 
-.deduction-field {
-  flex: 1;
-  font-size: var(--fontSizeBase, 15px);
-  font-weight: var(--fontWeightBold, 700);
-  color: var(--textPrimary,#0f172a);
-  background: transparent;
-  border: none;
-  min-width: 0;
+.form-item {
+  margin-bottom: 12px;
 }
 
-.deduction-unit {
-  font-size: var(--fontSizeSm, 13px);
-  color: var(--textSecondary,#94a3b8);
-  font-weight: var(--fontWeightMedium, 500);
-  flex-shrink: 0;
-  margin-left: var(--space-xs, 4px);
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  display: block;
+  margin-bottom: 8px;
 }
 
-.salary-input-wrapper {
+.input-row {
   display: flex;
   align-items: center;
   background: #ffffff;
-  border-radius: var(--radiusLg, 14px);
-  padding: var(--space-xs, 4px) var(--space-sm, 6px) var(--space-xs, 4px) var(--space-xl, 20px);
   border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0 12px;
 }
 
-.salary-input-wrapper:focus-within {
-  border-color: var(--accentGreen,#10B981);
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.08);
-}
-
-.salary-input {
+.form-input {
   flex: 1;
-  font-size: var(--fontSizeHero, 28px);
-  font-weight: var(--fontWeightBlack, 800);
-  color: var(--textPrimary,#0f172a);
-  padding: var(--space-md, 12px) 0;
-  letter-spacing: -0.5px;
+  height: 44px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
   background: transparent;
   border: none;
 }
 
-.unit-badge {
-  background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, #059669 100%);
-  padding: var(--space-md, 10px) var(--space-lg, 18px);
-  border-radius: var(--radiusMd, 11px);
-  flex-shrink: 0;
-  margin-left: var(--space-sm, 8px);
+.input-unit {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  padding-left: 8px;
+  white-space: nowrap;
 }
 
-.unit-badge text {
-  font-size: var(--fontSizeSm, 13px);
-  font-weight: var(--fontWeightBold, 700);
-  color: #ffffff;
+.divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 16px 0;
 }
 
-/* ===================================
-   🔘 计算按钮 (简化版 - 文字不溢出)
-   =================================== */
-.calculate-btn {
-  width: 100%;
-  height: 50px;
-  border-radius: var(--radiusLg, 16px);
-  background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, #059669 100%);
-  border: none;
+/* 扣除项标题 */
+.deduction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.deduction-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.deduction-total {
+  font-size: 13px;
+  color: #10b981;
+  font-weight: 600;
+  background: #ecfdf5;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+/* 扣除项列表 - 横向布局 */
+.deduction-list {
+  
+}
+
+.deduction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.deduction-item.item-last {
+  border-bottom: none;
+}
+
+.item-left {
   display: flex;
   align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
-  margin-top: var(--space-md, 12px);
-  font-size: var(--fontSizeLg, 17px);
-  font-weight: var(--fontWeightBold, 700);
-  color: #ffffff;
-  letter-spacing: 1px;
-  line-height: 1;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
-/* ===================================
-   📊 结果区域 (无动画)
-   =================================== */
-.result-section { }
-
-.result-main-card,
-.annual-card,
-.detail-card {
-  background: var(--cardBg,#ffffff);
-  border-radius: var(--radiusXl, 20px);
-  overflow: hidden;
-  box-shadow: var(--shadowMd, 0 4px 16px rgba(0, 0, 0, 0.06));
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  margin-bottom: var(--space-md, 16px);
-}
-
-.result-highlight {
-  background: var(--cardBg,#ffffff);
-  padding: var(--spaceXxl, 28px) var(--space-xl, 24px);
+.item-icon {
+  font-size: 22px;
+  width: 32px;
   text-align: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.amount-display {
+.item-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  white-space: nowrap;
+}
+
+.item-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.item-input {
+  width: 80px;
+  height: 32px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  text-align: right;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0 8px;
+}
+
+.item-unit {
+  font-size: 13px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+/* 提交按钮 */
+.submit-btn {
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+  margin-top: 16px;
+}
+
+.btn-hover {
+  opacity: 0.9;
+  transform: scale(0.98);
+}
+
+/* 结果区域 */
+.result-box {
+  margin-top: 20px;
+}
+
+.result-main {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.result-label {
+  font-size: 13px;
+  color: rgba(255,255,255,0.85);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.amount-row {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: var(--space-xs, 4px);
+  gap: 2px;
 }
 
-.currency-symbol {
-  font-size: var(--fontSizeXl, 24px);
-  font-weight: var(--fontWeightBold, 700);
-  color: #059669;
+.currency {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
 }
 
-.amount-value {
-  font-size: 44px;
-  font-weight: var(--fontWeightBlack, 900);
-  color: #047857;
-  letter-spacing: -1.5px;
-  line-height: 1;
+.amount-num {
+  font-size: 36px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -1px;
 }
 
-.stats-row {
+.result-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 1px;
-  background: rgba(0, 0, 0, 0.04);
+  background: #e2e8f0;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
 }
 
-.stat-box {
-  padding: var(--spaceXL, 20px) var(--spaceLG, 18px);
-  text-align: center;
+.grid-item {
   background: #ffffff;
+  padding: 14px 12px;
+  text-align: center;
 }
 
-.stat-label {
-  font-size: var(--fontSizeXs, 12px);
-  font-weight: var(--fontWeightSemibold, 600);
+.grid-label {
+  font-size: 12px;
   color: #64748b;
   display: block;
-  margin-bottom: var(--spaceMD, 8px);
+  margin-bottom: 4px;
 }
 
-.stat-value {
-  font-size: var(--fontSizeXl, 22px);
-  font-weight: var(--fontWeightBlack, 800);
+.grid-value {
+  font-size: 18px;
+  font-weight: 800;
   color: #1e293b;
-  letter-spacing: -0.3px;
 }
 
-.tax-color { color: #dc2626; }
-
-/* ===================================
-   💡 信息区域 (无动画)
-   =================================== */
-.info-section { }
-
-.info-card {
-  background: var(--cardBg,#ffffff);
-  border-radius: var(--radiusXl, 18px);
-  padding: var(--spaceXL, 22px) var(--spaceLG, 20px);
-  border-left: 4px solid rgba(0, 0, 0, 0.08);
-  box-shadow: var(--shadowSm, 0 2px 8px rgba(0, 0, 0, 0.04));
+.grid-value.red {
+  color: #dc2626;
 }
 
-.info-title {
-  font-size: var(--fontSizeBase, 15px);
-  font-weight: var(--fontWeightBold, 700);
-  color: var(--textPrimary,#1e293b);
-  letter-spacing: 0.2px;
+.grid-unit {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
 }
 
-.info-text {
-  font-size: var(--fontSizeSm, 12px);
-  color: var(--textSecondary,#64748b);
-  line-height: 1.65;
-  font-weight: var(--fontWeightMedium, 500);
+/* 年度汇总 */
+.annual-box {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.annual-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.annual-list {
+  
+}
+
+.annual-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.annual-row.row-last {
+  border-bottom: none;
+}
+
+.annual-label {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.annual-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.annual-value.red {
+  color: #dc2626;
+}
+
+.annual-value.bold {
+  font-weight: 800;
+  color: #10b981;
+}
+
+.annual-unit {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 400;
+  margin-left: 2px;
+}
+
+/* 计算明细 */
+.detail-box {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.detail-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.detail-list {
+  
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.detail-label {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.detail-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.val-unit {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 400;
+  margin-left: 2px;
+}
+
+/* 使用说明 */
+.tips-box {
+  background: #fefce8;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+  border-left: 3px solid #f59e0b;
+}
+
+.tips-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #92400e;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tip-line {
+  font-size: 12px;
+  color: #78716c;
+  line-height: 1.5;
 }
 
 .bottom-space {
-  height: 60px;
-  flex-shrink: 0;
+  height: 40px;
 }
 
-/* ===================================
-   🌙 夜间模式适配 (简化版)
-   =================================== */
+/* 夜间模式 */
 .dark-mode page {
   background-color: #0f1419;
 }
 
-.dark-mode .salary-card,
-.dark-mode .deduction-section {
-  background: transparent;
+.dark-mode .header-title {
+  color: #F1F5F9;
 }
 
-.dark-mode .salary-input-wrapper {
+.dark-mode .form-section {
   background: #232d42;
-  border-color: #374151;
 }
 
-.dark-mode .result-main-card,
-.dark-mode .annual-card,
-.dark-mode .detail-card {
-  background: var(--elevatedBg,#232d42);
-  border-color: var(--borderDark,rgba(71,85,105,0.25));
+.dark-mode .form-label,
+.dark-mode .deduction-title {
+  color: #F1F5F9;
 }
 
-.dark-mode .hero-title,
-.dark-mode .card-label,
-.dark-mode .section-title {
-  color: var(--textPrimary,#F1F5F9);
-}
-
-.dark-mode .salary-input {
-  color: var(--textPrimary,#F1F5F9);
-}
-
-.dark-mode .stat-label {
-  color: var(--textSecondary,#94A3B8);
-}
-
-.dark-mode .stat-value {
-  color: var(--textPrimary,#F1F5F9);
-}
-
-.dark-mode .section-header {
-  border-bottom-color: rgba(16, 185, 129, 0.2);
-}
-
-.dark-mode .total-deduction {
-  background: rgba(16, 185, 129, 0.15);
-  color: var(--accentGreen,#34D399);
-}
-
-.dark-mode .deduction-card {
-  background: #232d42;
-  border-color: #374151;
-}
-
-.dark-mode .deduction-card:active {
-  border-color: var(--accentGreen,#10B981);
-}
-
-.dark-mode .deduction-name {
-  color: var(--textPrimary,#F1F5F9);
-}
-
-.dark-mode .deduction-bottom {
+.dark-mode .input-row,
+.dark-mode .item-input {
   background: #1a2035;
+  border-color: #374151;
+  color: #F1F5F9;
 }
 
-.dark-mode .deduction-field {
-  color: var(--textPrimary,#F1F5F9);
+.dark-mode .item-name {
+  color: #CBD5E1;
 }
 
-.dark-mode .deduction-unit {
-  color: var(--textSecondary,#94A3B8);
+.dark-mode .divider {
+  background-color: #374151;
 }
 
-.dark-mode .info-card {
-  background: var(--elevatedBg,#232d42);
-  border-left-color: rgba(0, 0, 0, 0.15);
+.dark-mode .deduction-item {
+  border-bottom-color: #374151;
 }
 
-.dark-mode .info-title {
-  color: var(--textPrimary,#F1F5F9);
+.dark-mode .result-main {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
 }
 
-.dark-mode .info-text {
-  color: var(--textSecondary,#94A3B8);
+.dark-mode .grid-item {
+  background: #232d42;
 }
 
-.dark-mode .result-highlight {
-  background: var(--elevatedBg,#232d42);
-  border-bottom-color: rgba(255, 255, 255, 0.08);
+.dark-mode .grid-label {
+  color: #94A3B8;
+}
+
+.dark-mode .grid-value {
+  color: #F1F5F9;
+}
+
+.dark-mode .annual-box,
+.dark-mode .detail-box {
+  background: #232d42;
+}
+
+.dark-mode .annual-title,
+.dark-mode .detail-title {
+  color: #F1F5F9;
+}
+
+.dark-mode .annual-label,
+.dark-mode .detail-label {
+  color: #94A3B8;
+}
+
+.dark-mode .annual-value,
+.dark-mode .detail-value {
+  color: #F1F5F9;
+}
+
+.dark-mode .tips-box {
+  background: #422006;
+  border-left-color: #FBBF24;
+}
+
+.dark-mode .tips-title {
+  color: #FBBF24;
+}
+
+.dark-mode .tip-line {
+  color: #D4A574;
 }
