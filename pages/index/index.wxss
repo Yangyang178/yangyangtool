@@ -291,6 +291,8 @@ page {
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+  position: relative;
+  z-index: 10;
 }
 
 .greeting-text {
@@ -311,9 +313,10 @@ page {
   align-items: center;
   border-radius: 12px;
   background: rgba(255,255,255,0.2);
-  backdrop-filter: blur(10px);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(255,255,255,0.3);
+  position: relative;
+  z-index: 20;
 }
 
 .edit-mode-btn:active {
