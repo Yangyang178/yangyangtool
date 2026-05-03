@@ -18,17 +18,11 @@ page {
 }
 
 /* ===================================
-   🎯 工具头部 - 绿色主题
+   🎯 工具头部 - 绿色主题 (无动画)
    =================================== */
 .hero-section {
   text-align: center;
   padding: var(--spaceXxl, 32px) 0 var(--space-xl, 28px);
-  animation: heroFadeIn var(--durationSlow, 0.7s) cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes heroFadeIn {
-  from { opacity: 0; transform: translateY(-16px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 .icon-wrapper {
@@ -48,12 +42,6 @@ page {
   border-radius: var(--radiusLg, 18px);
   background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, #059669 100%);
   opacity: 0.12;
-  animation: glowPulse 3s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-  0%, 100% { transform: scale(1); opacity: 0.12; }
-  50% { transform: scale(1.08); opacity: 0.18; }
 }
 
 .icon-emoji {
@@ -276,26 +264,20 @@ page {
 }
 
 /* ===================================
-   🔘 计算按钮
+   🔘 计算按钮 (修复溢出 + 移除动画)
    =================================== */
 .calculate-btn {
   width: 100%;
   height: 54px;
   border-radius: var(--radiusLg, 16px);
-  background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, #059669 50%, #047857 100%);
-  background-size: 200% 200%;
+  background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, #059669 100%);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35), 0 2px 8px rgba(16, 185, 129, 0.2);
-  animation: btnGradientShift 4s ease infinite;
   margin-top: var(--space-sm, 8px);
-}
-
-@keyframes btnGradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  overflow: hidden;
 }
 
 .btn-text {
@@ -306,14 +288,9 @@ page {
 }
 
 /* ===================================
-   📊 结果区域
+   📊 结果区域 (无动画)
    =================================== */
-.result-section { animation: resultFadeIn var(--durationSlow, 0.6s) ease both; }
-
-@keyframes resultFadeIn {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+.result-section { }
 
 .result-main-card,
 .annual-card,
@@ -385,14 +362,9 @@ page {
 .tax-color { color: #dc2626; }
 
 /* ===================================
-   💡 信息区域
+   💡 信息区域 (无动画)
    =================================== */
-.info-section { animation: infoSlideUp var(--durationSlow, 0.7s) ease both; }
-
-@keyframes infoSlideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+.info-section { }
 
 .info-card {
   background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
