@@ -1,3 +1,5 @@
+@import "../../styles/tool-common.wxss";
+
 page { background-color: var(--pageBg,#F8FAFC); }
 .tool-page { min-height: 100vh; padding-bottom: 40px; }
 .container { padding: 20px; }

@@ -1,3 +1,5 @@
+@import "../../styles/tool-common.wxss";
+
 .container {
   height: 100vh;
   background: var(--pageBg,#F8FAFC);
