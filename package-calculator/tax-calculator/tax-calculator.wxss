@@ -1,7 +1,7 @@
 @import "../../styles/tool-common.wxss";
 
 page {
-  background-color: var(--pageBg,#f8fafb);
+  background-color: #ffffff;
   height: 100vh;
 }
 
@@ -146,11 +146,10 @@ page {
 }
 
 .deduction-card {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: #ffffff;
   border-radius: var(--radiusLg, 14px);
   padding: var(--space-md, 14px);
-  border: 2px solid transparent;
-  transition: all 0.25s ease;
+  border: 1px solid #e2e8f0;
 }
 
 .deduction-card:active {
@@ -199,10 +198,9 @@ page {
 .deduction-bottom {
   display: flex;
   align-items: center;
-  background: white;
+  background: #f8fafc;
   border-radius: var(--radiusMd, 10px);
   padding: var(--space-xs, 4px) var(--space-sm, 8px) var(--space-xs, 4px) var(--space-md, 12px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .deduction-field {
@@ -226,11 +224,10 @@ page {
 .salary-input-wrapper {
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, var(--pageBg,#F8FAFC) 0%, #f1f5f9 100%);
+  background: #ffffff;
   border-radius: var(--radiusLg, 14px);
   padding: var(--space-xs, 4px) var(--space-sm, 6px) var(--space-xs, 4px) var(--space-xl, 20px);
-  border: 2px solid transparent;
-  transition: all var(--durationNormal, 0.3s) cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #e2e8f0;
 }
 
 .salary-input-wrapper:focus-within {
@@ -394,12 +391,17 @@ page {
    🌙 夜间模式适配 (简化版)
    =================================== */
 .dark-mode page {
-  background-color: var(--pageBgNight,#0f1419);
+  background-color: #0f1419;
 }
 
 .dark-mode .salary-card,
 .dark-mode .deduction-section {
   background: transparent;
+}
+
+.dark-mode .salary-input-wrapper {
+  background: #232d42;
+  border-color: #374151;
 }
 
 .dark-mode .result-main-card,
@@ -437,7 +439,8 @@ page {
 }
 
 .dark-mode .deduction-card {
-  background: linear-gradient(135deg, #232d42 0%, #1a2035 100%);
+  background: #232d42;
+  border-color: #374151;
 }
 
 .dark-mode .deduction-card:active {
@@ -449,7 +452,7 @@ page {
 }
 
 .dark-mode .deduction-bottom {
-  background: var(--cardBg,#1a2035);
+  background: #1a2035;
 }
 
 .dark-mode .deduction-field {
