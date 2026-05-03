@@ -97,11 +97,10 @@
     <!-- 搜索栏 v2 - Task B3 增强 -->
     <view class="search-bar {{showSearchPanel ? 'active' : ''}}">
       <view class="search-input-wrapper">
-        <text class="search-icon">🔍</text>
         <input
           class="search-input"
           type="text"
-          placeholder="🔍 搜索 25+ 实用工具..."
+          placeholder="搜索 25+ 实用工具..."
           placeholder-class="search-placeholder"
           value="{{searchKeyword}}"
           bindinput="onSearchInput"
