@@ -145,11 +145,7 @@
       </view>
 
       <button class="calculate-btn" bindtap="calculate" hover-class="btn-active">
-        <view class="btn-inner">
-          <text class="btn-icon">◆</text>
-          <text class="btn-text">计算个税</text>
-        </view>
-        <view class="btn-shine"></view>
+        计算个税
       </button>
     </view>
 

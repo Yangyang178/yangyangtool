@@ -68,17 +68,17 @@ page {
 }
 
 /* ===================================
-   📝 输入区域
+   📝 输入区域 (无框透明样式)
    =================================== */
 .input-section { margin-bottom: var(--space-xl, 24px); }
 
 .salary-card,
 .deduction-section {
-  background: var(--cardBg,#ffffff);
-  border-radius: var(--radiusXl, 18px);
-  padding: var(--space-xl, 24px) var(--space-lg, 22px);
-  box-shadow: var(--shadowSm, 0 2px 8px rgba(0, 0, 0, 0.04));
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  border: none;
   margin-bottom: var(--space-xl, 20px);
 }
 
@@ -264,27 +264,24 @@ page {
 }
 
 /* ===================================
-   🔘 计算按钮 (修复溢出 + 移除动画)
+   🔘 计算按钮 (简化版 - 文字不溢出)
    =================================== */
 .calculate-btn {
   width: 100%;
-  height: 54px;
+  height: 50px;
   border-radius: var(--radiusLg, 16px);
   background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, #059669 100%);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35), 0 2px 8px rgba(16, 185, 129, 0.2);
-  margin-top: var(--space-sm, 8px);
-  overflow: hidden;
-}
-
-.btn-text {
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+  margin-top: var(--space-md, 12px);
   font-size: var(--fontSizeLg, 17px);
   font-weight: var(--fontWeightBold, 700);
   color: #ffffff;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  line-height: 1;
 }
 
 /* ===================================
@@ -401,7 +398,10 @@ page {
 }
 
 .dark-mode .salary-card,
-.dark-mode .deduction-section,
+.dark-mode .deduction-section {
+  background: transparent;
+}
+
 .dark-mode .result-main-card,
 .dark-mode .annual-card,
 .dark-mode .detail-card {
