@@ -100,7 +100,7 @@
         <input
           class="search-input"
           type="text"
-          placeholder="搜索 25+ 实用工具..."
+          placeholder="🔍 搜索 25+ 实用工具..."
           placeholder-class="search-placeholder"
           value="{{searchKeyword}}"
           bindinput="onSearchInput"
