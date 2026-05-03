@@ -4,6 +4,7 @@
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper yellow-gradient">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">💰</text>
       </view>
       <text class="tool-title">小费快速计算</text>
@@ -15,8 +16,8 @@
       <text class="section-label">账单金额</text>
       <view class="amount-input-wrapper">
         <text class="currency-symbol">$</text>
-        <input 
-          class="amount-input" 
+        <input
+          class="amount-input"
           type="digit"
           placeholder="0.00"
           value="{{billAmount}}"
@@ -29,8 +30,8 @@
     <view class="tip-section">
       <text class="section-label">选择小费比例</text>
       <view class="tip-options">
-        <view 
-          wx:for="{{tipOptions}}" 
+        <view
+          wx:for="{{tipOptions}}"
           wx:key="value"
           class="tip-option {{selectedTip === item.value ? 'active' : ''}}"
           data-value="{{item.value}}"
@@ -45,7 +46,7 @@
 
       <!-- 自定义小费输入 -->
       <view class="custom-tip-input" wx:if="{{isCustomTip}}">
-        <input 
+        <input
           type="digit"
           placeholder="输入百分比"
           value="{{customTipValue}}"
@@ -94,10 +95,10 @@
 
     <!-- 快捷操作 -->
     <view class="action-buttons">
-      <button class="copy-btn" bindtap="copyResult">
+      <button class="btn-primary" bindtap="copyResult">
         <text>📋 复制结果</text>
       </button>
-      <button class="reset-btn" bindtap="resetCalculator">
+      <button class="btn-secondary" bindtap="resetCalculator">
         <text>🔄 重置</text>
       </button>
     </view>

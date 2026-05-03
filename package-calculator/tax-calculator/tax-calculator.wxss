@@ -1,5 +1,7 @@
+@import "../../styles/tool-common.wxss";
+
 page {
-  background: #f8fafb;
+  background-color: var(--pageBg,#f8fafb);
   height: 100vh;
 }
 
@@ -7,36 +9,32 @@ page {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f8fafb;
 }
 
 .container {
-  padding: 0 20px 40px;
+  padding: var(--space-lg, 20px);
+  padding-bottom: calc(var(--space-xl, 40px) + env(safe-area-inset-bottom));
   min-height: calc(100vh - 44px);
 }
 
-/* ========== Hero Section ========== */
+/* ===================================
+   🎯 工具头部 - 绿色主题
+   =================================== */
 .hero-section {
   text-align: center;
-  padding: 32px 0 28px;
-  animation: heroFadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: var(--spaceXxl, 32px) 0 var(--space-xl, 28px);
+  animation: heroFadeIn var(--durationSlow, 0.7s) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes heroFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.hero-icon {
+.icon-wrapper {
   width: 72px;
   height: 72px;
-  margin: 0 auto 18px;
+  margin: 0 auto var(--space-lg, 18px);
   position: relative;
   display: flex;
   align-items: center;
@@ -47,8 +45,8 @@ page {
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 22px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: var(--radiusLg, 18px);
+  background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, #059669 100%);
   opacity: 0.12;
   animation: glowPulse 3s ease-in-out infinite;
 }
@@ -66,288 +64,112 @@ page {
 }
 
 .hero-title {
-  font-size: 26px;
-  font-weight: 800;
-  color: #0f172a;
+  font-size: var(--fontSizeHero, 26px);
+  font-weight: var(--fontWeightBlack, 800);
+  color: var(--textPrimary,#0f172a);
   letter-spacing: -0.5px;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-sm, 8px);
 }
 
 .hero-subtitle {
-  font-size: 13px;
-  color: #64748b;
-  font-weight: 400;
+  font-size: var(--fontSizeSm, 13px);
+  color: var(--textSecondary,#64748b);
+  font-weight: var(--fontWeightRegular, 400);
   letter-spacing: 0.5px;
 }
 
-/* ========== Input Section ========== */
-.input-section {
-  margin-bottom: 24px;
-  animation: sectionSlideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.15s both;
-}
+/* ===================================
+   📝 输入区域
+   =================================== */
+.input-section { margin-bottom: var(--space-xl, 24px); }
 
-@keyframes sectionSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.salary-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 24px 22px;
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    0 4px 16px rgba(0, 0, 0, 0.03);
+.salary-card,
+.deduction-section {
+  background: var(--cardBg,#ffffff);
+  border-radius: var(--radiusXl, 18px);
+  padding: var(--space-xl, 24px) var(--space-lg, 22px);
+  box-shadow: var(--shadowSm, 0 2px 8px rgba(0, 0, 0, 0.04));
   border: 1px solid rgba(0, 0, 0, 0.04);
-  margin-bottom: 20px;
+  margin-bottom: var(--space-xl, 20px);
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: var(--space-lg, 16px);
 }
 
 .card-label {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1e293b;
+  font-size: var(--fontSizeBase, 15px);
+  font-weight: var(--fontWeightBold, 700);
+  color: var(--textPrimary,#1e293b);
   letter-spacing: 0.3px;
 }
 
 .card-hint {
-  font-size: 12px;
-  color: #94a3b8;
-  font-weight: 500;
+  font-size: var(--fontSizeXs, 12px);
+  color: var(--textTertiary,#94a3b8);
+  font-weight: var(--fontWeightMedium, 500);
 }
 
 .salary-input-wrapper {
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 14px;
-  padding: 4px 6px 4px 20px;
+  background: linear-gradient(135deg, var(--pageBg,#F8FAFC) 0%, #f1f5f9 100%);
+  border-radius: var(--radiusLg, 14px);
+  padding: var(--space-xs, 4px) var(--space-sm, 6px) var(--space-xs, 4px) var(--space-xl, 20px);
   border: 2px solid transparent;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow:
-    inset 0 2px 4px rgba(0, 0, 0, 0.02),
-    0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: all var(--durationNormal, 0.3s) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .salary-input-wrapper:focus-within {
-  border-color: #10b981;
-  box-shadow:
-    0 0 0 4px rgba(16, 185, 129, 0.08),
-    inset 0 2px 4px rgba(0, 0, 0, 0.01);
+  border-color: var(--accentGreen,#10B981);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.08);
 }
 
 .salary-input {
   flex: 1;
-  font-size: 28px;
-  font-weight: 800;
-  color: #0f172a;
-  padding: 12px 0;
+  font-size: var(--fontSizeHero, 28px);
+  font-weight: var(--fontWeightBlack, 800);
+  color: var(--textPrimary,#0f172a);
+  padding: var(--space-md, 12px) 0;
   letter-spacing: -0.5px;
   background: transparent;
   border: none;
-  outline: none;
-}
-
-.placeholder {
-  color: #cbd5e1;
-  font-size: 28px;
-  font-weight: 600;
 }
 
 .unit-badge {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  padding: 10px 18px;
-  border-radius: 11px;
+  background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, #059669 100%);
+  padding: var(--space-md, 10px) var(--space-lg, 18px);
+  border-radius: var(--radiusMd, 11px);
   flex-shrink: 0;
-  margin-left: 8px;
+  margin-left: var(--space-sm, 8px);
 }
 
 .unit-badge text {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: var(--fontSizeSm, 13px);
+  font-weight: var(--fontWeightBold, 700);
   color: #ffffff;
-  white-space: nowrap;
-  letter-spacing: 0.3px;
 }
 
-/* ========== Deduction Section ========== */
-.deduction-section {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 22px 20px 20px;
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    0 4px 16px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  margin-bottom: 20px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.section-title-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-icon {
-  font-size: 18px;
-}
-
-.section-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1e293b;
-  letter-spacing: 0.2px;
-}
-
-.total-deduction {
-  font-size: 12px;
-  font-weight: 600;
-  color: #10b981;
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  padding: 5px 14px;
-  border-radius: 20px;
-}
-
-.deduction-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.deduction-card {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 14px;
-  padding: 16px 14px;
-  border: 1.5px solid rgba(0, 0, 0, 0.04);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.deduction-card:active {
-  transform: scale(0.98);
-  border-color: rgba(16, 185, 129, 0.3);
-}
-
-.card-wide {
-  grid-column: span 2;
-}
-
-.deduction-top {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.deduction-icon-wrap {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.icon-blue {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-}
-
-.icon-purple {
-  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
-}
-
-.icon-orange {
-  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
-}
-
-.icon-green {
-  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-}
-
-.icon-gray {
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-}
-
-.ded-icon {
-  font-size: 18px;
-}
-
-.deduction-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: #334155;
-  letter-spacing: 0.2px;
-}
-
-.deduction-bottom {
-  display: flex;
-  align-items: center;
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 8px 12px;
-  border: 1.5px solid rgba(0, 0, 0, 0.06);
-}
-
-.deduction-field {
-  flex: 1;
-  font-size: 17px;
-  font-weight: 700;
-  color: #0f172a;
-  text-align: right;
-  background: transparent;
-  border: none;
-  outline: none;
-  padding: 0;
-  margin-right: 6px;
-}
-
-.deduction-unit {
-  font-size: 12px;
-  color: #94a3b8;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-/* ========== Calculate Button ========== */
+/* ===================================
+   🔘 计算按钮
+   =================================== */
 .calculate-btn {
   width: 100%;
   height: 54px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+  border-radius: var(--radiusLg, 16px);
+  background: linear-gradient(135deg, var(--accentGreen,#10B981) 0%, #059669 50%, #047857 100%);
   background-size: 200% 200%;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
-  box-shadow:
-    0 6px 20px rgba(16, 185, 129, 0.35),
-    0 2px 8px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35), 0 2px 8px rgba(16, 185, 129, 0.2);
   animation: btnGradientShift 4s ease infinite;
-  margin-top: 8px;
+  margin-top: var(--space-sm, 8px);
 }
 
 @keyframes btnGradientShift {
@@ -355,111 +177,57 @@ page {
   50% { background-position: 100% 50%; }
 }
 
-.btn-inner {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  z-index: 2;
-}
-
-.btn-icon {
-  font-size: 20px;
-  color: #ffffff;
-}
-
 .btn-text {
-  font-size: 17px;
-  font-weight: 700;
+  font-size: var(--fontSizeLg, 17px);
+  font-weight: var(--fontWeightBold, 700);
   color: #ffffff;
   letter-spacing: 0.5px;
 }
 
-.btn-shine {
-  position: absolute;
-  top: 0;
-  left: -150%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.25) 50%,
-    transparent 100%
-  );
-  transition: left 0.6s ease;
-}
-
-.btn-active .btn-shine {
-  left: 150%;
-}
-
-.btn-active {
-  transform: scale(0.97) translateY(2px);
-  box-shadow:
-    0 3px 12px rgba(16, 185, 129, 0.3),
-    0 1px 4px rgba(16, 185, 129, 0.15);
-}
-
-/* ========== Result Section ========== */
-.result-section {
-  animation: resultFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
-}
+/* ===================================
+   📊 结果区域
+   =================================== */
+.result-section { animation: resultFadeIn var(--durationSlow, 0.6s) ease both; }
 
 @keyframes resultFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.result-main-card {
-  background: #ffffff;
-  border-radius: 20px;
+.result-main-card,
+.annual-card,
+.detail-card {
+  background: var(--cardBg,#ffffff);
+  border-radius: var(--radiusXl, 20px);
   overflow: hidden;
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.06),
-    0 2px 8px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadowMd, 0 4px 16px rgba(0, 0, 0, 0.06));
   border: 1px solid rgba(0, 0, 0, 0.04);
-  margin-bottom: 16px;
+  margin-bottom: var(--space-md, 16px);
 }
 
 .result-highlight {
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  padding: 28px 24px;
+  background: linear-gradient(135deg, var(--bgTipGreen,#ECFDF5) 0%, #d1fae5 100%);
+  padding: var(--spaceXxl, 28px) var(--space-xl, 24px);
   text-align: center;
   border-bottom: 1px solid rgba(16, 185, 129, 0.15);
-}
-
-.result-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #065f46;
-  display: block;
-  margin-bottom: 10px;
-  letter-spacing: 0.5px;
 }
 
 .amount-display {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 4px;
+  gap: var(--space-xs, 4px);
 }
 
 .currency-symbol {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: var(--fontSizeXl, 24px);
+  font-weight: var(--fontWeightBold, 700);
   color: #059669;
 }
 
 .amount-value {
   font-size: 44px;
-  font-weight: 900;
+  font-weight: var(--fontWeightBlack, 900);
   color: #047857;
   letter-spacing: -1.5px;
   line-height: 1;
@@ -473,284 +241,95 @@ page {
 }
 
 .stat-box {
-  padding: 20px 18px;
+  padding: var(--spaceXL, 20px) var(--spaceLG, 18px);
   text-align: center;
   background: #ffffff;
 }
 
 .stat-label {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--fontSizeXs, 12px);
+  font-weight: var(--fontWeightSemibold, 600);
   color: #64748b;
   display: block;
-  margin-bottom: 8px;
-  letter-spacing: 0.3px;
+  margin-bottom: var(--spaceMD, 8px);
 }
 
 .stat-value {
-  font-size: 22px;
-  font-weight: 800;
+  font-size: var(--fontSizeXl, 22px);
+  font-weight: var(--fontWeightBlack, 800);
   color: #1e293b;
   letter-spacing: -0.3px;
 }
 
-.stat-suffix {
-  font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
-  margin-left: 2px;
-}
+.tax-color { color: #dc2626; }
 
-.tax-color {
-  color: #dc2626;
-}
-
-.rate-color {
-  color: #f59e0b;
-}
-
-/* ========== Annual Card ========== */
-.annual-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 22px 20px;
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    0 4px 16px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  margin-bottom: 16px;
-}
-
-.annual-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 18px;
-  padding-bottom: 14px;
-  border-bottom: 1.5px solid rgba(0, 0, 0, 0.05);
-}
-
-.annual-icon {
-  font-size: 18px;
-}
-
-.annual-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1e293b;
-  letter-spacing: 0.2px;
-}
-
-.annual-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.annual-item {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 12px;
-  padding: 16px 14px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
-}
-
-.item-wide {
-  grid-column: span 2;
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  border-color: rgba(16, 185, 129, 0.15);
-}
-
-.annual-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #64748b;
-  display: block;
-  margin-bottom: 6px;
-  letter-spacing: 0.2px;
-}
-
-.annual-value {
-  font-size: 19px;
-  font-weight: 800;
-  color: #1e293b;
-  letter-spacing: -0.3px;
-}
-
-.annual-unit {
-  font-size: 12px;
-  font-weight: 600;
-  color: #94a3b8;
-  margin-left: 3px;
-}
-
-.annual-tax {
-  color: #dc2626;
-}
-
-.annual-after {
-  color: #059669;
-  font-size: 21px;
-}
-
-/* ========== Detail Card ========== */
-.detail-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 20px 18px;
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    0 4px 16px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  margin-bottom: 16px;
-}
-
-.detail-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1.5px solid rgba(0, 0, 0, 0.05);
-}
-
-.detail-icon {
-  font-size: 18px;
-  color: #10b981;
-}
-
-.detail-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1e293b;
-  letter-spacing: 0.2px;
-}
-
-.detail-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 11px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-}
-
-.detail-row:last-child {
-  border-bottom: none;
-}
-
-.detail-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: #64748b;
-}
-
-.detail-value {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1e293b;
-  letter-spacing: -0.2px;
-}
-
-.val-unit {
-  font-size: 12px;
-  font-weight: 500;
-  color: #94a3b8;
-  margin-left: 3px;
-}
-
-.detail-value.positive {
-  color: #059669;
-}
-
-.detail-value.negative {
-  color: #dc2626;
-}
-
-/* ========== Info Section ========== */
-.info-section {
-  animation: infoSlideUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.35s both;
-}
+/* ===================================
+   💡 信息区域
+   =================================== */
+.info-section { animation: infoSlideUp var(--durationSlow, 0.7s) ease both; }
 
 @keyframes infoSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .info-card {
   background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
-  border-radius: 18px;
-  padding: 22px 20px;
-  border-left: 4px solid #f59e0b;
-  box-shadow:
-    0 4px 12px rgba(245, 158, 11, 0.1),
-    0 2px 6px rgba(245, 158, 11, 0.05);
-}
-
-.info-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.info-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 800;
-  font-style: normal;
+  border-radius: var(--radiusXl, 18px);
+  padding: var(--spaceXL, 22px) var(--spaceLG, 20px);
+  border-left: 4px solid var(--accentYellow,#f59e0b);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
 }
 
 .info-title {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--fontSizeBase, 15px);
+  font-weight: var(--fontWeightBold, 700);
   color: #92400e;
   letter-spacing: 0.2px;
 }
 
-.info-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.info-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.info-bullet {
-  color: #f59e0b;
-  font-size: 8px;
-  margin-top: 6px;
-  flex-shrink: 0;
-}
-
 .info-text {
-  font-size: 12px;
+  font-size: var(--fontSizeSm, 12px);
   color: #78716c;
   line-height: 1.65;
-  font-weight: 500;
+  font-weight: var(--fontWeightMedium, 500);
 }
 
 .bottom-space {
   height: 60px;
   flex-shrink: 0;
+}
+
+/* ===================================
+   🌙 夜间模式适配 (简化版)
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .salary-card,
+.dark-mode .deduction-section,
+.dark-mode .result-main-card,
+.dark-mode .annual-card,
+.dark-mode .detail-card {
+  background: var(--elevatedBg,#232d42);
+  border-color: var(--borderDark,rgba(71,85,105,0.25));
+}
+
+.dark-mode .hero-title,
+.dark-mode .card-label,
+.dark-mode .section-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .salary-input {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .stat-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .stat-value {
+  color: var(--textPrimary,#F1F5F9);
 }

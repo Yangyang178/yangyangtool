@@ -3,7 +3,10 @@
 <scroll-view class="tool-page" scroll-y>
   <view class="container">
     <view class="tool-header">
-      <view class="icon-wrapper"><text class="tool-icon">⚖️</text></view>
+      <view class="icon-wrapper teal-gradient">
+        <view class="icon-decoration"></view>
+        <text class="tool-icon">⚖️</text>
+      </view>
       <text class="tool-title">BMI 计算器</text>
       <text class="tool-desc">身高体重 → BMI指数 + 健康建议</text>
     </view>
@@ -46,7 +49,7 @@
         </view>
       </view>
 
-      <button class="calc-btn" bindtap="calculateBMI" hover-class="btn-hover">
+      <button class="btn-primary calc-btn" bindtap="calculateBMI" hover-class="btn-hover">
         计算 BMI
       </button>
     </view>
