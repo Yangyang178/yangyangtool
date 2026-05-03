@@ -482,3 +482,181 @@ page {
 .dark-mode .rate-value {
   color: var(--accentBlue,#60A5FA);
 }
+
+/* ===================================
+   📱 货币选择器弹窗（自定义组件）
+   =================================== */
+.currency-picker-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.currency-picker-popup {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--cardBg,#FFFFFF);
+  border-radius: var(--radiusXl, 24px) var(--radiusXl, 24px) 0 0;
+  z-index: 1001;
+  transform: translateY(100%);
+  transition: transform var(--durationNormal, 0.3s) var(--easeOutBack, cubic-bezier(0.34, 1.56, 0.64, 1));
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.currency-picker-popup.show {
+  transform: translateY(0);
+}
+
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-lg, 20px);
+  border-bottom: 1px solid var(--borderLight,#E2E8F0);
+}
+
+.picker-title {
+  font-size: var(--fontSizeMd, 17px);
+  font-weight: var(--fontWeightBold, 700);
+  color: var(--textPrimary,#1E293B);
+}
+
+.picker-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surfaceBg,#F1F5F9);
+  border-radius: 50%;
+  transition: all var(--durationFast, 0.2s) var(--easeDefault, ease);
+}
+
+.picker-close:active {
+  background: var(--borderLight,#E2E8F0);
+  transform: scale(0.95);
+}
+
+.picker-close text {
+  font-size: 18px;
+  color: var(--textSecondary,#64748B);
+}
+
+.picker-list {
+  flex: 1;
+  padding: var(--space-md, 12px) 0;
+  max-height: 55vh;
+}
+
+.picker-item {
+  display: flex;
+  align-items: center;
+  padding: var(--space-md, 16px) var(--space-xl, 20px);
+  gap: var(--space-md, 12px);
+  transition: all var(--durationFast, 0.2s) var(--easeDefault, ease);
+}
+
+.picker-item:active {
+  background: var(--pageBg,#F8FAFC);
+}
+
+.picker-item.selected {
+  background: var(--bgTipBlue,#EFF6FF);
+}
+
+.picker-flag {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.picker-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs, 2px);
+}
+
+.picker-name {
+  font-size: var(--fontSizeBase, 16px);
+  font-weight: var(--fontWeightMedium, 500);
+  color: var(--textPrimary,#1E293B);
+}
+
+.picker-item.selected .picker-name {
+  color: var(--accentBlue,#3B82F6);
+  font-weight: var(--fontWeightSemibold, 600);
+}
+
+.picker-code-text {
+  font-size: var(--fontSizeSm, 13px);
+  color: var(--textSecondary,#64748B);
+}
+
+.picker-symbol-text {
+  font-size: var(--fontSizeMd, 17px);
+  font-weight: var(--fontWeightBold, 700);
+  color: var(--accentBlue,#3B82F6);
+  min-width: 30px;
+  text-align: right;
+}
+
+.picker-check {
+  font-size: 18px;
+  color: var(--accentBlue,#3B82F6);
+  font-weight: var(--fontWeightBold, 700);
+}
+
+/* ===================================
+   🌙 货币选择器夜间模式
+   =================================== */
+.dark-mode .currency-picker-popup {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .picker-header {
+  border-bottom-color: var(--borderDark,rgba(71,85,105,0.25));
+}
+
+.dark-mode .picker-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .picker-close {
+  background: var(--elevatedBg,#232d42);
+}
+
+.dark-mode .picker-close text {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .picker-item:active {
+  background: var(--elevatedBg,#232d42);
+}
+
+.dark-mode .picker-item.selected {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.dark-mode .picker-name {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .picker-item.selected .picker-name {
+  color: var(--accentBlue,#60A5FA);
+}
+
+.dark-mode .picker-code-text {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .picker-symbol-text {
+  color: var(--accentBlue,#60A5FA);
+}
