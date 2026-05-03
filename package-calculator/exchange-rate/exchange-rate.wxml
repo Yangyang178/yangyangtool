@@ -5,6 +5,7 @@
     <!-- 工具标题区 -->
     <view class="tool-header">
       <view class="icon-wrapper blue-gradient">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">💱</text>
       </view>
       <text class="tool-title">实时汇率换算</text>
@@ -40,11 +41,11 @@
           <text class="currency-code">{{fromCurrency}}</text>
           <text class="currency-name">{{fromCurrencyName}}</text>
         </view>
-        
+
         <view class="swap-btn" bindtap="swapCurrency">
           <text class="swap-icon">⇄</text>
         </view>
-        
+
         <view class="selector-box" bindtap="showToCurrency">
           <text class="currency-code">{{toCurrency}}</text>
           <text class="currency-name">{{toCurrencyName}}</text>
@@ -59,7 +60,7 @@
         <text class="result-label">= {{toCurrency}} {{toCurrencyName}}</text>
         <text class="rate-info">汇率: 1 {{fromCurrency}} = {{exchangeRate}} {{toCurrency}}</text>
       </view>
-      
+
       <!-- 常用货币快速查看 -->
       <view class="quick-rates">
         <text class="section-title">常用汇率参考</text>
@@ -80,10 +81,10 @@
 
     <!-- 操作按钮 -->
     <view class="action-btns">
-      <button class="primary-btn" bindtap="copyResult">
+      <button class="btn-primary" bindtap="copyResult">
         <text>复制结果</text>
       </button>
-      <button class="secondary-btn" bindtap="resetCalculator">
+      <button class="btn-secondary" bindtap="resetCalculator">
         <text>重新计算</text>
       </button>
     </view>
