@@ -498,7 +498,7 @@ page {
   background: rgba(16, 185, 129, 0.1);
 }
 
-.dark-mode .tip-item:not(.tips-list .tip-item) {
+.dark-mode .tip-item {
   background: rgba(16, 185, 129, 0.15);
   color: var(--accentGreen,#34D399);
 }
