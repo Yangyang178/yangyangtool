@@ -94,14 +94,14 @@
       </view>
     </view>
 
-    <!-- 全局搜索栏 -->
+    <!-- 搜索栏 v2 - Task B3 增强 -->
     <view class="search-bar {{showSearchPanel ? 'active' : ''}}">
       <view class="search-input-wrapper">
         <text class="search-icon">🔍</text>
-        <input 
-          class="search-input" 
-          type="text" 
-          placeholder="搜索工具…" 
+        <input
+          class="search-input"
+          type="text"
+          placeholder="🔍 搜索 25+ 实用工具..."
           placeholder-class="search-placeholder"
           value="{{searchKeyword}}"
           bindinput="onSearchInput"
@@ -114,32 +114,58 @@
         </view>
       </view>
 
-      <!-- 搜索面板 -->
+      <!-- 搜索面板 v2 -->
       <view class="search-panel" wx:if="{{showSearchPanel}}">
         <!-- 搜索历史 -->
         <view class="search-section" wx:if="{{searchHistory.length > 0}}">
           <view class="section-header">
-            <text class="section-title">搜索历史</text>
-            <text class="clear-history" bindtap="clearSearchHistory">清空</text>
-          </view>
-          <view class="history-tags">
-            <view class="history-tag" wx:for="{{searchHistory}}" wx:key="index" bindtap="onHistoryClick" data-word="{{item}}">
-              <text>{{item}}</text>
+            <view class="section-title-wrapper">
+              <text class="section-icon">🕐</text>
+              <text class="section-title">最近搜索</text>
             </view>
+            <text class="clear-history-btn" bindtap="clearSearchHistory">
+              <text class="clear-history-icon">🗑️</text>
+              <text>清空</text>
+            </text>
           </view>
+          <scroll-view class="history-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+            <view class="history-tags">
+              <view class="history-tag" wx:for="{{searchHistory}}" wx:key="index" bindtap="onHistoryClick" data-word="{{item}}">
+                <text class="history-tag-text">{{item}}</text>
+                <text class="history-tag-arrow">→</text>
+              </view>
+            </view>
+          </scroll-view>
         </view>
 
         <!-- 热门搜索 -->
         <view class="search-section">
           <view class="section-header">
-            <text class="section-title">热门搜索</text>
-          </view>
-          <view class="hot-tags">
-            <view class="hot-tag" wx:for="{{hotSearchWords}}" wx:key="index" bindtap="onHotSearchClick" data-word="{{item}}">
-              <text class="hot-icon" wx:if="{{index < 3}}">🔥</text>
-              <text>{{item}}</text>
+            <view class="section-title-wrapper">
+              <text class="section-icon">🔥</text>
+              <text class="section-title">热门推荐</text>
             </view>
           </view>
+          <view class="hot-tags">
+            <view 
+              class="hot-tag {{index < 3 ? 'top-hot' : ''}}" 
+              wx:for="{{hotSearchWords}}" 
+              wx:key="index" 
+              bindtap="onHotSearchClick" 
+              data-word="{{item}}"
+            >
+              <view class="hot-tag-rank" wx:if="{{index < 3}}">
+                <text>{{index + 1}}</text>
+              </view>
+              <text class="hot-tag-text">{{item}}</text>
+              <text class="hot-tag-fire" wx:if="{{index < 3}}">🔥</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 快捷提示 -->
+        <view class="search-tip">
+          <text class="tip-text">💡 提示：支持中英文、拼音首字母搜索</text>
         </view>
       </view>
     </view>
