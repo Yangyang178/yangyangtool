@@ -1165,6 +1165,8 @@ page {
 .card-icon {
   font-size: 28px;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  line-height: 56px;
+  display: block;
 }
 
 .card-title {
