@@ -133,10 +133,10 @@
    🔘 按钮通用样式 v2
    =================================== */
 .btn-primary {
-  background: linear-gradient(135deg, var(--primaryColor, #3B82F6) 0%, var(--primaryDark, #2563EB) 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--accentBlue,#3B82F6) 0%, #2563EB 100%);
+  color: #ffffff;
+  padding: 14px 28px;
   border-radius: var(--radiusLg, 16px);
-  padding: var(--space-md, 16px) var(--space-xl, 32px);
   font-size: var(--fontSizeBase, 15px);
   font-weight: var(--fontWeightSemibold, 600);
   border: none;
@@ -146,29 +146,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-primary::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
-  transform: translate(-50%, -50%) scale(0);
-  transition: transform var(--durationSlow, 0.4s) var(--easeDefault, ease);
 }
 
 .btn-primary:active {
   transform: scale(0.96);
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
-}
-
-.btn-primary:active::before {
-  transform: translate(-50%, -50%) scale(1);
 }
 
 .btn-secondary {
