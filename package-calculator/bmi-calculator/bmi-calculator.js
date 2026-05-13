@@ -35,23 +35,31 @@ Page({
   },
 
   calculateBMI() {
-    const h = parseFloat(this.data.height)
-    const w = parseFloat(this.data.weight)
-    
-    if (!h || !w || h <= 0 || w <= 0) {
-      wx.showToast({ title: '请输入有效的身高和体重', icon: 'none' })
-      return
-    }
+    try {
+      const h = parseFloat(this.data.height)
+      const w = parseFloat(this.data.weight)
 
-    wx.vibrateShort({ type: 'light' })
+      if (!h || !w || isNaN(h) || isNaN(w) || h <= 0 || w <= 0) {
+        wx.showToast({ title: '请输入有效的身高和体重', icon: 'none' })
+        return
+      }
 
-    let bmi, heightM
-    if (this.data.unitType === 'metric') {
-      heightM = h / 100
-      bmi = w / (heightM * heightM)
-    } else {
-      bmi = (w / (h * h)) * 703
-    }
+      if (this.data.unitType === 'metric') {
+        if (h > 250) { wx.showToast({ title: '身高超过2.5米？请检查', icon: 'none' }); return }
+        if (w > 500) { wx.showToast({ title: '体重超过500kg？请检查', icon: 'none' }); return }
+        if (h < 50) { wx.showToast({ title: '身高不能小于50cm', icon: 'none' }); return }
+        if (w < 10) { wx.showToast({ title: '体重不能小于10kg', icon: 'none' }); return }
+      }
+
+      wx.vibrateShort({ type: 'light' })
+
+      let bmi, heightM
+      if (this.data.unitType === 'metric') {
+        heightM = h / 100
+        bmi = w / (heightM * heightM)
+      } else {
+        bmi = (w / (h * h)) * 703
+      }
 
     bmi = Math.round(bmi * 10) / 10
 
@@ -86,6 +94,10 @@ Page({
       advice,
       idealWeight: { min: minW.toFixed(1), max: maxW.toFixed(1) }
     })
+    } catch (err) {
+      console.error('BMI calculation error:', err)
+      wx.showToast({ title: '计算出错，请检查输入', icon: 'none' })
+    }
   },
 
   onShareAppMessage() {

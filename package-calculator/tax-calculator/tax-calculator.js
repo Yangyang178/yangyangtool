@@ -46,23 +46,46 @@ Page({
   },
 
   calculate() {
-    const s = parseFloat(this.data.salary)
-    if (!s || s <= 0) { wx.showToast({ title: '请输入有效月薪', icon: 'none' }); return }
+    try {
+      const s = parseFloat(this.data.salary)
+      if (!s || isNaN(s) || s <= 0) {
+        wx.showToast({ title: '请输入有效月薪（大于0）', icon: 'none' })
+        return
+      }
+      if (s > 1000000) {
+        wx.showToast({ title: '月薪超过100万？请检查输入', icon: 'none' })
+        return
+      }
 
-    wx.vibrateShort({ type: 'light' })
-    const d = this.data.deductions
+      wx.vibrateShort({ type: 'light' })
+      const d = this.data.deductions
 
-    const threshold = 5000
-    const totalDeduct = parseFloat(d.children || 0) + parseFloat(d.education || 0) + parseFloat(d.housing || 0) + parseFloat(d.elderly || 0) + parseFloat(d.other || 0)
-    const taxable = Math.max(0, s - threshold - totalDeduct)
-    
-    const tax = this.calcTax(taxable)
-    const afterTax = s - tax
-    const effectiveRate = s > 0 ? ((tax / s) * 100).toFixed(2) : '0.00'
-    const monthlyAfterTax = afterTax.toFixed(2)
-    const annualSalary = (s * 12).toFixed(2)
-    const annualTax = (tax * 12).toFixed(2)
-    const annualAfterTax = (afterTax * 12).toFixed(2)
+      var children = parseFloat(d.children) || 0
+      var education = parseFloat(d.education) || 0
+      var housing = parseFloat(d.housing) || 0
+      var elderly = parseFloat(d.elderly) || 0
+      var other = parseFloat(d.other) || 0
+
+      if (children < 0 || education < 0 || housing < 0 || elderly < 0 || other < 0) {
+        wx.showToast({ title: '扣除项不能为负数', icon: 'none' })
+        return
+      }
+
+      if (children > 2000 || education > 2000 || housing > 1500 || elderly > 3000) {
+        wx.showToast({ title: '扣除项超出标准上限', icon: 'none' })
+      }
+
+      const threshold = 5000
+      const totalDeduct = children + education + housing + elderly + other
+      const taxable = Math.max(0, s - threshold - totalDeduct)
+
+      const tax = this.calcTax(taxable)
+      const afterTax = Math.max(0, s - tax)
+      const effectiveRate = s > 0 ? ((tax / s) * 100).toFixed(2) : '0.00'
+      const monthlyAfterTax = afterTax.toFixed(2)
+      const annualSalary = (s * 12).toFixed(2)
+      const annualTax = (tax * 12).toFixed(2)
+      const annualAfterTax = (afterTax * 12).toFixed(2)
 
     const breakdown = [
       { label: '税前月薪', val: s.toFixed(2), cls: '' },
@@ -87,6 +110,10 @@ Page({
       },
       breakdown
     })
+    } catch (err) {
+      console.error('Tax calculation error:', err)
+      wx.showToast({ title: '计算出错，请检查输入', icon: 'none' })
+    }
   },
 
   calcTax(taxable) {

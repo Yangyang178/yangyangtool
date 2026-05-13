@@ -154,16 +154,9 @@ Page({
       tools.push(t)
     }
 
-    this.setData({ tools: tools, filteredTools: tools })
-    wx.setStorageSync('allTools', tools)
-    wx.setStorageSync('urlMap', urlMap)
-
     var history = wx.getStorageSync('searchHistory') || []
     if (!Array.isArray(history)) history = []
-    this.setData({ searchHistory: history })
-
     var hasSeenGuide = wx.getStorageSync('hasSeenGuide')
-    if (!hasSeenGuide) this.setData({ showGuide: true })
 
     this.drawSharePoster()
 
@@ -198,20 +191,27 @@ Page({
       ]
     }
 
-    this.setData({ topTools: topTools })
-
     var totalUsage = 0
     try {
       totalUsage = wx.getStorageSync('totalUsageCount') || 0
       totalUsage = parseInt(totalUsage, 10) || 0
     } catch(e) {}
 
+    var totalUsageDisplay = '1.2万'
     if (totalUsage > 10000) {
-      this.setData({ totalUsageDisplay: (totalUsage / 10000).toFixed(1) + '万' })
+      totalUsageDisplay = (totalUsage / 10000).toFixed(1) + '万'
     } else if (totalUsage > 0) {
-      this.setData({ totalUsageDisplay: totalUsage.toString() })
-    } else {
-      this.setData({ totalUsageDisplay: '1.2万' })
+      totalUsageDisplay = totalUsage.toString()
+    }
+
+    this.setData({
+      tools: tools,
+      filteredTools: tools,
+      searchHistory: history,
+      showGuide: !hasSeenGuide,
+      topTools: topTools,
+      totalUsageDisplay: totalUsageDisplay
+    })
     }
 
     setTimeout(function() { this.setData({ isLoading: false }) }.bind(this), 600)
