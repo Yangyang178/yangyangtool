@@ -212,7 +212,6 @@ Page({
       topTools: topTools,
       totalUsageDisplay: totalUsageDisplay
     })
-    }
 
     var that = this
     setTimeout(function() { that.setData({ isLoading: false }) }, 600)
