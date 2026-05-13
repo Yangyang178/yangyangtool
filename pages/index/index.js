@@ -214,7 +214,8 @@ Page({
     })
     }
 
-    setTimeout(function() { this.setData({ isLoading: false }) }.bind(this), 600)
+    var that = this
+    setTimeout(function() { that.setData({ isLoading: false }) }, 600)
   },
 
   onShow: function() {
@@ -277,8 +278,9 @@ Page({
   },
 
   onScrollToUpper: function() {
+    var that = this
     this.setData({ scrollTop: 1 })
-    setTimeout(function() { this.setData({ scrollTop: 0 }) }.bind(this), 50)
+    setTimeout(function() { that.setData({ scrollTop: 0 }) }, 50)
   },
 
   onPageScroll: function(e) {
@@ -287,11 +289,12 @@ Page({
       if (e.detail && e.detail.scrollTop !== undefined) st = e.detail.scrollTop
       else if (e.detail && e.detail.scrollY !== undefined) st = e.detail.scrollY
       if (st < 5 && st > -50) {
+        var self = this
         if (!this._scrollFixTimer) {
           this._scrollFixTimer = setTimeout(function() {
-            this._scrollFixTimer = null
-            if (this.data.scrollTop !== 0) this.setData({ scrollTop: 0 })
-          }.bind(this), 100)
+            self._scrollFixTimer = null
+            if (self.data.scrollTop !== 0) self.setData({ scrollTop: 0 })
+          }, 100)
         }
       }
     } catch(e) {}
@@ -727,6 +730,7 @@ Page({
   onShareTimeline: function() { return { title: '🧰 百宝工具箱 - 汇率换算、单位转换等24+实用工具', query: '', imageUrl: this.data.sharePosterPath || '' } },
 
   drawSharePoster: function() {
+    var that = this
     try {
       var appInstance = getApp()
       if (appInstance.globalData.sharePosterPath) { this.setData({ sharePosterPath: appInstance.globalData.sharePosterPath }); return }
@@ -771,7 +775,7 @@ Page({
             success: function(res) { if (res.tempFilePath) { appInstance.globalData.sharePosterPath = res.tempFilePath; that.setData({ sharePosterPath: res.tempFilePath }) } }
           }, that)
         }, 100)
-      }.bind(this))
+      })
     } catch(e) {}
   }
 })
