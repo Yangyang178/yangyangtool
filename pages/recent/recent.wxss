@@ -1963,6 +1963,56 @@ page {
   border: 1px solid var(--borderLight,#E2E8F0);
 }
 
+/* 微信客服按钮 - 精美设计 */
+.contact-service-btn {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 12px !important;
+  line-height: inherit !important;
+  font-size: inherit !important;
+  overflow: visible !important;
+}
+
+.contact-service-btn::after {
+  display: none !important;
+}
+
+.contact-btn-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+  border-radius: 14px;
+  border: 1.5px solid rgba(59, 130, 246, 0.2);
+  box-shadow:
+    0 4px 12px rgba(59, 130, 246, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.contact-btn-content:active {
+  background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+  box-shadow:
+    0 6px 20px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  transform: scale(0.98) translateY(-1px);
+}
+
+.contact-arrow {
+  font-size: 18px;
+  color: #3B82F6;
+  font-weight: 700;
+  transition: transform 0.25s ease;
+}
+
+.contact-btn-content:active .contact-arrow {
+  transform: translateX(4px);
+}
+
 .contact-item:active {
   opacity: 0.75;
 }
@@ -1980,7 +2030,8 @@ page {
 
 .contact-value {
   font-size: 13px;
-  color: var(--textTertiary,#94A3B8);
+  font-weight: 600;
+  color: #3B82F6;
 }
 
 .copyright-section {
@@ -2044,8 +2095,28 @@ page {
   border-color: rgba(71, 85, 105, 0.6);
 }
 
+/* 暗黑模式下客服按钮样式 */
+.dark-mode .contact-btn-content {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(96, 165, 250, 0.1) 100%);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow:
+    0 4px 12px rgba(59, 130, 246, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode .contact-btn-content:active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(96, 165, 250, 0.18) 100%);
+  box-shadow:
+    0 6px 20px rgba(59, 130, 246, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.dark-mode .contact-arrow {
+  color: #60A5FA;
+}
+
 .dark-mode .feature-desc,
 .dark-mode .contact-value,
 .dark-mode .copyright-sub {
-  color: #94A3B8;
+  color: #60A5FA;
 }

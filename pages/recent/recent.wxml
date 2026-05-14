@@ -279,11 +279,20 @@
         <view class="contact-section">
           <text class="contact-title">联系我们</text>
           <view class="contact-items">
-            <view class="contact-item" bindtap="copyWechat" hover-class="contact-hover">
-              <text class="contact-icon">💬</text>
-              <text class="contact-label">微信反馈</text>
-              <text class="contact-value">点击复制微信号</text>
-            </view>
+            <contact-button
+              class="contact-item contact-service-btn"
+              hover-class="contact-hover"
+              size="18"
+              color="#3B82F6"
+              session-from="来自百宝工具箱-关于我们"
+            >
+              <view class="contact-btn-content">
+                <text class="contact-icon">💬</text>
+                <text class="contact-label">微信客服</text>
+                <text class="contact-value">点击咨询反馈</text>
+                <text class="contact-arrow">→</text>
+              </view>
+            </contact-button>
           </view>
         </view>
 
