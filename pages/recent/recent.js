@@ -839,7 +839,7 @@ Page({
   copyWechat() {
     wx.vibrateShort({ type: 'light' })
     wx.setClipboardData({
-      data: 'toolbox_feedback',
+      data: 'y8849112640',
       success: function() {
         wx.showToast({
           title: '微信号已复制',

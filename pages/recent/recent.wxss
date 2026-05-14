@@ -1728,9 +1728,12 @@ page {
 }
 
 .app-name {
-  font-size: 22px;
-  font-weight: 700;
-  color: #1E293B;
+  font-size: 24px;
+  font-weight: 800;
+  color: #1E1B4B;
+  text-shadow:
+    0 2px 8px rgba(30, 27, 75, 0.3),
+    0 1px 3px rgba(30, 27, 75, 0.2);
 }
 
 .app-version {
