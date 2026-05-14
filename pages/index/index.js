@@ -768,13 +768,12 @@ Page({
         bottomGrad.addColorStop(0, '#3B82F6'); bottomGrad.addColorStop(1, '#1D4ED8')
         ctx.beginPath(); ctx.moveTo(50, 336); ctx.lineTo(450, 336); ctx.quadraticCurveTo(450, 360, 426, 360); ctx.lineTo(74, 360); ctx.quadraticCurveTo(50, 360, 50, 336); ctx.closePath(); ctx.fillStyle = bottomGrad; ctx.fill()
         ctx.font = '600 18px -apple-system, system-ui, sans-serif'; ctx.fillStyle = '#FFFFFF'; ctx.fillText('✨ 24+ 实用工具，一键即达', 250, 355)
-        var pageInstance = this
         setTimeout(function() {
           wx.canvasToTempFilePath({ canvas: canvas, width: 500, height: 400, destWidth: 500, destHeight: 400, fileType: 'png', quality: 1,
             success: function(res) { 
               if (res.tempFilePath) { 
                 appInstance.globalData.sharePosterPath = res.tempFilePath 
-                pageInstance.setData({ sharePosterPath: res.tempFilePath }) 
+                that.setData({ sharePosterPath: res.tempFilePath }) 
               } 
             }
           })
