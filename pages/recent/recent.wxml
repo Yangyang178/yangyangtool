@@ -200,6 +200,104 @@
       </button>
     </view>
 
+    <!-- 关于我们弹窗 -->
+    <view class="about-mask" wx:if="{{showAboutUs}}" bindtap="closeAboutUs"></view>
+    <view class="about-panel {{showAboutUs ? 'show' : ''}}">
+      <view class="about-header">
+        <text class="about-title">ℹ️ 关于我们</text>
+        <text class="about-close" bindtap="closeAboutUs">✕</text>
+      </view>
+
+      <view class="about-content">
+        <!-- 应用信息 -->
+        <view class="app-info-section">
+          <view class="app-logo-area">
+            <text class="app-logo-icon">🧰</text>
+            <text class="app-name">百宝工具箱</text>
+            <text class="app-version">v2.0</text>
+          </view>
+
+          <view class="app-slogan">
+            <text>25+ 实用小工具，即用即走</text>
+          </view>
+        </view>
+
+        <!-- 功能介绍 -->
+        <view class="feature-list">
+          <view class="feature-item">
+            <text class="feature-icon">🎯</text>
+            <view class="feature-text">
+              <text class="feature-title">专注效率</text>
+              <text class="feature-desc">精选实用工具，提升工作生活效率</text>
+            </view>
+          </view>
+
+          <view class="feature-item">
+            <text class="feature-icon">⚡</text>
+            <view class="feature-text">
+              <text class="feature-title">即用即走</text>
+              <text class="feature-desc">无需安装，打开即用，方便快捷</text>
+            </view>
+          </view>
+
+          <view class="feature-item">
+            <text class="feature-icon">🔒</text>
+            <view class="feature-text">
+              <text class="feature-title">隐私安全</text>
+              <text class="feature-desc">所有数据本地存储，保护您的隐私</text>
+            </view>
+          </view>
+
+          <view class="feature-item">
+            <text class="feature-icon">🆓</text>
+            <view class="feature-text">
+              <text class="feature-title">完全免费</text>
+              <text class="feature-desc">所有功能永久免费，无广告打扰</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 统计数据 -->
+        <view class="stats-section">
+          <view class="stat-row">
+            <view class="stat-box">
+              <text class="stat-num">25+</text>
+              <text class="stat-label">实用工具</text>
+            </view>
+            <view class="stat-box">
+              <text class="stat-num">6</text>
+              <text class="stat-label">工具分类</text>
+            </view>
+            <view class="stat-box">
+              <text class="stat-num">100%</text>
+              <text class="stat-label">免费使用</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 联系方式 -->
+        <view class="contact-section">
+          <text class="contact-title">联系我们</text>
+          <view class="contact-items">
+            <view class="contact-item" bindtap="copyWechat" hover-class="contact-hover">
+              <text class="contact-icon">💬</text>
+              <text class="contact-label">微信反馈</text>
+              <text class="contact-value">点击复制微信号</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 版权信息 -->
+        <view class="copyright-section">
+          <text class="copyright-text">© 2024 百宝工具箱</text>
+          <text class="copyright-sub">用心打造每一个工具 ✨</text>
+        </view>
+      </view>
+
+      <!-- 关闭按钮 -->
+      <button class="close-about-btn" bindtap="closeAboutUs">我知道了</button>
+    </view>
+
     <!-- 缓存清理弹窗 -->
     <view class="cache-mask" wx:if="{{showClearCache}}" bindtap="closeClearCache"></view>
     <view class="cache-panel {{showClearCache ? 'show' : ''}}">
@@ -376,6 +474,16 @@
           <view class="setting-left">
             <text class="setting-icon">💬</text>
             <text class="setting-name">意见反馈</text>
+          </view>
+          <view class="setting-right">
+            <text class="setting-arrow">›</text>
+          </view>
+        </view>
+
+        <view class="setting-item" bindtap="showAboutUs" hover-class="setting-hover">
+          <view class="setting-left">
+            <text class="setting-icon">ℹ️</text>
+            <text class="setting-name">关于我们</text>
           </view>
           <view class="setting-right">
             <text class="setting-arrow">›</text>

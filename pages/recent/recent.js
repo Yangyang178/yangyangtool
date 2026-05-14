@@ -68,6 +68,8 @@ Page({
       { value: 'other', label: '💬 其他' }
     ],
 
+    showAboutUs: false,  // 关于我们弹窗
+
     showToolRequest: false,
     toolRequestContent: '',
     toolRequestContact: '',
@@ -821,6 +823,30 @@ Page({
 
   closeFeedback() {
     this.setData({ showFeedback: false })
+  },
+
+  showAboutUs() {
+    wx.vibrateShort({ type: 'light' })
+    this.setData({
+      showAboutUs: true
+    })
+  },
+
+  closeAboutUs() {
+    this.setData({ showAboutUs: false })
+  },
+
+  copyWechat() {
+    wx.vibrateShort({ type: 'light' })
+    wx.setClipboardData({
+      data: 'toolbox_feedback',
+      success: function() {
+        wx.showToast({
+          title: '微信号已复制',
+          icon: 'success'
+        })
+      }
+    })
   },
 
   selectFeedbackType(e) {

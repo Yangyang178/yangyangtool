@@ -1651,3 +1651,292 @@ page {
   color: white;
   box-shadow: 0 4px 12px rgba(239,68,68,0.3);
 }
+
+/* ===================================
+ *   ℹ️ 关于我们弹窗样式
+ * =================================== */
+
+.about-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 998;
+}
+
+.about-panel {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: white;
+  border-radius: 24px 24px 0 0;
+  padding: 24px 20px 40px;
+  z-index: 999;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.about-panel.show {
+  transform: translateY(0);
+}
+
+.about-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.about-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--textPrimary,#1E293B);
+}
+
+.about-close {
+  font-size: 22px;
+  color: var(--textSecondary,#64748B);
+  padding: 4px;
+}
+
+.about-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.app-info-section {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+  border-radius: 16px;
+}
+
+.app-logo-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.app-logo-icon {
+  font-size: 48px;
+}
+
+.app-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.app-version {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6366F1;
+  background: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+.app-slogan text {
+  font-size: 14px;
+  color: #4F46E5;
+  font-weight: 500;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  background: var(--surfaceBg,#F8FAFC);
+  border-radius: 14px;
+  border: 1px solid var(--borderLight,#E2E8F0);
+}
+
+.feature-icon {
+  font-size: 28px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+
+.feature-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.feature-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--textPrimary,#1E293B);
+}
+
+.feature-desc {
+  font-size: 13px;
+  color: var(--textSecondary,#64748B);
+  line-height: 1.4;
+}
+
+.stats-section {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-around;
+  gap: 12px;
+}
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.stat-num {
+  font-size: 22px;
+  font-weight: 800;
+  color: #92400E;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #92400E;
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+.contact-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--textPrimary,#1E293B);
+}
+
+.contact-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surfaceBg,#F8FAFC);
+  border-radius: 12px;
+  border: 1px solid var(--borderLight,#E2E8F0);
+}
+
+.contact-item:active {
+  opacity: 0.75;
+}
+
+.contact-icon {
+  font-size: 24px;
+}
+
+.contact-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--textPrimary,#1E293B);
+  flex: 1;
+}
+
+.contact-value {
+  font-size: 13px;
+  color: var(--textTertiary,#94A3B8);
+}
+
+.copyright-section {
+  text-align: center;
+  padding: 16px;
+  background: var(--surfaceBg,#F8FAFC);
+  border-radius: 12px;
+}
+
+.copyright-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--textSecondary,#64748B);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.copyright-sub {
+  font-size: 13px;
+  color: var(--textTertiary,#94A3B8);
+}
+
+.close-about-btn {
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 20px;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.35);
+}
+
+.close-about-btn:active {
+  opacity: 0.9;
+  transform: scale(0.98);
+}
+
+.dark-mode .about-panel {
+  background: #1E293B;
+}
+
+.dark-mode .about-title,
+.dark-mode .app-name,
+.dark-mode .feature-title,
+.dark-mode .contact-label,
+.dark-mode .copyright-text {
+  color: #F1F5F9;
+}
+
+.dark-mode .about-mask {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.dark-mode .feature-item,
+.dark-mode .contact-item,
+.dark-mode .copyright-section {
+  background: #0F172A;
+  border-color: rgba(71, 85, 105, 0.6);
+}
+
+.dark-mode .feature-desc,
+.dark-mode .contact-value,
+.dark-mode .copyright-sub {
+  color: #94A3B8;
+}
