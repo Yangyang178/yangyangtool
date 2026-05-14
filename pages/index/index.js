@@ -152,6 +152,8 @@ Page({
     categories: categories,
     tools: defaultTools,
     topTools: [],
+    recentTools: [],  // 最近使用的工具列表
+    showAllRecent: false,  // 是否显示全部最近使用
     totalUsageDisplay: '1.2万'
   },
 
@@ -186,6 +188,11 @@ Page({
     var history = wx.getStorageSync('searchHistory') || []
     if (!Array.isArray(history)) history = []
     var hasSeenGuide = wx.getStorageSync('hasSeenGuide')
+
+    // 加载最近使用的工具列表
+    var recentTools = wx.getStorageSync('recentTools') || []
+    if (!Array.isArray(recentTools)) recentTools = []
+
     this.drawSharePoster()
 
     var topTools = []
@@ -238,6 +245,7 @@ Page({
       searchHistory: history,
       showGuide: !hasSeenGuide,
       topTools: topTools,
+      recentTools: recentTools,  // 最近使用的工具列表
       totalUsageDisplay: totalUsageDisplay
     })
 
@@ -664,6 +672,61 @@ Page({
       }
       this.setData({ filteredTools: filtered })
     } catch(e) {}
+  },
+
+  /* ========================================================
+   *   [最近使用功能] 查看全部最近使用的工具
+   * ======================================================== */
+
+  /**
+   * 切换显示全部最近使用
+   */
+  toggleShowAllRecent: function() {
+    try {
+      wx.vibrateShort({ type: 'light' })
+
+      var currentShow = this.data.showAllRecent
+      this.setData({
+        showAllRecent: !currentShow
+      })
+
+      if (!currentShow) {
+        // 打开时重新加载最新数据
+        var recentTools = wx.getStorageSync('recentTools') || []
+        if (!Array.isArray(recentTools)) recentTools = []
+        this.setData({ recentTools: recentTools })
+      }
+    } catch(e) {
+      console.error('[toggleShowAllRecent] Error:', e)
+    }
+  },
+
+  /**
+   * 从最近使用列表中点击工具跳转
+   */
+  onRecentToolClick: function(e) {
+    try {
+      var tool = e.currentTarget.dataset.tool
+      if (!tool) return
+
+      wx.vibrateShort({ type: 'light' })
+
+      // 跳转到对应工具页面
+      var url = urlMap[tool.id]
+      if (url) {
+        wx.navigateTo({
+          url: url,
+          fail: function(err) {
+            console.error('[recent] 跳转失败:', err)
+            wx.showToast({ title: '页面跳转失败', icon: 'none' })
+          }
+        })
+      } else {
+        wx.showToast({ title: '功能开发中...', icon: 'none', duration: 1500 })
+      }
+    } catch(e) {
+      console.error('[onRecentToolClick] Error:', e)
+    }
   },
 
   /* ========================================================

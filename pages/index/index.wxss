@@ -231,6 +231,167 @@ page {
   max-width: 100%;
 }
 
+/* ===================================
+   🕐 最近使用工具区域 v3
+   =================================== */
+
+.recent-section {
+  margin-top: 24px;
+  margin-bottom: 10px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 18px;
+  border: 1.5px solid rgba(255,255,255,0.22);
+  padding: 16px 18px;
+  position: relative;
+  z-index: 2;
+  animation: recentSlideInV3 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.75s backwards;
+}
+
+@keyframes recentSlideInV3 {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.recent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.recent-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: -0.3px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.recent-more-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  background: rgba(255,255,255,0.22);
+  border-radius: 20px;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1.5px solid rgba(255,255,255,0.28);
+}
+
+.recent-more-btn:active {
+  transform: scale(0.92);
+  background: rgba(255,255,255,0.32);
+}
+
+.recent-more-text {
+  font-size: 13px;
+  color: #FFFFFF;
+  font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+.recent-arrow {
+  font-size: 11px;
+  color: #FFFFFF;
+  font-weight: 600;
+  transition: transform 0.35s ease;
+}
+
+/* 最近使用列表项 */
+.recent-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 16px;
+  margin-bottom: 10px;
+  background: rgba(255,255,255,0.20);
+  border-radius: 14px;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1.5px solid transparent;
+  box-shadow:
+    0 3px 10px rgba(0,0,0,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+.recent-item:last-child {
+  margin-bottom: 0;
+}
+
+.recent-item:active {
+  transform: scale(0.96) translateX(3px);
+  background: rgba(255,255,255,0.30);
+  box-shadow:
+    0 4px 14px rgba(102,126,234,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+  border-color: rgba(102,126,234,0.25);
+}
+
+.recent-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+  flex-shrink: 0;
+}
+
+.recent-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.recent-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #FFFFFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+.recent-time {
+  font-size: 11px;
+  color: rgba(255,255,255,0.65);
+  font-weight: 400;
+}
+
+.recent-arrow-right {
+  font-size: 19px;
+  color: rgba(255,255,255,0.55);
+  font-weight: 300;
+  flex-shrink: 0;
+}
+
+/* 展开状态滚动容器 */
+.recent-scroll {
+  max-height: 400px;
+}
+
+/* 空状态 */
+.recent-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.recent-empty-text {
+  font-size: 14px;
+  color: rgba(255,255,255,0.60);
+  font-weight: 500;
+}
+
 /* Trust Bar v3 - 数据信任条增强 */
 .trust-bar {
   display: flex;

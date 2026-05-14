@@ -27,20 +27,66 @@
       </view>
 
       <!-- Top 3 快捷入口 -->
-      <view class="quick-access" wx:if="{{topTools.length > 0 && !isEditMode}}">
-        <view
-          wx:for="{{topTools}}"
-          wx:key="id"
-          class="quick-tool-item"
-          data-tool="{{item}}"
-          bindtap="onToolClick"
-        >
-          <view class="quick-icon" style="background: {{item.iconBg}}">
-            <text>{{item.icon}}</text>
-          </view>
-          <text class="quick-name">{{item.name}}</text>
+    <view class="quick-access" wx:if="{{topTools.length > 0 && !isEditMode}}">
+      <view
+        wx:for="{{topTools}}"
+        wx:key="id"
+        class="quick-tool-item"
+        data-tool="{{item}}"
+        bindtap="onToolClick"
+      >
+        <view class="quick-icon" style="background: {{item.iconBg}}">
+          <text>{{item.icon}}</text>
+        </view>
+        <text class="quick-name">{{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 最近使用工具 -->
+    <view class="recent-section" wx:if="{{recentTools.length > 0}}">
+      <view class="recent-header">
+        <text class="recent-title">🕐 最近使用</text>
+        <view class="recent-more-btn" bindtap="toggleShowAllRecent">
+          <text class="recent-more-text">{{showAllRecent ? '收起' : '查看全部'}}</text>
+          <text class="recent-arrow">{{showAllRecent ? '▲' : '▼'}}</text>
         </view>
       </view>
+
+      <!-- 折叠状态：只显示前3个 -->
+      <view class="recent-list-collapsed" wx:if="{{!showAllRecent}}">
+        <block wx:for="{{recentTools}}" wx:key="id" wx:if="{{index < 3}}">
+          <view class="recent-item" bindtap="onRecentToolClick" data-tool="{{item}}">
+            <view class="recent-icon-wrap" style="background: {{item.iconBg}}">{{item.icon}}</view>
+            <view class="recent-info">
+              <text class="recent-name">{{item.name}}</text>
+              <text class="recent-time">{{item.usedAt ? item.usedAt : ''}}</text>
+            </view>
+            <text class="recent-arrow-right">›</text>
+          </view>
+        </block>
+      </view>
+
+      <!-- 展开状态：显示全部 -->
+      <view class="recent-list-expanded" wx:if="{{showAllRecent}}">
+        <scroll-view scroll-y class="recent-scroll" style="max-height: 400px;">
+          <block wx:for="{{recentTools}}" wx:key="id">
+            <view class="recent-item" bindtap="onRecentToolClick" data-tool="{{item}}">
+              <view class="recent-icon-wrap" style="background: {{item.iconBg}}">{{item.icon}}</view>
+              <view class="recent-info">
+                <text class="recent-name">{{item.name}}</text>
+                <text class="recent-time">{{item.usedAt ? item.usedAt : ''}}</text>
+              </view>
+              <text class="recent-arrow-right">›</text>
+            </view>
+          </block>
+        </scroll-view>
+
+        <!-- 空状态提示 -->
+        <view class="recent-empty" wx:if="{{recentTools.length === 0}}">
+          <text class="recent-empty-text">暂无使用记录</text>
+        </view>
+      </view>
+    </view>
 
       <!-- 数据信任条 -->
       <view class="trust-bar" wx:if="{{!isEditMode}}">
