@@ -540,6 +540,23 @@ page {
   border-color: rgba(102,126,234,0.2);
 }
 
+/* 弹窗内的文字颜色 - 使用深色确保在白色背景上清晰可见 */
+.recent-item-modal .recent-name {
+  color: #1E293B;
+  font-size: 16px;
+  font-weight: 700;
+  text-shadow: none;
+}
+
+.recent-item-modal .recent-time {
+  color: #64748B;
+  font-size: 12px;
+}
+
+.recent-item-modal .recent-arrow-right {
+  color: #94A3B8;
+}
+
 /* 弹窗底部 */
 .modal-footer {
   padding: 16px 24px 22px;
@@ -2386,4 +2403,26 @@ page.dark-mode {
 .dark-mode .no-hidden-tools {
   color: #fde68a;
   font-weight: 500;
+}
+
+/* 暗黑模式下弹窗内的文字颜色 */
+.dark-mode .recent-item-modal {
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+.dark-mode .recent-item-modal .recent-name {
+  color: #F1F5F9;
+}
+
+.dark-mode .recent-item-modal .recent-time {
+  color: #94A3B8;
+}
+
+.dark-mode .recent-item-modal .recent-arrow-right {
+  color: #64748B;
+}
+
+.dark-mode .recent-item-modal:active {
+  background: linear-gradient(135deg, #334155 0%, #1E293B 100%);
 }
