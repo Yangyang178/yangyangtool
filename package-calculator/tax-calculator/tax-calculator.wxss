@@ -115,66 +115,106 @@ page {
   border-radius: 12px;
 }
 
-/* 扣除项列表 - 横向布局 */
+/* 扣除项列表 - 精美卡片式布局 */
 .deduction-list {
-  
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
+/* 扣除项 - 独立圆角卡片设计 */
 .deduction-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #f1f5f9;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+  border-radius: 16px;
+  border: 1.5px solid rgba(148, 163, 184, 0.15);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-bottom: 0;
 }
 
 .deduction-item.item-last {
-  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* 卡片悬停/点击效果 */
+.deduction-item:active {
+  background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+  box-shadow:
+    0 4px 16px rgba(102, 126, 234, 0.15),
+    0 2px 8px rgba(102, 126, 234, 0.08);
+  border-color: rgba(102, 126, 234, 0.25);
+  transform: scale(0.98) translateY(-1px);
 }
 
 .item-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex-shrink: 0;
 }
 
 .item-icon {
-  font-size: 22px;
-  width: 32px;
-  text-align: center;
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+  border-radius: 12px;
+  box-shadow:
+    0 2px 6px rgba(102, 126, 234, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .item-name {
-  font-size: 14px;
-  font-weight: 500;
-  color: #334155;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1E293B;
   white-space: nowrap;
 }
 
 .item-right {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
 .item-input {
-  width: 80px;
-  height: 34px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #1e293b;
+  width: 90px;
+  height: 38px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1E293B;
   text-align: right;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 0 8px;
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 0 12px;
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.04),
+    0 1px 2px rgba(255, 255, 255, 0.9);
+  transition: all 0.2s ease;
+}
+
+.item-input:focus {
+  border-color: #3B82F6;
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.04),
+    0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .item-unit {
-  font-size: 13px;
-  color: #94a3b8;
+  font-size: 14px;
+  color: #64748B;
+  font-weight: 500;
   white-space: nowrap;
 }
 
