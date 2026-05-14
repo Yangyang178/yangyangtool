@@ -983,10 +983,36 @@ page {
 
 .dark-mode .settings-section {
   background: rgba(30, 41, 59, 0.8) !important;
-  box-shadow: 
+  box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.3),
     0 2px 8px rgba(0, 0, 0, 0.15) !important;
   border: 1px solid rgba(71, 85, 105, 0.4) !important;
+}
+
+/* 暗黑模式下设置项文字颜色统一 */
+.dark-mode .settings-section .setting-name {
+  color: #F1F5F9;
+}
+
+.dark-mode .settings-section .setting-value {
+  background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+  color: #94A3B8;
+}
+
+.dark-mode .settings-section .setting-arrow {
+  color: #64748B;
+}
+
+.dark-mode .settings-section .setting-icon {
+  opacity: 0.9;
+}
+
+.dark-mode .settings-section .section-title {
+  color: #F1F5F9;
+}
+
+.dark-mode .settings-section .section-icon {
+  opacity: 0.9;
 }
 
 .dark-mode .settings-section .setting-item {
