@@ -12,6 +12,8 @@ Page({
     isRefreshing: false,
     lastUpdateText: '演示数据',
     rateSource: 'demo',
+    showCurrencyPicker: false,
+    pickerType: 'from',
 
     quickRates: [
       { code: 'USD', name: '美元', rate: '0.1387', symbol: '$' },
@@ -160,45 +162,62 @@ Page({
   },
 
   showFromCurrency() {
-    var currencyNames = []
-    for (var ci = 0; ci < this.data.currencies.length; ci++) {
-      var c = this.data.currencies[ci]
-      currencyNames.push(c.flag + ' ' + c.name + ' (' + c.code + ')')
-    }
-    wx.showActionSheet({
-      itemList: currencyNames,
-      success: function(res) {
-        var selected = this.data.currencies[res.tapIndex]
-        this.setData({
-          fromCurrency: selected.code,
-          fromCurrencyName: selected.name,
-          fromSymbol: selected.symbol
-        })
-        this.updateExchangeRate()
-        this.calculateResult()
-      }.bind(this)
+    wx.vibrateShort({ type: 'light' })
+    this.setData({
+      showCurrencyPicker: true,
+      pickerType: 'from'
     })
   },
 
   showToCurrency() {
-    var currencyNames2 = []
-    for (var ci2 = 0; ci2 < this.data.currencies.length; ci2++) {
-      var c2 = this.data.currencies[ci2]
-      currencyNames2.push(c2.flag + ' ' + c2.name + ' (' + c2.code + ')')
+    wx.vibrateShort({ type: 'light' })
+    this.setData({
+      showCurrencyPicker: true,
+      pickerType: 'to'
+    })
+  },
+
+  hideCurrencyPicker() {
+    this.setData({ showCurrencyPicker: false })
+  },
+
+  selectCurrency(e) {
+    var currencyCode = e.currentTarget.dataset.code
+    var selected = null
+    for (var sci = 0; sci < this.data.currencies.length; sci++) {
+      if (this.data.currencies[sci].code === currencyCode) { selected = this.data.currencies[sci]; break }
     }
-    wx.showActionSheet({
-      itemList: currencyNames2,
-      success: function(res) {
-        var selected = this.data.currencies[res.tapIndex]
+
+    if (selected) {
+      wx.vibrateShort({ type: 'light' })
+
+      if (this.data.pickerType === 'from') {
+        if (selected.code === this.data.toCurrency) {
+          wx.showToast({ title: '不能选择相同货币', icon: 'none' })
+          return
+        }
+        this.setData({
+          fromCurrency: selected.code,
+          fromCurrencyName: selected.name,
+          fromSymbol: selected.symbol,
+          showCurrencyPicker: false
+        })
+      } else {
+        if (selected.code === this.data.fromCurrency) {
+          wx.showToast({ title: '不能选择相同货币', icon: 'none' })
+          return
+        }
         this.setData({
           toCurrency: selected.code,
           toCurrencyName: selected.name,
-          toSymbol: selected.symbol
+          toSymbol: selected.symbol,
+          showCurrencyPicker: false
         })
-        this.updateExchangeRate()
-        this.calculateResult()
-      }.bind(this)
-    })
+      }
+
+      this.updateExchangeRate()
+      this.calculateResult()
+    }
   },
 
   swapCurrency() {

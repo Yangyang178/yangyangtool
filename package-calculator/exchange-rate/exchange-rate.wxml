@@ -5,6 +5,7 @@
     <!-- 工具标题区 -->
     <view class="tool-header">
       <view class="icon-wrapper blue-gradient">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">💱</text>
       </view>
       <text class="tool-title">实时汇率换算</text>
@@ -40,11 +41,11 @@
           <text class="currency-code">{{fromCurrency}}</text>
           <text class="currency-name">{{fromCurrencyName}}</text>
         </view>
-        
+
         <view class="swap-btn" bindtap="swapCurrency">
           <text class="swap-icon">⇄</text>
         </view>
-        
+
         <view class="selector-box" bindtap="showToCurrency">
           <text class="currency-code">{{toCurrency}}</text>
           <text class="currency-name">{{toCurrencyName}}</text>
@@ -59,7 +60,7 @@
         <text class="result-label">= {{toCurrency}} {{toCurrencyName}}</text>
         <text class="rate-info">汇率: 1 {{fromCurrency}} = {{exchangeRate}} {{toCurrency}}</text>
       </view>
-      
+
       <!-- 常用货币快速查看 -->
       <view class="quick-rates">
         <text class="section-title">常用汇率参考</text>
@@ -80,12 +81,40 @@
 
     <!-- 操作按钮 -->
     <view class="action-btns">
-      <button class="primary-btn" bindtap="copyResult">
+      <button class="btn-primary" bindtap="copyResult">
         <text>复制结果</text>
       </button>
-      <button class="secondary-btn" bindtap="resetCalculator">
+      <button class="btn-secondary" bindtap="resetCalculator">
         <text>重新计算</text>
       </button>
+    </view>
+
+    <!-- 自定义货币选择器弹窗 -->
+    <view class="currency-picker-mask" wx:if="{{showCurrencyPicker}}" bindtap="hideCurrencyPicker"></view>
+    <view class="currency-picker-popup {{showCurrencyPicker ? 'show' : ''}}">
+      <view class="picker-header">
+        <text class="picker-title">选择{{pickerType === 'from' ? '源' : '目标'}}货币</text>
+        <view class="picker-close" bindtap="hideCurrencyPicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <scroll-view scroll-y class="picker-list">
+        <view
+          class="picker-item {{item.code === (pickerType === 'from' ? fromCurrency : toCurrency) ? 'selected' : ''}}"
+          wx:for="{{currencies}}"
+          wx:key="code"
+          data-code="{{item.code}}"
+          bindtap="selectCurrency"
+        >
+          <text class="picker-flag">{{item.flag}}</text>
+          <view class="picker-info">
+            <text class="picker-name">{{item.name}}</text>
+            <text class="picker-code-text">{{item.code}}</text>
+          </view>
+          <text class="picker-symbol-text">{{item.symbol}}</text>
+          <text class="picker-check" wx:if="{{item.code === (pickerType === 'from' ? fromCurrency : toCurrency)}}">✓</text>
+        </view>
+      </scroll-view>
     </view>
   </view>
 </scroll-view>

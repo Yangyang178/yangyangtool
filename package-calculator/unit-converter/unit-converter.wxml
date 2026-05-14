@@ -4,6 +4,7 @@
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper red-gradient">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">📏</text>
       </view>
       <text class="tool-title">智能单位换算</text>
@@ -28,8 +29,8 @@
       <view class="input-card">
         <text class="card-label">输入数值</text>
         <view class="value-input-wrapper">
-          <input 
-            class="value-input" 
+          <input
+            class="value-input"
             type="digit"
             placeholder="请输入数值"
             value="{{inputValue}}"
@@ -72,10 +73,10 @@
 
     <!-- 操作按钮 -->
     <view class="action-btns">
-      <button class="primary-btn" bindtap="copyResult">
+      <button class="btn-primary" bindtap="copyResult">
         <text>复制结果</text>
       </button>
-      <button class="secondary-btn" bindtap="swapUnits">
+      <button class="btn-secondary" bindtap="swapUnits">
         <text>交换单位</text>
       </button>
     </view>

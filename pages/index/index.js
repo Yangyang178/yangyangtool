@@ -1,4 +1,25 @@
+/**
+ * 首页主逻辑 - pages/index/index.js
+ * 
+ * 百宝工具箱首页核心文件
+ * 职责：工具展示、搜索、分类、编辑模式、分享等功能
+ * 
+ * 模块说明：
+ * - [配置区] 数据定义、路由映射、辅助函数
+ * - [生命周期] onLoad, onShow 等页面生命周期
+ * - [主题系统] 暗黑模式适配
+ * - [布局管理] 自定义排序、隐藏、重置
+ * - [搜索功能] 关键词搜索、历史记录
+ * - [交互功能] 点击、收藏、长按菜单
+ * - [数据统计] 使用记录、周统计
+ * - [分享功能] 海报绘制、分享配置
+ */
+
 var app = getApp()
+
+/* ============================================================
+ *   [配置区] 数据定义与路由映射
+ * ============================================================ */
 
 var urlMap = {
   1: '/package-calculator/exchange-rate/exchange-rate',
@@ -27,12 +48,90 @@ var urlMap = {
   25: '/package-calculator/tax-calculator/tax-calculator'
 }
 
+var defaultTools = [
+  { id: 21, name: '图片处理', description: '压缩/转换/裁剪/信息查看', icon: '📹', iconBg: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)', category: 'dev', isHot: true, isFavorite: false },
+  { id: 2, name: '单位换算', description: '长度/重量/温度等转换', icon: '📏', iconBg: 'linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%)', category: 'calculator', isHot: false, isFavorite: false },
+  { id: 1, name: '汇率换算', description: '实时汇率，快速换汇', icon: '💱', iconBg: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)', category: 'calculator', isHot: true, isFavorite: false },
+  { id: 3, name: '房贷计算器', description: '月供、利息一目了然', icon: '🏠', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', category: 'calculator', isHot: true, isFavorite: false },
+  { id: 5, name: '字数统计', description: '中英文字符精准统计', icon: '#️⃣', iconBg: 'linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%)', category: 'text', isHot: true, isFavorite: false },
+  { id: 13, name: '日期计算器', description: '间隔天数精确计算', icon: '📅', iconBg: 'linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)', category: 'datetime', isHot: true, isFavorite: false },
+  { id: 11, name: '随机决定', description: '抽签做决定不再纠结', icon: '🎲', iconBg: 'linear-gradient(135deg, #FECDD3 0%, #FDA4AF 100%)', category: 'life', isHot: false, isFavorite: false },
+  { id: 4, name: '小费计算器', description: '快速计算小费金额', icon: '💰', iconBg: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)', category: 'calculator', isHot: false, isFavorite: false },
+  { id: 6, name: '大小写转换', description: '英文大小写一键切换', icon: '🔤', iconBg: 'linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%)', category: 'text', isHot: false, isFavorite: false },
+  { id: 7, name: 'Base64编解码', description: 'Base64编码解码工具', icon: '🔐', iconBg: 'linear-gradient(135deg, #CCFBF1 0%, #99F6E4 100%)', category: 'text', isHot: false, isFavorite: false },
+  { id: 9, name: '番茄计时', description: '专注工作25分钟', icon: '🍅', iconBg: 'linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%)', category: 'life', isHot: true, isFavorite: false },
+  { id: 10, name: '喝水提醒', description: '健康饮水定时提醒', icon: '💧', iconBg: 'linear-gradient(135deg, #BAE6FD 0%, #7DD3FC 100%)', category: 'life', isHot: false, isFavorite: false },
+  { id: 12, name: '垃圾分类查询', description: '智能识别垃圾类型', icon: '♻️', iconBg: 'linear-gradient(135deg, #BBF7D0 0%, #86EFAC 100%)', category: 'life', isHot: false, isFavorite: false },
+  { id: 14, name: '倒计时', description: '重要日期倒计时', icon: '⏰', iconBg: 'linear-gradient(135deg, #93C5FD 0%, #60A5FA 100%)', category: 'datetime', isHot: false, isFavorite: false },
+  { id: 15, name: '世界时钟', description: '全球时区时间查看', icon: '🌍', iconBg: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)', category: 'datetime', isHot: false, isFavorite: false },
+  { id: 16, name: '年龄计算器', description: '精确到天的年龄计算', icon: '🧓', iconBg: 'linear-gradient(135deg, #FDA4AF 0%, #FB7185 100%)', category: 'datetime', isHot: false, isFavorite: false },
+  { id: 17, name: 'JSON格式化', description: 'JSON美化压缩工具', icon: '{}', iconBg: 'linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)', category: 'dev', isHot: true, isFavorite: false },
+  { id: 18, name: '颜色转换', description: 'HEX/RGB/HSL互转', icon: '🎨', iconBg: 'linear-gradient(135deg, #F472B6 0%, #EC4899 100%)', category: 'dev', isHot: false, isFavorite: false },
+  { id: 19, name: 'URL编解码', description: 'URL编码解码工具', icon: '🔗', iconBg: 'linear-gradient(135deg, #67E8F9 0%, #22D3EE 100%)', category: 'dev', isHot: false, isFavorite: false },
+  { id: 20, name: '正则表达式测试', description: '正则表达式在线测试', icon: '✨', iconBg: 'linear-gradient(135deg, #C4B5FD 0%, #A78BFA 100%)', category: 'dev', isHot: false, isFavorite: false },
+  { id: 22, name: '密码生成器', description: '自定义长度/字符类型，一键生成强密码', icon: '🔐', iconBg: 'linear-gradient(135deg, #CCFBF1 0%, #99F6E4 100%)', category: 'dev', isHot: false, isFavorite: false },
+  { id: 23, name: 'BMI 计算器', description: '身高体重→BMI指数+健康建议', icon: '⚖️', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', category: 'life', isHot: true, isFavorite: false },
+  { id: 24, name: '文本对比', description: '两段文本差异对比，高亮显示不同处', icon: '🔄', iconBg: 'linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%)', category: 'text', isHot: false, isFavorite: false },
+  { id: 25, name: '个税计算器', description: '2024最新个税专项扣除，月薪→税后工资', icon: '💰', iconBg: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)', category: 'calculator', isHot: true, isFavorite: false }
+]
+
+var categories = [
+  { id: 'all', name: '全部' },
+  { id: 'calculator', name: '计算转换' },
+  { id: 'text', name: '文本处理' },
+  { id: 'life', name: '生活助手' },
+  { id: 'datetime', name: '日期时间' },
+  { id: 'dev', name: '开发调试' }
+]
+
+var hotSearchWords = ['汇率', '房贷', 'BMI', '个税', '字数', '番茄', 'JSON', '图片', '密码', '随机']
+
+var pinyinMap = {
+  'a': 'a', 'b': 'b', 'c': 'c', 'd': 'd', 'e': 'e', 'f': 'f', 'g': 'g', 'h': 'h',
+  'i': 'i', 'j': 'j', 'k': 'k', 'l': 'l', 'm': 'm', 'n': 'n', 'o': 'o', 'p': 'p',
+  'q': 'q', 'r': 'r', 's': 's', 't': 't', 'u': 'u', 'v': 'v', 'w': 'w', 'x': 'x',
+  'y': 'y', 'z': 'z',
+  '阿': 'a', '爱': 'a', '安': 'a',
+  '把': 'b', '百': 'b', '半': 'b', '本': 'b', '比': 'b', '变': 'b', '表': 'b', '别': 'b', '不': 'b',
+  '查': 'c', '差': 'c', '产': 'c', '常': 'c', '成': 'c', '程': 'c', '尺': 'c', '冲': 'c', '处': 'c', '除': 'c', '测': 'c', '策': 'c', '存': 'c', '操': 'c',
+  '大': 'd', '单': 'd', '当': 'd', '倒': 'd', '导': 'd', '得': 'd', '的': 'd', '地': 'd', '第': 'd', '典': 'd', '定': 'd', '丢': 'd', '度': 'd', '段': 'd', '短': 'd', '对': 'd', '达': 'd', '代': 'd', '二': 'e',
+  '发': 'f', '法': 'f', '反': 'f', '范': 'f', '房': 'f', '费': 'f', '分': 'f', '份': 'f', '风': 'f', '复': 'f', '付': 'f', '负': 'f',
+  '改': 'g', '概': 'g', '干': 'g', '刚': 'g', '高': 'g', '个': 'g', '格': 'g', '更': 'g', '工': 'g', '公': 'g', '功': 'g', '管': 'g', '规': 'g', '国': 'g', '过': 'g',
+  '还': 'h', '海': 'h', '含': 'h', '行': 'h', '好': 'h', '号': 'h', '合': 'h', '和': 'h', '红': 'h', '后': 'h', '互': 'h', '划': 'h', '化': 'h', '换': 'h', '黄': 'h', '汇': 'h', '会': 'h', '混': 'h', '活': 'h', '或': 'h', '获': 'h', '喝': 'h', '黑': 'h', '恒': 'h',
+  '机': 'j', '基': 'j', '及': 'j', '几': 'j', '计': 'j', '记': 'j', '际': 'j', '加': 'j', '家': 'j', '价': 'j', '检': 'j', '简': 'j', '建': 'j', '健': 'j', '将': 'j', '降': 'j', '交': 'j', '角': 'j', '教': 'j', '接': 'j', '结': 'j', '解': 'j', '界': 'j', '借': 'j', '今': 'j', '金': 'j', '紧': 'j', '进': 'j', '近': 'j', '经': 'j', '精': 'j', '警': 'j', '竞': 'j', '镜': 'j', '究': 'j', '九': 'j', '久': 'j', '旧': 'j', '局': 'j', '决': 'j', '觉': 'j', '绝': 'j', '具': 'j', '卷': 'j',
+  '开': 'k', '看': 'k', '科': 'k', '可': 'k', '克': 'k', '客': 'k', '空': 'k', '控': 'k', '口': 'k', '快': 'k', '宽': 'k', '框': 'k',
+  '拉': 'l', '来': 'l', '蓝': 'l', '朗': 'l', '类': 'l', '累': 'l', '离': 'l', '理': 'l', '历': 'l', '立': 'l', '利': 'l', '力': 'l', '例': 'l', '连': 'l', '联': 'l', '两': 'l', '量': 'l', '聊': 'l', '列': 'l', '临': 'l', '龄': 'l', '领': 'l', '另': 'l', '流': 'l', '录': 'l', '乱': 'l', '率': 'l', '滤': 'l', '轮': 'l', '逻': 'l', '落': 'l', '垃': 'l', '栏': 'l', '楼': 'l',
+  '码': 'm', '买': 'm', '满': 'm', '漫': 'm', '猫': 'm', '冒': 'm', '贸': 'm', '眉': 'm', '每': 'm', '美': 'm', '门': 'm', '米': 'm', '密': 'm', '面': 'm', '民': 'm', '名': 'm', '明': 'm', '命': 'm', '模': 'm', '末': 'm', '目': 'm', '默': 'm',
+  '那': 'n', '内': 'n', '纳': 'n', '能': 'n', '年': 'n', '念': 'n', '农': 'n', '浓': 'n', '暖': 'n',
+  '欧': 'o', '偶': 'o',
+  '排': 'p', '判': 'p', '旁': 'p', '跑': 'p', '配': 'p', '批': 'p', '片': 'p', '偏': 'p', '拼': 'p', '频': 'p', '评': 'p', '屏': 'p', '平': 'p', '凭': 'p',
+  '期': 'q', '齐': 'q', '其': 'q', '棋': 'q', '启': 'q', '气': 'q', '千': 'q', '签': 'q', '前': 'q', '钱': 'q', '强': 'q', '切': 'q', '清': 'q', '情': 'q', '请': 'q', '秋': 'q', '求': 'q', '区': 'q', '取': 'q', '趣': 'q', '去': 'q', '圈': 'q', '全': 'q', '权': 'q', '确': 'q',
+  '然': 'r', '让': 'r', '热': 'r', '人': 'r', '认': 'r', '任': 'r', '日': 'r', '容': 'r', '入': 'r', '软': 'r',
+  '三': 's', '散': 's', '扫': 's', '色': 's', '删': 's', '上': 's', '少': 's', '设': 's', '深': 's', '审': 's', '生': 's', '失': 's', '时': 's', '实': 't', '识': 's', '世': 's', '式': 's', '示': 's', '事': 's', '是': 's', '手': 's', '首': 's', '受': 's', '数': 's', '刷': 's', '双': 's', '水': 's', '顺': 's', '说': 's', '搜': 's', '速': 's', '随': 's', '碎': 's', '算': 's', '虽': 's', '缩': 's', '锁': 's',
+  '他': 't', '台': 't', '谈': 't', '弹': 't', '特': 't', '提': 't', '天': 't', '填': 't', '条': 't', '贴': 't', '铁': 't', '通': 't', '同': 't', '统': 't', '头': 't', '图': 't', '突': 't', '团': 't', '退': 't', '拖': 't',
+  '外': 'w', '完': 'w', '网': 'w', '危': 'w', '维': 'w', '围': 'w', '位': 'w', '文': 'w', '稳': 'w', '问': 'w', '卧': 'w', '无': 'w', '五': 'w', '物': 'w',
+  '下': 'x', '先': 'x', '显': 'x', '现': 'x', '线': 'x', '限': 'x', '相': 'x', '向': 'x', '项': 'x', '消': 'x', '小': 'x', '效': 'x', '些': 'x', '协': 'x', '信': 'x', '星': 'x', '行': 'x', '修': 'x', '秀': 'x', '虚': 'x', '需': 'x', '序': 'x', '选': 'x', '学': 'x', '雪': 'x', '寻': 'x', '循': 'x', '验': 'x', '响': 'x', '像': 'x', '享': 'x', '心': 'x', '新': 'x', '醒': 'x', '详': 'x', '降': 'x', '写': 'x',
+  '颜': 'y', '羊': 'y', '阳': 'y', '样': 'y', '摇': 'y', '要': 'y', '也': 'y', '一': 'y', '以': 'y', '易': 'y', '意': 'y', '因': 'y', '引': 'y', '应': 'y', '映': 'y', '拥': 'y', '永': 'y', '用': 'y', '优': 'y', '由': 'y', '邮': 'y', '有': 'y', '右': 'y', '于': 'y', '余': 'y', '与': 'y', '预': 'y', '域': 'y', '员': 'y', '原': 'y', '源': 'y', '远': 'y', '愿': 'y', '月': 'y', '阅': 'y', '越': 'y', '云': 'y', '允': 'y', '运': 'y', '韵': 'y', '压': 'y', '亚': 'y', '严': 'y', '眼': 'y', '演': 'y', '养': 'y', '页': 'y', '依': 'y', '移': 'y', '已': 'y', '益': 'y', '义': 'y', '音': 'y', '阴': 'y', '银': 'y', '印': 'y', '英': 'y', '迎': 'y', '盈': 'y', '影': 'y', '硬': 'y', '勇': 'y', '悠': 'y', '油': 'y', '游': 'y', '友': 'y', '又': 'y', '幼': 'y', '鱼': 'y', '愉': 'y', '渔': 'y', '予': 'y', '宇': 'y', '羽': 'y', '雨': 'y', '语': 'y', '玉': 'y', '育': 'y', '浴': 'y', '蚌': 'y', '御': 'y', '优': 'y', '遇': 'y', '誉': 'y', '愈': 'y', '欲': 'y', '圆': 'y', '缘': 'y', '日': 'y', '约': 'y', '跃': 'y', '钥': 'y', '岳': 'y', '悦': 'y', '均': 'y', '蕴': 'y',
+  '在': 'z', '咱': 'z', '杂': 'z', '灾': 'z', '载': 'z', '暂': 'z', '赞': 'z', '脏': 'z', '郭': 'z', '早': 'z', '造': 'z', '噪': 'z', '责': 'z', '择': 'z', '则': 'z', '泽': 'z', '贼': 'z', '怎': 'z', '增': 'z', '赠': 'z', '扎': 'z', '眨': 'z', '占': 'z', '展': 'z', '站': 'z', '张': 'z', '掌': 'z', '丈': 'z', '帐': 'z', '账': 'z', '障': 'z', '招': 'z', '找': 'z', '照': 'z', '罩': 'z', '折': 'z', '哲': 'z', '者': 'z', '这': 'z', '浙': 'z', '针': 'z', '侦': 'z', '真': 'z', '诊': 'z', '枕': 'z', '阵': 'z', '振': 'z', '镇': 'z', '震': 'z', '争': 'z', '征': 'z', '整': 'z', '正': 'z', '证': 'z', '政': 'z', '症': 'z', '之': 'z', '支': 'z', '知': 'z', '织': 'z', '脂': 'z', '执': 'z', '值': 'z', '职': 'z', '直': 'z', '植': 'z', '殖': 'z', '止': 'z', '旨': 'z', '指': 'z', '纸': 'z', '至': 'z', '志': 'z', '制': 'z', '质': 'z', '治': 'z', '秩': 'z', '智': 'z', '置': 'z', '中': 'zh', '忠': 'zh', '钟': 'zh', '终': 'zh', '种': 'zh', '众': 'zh', '周': 'zhou', '洲': 'z', '粥': 'z', '轴': 'z', '肘': 'z', '皱': 'z', '竹': 'z', '筑': 'z', '主': 'z', '煮': 'z', '嘱': 'z', '住': 'z', '注': 'z', '驻': 'z', '柱': 'z', '助': 'z', '筑': 'z', '祝': 'z', '著': 'z', '抓': 'z', '拽': 'z', '专': 'z', '转': 'z', '赚': 'z', '庄': 'z', '装': 'z', '壮': 'z', '状': 'z', '撞': 'z', '追': 'z', '准': 'z', '捕': 'z', '桌': 'z', '着': 'z', '兹': 'z', '资': 'z', '姿': 'z', '滋': 'z', '粒': 'z', '子': 'z', '字': 'z', '自': 'z', '宗': 'z', '综': 'z', '总': 'z', '纵': 'z'
+}
+
+function getPinyinFirstLetter(str) {
+  if (!str) return ''
+  var firstChar = str.charAt(0).toLowerCase()
+  return pinyinMap[firstChar] || firstChar
+}
+
+/* ============================================================
+ *   [页面主体] Page 定义
+ * ============================================================ */
+
 Page({
+  
   data: {
     greetingText: '',
     searchKeyword: '',
     searchHistory: [],
-    hotSearchWords: ['汇率', '房贷', 'BMI', '个税', '字数', '番茄', 'JSON', '图片', '密码', '随机'],
+    hotSearchWords: hotSearchWords,
     showSearchPanel: false,
     currentCategory: 'all',
     isRefreshing: false,
@@ -40,601 +139,449 @@ Page({
     isDarkMode: false,
     showGuide: false,
     sharePosterPath: '',
-
     isLoading: true,
-
     isEditMode: false,
     isDragging: false,
     dragIndex: -1,
-
     selectedToolIndex: -1,
-
     canUndo: false,
     editHistory: [],
-
     customOrder: [],
     hiddenTools: [],
     hiddenToolsList: [],
-    categories: [
-      { id: 'all', name: '全部' },
-      { id: 'calculator', name: '计算转换' },
-      { id: 'text', name: '文本处理' },
-      { id: 'life', name: '生活助手' },
-      { id: 'datetime', name: '日期时间' },
-      { id: 'dev', name: '开发调试' }
-    ],
-    tools: [
-      {
-        id: 21, name: '图片处理', description: '压缩/转换/裁剪/信息查看', icon: '\uD83D\uDCF9\uFE0F', iconBg: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)', category: 'dev', isHot: true, isFavorite: false
-      },
-      {
-        id: 2, name: '单位换算', description: '长度/重量/温度等转换', icon: '\uD83D\uDCCF', iconBg: 'linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%)', category: 'calculator', isHot: false, isFavorite: false
-      },
-      {
-        id: 1, name: '汇率换算', description: '实时汇率，快速换汇', icon: '\u{1F4B1}', iconBg: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)', category: 'calculator', isHot: true, isFavorite: false
-      },
-      {
-        id: 3, name: '房贷计算器', description: '月供、利息一目了然', icon: '\uD83C\uDFE0', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', category: 'calculator', isHot: true, isFavorite: false
-      },
-      {
-        id: 5, name: '字数统计', description: '中英文字符精准统计', icon: '#\ufe0f\u20e3', iconBg: 'linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%)', category: 'text', isHot: true, isFavorite: false
-      },
-      {
-        id: 13, name: '日期计算器', description: '间隔天数精确计算', icon: '\uD83D\uDCC5', iconBg: 'linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)', category: 'datetime', isHot: true, isFavorite: false
-      },
-      {
-        id: 11, name: '随机决定', description: '抽签做决定不再纠结', icon: '\uD83C\uDFB2', iconBg: 'linear-gradient(135deg, #FECDD3 0%, #FDA4AF 100%)', category: 'life', isHot: false, isFavorite: false
-      },
-      {
-        id: 4, name: '小费计算器', description: '快速计算小费金额', icon: '\uD83D\uDCB0', iconBg: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)', category: 'calculator', isHot: false, isFavorite: false
-      },
-      {
-        id: 6, name: '大小写转换', description: '英文大小写一键切换', icon: '\uD83D\uDD24', iconBg: 'linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%)', category: 'text', isHot: false, isFavorite: false
-      },
-      {
-        id: 7, name: 'Base64编解码', description: 'Base64编码解码工具', icon: '\uD83D\uDD10', iconBg: 'linear-gradient(135deg, #CCFBF1 0%, #99F6E4 100%)', category: 'text', isHot: false, isFavorite: false
-      },
-      {
-        id: 9, name: '番茄计时', description: '专注工作25分钟', icon: '\uD83C\uDF45', iconBg: 'linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%)', category: 'life', isHot: true, isFavorite: false
-      },
-      {
-        id: 10, name: '喝水提醒', description: '健康饮水定时提醒', icon: '\uD83D\uDCA7', iconBg: 'linear-gradient(135deg, #BAE6FD 0%, #7DD3FC 100%)', category: 'life', isHot: false, isFavorite: false
-      },
-      {
-        id: 12, name: '垃圾分类查询', description: '智能识别垃圾类型', icon: '\u267B\uFE0F', iconBg: 'linear-gradient(135deg, #BBF7D0 0%, #86EFAC 100%)', category: 'life', isHot: false, isFavorite: false
-      },
-      {
-        id: 14, name: '倒计时', description: '重要日期倒计时', icon: '\u23F0', iconBg: 'linear-gradient(135deg, #93C5FD 0%, #60A5FA 100%)', category: 'datetime', isHot: false, isFavorite: false
-      },
-      {
-        id: 15, name: '世界时钟', description: '全球时区时间查看', icon: '\uD83C\uDF0D', iconBg: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)', category: 'datetime', isHot: false, isFavorite: false
-      },
-      {
-        id: 16, name: '年龄计算器', description: '精确到天的年龄计算', icon: '\uD83E\uDDD2', iconBg: 'linear-gradient(135deg, #FDA4AF 0%, #FB7185 100%)', category: 'datetime', isHot: false, isFavorite: false
-      },
-      {
-        id: 17, name: 'JSON格式化', description: 'JSON美化压缩工具', icon: '{}', iconBg: 'linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)', category: 'dev', isHot: true, isFavorite: false
-      },
-      {
-        id: 18, name: '颜色转换', description: 'HEX/RGB/HSL互转', icon: '\uD83C\uDFA8', iconBg: 'linear-gradient(135deg, #F472B6 0%, #EC4899 100%)', category: 'dev', isHot: false, isFavorite: false
-      },
-      {
-        id: 19, name: 'URL编解码', description: 'URL编码解码工具', icon: '\uD83D\uDD17', iconBg: 'linear-gradient(135deg, #67E8F9 0%, #22D3EE 100%)', category: 'dev', isHot: false, isFavorite: false
-      },
-      {
-        id: 20, name: '正则表达式测试', description: '正则表达式在线测试', icon: '\u2728', iconBg: 'linear-gradient(135deg, #C4B5FD 0%, #A78BFA 100%)', category: 'dev', isHot: false, isFavorite: false
-      },
-      {
-        id: 22, name: '密码生成器', description: '自定义长度/字符类型，一键生成强密码', icon: '\uD83D\uDD10', iconBg: 'linear-gradient(135deg, #CCFBF1 0%, #99F6E4 100%)', category: 'dev', isHot: false, isFavorite: false
-      },
-      {
-        id: 23, name: 'BMI 计算器', description: '身高体重→BMI指数+健康建议', icon: '\u2696\uFE0F', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', category: 'life', isHot: true, isFavorite: false
-      },
-      {
-        id: 24, name: '文本对比', description: '两段文本差异对比，高亮显示不同处', icon: '\uD83D\uDD04', iconBg: 'linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%)', category: 'text', isHot: false, isFavorite: false
-      },
-      {
-        id: 25, name: '个税计算器', description: '2024最新个税专项扣除，月薪→税后工资', icon: '\uD83D\uDCB0', iconBg: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)', category: 'calculator', isHot: true, isFavorite: false
-      }
-    ]
+    categories: categories,
+    tools: defaultTools,
+    topTools: [],
+    totalUsageDisplay: '1.2万'
   },
+
+  /* ========================================================
+   *   [生命周期]
+   * ======================================================== */
 
   onLoad: function() {
     this.updateGreeting()
     this.loadCustomLayout()
     this.filterTools()
     this.applyCurrentTheme()
-
     var favorites = wx.getStorageSync('favorites') || []
-    var toolsData = this.data.tools
+    if (!Array.isArray(favorites)) favorites = []
+
     var tools = []
-    for (var i = 0; i < toolsData.length; i++) {
-      var toolCopy = {}
-      for (var key in toolsData[i]) {
-        toolCopy[key] = toolsData[i][key]
+    for (var i = 0; i < defaultTools.length; i++) {
+      var t = {}
+      for (var key in defaultTools[i]) {
+        t[key] = defaultTools[i][key]
       }
-      var isFav = false
+      t.isFavorite = false
       for (var j = 0; j < favorites.length; j++) {
-        if (favorites[j] === toolCopy.id) {
-          isFav = true
+        if (favorites[j] === t.id) {
+          t.isFavorite = true
           break
         }
       }
-      toolCopy.isFavorite = isFav
-      tools.push(toolCopy)
+      tools.push(t)
     }
-
-    this.setData({ tools: tools, filteredTools: tools })
-
-    wx.setStorageSync('allTools', this.data.tools)
-    wx.setStorageSync('urlMap', urlMap)
 
     var history = wx.getStorageSync('searchHistory') || []
-    this.setData({ searchHistory: history })
-
+    if (!Array.isArray(history)) history = []
     var hasSeenGuide = wx.getStorageSync('hasSeenGuide')
-    if (!hasSeenGuide) {
-      this.setData({ showGuide: true })
-    }
-
     this.drawSharePoster()
 
-    var that = this
-    setTimeout(function() {
-      that.setData({ isLoading: false })
-    }, 600)
-  },
+    var topTools = []
+    try {
+      var weeklyUsage = wx.getStorageSync('weeklyUsage') || {}
+      if (typeof weeklyUsage !== 'object' || Array.isArray(weeklyUsage)) weeklyUsage = {}
 
-  loadCustomLayout: function() {
-    var customOrder = wx.getStorageSync('customToolOrder') || []
-    var hiddenTools = wx.getStorageSync('hiddenTools') || []
+      var sortedTools = []
+      for (var ti = 0; ti < tools.length; ti++) {
+        var toolId = tools[ti].id
+        var usageCount = 0
+        if (weeklyUsage[toolId]) {
+          usageCount = parseInt(weeklyUsage[toolId], 10) || 0
+        }
+        sortedTools.push({
+          id: tools[ti].id,
+          name: tools[ti].name,
+          icon: tools[ti].icon,
+          iconBg: tools[ti].iconBg,
+          count: usageCount
+        })
+      }
+
+      sortedTools.sort(function(a, b) { return b.count - a.count })
+      topTools = sortedTools.slice(0, 3)
+    } catch(e) {
+      topTools = [
+        { id: 1, name: '汇率换算', icon: '💱', iconBg: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)' },
+        { id: 3, name: '房贷计算器', icon: '🏠', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)' },
+        { id: 23, name: 'BMI 计算器', icon: '⚖️', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)' }
+      ]
+    }
+
+    var totalUsage = 0
+    try {
+      totalUsage = wx.getStorageSync('totalUsageCount') || 0
+      totalUsage = parseInt(totalUsage, 10) || 0
+    } catch(e) {}
+
+    var totalUsageDisplay = '1.2万'
+    if (totalUsage > 10000) {
+      totalUsageDisplay = (totalUsage / 10000).toFixed(1) + '万'
+    } else if (totalUsage > 0) {
+      totalUsageDisplay = totalUsage.toString()
+    }
 
     this.setData({
-      customOrder: customOrder,
-      hiddenTools: hiddenTools
+      tools: tools,
+      filteredTools: tools,
+      searchHistory: history,
+      showGuide: !hasSeenGuide,
+      topTools: topTools,
+      totalUsageDisplay: totalUsageDisplay
     })
 
-    if (customOrder.length > 0) {
-      var tools = this.data.tools
+    var that = this
+    setTimeout(function() { that.setData({ isLoading: false }) }, 600)
+  },
 
-      var orderedTools = []
-      for (var oi = 0; oi < customOrder.length; oi++) {
-        var skipHidden = false
-        for (var hi = 0; hi < hiddenTools.length; hi++) {
-          if (hiddenTools[hi] === customOrder[oi]) {
-            skipHidden = true
-            break
-          }
+  onShow: function() {
+    this.updateGreeting()
+    this.applyCurrentTheme()
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
+  },
+
+  /* ========================================================
+   *   [主题系统] 暗黑模式适配
+   * ======================================================== */
+
+  applyCurrentTheme: function() {
+    try {
+      var appInstance = getApp()
+      if (appInstance) {
+        var isDark = appInstance.globalData.isDarkMode || wx.getStorageSync('darkMode') === true
+        this.setData({ isDarkMode: isDark })
+        var bgColor = isDark ? '#0F172A' : '#F8FAFC'
+        wx.setBackgroundColor({
+          backgroundColor: bgColor,
+          backgroundColorTop: bgColor,
+          backgroundColorBottom: bgColor
+        })
+      }
+    } catch(e) {}
+  },
+
+  updateGreeting: function() {
+    try {
+      var hour = new Date().getHours()
+      var greeting = ''
+      if (hour >= 5 && hour < 12) greeting = '上午好'
+      else if (hour >= 12 && hour < 14) greeting = '中午好'
+      else if (hour >= 14 && hour < 18) greeting = '下午好'
+      else if (hour >= 18 && hour < 22) greeting = '晚上好'
+      else greeting = '夜深了'
+
+      var weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+      var now = new Date()
+      var dateStr = weekDays[now.getDay()] + ',' + (now.getMonth() + 1) + '月' + now.getDate() + '日'
+      this.setData({ greetingText: greeting + '\n' + dateStr })
+    } catch(e) {
+      this.setData({ greetingText: '欢迎使用' })
+    }
+  },
+
+  onGuideClose: function() {
+    this.setData({ showGuide: false })
+  },
+
+  onPullDownRefresh: function() {
+    this.setData({ isRefreshing: true })
+    var that = this
+    setTimeout(function() {
+      that.updateGreeting()
+      that.setData({ isRefreshing: false })
+      wx.stopPullDownRefresh()
+      wx.showToast({ title: '刷新成功', icon: 'success' })
+    }, 1000)
+  },
+
+  onScrollToUpper: function() {
+    var that = this
+    this.setData({ scrollTop: 1 })
+    setTimeout(function() { that.setData({ scrollTop: 0 }) }, 50)
+  },
+
+  onPageScroll: function(e) {
+    try {
+      var st = 0
+      if (e.detail && e.detail.scrollTop !== undefined) st = e.detail.scrollTop
+      else if (e.detail && e.detail.scrollY !== undefined) st = e.detail.scrollY
+      if (st < 5 && st > -50) {
+        var self = this
+        if (!this._scrollFixTimer) {
+          this._scrollFixTimer = setTimeout(function() {
+            self._scrollFixTimer = null
+            if (self.data.scrollTop !== 0) self.setData({ scrollTop: 0 })
+          }, 100)
         }
-        if (!skipHidden) {
-          for (var ti = 0; ti < tools.length; ti++) {
-            if (tools[ti].id === customOrder[oi]) {
-              orderedTools.push(tools[ti])
-              break
+      }
+    } catch(e) {}
+  },
+
+  /* ========================================================
+   *   [布局管理] 自定义排序、隐藏、重置
+   * ======================================================== */
+
+  loadCustomLayout: function() {
+    try {
+      var customOrder = wx.getStorageSync('customToolOrder') || []
+      var hiddenTools = wx.getStorageSync('hiddenTools') || []
+      if (!Array.isArray(customOrder)) customOrder = []
+      if (!Array.isArray(hiddenTools)) hiddenTools = []
+
+      this.setData({ customOrder: customOrder, hiddenTools: hiddenTools })
+
+      var tools = this.data.tools || []
+      if (!Array.isArray(tools) || tools.length === 0) return
+
+      if (customOrder.length > 0) {
+        var orderedTools = []
+        for (var oi = 0; oi < customOrder.length; oi++) {
+          var isHidden = false
+          for (var hi = 0; hi < hiddenTools.length; hi++) {
+            if (hiddenTools[hi] === customOrder[oi]) { isHidden = true; break }
+          }
+          if (!isHidden) {
+            for (var ti = 0; ti < tools.length; ti++) {
+              if (tools[ti].id === customOrder[oi]) { orderedTools.push(tools[ti]); break }
             }
           }
         }
+        var remainingTools = []
+        for (var ri = 0; ri < tools.length; ri++) {
+          var inOrdered = false
+          for (var ci = 0; ci < customOrder.length; ci++) {
+            if (customOrder[ci] === tools[ri].id) { inOrdered = true; break }
+          }
+          var isHidden2 = false
+          for (var hi2 = 0; hi2 < hiddenTools.length; hi2++) {
+            if (hiddenTools[hi2] === tools[ri].id) { isHidden2 = true; break }
+          }
+          if (!inOrdered && !isHidden2) remainingTools.push(tools[ri])
+        }
+        var finalTools = orderedTools.concat(remainingTools)
+        this.setData({ tools: finalTools, filteredTools: finalTools })
+      } else if (hiddenTools.length > 0) {
+        var visibleTools = []
+        for (var vi = 0; vi < tools.length; vi++) {
+          var hFound = false
+          for (var hi3 = 0; hi3 < hiddenTools.length; hi3++) {
+            if (hiddenTools[hi3] === tools[vi].id) { hFound = true; break }
+          }
+          if (!hFound) visibleTools.push(tools[vi])
+        }
+        this.setData({ tools: visibleTools, filteredTools: visibleTools })
       }
 
-      var remainingTools = []
-      for (var ri = 0; ri < tools.length; ri++) {
-        var inOrdered = false
-        var isHidden = false
-        for (var ci = 0; ci < customOrder.length; ci++) {
-          if (customOrder[ci] === tools[ri].id) {
-            inOrdered = true
-            break
-          }
-        }
-        for (var chi = 0; chi < hiddenTools.length; chi++) {
-          if (hiddenTools[chi] === tools[ri].id) {
-            isHidden = true
-            break
-          }
-        }
-        if (!inOrdered && !isHidden) {
-          remainingTools.push(tools[ri])
-        }
-      }
-
-      var finalTools = orderedTools.concat(remainingTools)
-      this.setData({
-        tools: finalTools,
-        filteredTools: finalTools
-      })
-    } else if (hiddenTools.length > 0) {
-      var visibleTools = []
-      for (var vi = 0; vi < this.data.tools.length; vi++) {
-        var hFound = false
-        for (var vh = 0; vh < hiddenTools.length; vh++) {
-          if (hiddenTools[vh] === this.data.tools[vi].id) {
-            hFound = true
-            break
-          }
-        }
-        if (!hFound) visibleTools.push(this.data.tools[vi])
-      }
-      this.setData({
-        tools: visibleTools,
-        filteredTools: visibleTools
-      })
-    }
-
-    this.updateHiddenToolsList(hiddenTools)
+      this.updateHiddenToolsList(hiddenTools)
+    } catch(e) {}
   },
 
   toggleEditMode: function() {
-    wx.vibrateShort({ type: 'light' })
-
-    if (!this.data.isEditMode) {
-      wx.showModal({
-        title: '\uD83D\uDCDD 编辑模式',
-        content: '点击工具卡片选中\n再次点击另一个卡片可交换位置\n点击眼睛图标可隐藏工具',
-        showCancel: false,
-        confirmText: '我知道了',
-        confirmColor: '#3B82F6'
+    try {
+      wx.vibrateShort({ type: 'light' })
+      if (!this.data.isEditMode) {
+        wx.showModal({
+          title: '📝 编辑模式',
+          content: '点击工具卡片选中\n再次点击另一个卡片可交换位置\n点击眼睛图标可隐藏工具',
+          showCancel: false, confirmText: '我知道了', confirmColor: '#3B82F6'
+        })
+      }
+      this.setData({
+        isEditMode: !this.data.isEditMode,
+        selectedToolIndex: -1, canUndo: false, editHistory: []
       })
-    }
-
-    this.setData({
-      isEditMode: !this.data.isEditMode,
-      selectedToolIndex: -1,
-      canUndo: false,
-      editHistory: []
-    })
-
-    if (!this.data.isEditMode) {
-      this.saveCustomLayout()
-      wx.showToast({
-        title: '布局已保存 \u2705',
-        icon: 'success',
-        duration: 1500
-      })
-    }
+      if (!this.data.isEditMode) {
+        this.saveCustomLayout()
+        wx.showToast({ title: '布局已保存 ✅', icon: 'success', duration: 1500 })
+      }
+    } catch(e) {}
   },
 
   onEditToolClick: function(e) {
-    if (!this.data.isEditMode) return
-
-    var index = e.currentTarget.dataset.index
-    var currentSelected = this.data.selectedToolIndex
-
-    if (currentSelected === -1) {
-      wx.vibrateShort({ type: 'light' })
-      this.setData({ selectedToolIndex: index })
-      return
-    }
-
-    if (currentSelected === index) {
-      wx.vibrateShort({ type: 'light' })
-      this.setData({ selectedToolIndex: -1 })
-      return
-    }
-
-    wx.vibrateShort({ type: 'medium' })
-
-    var filteredTools = []
-    for (var fi = 0; fi < this.data.filteredTools.length; fi++) {
-      filteredTools.push(this.data.filteredTools[fi])
-    }
-
-    if (!filteredTools[currentSelected] || !filteredTools[index]) {
-      console.warn('Invalid index for swap')
-      return
-    }
-
-    this.pushEditHistory()
-
-    var temp = filteredTools[currentSelected]
-    filteredTools[currentSelected] = filteredTools[index]
-    filteredTools[index] = temp
-
-    this.setData({
-      filteredTools: filteredTools,
-      selectedToolIndex: -1,
-      canUndo: true
-    })
-
-    this.saveCustomLayout()
-
-    wx.showToast({
-      title: '已交换位置',
-      icon: 'success',
-      duration: 800
-    })
+    try {
+      if (!this.data.isEditMode) return
+      var index = e.currentTarget.dataset.index
+      var currentSelected = this.data.selectedToolIndex
+      if (currentSelected === -1) {
+        wx.vibrateShort({ type: 'light' })
+        this.setData({ selectedToolIndex: index }); return
+      }
+      if (currentSelected === index) {
+        wx.vibrateShort({ type: 'light' })
+        this.setData({ selectedToolIndex: -1 }); return
+      }
+      wx.vibrateShort({ type: 'medium' })
+      var filteredTools = this.data.filteredTools || []
+      if (!filteredTools[currentSelected] || !filteredTools[index]) return
+      this.pushEditHistory()
+      var temp = filteredTools[currentSelected]
+      filteredTools[currentSelected] = filteredTools[index]
+      filteredTools[index] = temp
+      this.setData({ filteredTools: filteredTools, selectedToolIndex: -1, canUndo: true })
+      this.saveCustomLayout()
+      wx.showToast({ title: '已交换位置', icon: 'success', duration: 800 })
+    } catch(e) {}
   },
 
   pushEditHistory: function() {
-    var snapshot = []
-    for (var i = 0; i < this.data.filteredTools.length; i++) {
-      snapshot.push(this.data.filteredTools[i].id)
-    }
-    var hiddenSnapshot = []
-    for (var j = 0; j < this.data.hiddenTools.length; j++) {
-      hiddenSnapshot.push(this.data.hiddenTools[j])
-    }
-    var history = []
-    for (var h = 0; h < this.data.editHistory.length; h++) {
-      history.push(this.data.editHistory[h])
-    }
-    history.push({
-      order: snapshot,
-      hidden: hiddenSnapshot,
-      timestamp: Date.now()
-    })
-    if (history.length > 20) {
-      history = history.slice(history.length - 20)
-    }
-    this.setData({ editHistory: history })
+    try {
+      var filteredTools = this.data.filteredTools || []
+      var snapshot = []
+      for (var i = 0; i < filteredTools.length; i++) snapshot.push(filteredTools[i].id)
+      var hiddenTools = this.data.hiddenTools || []
+      var hiddenSnapshot = []
+      for (var j = 0; j < hiddenTools.length; j++) hiddenSnapshot.push(hiddenTools[j])
+      var history = this.data.editHistory || []
+      history = history.slice()
+      history.push({ order: snapshot, hidden: hiddenSnapshot, timestamp: Date.now() })
+      if (history.length > 20) history = history.slice(history.length - 20)
+      this.setData({ editHistory: history })
+    } catch(e) {}
   },
 
   undoLastAction: function() {
-    if (this.data.editHistory.length === 0) {
-      wx.showToast({ title: '没有可撤销的操作', icon: 'none', duration: 1200 })
-      return
-    }
-
-    wx.vibrateShort({ type: 'light' })
-
-    var history = []
-    for (var h = 0; h < this.data.editHistory.length; h++) {
-      history.push(this.data.editHistory[h])
-    }
-    var prevState = history.pop()
-
-    var allTools = this.data.tools
-    var restoredOrder = []
-    for (var oi = 0; oi < prevState.order.length; oi++) {
-      for (var ti = 0; ti < allTools.length; ti++) {
-        if (allTools[ti].id === prevState.order[oi]) {
-          restoredOrder.push(allTools[ti])
-          break
+    try {
+      var history = this.data.editHistory || []
+      if (history.length === 0) { wx.showToast({ title: '没有可撤销的操作', icon: 'none', duration: 1200 }); return }
+      wx.vibrateShort({ type: 'light' })
+      var newHistory = history.slice()
+      var prevState = newHistory.pop()
+      var allTools = this.data.tools || []
+      var restoredOrder = []
+      if (prevState.order && Array.isArray(prevState.order)) {
+        for (var oi = 0; oi < prevState.order.length; oi++) {
+          for (var ti = 0; ti < allTools.length; ti++) {
+            if (allTools[ti].id === prevState.order[oi]) { restoredOrder.push(allTools[ti]); break }
+          }
         }
       }
-    }
-
-    var restoredHidden = prevState.hidden || []
-
-    this.setData({
-      filteredTools: restoredOrder,
-      hiddenTools: restoredHidden,
-      editHistory: history,
-      canUndo: history.length > 0,
-      selectedToolIndex: -1
-    })
-
-    this.updateHiddenToolsList(restoredHidden)
-    this.saveCustomLayout()
-
-    wx.showToast({
-      title: '已撤销 ↩️',
-      icon: 'none',
-      duration: 800
-    })
+      var restoredHidden = (prevState.hidden && Array.isArray(prevState.hidden)) ? prevState.hidden : []
+      this.setData({ filteredTools: restoredOrder, hiddenTools: restoredHidden, editHistory: newHistory, canUndo: newHistory.length > 0, selectedToolIndex: -1 })
+      this.updateHiddenToolsList(restoredHidden)
+      this.saveCustomLayout()
+      wx.showToast({ title: '已撤销 ↩️', icon: 'none', duration: 800 })
+    } catch(e) {}
   },
 
   toggleToolVisibility: function(e) {
-    if (!this.data.isEditMode) return
-
-    wx.vibrateShort({ type: 'light' })
-
-    this.pushEditHistory()
-
-    var id = e.currentTarget.dataset.id
-    var hiddenTools = []
-    for (var hi = 0; hi < this.data.hiddenTools.length; hi++) {
-      hiddenTools.push(this.data.hiddenTools[hi])
-    }
-
-    var foundIdx = -1
-    for (var fi = 0; fi < hiddenTools.length; fi++) {
-      if (hiddenTools[fi] === id) {
-        foundIdx = fi
-        break
+    try {
+      if (!this.data.isEditMode) return
+      wx.vibrateShort({ type: 'light' })
+      this.pushEditHistory()
+      var id = e.currentTarget.dataset.id
+      var hiddenTools = this.data.hiddenTools || []
+      hiddenTools = hiddenTools.slice()
+      var foundIdx = -1
+      for (var i = 0; i < hiddenTools.length; i++) { if (hiddenTools[i] === id) { foundIdx = i; break } }
+      if (foundIdx > -1) { hiddenTools.splice(foundIdx, 1); wx.showToast({ title: '已显示 ✓', icon: 'none', duration: 1000 }) }
+      else { hiddenTools.push(id); wx.showToast({ title: '已隐藏 👁', icon: 'none', duration: 1000 }) }
+      this.updateHiddenToolsList(hiddenTools)
+      var filteredTools = this.data.filteredTools || []
+      var visibleTools = []
+      for (var vi = 0; vi < filteredTools.length; vi++) {
+        var isHidden = false
+        for (var hi = 0; hi < hiddenTools.length; hi++) { if (hiddenTools[hi] === filteredTools[vi].id) { isHidden = true; break } }
+        if (!isHidden) visibleTools.push(filteredTools[vi])
       }
-    }
-    if (foundIdx > -1) {
-      hiddenTools.splice(foundIdx, 1)
-      wx.showToast({ title: '已显示 \u2713', icon: 'none', duration: 1000 })
-    } else {
-      hiddenTools.push(id)
-      wx.showToast({ title: '已隐藏 \uD83D\uDC41', icon: 'none', duration: 1000 })
-    }
-
-    this.updateHiddenToolsList(hiddenTools)
-
-    var visibleTools = []
-    for (var vi = 0; vi < this.data.filteredTools.length; vi++) {
-      var isHidden = false
-      for (var hv = 0; hv < hiddenTools.length; hv++) {
-        if (hiddenTools[hv] === this.data.filteredTools[vi].id) {
-          isHidden = true
-          break
-        }
-      }
-      if (!isHidden) visibleTools.push(this.data.filteredTools[vi])
-    }
-    this.setData({
-      hiddenTools: hiddenTools,
-      filteredTools: visibleTools,
-      canUndo: true
-    })
+      this.setData({ hiddenTools: hiddenTools, filteredTools: visibleTools, canUndo: true })
+    } catch(e) {}
   },
 
   restoreHiddenTool: function(e) {
-    wx.vibrateShort({ type: 'light' })
-
-    var id = e.currentTarget.dataset.id
-    var hiddenTools = []
-    for (var hi = 0; hi < this.data.hiddenTools.length; hi++) {
-      hiddenTools.push(this.data.hiddenTools[hi])
-    }
-
-    var newHidden = []
-    for (var nh = 0; nh < hiddenTools.length; nh++) {
-      if (hiddenTools[nh] !== id) newHidden.push(hiddenTools[nh])
-    }
-    hiddenTools = newHidden
-
-    this.updateHiddenToolsList(hiddenTools)
-
-    var allTools = this.data.tools
-    var restoredTool = null
-    for (var ai = 0; ai < allTools.length; ai++) {
-      if (allTools[ai].id === id) {
-        restoredTool = allTools[ai]
-        break
+    try {
+      wx.vibrateShort({ type: 'light' })
+      var id = e.currentTarget.dataset.id
+      var hiddenTools = this.data.hiddenTools || []
+      var newHidden = []
+      for (var nh = 0; nh < hiddenTools.length; nh++) { if (hiddenTools[nh] !== id) newHidden.push(hiddenTools[nh]) }
+      hiddenTools = newHidden
+      this.updateHiddenToolsList(hiddenTools)
+      var allTools = this.data.tools || []
+      var restoredTool = null
+      for (var ai = 0; ai < allTools.length; ai++) { if (allTools[ai].id === id) { restoredTool = allTools[ai]; break } }
+      var visibleTools = this.data.filteredTools || []
+      if (restoredTool) {
+        var alreadyExists = false
+        for (var ve = 0; ve < visibleTools.length; ve++) { if (visibleTools[ve].id === id) { alreadyExists = true; break } }
+        if (!alreadyExists) visibleTools.push(restoredTool)
       }
-    }
-
-    var visibleTools = []
-    for (var vi = 0; vi < this.data.filteredTools.length; vi++) {
-      visibleTools.push(this.data.filteredTools[vi])
-    }
-    if (restoredTool) {
-      var alreadyExists = false
-      for (var ve = 0; ve < visibleTools.length; ve++) {
-        if (visibleTools[ve].id === id) {
-          alreadyExists = true
-          break
-        }
-      }
-      if (!alreadyExists) visibleTools.push(restoredTool)
-    }
-
-    this.setData({
-      hiddenTools: hiddenTools,
-      filteredTools: visibleTools
-    })
-
-    var displayName = restoredTool ? restoredTool.name : '工具'
-    wx.showToast({
-      title: displayName + ' 已恢复 \u2713',
-      icon: 'success',
-      duration: 1000
-    })
+      this.setData({ hiddenTools: hiddenTools, filteredTools: visibleTools })
+      var displayName = restoredTool ? restoredTool.name : '工具'
+      wx.showToast({ title: displayName + ' 已恢复 ✓', icon: 'success', duration: 1000 })
+    } catch(e) {}
   },
 
   updateHiddenToolsList: function(hiddenTools) {
-    if (!hiddenTools || hiddenTools.length === 0) {
-      this.setData({ hiddenToolsList: [] })
-      return
-    }
-
-    var allTools = this.data.tools
-    var hiddenList = []
-    for (var i = 0; i < allTools.length; i++) {
-      for (var j = 0; j < hiddenTools.length; j++) {
-        if (hiddenTools[j] === allTools[i].id) {
-          hiddenList.push(allTools[i])
-          break
-        }
+    try {
+      if (!hiddenTools || !Array.isArray(hiddenTools) || hiddenTools.length === 0) { this.setData({ hiddenToolsList: [] }); return }
+      var allTools = this.data.tools || []
+      var hiddenList = []
+      for (var i = 0; i < allTools.length; i++) {
+        for (var j = 0; j < hiddenTools.length; j++) { if (hiddenTools[j] === allTools[i].id) { hiddenList.push(allTools[i]); break } }
       }
-    }
-
-    this.setData({ hiddenToolsList: hiddenList })
+      this.setData({ hiddenToolsList: hiddenList })
+    } catch(e) {}
   },
 
   saveCustomLayout: function() {
-    var currentOrder = []
-    for (var i = 0; i < this.data.filteredTools.length; i++) {
-      currentOrder.push(this.data.filteredTools[i].id)
-    }
-    wx.setStorageSync('customToolOrder', currentOrder)
-    wx.setStorageSync('hiddenTools', this.data.hiddenTools)
-
-    this.setData({
-      customOrder: currentOrder
-    })
+    try {
+      var filteredTools = this.data.filteredTools || []
+      var currentOrder = []
+      for (var i = 0; i < filteredTools.length; i++) currentOrder.push(filteredTools[i].id)
+      wx.setStorageSync('customToolOrder', currentOrder)
+      wx.setStorageSync('hiddenTools', this.data.hiddenTools || [])
+      this.setData({ customOrder: currentOrder })
+    } catch(e) {}
   },
 
   resetLayout: function() {
-    wx.vibrateShort({ type: 'medium' })
-
-    var that = this
-    wx.showModal({
-      title: '\u26A0\uFE0F 重置布局',
-      content: '确定要恢复默认布局吗？\n所有自定义排序和隐藏设置将被清除。\n\n💡 重置后可通过"撤销"按钮恢复',
-      confirmText: '重置',
-      cancelText: '取消',
-      confirmColor: '#EF4444',
-      success: function(res) {
-        if (res.confirm) {
-          that.pushEditHistory()
-
-          wx.removeStorageSync('customToolOrder')
-          wx.removeStorageSync('hiddenTools')
-
-          that.setData({
-            customOrder: [],
-            hiddenTools: [],
-            isEditMode: false,
-            canUndo: true,
-            selectedToolIndex: -1
-          })
-
-          var favorites = wx.getStorageSync('favorites') || []
-          var defaultTools = []
-          for (var di = 0; di < that.data.tools.length; di++) {
-            var tcopy = {}
-            for (var key in that.data.tools[di]) {
-              tcopy[key] = that.data.tools[di][key]
+    try {
+      wx.vibrateShort({ type: 'medium' })
+      var that = this
+      wx.showModal({
+        title: '⚠️ 重置布局', content: '确定要恢复默认布局吗？\n所有自定义排序和隐藏设置将被清除。',
+        confirmText: '重置', cancelText: '取消', confirmColor: '#EF4444',
+        success: function(res) {
+          if (res.confirm) {
+            that.pushEditHistory()
+            wx.removeStorageSync('customToolOrder')
+            wx.removeStorageSync('hiddenTools')
+            that.setData({ customOrder: [], hiddenTools: [], isEditMode: false, canUndo: true, selectedToolIndex: -1 })
+            var favs = wx.getStorageSync('favorites') || []
+            if (!Array.isArray(favs)) favs = []
+            var defaultToolsCopy = []
+            for (var di = 0; di < defaultTools.length; di++) {
+              var tcopy = {}; var src = defaultTools[di]
+              for (var key in src) tcopy[key] = src[key]
+              tcopy.isFavorite = false
+              for (var fi = 0; fi < favs.length; fi++) { if (favs[fi] === tcopy.id) { tcopy.isFavorite = true; break } }
+              defaultToolsCopy.push(tcopy)
             }
-            var isFav = false
-            for (var fj = 0; fj < favorites.length; fj++) {
-              if (favorites[fj] === tcopy.id) {
-                isFav = true
-                break
-              }
-            }
-            tcopy.isFavorite = isFav
-            defaultTools.push(tcopy)
+            that.setData({ tools: defaultToolsCopy, filteredTools: defaultToolsCopy })
+            wx.showToast({ title: '已恢复默认布局', icon: 'success' })
           }
-
-          that.setData({
-            tools: defaultTools,
-            filteredTools: defaultTools
-          })
-
-          wx.showToast({ title: '已恢复默认布局', icon: 'success' })
         }
-      }
-    })
+      })
+    } catch(e) {}
   },
 
-  getPinyinFirstLetter: function(str) {
-    if (!str) return ''
-    var pinyinMap = {
-      'a': 'a', 'b': 'b', 'c': 'c', 'd': 'd', 'e': 'e', 'f': 'f', 'g': 'g', 'h': 'h',
-      'i': 'i', 'j': 'j', 'k': 'k', 'l': 'l', 'm': 'm', 'n': 'n', 'o': 'o', 'p': 'p',
-      'q': 'q', 'r': 'r', 's': 's', 't': 't', 'u': 'u', 'v': 'v', 'w': 'w', 'x': 'x',
-      'y': 'y', 'z': 'z',
-      '\u963f': 'a', '\u7231': 'a', '\u5b89': 'a',
-      '\u628a': 'b', '\u767e': 'b', '\u534a': 'b', '\u672c': 'b', '\u6bd4': 'b', '\u53d8': 'b', '\u8868': 'b', '\u522b': 'b', '\u4e0d': 'b',
-      '\u67e5': 'c', '\u5dee': 'c', '\u4ea7': 'c', '\u5e38': 'c', '\u6210': 'c', '\u7a0b': 'c', '\u5c3a': 'c', '\u51b2': 'c', '\u62bd': 'c', '\u5904': 'c', '\u9664': 'c', '\u6d4b': 'c', '\u7b56': 'c', '\u5b58': 'c', '\u64cd': 'c',
-      '\u5927': 'd', '\u5355': 'd', '\u5f53': 'd', '\u5012': 'd', '\u5bfc': 'd', '\u5f97': 'd', '\u7684': 'd', '\u5730': 'd', '\u7b2c': 'd', '\u5178': 'd', '\u5b9a': 'd', '\u4e22': 'd', '\u5ea6': 'd', '\u6bb5': 'd', '\u77ed': 'd', '\u5bf9': 'd', '\u8fbe': 'd', '\u4ee3': 'd', '\u4e8c': 'e',
-      '\u53d1': 'f', '\u6cd5': 'f', '\u53cd': 'f', '\u8303': 'f', '\u623f': 'f', '\u8d39': 'f', '\u5206': 'f', '\u4efd': 'f', '\u98ce': 'f', '\u590d': 'f', '\u4ed8': 'f', '\u8d1f': 'f',
-      '\u6539': 'g', '\u6982': 'g', '\u5e72': 'g', '\u521a': 'g', '\u9ad8': 'g', '\u4e2a': 'g', '\u683c': 'g', '\u66f4': 'g', '\u5de5': 'g', '\u516c': 'g', '\u529f': 'g', '\u7ba1': 'g', '\u89c4': 'g', '\u56fd': 'g', '\u8fc7': 'g',
-      '\u8fd8': 'h', '\u6d77': 'h', '\u542b': 'h', '\u884c': 'h', '\u597d': 'h', '\u53f7': 'h', '\u5408': 'h', '\u548c': 'h', '\u7ea2': 'h', '\u540e': 'h', '\u4e92': 'h', '\u5212': 'h', '\u5316': 'h', '\u6362': 'h', '\u9ec4': 'h', '\u6c47': 'h', '\u4f1a': 'h', '\u6df7': 'h', '\u6d3b': 'h', '\u6216': 'h', '\u83b7': 'h', '\u559d': 'h', '\u9ed1': 'h', '\u6052': 'h',
-      '\u673a': 'j', '\u57fa': 'j', '\u53ca': 'j', '\u51e0': 'j', '\u8ba1': 'j', '\u8bb0': 'j', '\u9645': 'j', '\u52a0': 'j', '\u5bb6': 'j', '\u4ef7': 'j', '\u68c0': 'j', '\u7b80': 'j', '\u5efa': 'j', '\u5065': 'j', '\u5c06': 'j', '\u964d': 'j', '\u4ea4': 'j', '\u89d2': 'j', '\u6559': 'j', '\u63a5': 'j', '\u7ed3': 'j', '\u89e3': 'j', '\u754c': 'j', '\u501f': 'j', '\u4eca': 'j', '\u91d1': 'j', '\u7d27': 'j', '\u8fdb': 'j', '\u8fd1': 'j', '\u7ecf': 'j', '\u7cbe': 'j', '\u8b66': 'j', '\u7ade': 'j', '\u955c': 'j', '\u7a76': 'j', '\u4e5d': 'j', '\u4e45': 'j', '\u65e7': 'j', '\u5c40': 'j', '\u51b3': 'j', '\u89c9': 'j', '\u7edd': 'j', '\u5177': 'j', '\u5377': 'j',
-      '\u5f00': 'k', '\u770b': 'k', '\u79d1': 'k', '\u53ef': 'k', '\u514b': 'k', '\u5ba2': 'k', '\u7a7a': 'k', '\u63a7': 'k', '\u53e3': 'k', '\u5feb': 'k', '\u5bbd': 'k', '\u6846': 'k',
-      '\u62c9': 'l', '\u6765': 'l', '\u84dd': 'l', '\u6717': 'l', '\u7c7b': 'l', '\u7d2f': 'l', '\u79bb': 'l', '\u7406': 'l', '\u5386': 'l', '\u7acb': 'l', '\u5229': 'l', '\u529b': 'l', '\u4f8b': 'l', '\u8fde': 'l', '\u8054': 'l', '\u4e24': 'l', '\u91cf': 'l', '\u804a': 'l', '\u5217': 'l', '\u4e34': 'l', '\u9f84': 'l', '\u9886': 'l', '\u53e6': 'l', '\u6d41': 'l', '\u5f55': 'l', '\u4e71': 'l', '\u7387': 'l', '\u6ee4': 'l', '\u8f6e': 'l', '\u903b': 'l', '\u843d': 'l', '\u573e': 'l', '\u680f': 'l', '\u697c': 'l',
-      '\u7801': 'm', '\u4e70': 'm', '\u6ee1': 'm', '\u6f2b': 'm', '\u732b': 'm', '\u5192': 'm', '\u8d38': 'm', '\u7709': 'm', '\u6bcf': 'm', '\u7f8e': 'm', '\u95e8': 'm', '\u7c73': 'm', '\u5bc6': 'm', '\u9762': 'm', '\u6c11': 'm', '\u540d': 'm', '\u660e': 'm', '\u547d': 'm', '\u6a21': 'm', '\u672b': 'm', '\u76ee': 'm', '\u9ed8': 'm',
-      '\u90a3': 'n', '\u5185': 'n', '\u7eb3': 'n', '\u80fd': 'n', '\u5e74': 'n', '\u5ff5': 'n', '\u519c': 'n', '\u6d53': 'n', '\u6696': 'n',
-      '\u6b27': 'o', '\u5076': 'o',
-      '\u6392': 'p', '\u5224': 'p', '\u65c1': 'p', '\u8dd1': 'p', '\u914d': 'p', '\u6279': 'p', '\u7247': 'p', '\u504f': 'p', '\u62fc': 'p', '\u9891': 'p', '\u8bc4': 'p', '\u5c4f': 'p', '\u5e73': 'p', '\u51ed': 'p',
-      '\u671f': 'q', '\u9f50': 'q', '\u5176': 'q', '\u68cb': 'q', '\u542f': 'q', '\u6c14': 'q', '\u5343': 'q', '\u7b7e': 'q', '\u524d': 'q', '\u94b1': 'q', '\u5f3a': 'q', '\u5207': 'q', '\u6e05': 'q', '\u60c5': 'q', '\u8bf7': 'q', '\u79cb': 'q', '\u6c42': 'q', '\u533a': 'q', '\u53d6': 'q', '\u8da3': 'q', '\u53bb': 'q', '\u5708': 'q', '\u5168': 'q', '\u6743': 'q', '\u786e': 'q',
-      '\u7136': 'r', '\u8ba9': 'r', '\u70ed': 'r', '\u4eba': 'r', '\u8ba4': 'r', '\u4efb': 'r', '\u65e5': 'r', '\u5bb9': 'r', '\u5165': 'r', '\u8f6f': 'r',
-      '\u4e09': 's', '\u6563': 's', '\u626b': 's', '\u8272': 's', '\u5220': 's', '\u4e0a': 's', '\u5c11': 's', '\u8bbe': 's', '\u6df1': 's', '\u5ba1': 's', '\u751f': 's', '\u5931': 's', '\u65f6': 's', '\u5b9e': 't', '\u8bc6': 's', '\u4e16': 's', '\u5f0f': 's', '\u793a': 's', '\u4e8b': 's', '\u662f': 's', '\u624b': 's', '\u9996': 's', '\u53d7': 's', '\u6570': 's', '\u5237': 's', '\u53cc': 's', '\u6c34': 's', '\u987a': 's', '\u8bf4': 's', '\u641c': 's', '\u901f': 's', '\u968f': 's', '\u788e': 's', '\u7b97': 's', '\u867d': 's', '\u7f29': 's', '\u9501': 's',
-      '\u4ed6': 't', '\u53f0': 't', '\u8c08': 't', '\u5f39': 't', '\u7279': 't', '\u63d0': 't', '\u5929': 't', '\u586b': 't', '\u6761': 't', '\u8d34': 't', '\u94c1': 't', '\u901a': 't', '\u540c': 't', '\u7edf': 't', '\u5934': 't', '\u56fe': 't', '\u7a81': 't', '\u56e2': 't', '\u9000': 't', '\u62d6': 't',
-      '\u5916': 'w', '\u5b8c': 'w', '\u7f51': 'w', '\u5371': 'w', '\u7ef4': 'w', '\u56f4': 'w', '\u4f4d': 'w', '\u6587': 'w', '\u7a33': 'w', '\u95ee': 'w', '\u5367': 'w', '\u65e0': 'w', '\u4e94': 'w', '\u7269': 'w',
-      '\u4e0b': 'x', '\u5148': 'x', '\u663e': 'x', '\u73b0': 'x', '\u7ebf': 'x', '\u9650': 'x', '\u76f8': 'x', '\u5411': 'x', '\u9879': 'x', '\u6d88': 'x', '\u5c0f': 'x', '\u6548': 'x', '\u4e9b': 'x', '\u534f': 'x', '\u4fe1': 'x', '\u661f': 'x', '\u884c': 'x', '\u4fee': 'x', '\u79c0': 'x', '\u865a': 'x', '\u9700': 'x', '\u5e8f': 'x', 'u9009': 'x', '\u5b66': 'x', '\u96ea': 'x', '\u5bfb': 'x', '\u5faa': 'x', '\u9a8c': 'x', '\u54cd': 'x', '\u50cf': 'x', '\u4eab': 'x', '\u5fc3': 'x', '\u65b0': 'x', '\u9192': 'x', '\u8be6': 'x', '\u964d': 'x', '\u5199': 'x',
-      '\u989c': 'y', '\u7f8a': 'y', '\u9633': 'y', '\u6837': 'y', '\u6447': 'y', '\u8981': 'y', '\u4e5f': 'y', '\u4e00': 'y', '\u4ee5': 'y', '\u6613': 'y', '\u610f': 'y', '\u56e0': 'y', '\u5f15': 'y', '\u5e94': 'y', '\u6620': 'y', '\u62e5': 'y', '\u6c38': 'y', '\u7528': 'y', '\u4f18': 'y', 'c5b0': 'y', '\u7531': 'y', '\u90ae': 'y', '\u6709': 'y', '\u53f3': 'y', '\u4e8e': 'y', '\u4f59': 'y', '\u4e0e': 'y', '\u9884': 'y', '\u57df': 'y', '\u5458': 'y', '\u539f': 'y', '\u6e90': 'y', '\u8fdc': 'y', '\u613f': 'y', '\u6708': 'y', '\u9605': 'y', '\u8d8a': 'y', '\u4e91': 'y', '\u5141': 'y', '\u8fd0': 'y', '\u97f5': 'y', 'u538b': 'y', '\u4e9a': 'y', '\u4e25': 'y', '\u773c': 'y', '\u6f14': 'y', 'u9a8c': 'y', '\u517b': 'y', '\u9875': 'y', '\u4f9d': 'y', '\u79fb': 'y', '\u5df2': 'y', '\u76ca': 'y', '\u4e49': 'y', '\u97f3': 'y', '\u9634': 'y', '\u94f6': 'y', 'u5370': 'y', '\u82f1': 'y', 'u8fce': 'y', '\u76c8': 'y', 'u5f71': 'y', '\u786c': 'y', '\u52c7': 'y', '\u60a0': 'y', '\u6cb9': 'y', 'u6e38': 'y', 'u53cb': 'y', 'u53c8': 'y', 'u5e7c': 'y', '\u9c7c': 'y', '\u6109': 'y', '\u6e14': 'y', '\u4e88': 'y', '\u5b87': 'y', '\u7fbd': 'y', '\u96e8': 'y', '\u8bed': 'y', '\u7389': 'y', '\u80b2': 'y', '\u6d74': 'y', '\u8c6b': 'y', '\u5fa1': 'y', '\u88d5': 'y', '\u9047': 'y', '\u8a89': 'y', '\u6108': 'y', '\u6b32': 'y', '\u5706': 'y', '\u7f18': 'y', '\u65e5': 'y', '\u7ea6': 'y', '\u8dc3': 'y', '\u94a5': 'y', '\u5cb3': 'y', '\u60a6': 'y', '\u5747': 'y', '\u8574': 'y',
-      '\u5728': 'z', '\u54b1': 'z', '\u6742': 'z', '\u707e': 'z', '\u8f7d': 'z', '\u6682': 'z', '\u8d5e': 'z', '\u810f': 'z', '\u90ed': 'z', '\u65e9': 'z', '\u9020': 'z', '\u566a': 'z', '\u8d23': 'z', '\u62e9': 'z', '\u5219': 'z', '\u6cfd': 'z', '\u8d3c': 'z', '\u600e': 'z', '\u589e': 'z', '\u8d60': 'z', '\u624e': 'z', '\u7728': 'z', '\u5360': 'z', '\u5c55': 'z', '\u7ad9': 'z', '\u5f20': 'z', '\u638c': 'z', '\u4e08': 'z', '\u5e10': 'z', '\u8d26': 'z', '\u969c': 'z', '\u62db': 'z', '\u627e': 'z', '\u7167': 'z', '\u7f69': 'z', '\u6298': 'z', '\u54f2': 'z', '\u8005': 'z', '\u8fd9': 'z', '\u6d59': 'z', '\u9488': 'z', '\u4fa6': 'z', '\u771f': 'z', '\u8bca': 'z', '\u6795': 'z', '\u9635': 'z', '\u632f': 'z', '\u9547': 'z', '\u9707': 'z', '\u4e89': 'z', '\u5f81': 'z', '\u6574': 'z', '\u6b63': 'z', '\u8bc1': 'z', '\u653f': 'z', '\u75c7': 'z', '\u4e4b': 'z', '\u652f': 'z', '\u77e5': 'z', '\u7ec7': 'z', '\u8102': 'z', '\u6267': 'z', '\u503c': 'z', '\u804c': 'z', '\u76f4': 'z', '\u690d': 'z', '\u6b96': 'z', '\u6b62': 'z', '\u65e8': 'z', '\u6307': 'z', '\u7eb8': 'z', '\u81f3': 'z', '\u5fd7': 'z', '\u5236': 'z', '\u8d28': 'z', '\u6cbb': 'zh', '\u79e9': 'z', '\u667a': 'z', '\u7f6e': 'z', '\u4e2d': 'zh', '\u5fe0': 'zh', '\u949f': 'zh', '\u7ec8': 'zh', '\u79cd': 'zh', '\u4f17': 'zh', '\u5468': 'zhou', '\u6d32': 'z', '\u7ca5': 'z', '\u8f74': 'z', '\u8098': 'z', '\u76b1': 'z', '\u9aa4': 'z', '\u7af9': 'z', '\u7af9': 'z', '\u4e3b': 'z', 'u716e': 'z', u5631: 'z', '\u4f4f': 'z', '\u6ce8': 'z', '\u9a7b': 'z', '\u67f1': 'z', '\u52a9': 'z', '\u7b51': 'z', '\u795d': 'z', '\u8457': 'z', '\u6293': 'z', '\u62fd': 'z', '\u4e13': 'z', '\u8f6c': 'z', '\u8d5a': 'z', '\u5e84': 'z', '\u88c5': 'z', '\u58ee': 'z', '\u72b6': 'z', '\u649e': 'z', '\u8ffd': 'z', '\u51c6': 'z', '\u6355': 'z', '\u684c': 'z', '\u7740': 'z', '\u5179': 'z', '\u8d44': 'z', '\u59ff': 'z', '\u6ecb': 'z', '\u7c92': 'z', '\u5b50': 'z', '\u7d2b': 'z', '\u5b57': 'z', '\u81ea': 'z', '\u5b97': 'z', '\u7efc': 'z', '\u603b': 'z', '\u7eb5': 'z', '\u8d70': 'z', '\u594f': 'z', '\u79df': 'z', '\u8db3': 'z', '\u65cf': 'z', '\u963b': 'z', '\u7ec4': 'z', '\u7956': 'z', '\u5634': 'z', '\u9189': 'z', '\u6700': 'z', '\u7f6a': 'z', '\u5c0a': 'z', '\u9075': 'z', '\u6628': 'z', '\u5de6': 'z', 'u4f50': 'z', '\u505a': 'z', '\u5ea7': 'z'
-    }
-    var firstChar = str.charAt(0).toLowerCase()
-    return pinyinMap[firstChar] || firstChar
-  },
+  /* ========================================================
+   *   [搜索功能] 关键词搜索、历史记录
+   * ======================================================== */
 
   addToSearchHistory: function(keyword) {
     if (!keyword.trim()) return
@@ -651,86 +598,22 @@ Page({
 
   clearSearchHistory: function() {
     var that = this
-    wx.showModal({
-      title: '\u6e05\u7a7a\u641c\u7d22\u5386\u53f2',
-      content: '\u786e\u5b9a\u8981\u6e05\u7a7a\u6240\u6709\u641c\u7d22\u5386\u53f2\u5417\uff1f',
-      confirmText: '\u6e05\u7a7a',
-      confirmColor: '#EF4444',
-      success: function(res) {
-        if (res.confirm) {
-          wx.removeStorageSync('searchHistory')
-          that.setData({ searchHistory: [] })
-          wx.showToast({ title: '\u5df2\u6e05\u7a7a', icon: 'success' })
-        }
-      }
+    wx.showModal({ title: '清空搜索历史', content: '确定要清空所有搜索历史吗？', confirmText: '清空', confirmColor: '#EF4444',
+      success: function(res) { if (res.confirm) { wx.removeStorageSync('searchHistory'); that.setData({ searchHistory: [] }); wx.showToast({ title: '已清空', icon: 'success' }) } }
     })
   },
 
   onHotSearchClick: function(e) {
-    var keyword = e.currentTarget.dataset.word
-    this.setData({ searchKeyword: keyword })
-    this.addToSearchHistory(keyword)
+    var word = e.currentTarget.dataset.word
+    this.setData({ searchKeyword: word })
+    this.addToSearchHistory(word)
     this.filterTools()
   },
 
   onHistoryClick: function(e) {
-    var keyword = e.currentTarget.dataset.word
-    this.setData({ searchKeyword: keyword })
+    var word = e.currentTarget.dataset.word
+    this.setData({ searchKeyword: word })
     this.filterTools()
-  },
-
-  onShow: function() {
-    this.updateGreeting()
-    this.applyCurrentTheme()
-
-    wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage', 'shareTimeline']
-    })
-  },
-
-  applyCurrentTheme: function() {
-    var appInstance = getApp()
-    if (appInstance) {
-      var isDark = appInstance.globalData.isDarkMode || wx.getStorageSync('darkMode') === true
-      this.setData({ isDarkMode: isDark })
-
-      var bgColor = isDark ? '#0F172A' : '#F8FAFC'
-      try {
-        wx.setBackgroundColor({
-          backgroundColor: bgColor,
-          backgroundColorTop: bgColor,
-          backgroundColorBottom: bgColor
-        })
-      } catch(e) {
-        console.log('setBackgroundColor error:', e)
-      }
-    }
-  },
-
-  updateGreeting: function() {
-    var hour = new Date().getHours()
-    var greeting = ''
-
-    if (hour >= 5 && hour < 12) {
-      greeting = '\u4e0a\u5348\u597d'
-    } else if (hour >= 12 && hour < 14) {
-      greeting = '\u4e2d\u5348\u597d'
-    } else if (hour >= 14 && hour < 18) {
-      greeting = '\u4e0b\u5348\u597d'
-    } else if (hour >= 18 && hour < 22) {
-      greeting = '\u665a\u4e0a\u597d'
-    } else {
-      greeting = '\u591c\u6df1\u4e86'
-    }
-
-    var weekDays = ['\u5468\u65e5', '\u5468\u4e00', '\u5468\u4e8c', '\u5468\u4e09', '\u5468\u56db', '\u5468\u4e94', '\u5468\u516d']
-    var now = new Date()
-    var dateStr = weekDays[now.getDay()] + ',' + (now.getMonth() + 1) + '\u6708' + now.getDate() + '\u65e5'
-
-    this.setData({
-      greetingText: greeting + '\n' + dateStr
-    })
   },
 
   onSearchInput: function(e) {
@@ -750,442 +633,204 @@ Page({
     this.filterTools()
   },
 
-  filterTools: function() {
-    var filtered = []
-    for (var i = 0; i < this.data.tools.length; i++) {
-      filtered.push(this.data.tools[i])
-    }
-
-    if (this.data.currentCategory !== 'all') {
-      var newFiltered = []
-      for (var f = 0; f < filtered.length; f++) {
-        if (filtered[f].category === this.data.currentCategory) {
-          newFiltered.push(filtered[f])
-        }
-      }
-      filtered = newFiltered
-    }
-
-    if (this.data.searchKeyword) {
-      var keyword = this.data.searchKeyword.toLowerCase()
-      var pinyinKeyword = this.getPinyinFirstLetter(keyword)
-
-      var matched = []
-      for (var m = 0; m < filtered.length; m++) {
-        var tool = filtered[m]
-        var nameMatch = tool.name.toLowerCase().indexOf(keyword) > -1
-        var descMatch = tool.description.toLowerCase().indexOf(keyword) > -1
-        var pinyinMatch = this.getPinyinFirstLetter(tool.name).toLowerCase().indexOf(pinyinKeyword) > -1
-
-        if (nameMatch || descMatch || pinyinMatch) {
-          matched.push(tool)
-        }
-      }
-
-      filtered = matched
-      this.addToSearchHistory(this.data.searchKeyword)
-    }
-
-    this.setData({ filteredTools: filtered })
-  },
-
-  onSearchFocus: function() {
-    this.setData({ showSearchPanel: true })
-  },
+  onSearchFocus: function() { this.setData({ showSearchPanel: true }) },
 
   onSearchBlur: function() {
     var that = this
-    setTimeout(function() {
-      that.setData({ showSearchPanel: false })
-    }, 200)
+    setTimeout(function() { that.setData({ showSearchPanel: false }) }, 200)
   },
 
-  onToolClick: function(e) {
-    var tool = e.currentTarget.dataset.tool
-
-    wx.vibrateShort({ type: 'light' })
-
-    this.saveRecentTool(tool)
-    this.recordWeeklyUsage()
-
-    var url = urlMap[tool.id]
-
-    if (url) {
-      wx.navigateTo({
-        url: url,
-        fail: function(err) {
-          console.log('\u8df3\u8f6c\u5931\u8d25:', err)
-          wx.showToast({
-            title: '\u9875\u9762\u8df3\u8f6c\u5931\u8d25',
-            icon: 'none'
-          })
+  filterTools: function() {
+    try {
+      var filtered = [].concat(this.data.tools || [])
+      if (this.data.currentCategory !== 'all') {
+        var catFiltered = []
+        for (var i = 0; i < filtered.length; i++) { if (filtered[i].category === this.data.currentCategory) catFiltered.push(filtered[i]) }
+        filtered = catFiltered
+      }
+      if (this.data.searchKeyword) {
+        var keyword = this.data.searchKeyword.toLowerCase()
+        var pinyinKeyword = getPinyinFirstLetter(keyword)
+        var result = []
+        for (var j = 0; j < filtered.length; j++) {
+          var tool = filtered[j]
+          var nameMatch = tool.name.toLowerCase().indexOf(keyword) > -1
+          var descMatch = tool.description.toLowerCase().indexOf(keyword) > -1
+          var pinyinMatch = getPinyinFirstLetter(tool.name).toLowerCase().indexOf(pinyinKeyword) > -1
+          if (nameMatch || descMatch || pinyinMatch) result.push(tool)
         }
-      })
-    } else {
-      wx.showToast({
-        title: '\u529f\u80fd\u5f00\u53d1\u4e2d...',
-        icon: 'none',
-        duration: 1500
-      })
-    }
+        filtered = result
+        this.addToSearchHistory(this.data.searchKeyword)
+      }
+      this.setData({ filteredTools: filtered })
+    } catch(e) {}
+  },
+
+  /* ========================================================
+   *   [交互功能] 工具点击、收藏、长按菜单
+   * ======================================================== */
+
+  onToolClick: function(e) {
+    try {
+      var tool = e.currentTarget.dataset.tool
+      if (!tool) return
+      wx.vibrateShort({ type: 'light' })
+      this.saveRecentTool(tool)
+      this.recordWeeklyUsage()
+      var url = urlMap[tool.id]
+      if (url) {
+        wx.navigateTo({ url: url, fail: function(err) { console.log('[tool] 跳转失败:', err); wx.showToast({ title: '页面跳转失败', icon: 'none' }) } })
+      } else { wx.showToast({ title: '功能开发中...', icon: 'none', duration: 1500 }) }
+    } catch(e) {}
   },
 
   toggleFavorite: function(e) {
-    var id = e.currentTarget.dataset.id
-    var tools = []
-    for (var i = 0; i < this.data.tools.length; i++) {
-      var t = {}
-      for (var key in this.data.tools[i]) {
-        t[key] = this.data.tools[i][key]
+    try {
+      var id = e.currentTarget.dataset.id
+      var toolsData = this.data.tools || []
+      var tools = []
+      for (var i = 0; i < toolsData.length; i++) {
+        var t = {}; var src = toolsData[i]
+        for (var key in src) t[key] = src[key]
+        if (t.id === id) t.isFavorite = !t.isFavorite
+        tools.push(t)
       }
-      if (t.id === id) {
-        t.isFavorite = !t.isFavorite
-      }
-      tools.push(t)
-    }
-
-    var favorites = []
-    for (var j = 0; j < tools.length; j++) {
-      if (tools[j].isFavorite) favorites.push(tools[j].id)
-    }
-    wx.setStorageSync('favorites', favorites)
-
-    wx.vibrateShort({ type: 'light' })
-
-    this.setData({ tools: tools })
-    this.filterTools()
-
-    var hasId = false
-    for (var k = 0; k < favorites.length; k++) {
-      if (favorites[k] === id) { hasId = true; break }
-    }
-    if (hasId) {
-      this.showHeartAnimation()
-    }
+      var favorites = []
+      for (var j = 0; j < tools.length; j++) { if (tools[j].isFavorite) favorites.push(tools[j].id) }
+      wx.setStorageSync('favorites', favorites)
+      wx.vibrateShort({ type: 'light' })
+      this.setData({ tools: tools })
+      this.filterTools()
+      var hasId = false
+      for (var k = 0; k < favorites.length; k++) { if (favorites[k] === id) { hasId = true; break } }
+      if (hasId) this.showHeartAnimation()
+    } catch(e) {}
   },
 
   onToolLongPress: function(e) {
-    wx.vibrateShort({ type: 'medium' })
-    var tool = e.currentTarget.dataset.tool
-    this.setData({
-      showMenu: true,
-      menuTool: tool
-    })
+    try { wx.vibrateShort({ type: 'medium' }); var tool = e.currentTarget.dataset.tool; this.setData({ showMenu: true, menuTool: tool }) } catch(e) {}
   },
 
-  closeMenu: function() {
-    this.setData({
-      showMenu: false,
-      menuTool: null
-    })
-  },
+  closeMenu: function() { this.setData({ showMenu: false, menuTool: null }) },
 
   showHeartAnimation: function() {
     this.setData({ showHeart: true })
     var that = this
-    setTimeout(function() {
-      that.setData({ showHeart: false })
-    }, 800)
+    setTimeout(function() { that.setData({ showHeart: false }) }, 800)
   },
 
+  /* ========================================================
+   *   [数据统计] 使用记录、周统计
+   * ======================================================== */
+
   recordWeeklyUsage: function() {
-    var today = new Date()
-    var y = today.getFullYear()
-    var mo = today.getMonth() + 1
-    var d = today.getDate()
-    var moStr = mo < 10 ? '0' + mo : '' + mo
-    var dStr = d < 10 ? '0' + d : '' + d
-    var dateKey = y + '-' + moStr + '-' + dStr
-
-    var weeklyRecord = wx.getStorageSync('weeklyUsage') || {}
-    weeklyRecord[dateKey] = (weeklyRecord[dateKey] || 0) + 1
-
-    var oneWeekAgo = new Date()
-    oneWeekAgo.setDate(today.getDate() - 7)
-    var keysToRemove = []
-    var _keys = []
-    for (var k in weeklyRecord) {
-      _keys.push(k)
-    }
-    for (var ki = 0; ki < _keys.length; ki++) {
-      var parts = _keys[ki].split('-')
-      var ky = parseInt(parts[0], 10)
-      var km = parseInt(parts[1], 10) - 1
-      var kd = parseInt(parts[2], 10)
-      var kdDate = new Date(ky, km, kd)
-      if (kdDate < oneWeekAgo) {
-        keysToRemove.push(_keys[ki])
+    try {
+      var today = new Date()
+      var y = today.getFullYear(), mo = today.getMonth() + 1, d = today.getDate()
+      var moStr = mo < 10 ? ('0' + mo) : ('' + mo), dStr = d < 10 ? ('0' + d) : ('' + d)
+      var dateKey = y + '-' + moStr + '-' + dStr
+      var weeklyRecord = wx.getStorageSync('weeklyUsage') || {}
+      if (typeof weeklyRecord !== 'object' || Array.isArray(weeklyRecord)) weeklyRecord = {}
+      weeklyRecord[dateKey] = (weeklyRecord[dateKey] || 0) + 1
+      var oneWeekAgo = new Date(); oneWeekAgo.setDate(today.getDate() - 7)
+      var keysToRemove = []
+      for (var key in weeklyRecord) {
+        if (weeklyRecord.hasOwnProperty(key)) {
+          var parts = key.split('-')
+          if (parts.length === 3) {
+            var kdDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10))
+            if (kdDate < oneWeekAgo) keysToRemove.push(key)
+          }
+        }
       }
-    }
-    for (var kr = 0; kr < keysToRemove.length; kr++) {
-      delete weeklyRecord[keysToRemove[kr]]
-    }
-
-    wx.setStorageSync('weeklyUsage', weeklyRecord)
+      for (var kr = 0; kr < keysToRemove.length; kr++) delete weeklyRecord[keysToRemove[kr]]
+      wx.setStorageSync('weeklyUsage', weeklyRecord)
+    } catch(e) {}
   },
 
   saveRecentTool: function(tool) {
-    var recentTools = wx.getStorageSync('recentTools') || []
-    var newRecent = []
-    for (var i = 0; i < recentTools.length; i++) {
-      if (recentTools[i].id !== tool.id) newRecent.push(recentTools[i])
-    }
-    newRecent.unshift({
-      id: tool.id,
-      name: tool.name,
-      icon: tool.icon,
-      iconBg: tool.iconBg,
-      usedAt: new Date().getTime()
-    })
-    if (newRecent.length > 20) newRecent = newRecent.slice(0, 20)
-    wx.setStorageSync('recentTools', newRecent)
-
-    var currentCount = wx.getStorageSync('totalUsageCount') || 0
-    wx.setStorageSync('totalUsageCount', currentCount + 1)
-
-    var appInstance = getApp()
-    if (appInstance.cloudSyncUsage) {
-      appInstance.cloudSyncUsage(tool.id, tool.name)
-    }
+    try {
+      if (!tool || !tool.id) return
+      var recentTools = wx.getStorageSync('recentTools') || []
+      if (!Array.isArray(recentTools)) recentTools = []
+      var newRecent = []
+      for (var i = 0; i < recentTools.length; i++) { if (recentTools[i].id !== tool.id) newRecent.push(recentTools[i]) }
+      newRecent.unshift({ id: tool.id, name: tool.name, icon: tool.icon, iconBg: tool.iconBg, usedAt: new Date().getTime() })
+      if (newRecent.length > 20) newRecent = newRecent.slice(0, 20)
+      wx.setStorageSync('recentTools', newRecent)
+      var count = wx.getStorageSync('totalUsageCount') || 0
+      count = parseInt(count, 10) || 0
+      wx.setStorageSync('totalUsageCount', count + 1)
+      try { var appInst = getApp(); if (appInst && typeof appInst.cloudSyncUsage === 'function') appInst.cloudSyncUsage(tool.id, tool.name) } catch(err) {}
+    } catch(e) {}
   },
+
+  /* ========================================================
+   *   [分享功能] 更多菜单、分享配置、海报绘制
+   * ======================================================== */
 
   showMoreMenu: function() {
-    var that = this
     wx.showActionSheet({
-      itemList: ['\u5173\u4e8e\u6211\u4eec', '\u610f\u89c1\u53cd\u9988', '\u5206\u4eab\u7ed9\u670b\u53cb'],
-      success: function(res) {
-        switch (res.tapIndex) {
-          case 0:
-            wx.showToast({ title: '\u767e\u5b9d\u5de5\u5177\u7bb1 v1.0', icon: 'none' })
-            break
-          case 1:
-            wx.showToast({ title: '\u611f\u8c22\u60a8\u7684\u53cd\u9988\uff01', icon: 'none' })
-            break
-          case 2:
-            break
-        }
-      }
+      itemList: ['关于我们', '意见反馈', '分享给朋友'],
+      success: function(res) { switch (res.tapIndex) { case 0: wx.showToast({ title: '百宝工具箱 v1.0', icon: 'none' }); break; case 1: wx.showToast({ title: '感谢您的反馈！', icon: 'none' }); break } }
     })
   },
 
-  onShareAppMessage: function() {
-    return {
-      title: '🧰 百宝工具箱 - 24+实用小工具合集',
-      path: '/pages/index/index',
-      imageUrl: this.data.sharePosterPath || ''
-    }
-  },
+  onShareAppMessage: function() { return { title: '🧰 百宝工具箱 - 24+实用小工具合集', path: '/pages/index/index', imageUrl: this.data.sharePosterPath || '' } },
 
-  onShareTimeline: function() {
-    return {
-      title: '🧰 百宝工具箱 - 汇率换算、单位转换等24+实用工具',
-      query: '',
-      imageUrl: this.data.sharePosterPath || ''
-    }
-  },
+  onShareTimeline: function() { return { title: '🧰 百宝工具箱 - 汇率换算、单位转换等24+实用工具', query: '', imageUrl: this.data.sharePosterPath || '' } },
 
   drawSharePoster: function() {
     var that = this
-    var appInstance = getApp()
-    
-    if (appInstance.globalData.sharePosterPath) {
-      that.setData({ sharePosterPath: appInstance.globalData.sharePosterPath })
-      return
-    }
-
-    const query = wx.createSelectorQuery()
-    query.select('#shareCanvas')
-      .fields({ node: true, size: true })
-      .exec(function(res) {
+    try {
+      var appInstance = getApp()
+      if (appInstance.globalData.sharePosterPath) { this.setData({ sharePosterPath: appInstance.globalData.sharePosterPath }); return }
+      var query = wx.createSelectorQuery()
+      query.select('#shareCanvas').fields({ node: true, size: true }).exec(function(res) {
         if (!res || !res[0]) return
-        
-        const canvas = res[0].node
-        const ctx = canvas.getContext('2d')
-        
-        const dpr = wx.getSystemInfoSync().pixelRatio
-        canvas.width = 500 * dpr
-        canvas.height = 400 * dpr
-        ctx.scale(dpr, dpr)
-
+        var canvas = res[0].node, ctx = canvas.getContext('2d')
+        var dpr = wx.getSystemInfoSync().pixelRatio
+        canvas.width = 500 * dpr; canvas.height = 400 * dpr; ctx.scale(dpr, dpr)
         ctx.fillStyle = '#0F172A'
-        roundRect(ctx, 0, 0, 500, 400, 24)
-        ctx.fill()
-
+        ctx.beginPath(); ctx.rect(0, 0, 500, 400, 24); ctx.fill()
         var topGrad = ctx.createLinearGradient(0, 0, 500, 200)
-        topGrad.addColorStop(0, '#1E3A5F')
-        topGrad.addColorStop(1, '#0F172A')
+        topGrad.addColorStop(0, '#1E3A5F'); topGrad.addColorStop(1, '#0F172A')
         ctx.fillStyle = topGrad
-        roundRect(ctx, 0, 0, 500, 200, 24)
-        ctx.fill()
-
+        ctx.beginPath(); ctx.rect(0, 0, 500, 200, 24); ctx.fill()
         ctx.globalAlpha = 0.15
-        ctx.fillStyle = '#3B82F6'
-        ctx.beginPath()
-        ctx.arc(430, 40, 100, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.beginPath()
-        ctx.arc(60, 160, 70, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.globalAlpha = 0.08
-        ctx.fillStyle = '#8B5CF6'
-        ctx.beginPath()
-        ctx.arc(380, 170, 60, 0, Math.PI * 2)
-        ctx.fill()
+        ctx.fillStyle = '#3B82F6'; ctx.beginPath(); ctx.arc(430, 40, 100, 0, Math.PI * 2); ctx.fill()
+        ctx.beginPath(); ctx.arc(60, 160, 70, 0, Math.PI * 2); ctx.fill()
+        ctx.globalAlpha = 0.08; ctx.fillStyle = '#8B5CF6'; ctx.beginPath(); ctx.arc(380, 170, 60, 0, Math.PI * 2); ctx.fill()
         ctx.globalAlpha = 1
-
-        ctx.font = 'bold 44px -apple-system, system-ui, sans-serif'
-        ctx.fillStyle = '#FFFFFF'
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        ctx.fillText('🧰 百宝工具箱', 250, 72)
-
-        ctx.font = '16px -apple-system, system-ui, sans-serif'
-        ctx.fillStyle = 'rgba(255,255,255,0.5)'
-        ctx.fillText('即用即走 · 轻量高效 · 实用便捷', 250, 105)
-
-        var tools = [
-          { icon: '💹', name: '汇率' },
-          { icon: '📐', name: '单位' },
-          { icon: '🏠', name: '房贷' },
-          { icon: '💰', name: '小费' },
-          { icon: '🔢', name: '字数' },
-          { icon: '🔤', name: '大小写' },
-          { icon: '🔐', name: 'Base64' },
-          { icon: '🍅', name: '番茄钟' },
-          { icon: '💧', name: '喝水' },
-          { icon: '🎲', name: '随机' },
-          { icon: '🗑️', name: '垃圾分类' },
-          { icon: '📅', name: '日期' }
-        ]
-
-        var cardX = 30
-        var cardY = 130
-        var cardW = 440
-        var cardH = 180
-        var cardR = 20
-
+        ctx.font = 'bold 44px -apple-system, system-ui, sans-serif'; ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🧰 百宝工具箱', 250, 72)
+        ctx.font = '16px -apple-system, system-ui, sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.fillText('即用即走 · 轻量高效 · 实用便捷', 250, 105)
+        var tools = [{ icon: '💹', name: '汇率' }, { icon: '📐', name: '单位' }, { icon: '🏠', name: '房贷' }, { icon: '💰', name: '小费' }, { icon: '🔢', name: '字数' }, { icon: '🔤', name: '大小写' }, { icon: '🔐', name: 'Base64' }, { icon: '🍅', name: '番茄钟' }, { icon: '💧', name: '喝水' }, { icon: '🎲', name: '随机' }, { icon: '🗑️', name: '垃圾分类' }, { icon: '📅', name: '日期' }]
+        var cardX = 30, cardY = 130, cardW = 440, cardH = 180
         ctx.fillStyle = 'rgba(255,255,255,0.06)'
-        roundRect(ctx, cardX, cardY, cardW, cardH, cardR)
-        ctx.fill()
-        ctx.strokeStyle = 'rgba(255,255,255,0.08)'
-        ctx.lineWidth = 1
-        roundRect(ctx, cardX, cardY, cardW, cardH, cardR)
-        ctx.stroke()
-
-        var cols = 6
-        var rows = 2
-        var itemW = 68
-        var itemH = 76
-        var gapX = (cardW - cols * itemW) / (cols + 1)
-        var gapY = (cardH - rows * itemH) / (rows + 1)
-
+        ctx.beginPath(); ctx.moveTo(cardX, cardY + 18); ctx.lineTo(cardX + cardW, cardY + 18); ctx.quadraticCurveTo(cardX + cardW, cardY, cardX + cardW - 18, cardY); ctx.lineTo(cardX + 18, cardY); ctx.quadraticCurveTo(cardX, cardY, cardX, cardY + 18); ctx.fill()
+        var cols = 6, rows = 2, itemW = 68, itemH = 76, gapX = (cardW - cols * itemW) / (cols + 1), gapY = (cardH - rows * itemH) / (rows + 1)
         for (var ti = 0; ti < tools.length; ti++) {
-          var col = ti % cols
-          var row = Math.floor(ti / cols)
-          var ix = cardX + gapX + col * (itemW + gapX)
-          var iy = cardY + gapY + row * (itemH + gapY)
-
-          ctx.globalAlpha = 0.12
-          roundRect(ctx, ix, iy, itemW, itemH, 14)
-          ctx.fill()
-          ctx.globalAlpha = 1
-
-          ctx.font = '26px sans-serif'
-          ctx.textAlign = 'center'
-          ctx.textBaseline = 'middle'
-          ctx.fillText(tools[ti].icon, ix + itemW / 2, iy + itemH / 2 - 8)
-
-          ctx.font = '11px sans-serif'
-          ctx.fillStyle = 'rgba(255,255,255,0.65)'
-          ctx.fillText(tools[ti].name, ix + itemW / 2, iy + itemH - 14)
+          var col = ti % cols, row = Math.floor(ti / cols)
+          var ix = cardX + gapX + col * (itemW + gapX), iy = cardY + gapY + row * (itemH + gapY)
+          ctx.globalAlpha = 0.12; ctx.beginPath(); ctx.arc(ix + itemW / 2, iy + itemH / 2, 28, 0, Math.PI * 2); ctx.fill()
+          ctx.globalAlpha = 1; ctx.font = '26px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(tools[ti].icon, ix + itemW / 2, iy + itemH / 2 - 8)
+          ctx.font = '11px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.65)'; ctx.fillText(tools[ti].name, ix + itemW / 2, iy + itemH - 14)
         }
-
-        ctx.textAlign = 'center'
-
-        var bottomGrad = ctx.createLinearGradient(250, 330, 250, 380)
-        bottomGrad.addColorStop(0, '#3B82F6')
-        bottomGrad.addColorStop(1, '#1D4ED8')
-        roundRect(ctx, 50, 328, 400, 48, 24)
-        ctx.fillStyle = bottomGrad
-        ctx.fill()
-
-        ctx.font = '600 18px -apple-system, system-ui, sans-serif'
-        ctx.fillStyle = '#FFFFFF'
-        ctx.fillText('✨ 24+ 实用工具，一键即达', 250, 355)
-
+        ctx.textAlign = 'center'; var bottomGrad = ctx.createLinearGradient(250, 330, 250, 380)
+        bottomGrad.addColorStop(0, '#3B82F6'); bottomGrad.addColorStop(1, '#1D4ED8')
+        ctx.beginPath(); ctx.moveTo(50, 336); ctx.lineTo(450, 336); ctx.quadraticCurveTo(450, 360, 426, 360); ctx.lineTo(74, 360); ctx.quadraticCurveTo(50, 360, 50, 336); ctx.closePath(); ctx.fillStyle = bottomGrad; ctx.fill()
+        ctx.font = '600 18px -apple-system, system-ui, sans-serif'; ctx.fillStyle = '#FFFFFF'; ctx.fillText('✨ 24+ 实用工具，一键即达', 250, 355)
         setTimeout(function() {
-          wx.canvasToTempFilePath({
-            canvas: canvas,
-            width: 500,
-            height: 400,
-            destWidth: 500,
-            destHeight: 400,
-            fileType: 'png',
-            quality: 1,
-            success: function(res) {
-              if (res.tempFilePath) {
-                appInstance.globalData.sharePosterPath = res.tempFilePath
-                that.setData({ sharePosterPath: res.tempFilePath })
-              }
+          wx.canvasToTempFilePath({ canvas: canvas, width: 500, height: 400, destWidth: 500, destHeight: 400, fileType: 'png', quality: 1,
+            success: function(res) { 
+              if (res.tempFilePath) { 
+                appInstance.globalData.sharePosterPath = res.tempFilePath 
+                that.setData({ sharePosterPath: res.tempFilePath }) 
+              } 
             }
-          }, that)
+          })
         }, 100)
       })
-  },
-
-  onGuideClose: function() {
-    this.setData({ showGuide: false })
-  },
-
-  onPullDownRefresh: function() {
-    this.setData({ isRefreshing: true })
-
-    var that = this
-    setTimeout(function() {
-      that.updateGreeting()
-      that.setData({ isRefreshing: false })
-      wx.stopPullDownRefresh()
-      wx.showToast({ title: '\u5237\u65b0\u6210\u529f', icon: 'success' })
-    }, 1000)
-  },
-
-  onScrollToUpper: function() {
-    this.setData({ scrollTop: 1 })
-    var that = this
-    setTimeout(function() {
-      that.setData({ scrollTop: 0 })
-    }, 50)
-  },
-
-  onPageScroll: function(e) {
-    var st = 0
-    if (e.detail && e.detail.scrollTop !== undefined) {
-      st = e.detail.scrollTop
-    } else if (e.detail && e.detail.scrollY !== undefined) {
-      st = e.detail.scrollY
-    }
-    if (st < 5 && st > -50) {
-      if (!this._scrollFixTimer) {
-        var that = this
-        this._scrollFixTimer = setTimeout(function() {
-          that._scrollFixTimer = null
-          if (that.data.scrollTop !== 0) {
-            that.setData({ scrollTop: 0 })
-          }
-        }, 100)
-      }
-    }
+    } catch(e) {}
   }
 })
-
-function roundRect(ctx, x, y, w, h, r) {
-  if (w < 2 * r) r = w / 2
-  if (h < 2 * r) r = h / 2
-  ctx.beginPath()
-  ctx.moveTo(x + r, y)
-  ctx.arcTo(x + w, y, x + w, y + h, r)
-  ctx.arcTo(x + w, y + h, x, y + h, r)
-  ctx.arcTo(x, y + h, x, y, r)
-  ctx.arcTo(x, y, x + w, y, r)
-  ctx.closePath()
-}

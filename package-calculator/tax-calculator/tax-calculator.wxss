@@ -1,756 +1,500 @@
+@import "../../styles/tool-common.wxss";
+
 page {
-  background: #f8fafb;
+  background-color: #ffffff;
   height: 100vh;
 }
 
 .tool-page {
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: #f8fafb;
 }
 
 .container {
-  padding: 0 20px 40px;
-  min-height: calc(100vh - 44px);
+  padding: 16px;
+  padding-bottom: calc(60px + env(safe-area-inset-bottom));
 }
 
-/* ========== Hero Section ========== */
-.hero-section {
+/* 头部 */
+.header {
   text-align: center;
-  padding: 32px 0 28px;
-  animation: heroFadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 24px 0 20px;
 }
 
-@keyframes heroFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.hero-icon {
-  width: 72px;
-  height: 72px;
-  margin: 0 auto 18px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-glow {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 22px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  opacity: 0.12;
-  animation: glowPulse 3s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-  0%, 100% { transform: scale(1); opacity: 0.12; }
-  50% { transform: scale(1.08); opacity: 0.18; }
-}
-
-.icon-emoji {
-  font-size: 36px;
-  position: relative;
-  z-index: 1;
-  filter: drop-shadow(0 2px 8px rgba(16, 185, 129, 0.35));
-}
-
-.hero-title {
-  font-size: 26px;
-  font-weight: 800;
-  color: #0f172a;
-  letter-spacing: -0.5px;
+.header-icon {
+  font-size: 48px;
   display: block;
   margin-bottom: 8px;
 }
 
-.hero-subtitle {
+.header-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.header-sub {
   font-size: 13px;
-  color: #64748b;
-  font-weight: 400;
-  letter-spacing: 0.5px;
+  color: #94a3b8;
 }
 
-/* ========== Input Section ========== */
-.input-section {
-  margin-bottom: 24px;
-  animation: sectionSlideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.15s both;
-}
-
-@keyframes sectionSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.salary-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 24px 22px;
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    0 4px 16px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  margin-bottom: 20px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* 表单区域 - 柔和圆角 */
+.form-section {
+  background: #f8fafc;
+  border-radius: 24px;
+  padding: 20px;
   margin-bottom: 16px;
 }
 
-.card-label {
+.form-item {
+  margin-bottom: 12px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 0 14px;
+}
+
+.form-input {
+  flex: 1;
+  height: 44px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  background: transparent;
+  border: none;
+}
+
+.input-unit {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  padding-left: 8px;
+  white-space: nowrap;
+}
+
+.divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 16px 0;
+}
+
+/* 扣除项标题 */
+.deduction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.deduction-title {
   font-size: 15px;
   font-weight: 700;
   color: #1e293b;
-  letter-spacing: 0.3px;
 }
 
-.card-hint {
+.deduction-total {
+  font-size: 13px;
+  color: #10b981;
+  font-weight: 600;
+  background: #ecfdf5;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+/* 扣除项列表 - 横向布局 */
+.deduction-list {
+  
+}
+
+.deduction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.deduction-item.item-last {
+  border-bottom: none;
+}
+
+.item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.item-icon {
+  font-size: 22px;
+  width: 32px;
+  text-align: center;
+}
+
+.item-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  white-space: nowrap;
+}
+
+.item-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.item-input {
+  width: 80px;
+  height: 34px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  text-align: right;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0 8px;
+}
+
+.item-unit {
+  font-size: 13px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+/* 提交按钮 */
+.submit-btn {
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 25px;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+  margin-top: 20px;
+}
+
+.btn-hover {
+  opacity: 0.9;
+  transform: scale(0.98);
+}
+
+/* 结果区域 */
+.result-box {
+  margin-top: 20px;
+}
+
+.result-main {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+}
+
+.result-label {
+  font-size: 13px;
+  color: rgba(255,255,255,0.85);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.amount-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 2px;
+}
+
+.currency {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.amount-num {
+  font-size: 36px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -1px;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: #e2e8f0;
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+}
+
+.grid-item {
+  background: #ffffff;
+  padding: 16px 12px;
+  text-align: center;
+}
+
+.grid-label {
+  font-size: 12px;
+  color: #64748b;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.grid-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.grid-value.red {
+  color: #dc2626;
+}
+
+.grid-unit {
   font-size: 12px;
   color: #94a3b8;
   font-weight: 500;
 }
 
-.salary-input-wrapper {
-  display: flex;
-  align-items: center;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 14px;
-  padding: 4px 6px 4px 20px;
-  border: 2px solid transparent;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow:
-    inset 0 2px 4px rgba(0, 0, 0, 0.02),
-    0 1px 3px rgba(0, 0, 0, 0.03);
-}
-
-.salary-input-wrapper:focus-within {
-  border-color: #10b981;
-  box-shadow:
-    0 0 0 4px rgba(16, 185, 129, 0.08),
-    inset 0 2px 4px rgba(0, 0, 0, 0.01);
-}
-
-.salary-input {
-  flex: 1;
-  font-size: 28px;
-  font-weight: 800;
-  color: #0f172a;
-  padding: 12px 0;
-  letter-spacing: -0.5px;
-  background: transparent;
-  border: none;
-  outline: none;
-}
-
-.placeholder {
-  color: #cbd5e1;
-  font-size: 28px;
-  font-weight: 600;
-}
-
-.unit-badge {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  padding: 10px 18px;
-  border-radius: 11px;
-  flex-shrink: 0;
-  margin-left: 8px;
-}
-
-.unit-badge text {
-  font-size: 13px;
-  font-weight: 700;
-  color: #ffffff;
-  white-space: nowrap;
-  letter-spacing: 0.3px;
-}
-
-/* ========== Deduction Section ========== */
-.deduction-section {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 22px 20px 20px;
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    0 4px 16px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  margin-bottom: 20px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.section-title-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-icon {
-  font-size: 18px;
-}
-
-.section-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1e293b;
-  letter-spacing: 0.2px;
-}
-
-.total-deduction {
-  font-size: 12px;
-  font-weight: 600;
-  color: #10b981;
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  padding: 5px 14px;
+/* 年度汇总 */
+.annual-box {
+  background: #f8fafc;
   border-radius: 20px;
-}
-
-.deduction-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.deduction-card {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 14px;
-  padding: 16px 14px;
-  border: 1.5px solid rgba(0, 0, 0, 0.04);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.deduction-card:active {
-  transform: scale(0.98);
-  border-color: rgba(16, 185, 129, 0.3);
-}
-
-.card-wide {
-  grid-column: span 2;
-}
-
-.deduction-top {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.deduction-icon-wrap {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.icon-blue {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-}
-
-.icon-purple {
-  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
-}
-
-.icon-orange {
-  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
-}
-
-.icon-green {
-  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-}
-
-.icon-gray {
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-}
-
-.ded-icon {
-  font-size: 18px;
-}
-
-.deduction-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: #334155;
-  letter-spacing: 0.2px;
-}
-
-.deduction-bottom {
-  display: flex;
-  align-items: center;
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 8px 12px;
-  border: 1.5px solid rgba(0, 0, 0, 0.06);
-}
-
-.deduction-field {
-  flex: 1;
-  font-size: 17px;
-  font-weight: 700;
-  color: #0f172a;
-  text-align: right;
-  background: transparent;
-  border: none;
-  outline: none;
-  padding: 0;
-  margin-right: 6px;
-}
-
-.deduction-unit {
-  font-size: 12px;
-  color: #94a3b8;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-/* ========== Calculate Button ========== */
-.calculate-btn {
-  width: 100%;
-  height: 54px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
-  background-size: 200% 200%;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  box-shadow:
-    0 6px 20px rgba(16, 185, 129, 0.35),
-    0 2px 8px rgba(16, 185, 129, 0.2);
-  animation: btnGradientShift 4s ease infinite;
-  margin-top: 8px;
-}
-
-@keyframes btnGradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-.btn-inner {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  z-index: 2;
-}
-
-.btn-icon {
-  font-size: 20px;
-  color: #ffffff;
-}
-
-.btn-text {
-  font-size: 17px;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: 0.5px;
-}
-
-.btn-shine {
-  position: absolute;
-  top: 0;
-  left: -150%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.25) 50%,
-    transparent 100%
-  );
-  transition: left 0.6s ease;
-}
-
-.btn-active .btn-shine {
-  left: 150%;
-}
-
-.btn-active {
-  transform: scale(0.97) translateY(2px);
-  box-shadow:
-    0 3px 12px rgba(16, 185, 129, 0.3),
-    0 1px 4px rgba(16, 185, 129, 0.15);
-}
-
-/* ========== Result Section ========== */
-.result-section {
-  animation: resultFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
-}
-
-@keyframes resultFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.result-main-card {
-  background: #ffffff;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.06),
-    0 2px 8px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  margin-bottom: 16px;
-}
-
-.result-highlight {
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  padding: 28px 24px;
-  text-align: center;
-  border-bottom: 1px solid rgba(16, 185, 129, 0.15);
-}
-
-.result-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #065f46;
-  display: block;
-  margin-bottom: 10px;
-  letter-spacing: 0.5px;
-}
-
-.amount-display {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 4px;
-}
-
-.currency-symbol {
-  font-size: 24px;
-  font-weight: 700;
-  color: #059669;
-}
-
-.amount-value {
-  font-size: 44px;
-  font-weight: 900;
-  color: #047857;
-  letter-spacing: -1.5px;
-  line-height: 1;
-}
-
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1px;
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.stat-box {
-  padding: 20px 18px;
-  text-align: center;
-  background: #ffffff;
-}
-
-.stat-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #64748b;
-  display: block;
-  margin-bottom: 8px;
-  letter-spacing: 0.3px;
-}
-
-.stat-value {
-  font-size: 22px;
-  font-weight: 800;
-  color: #1e293b;
-  letter-spacing: -0.3px;
-}
-
-.stat-suffix {
-  font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
-  margin-left: 2px;
-}
-
-.tax-color {
-  color: #dc2626;
-}
-
-.rate-color {
-  color: #f59e0b;
-}
-
-/* ========== Annual Card ========== */
-.annual-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 22px 20px;
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    0 4px 16px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  margin-bottom: 16px;
-}
-
-.annual-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 18px;
-  padding-bottom: 14px;
-  border-bottom: 1.5px solid rgba(0, 0, 0, 0.05);
-}
-
-.annual-icon {
-  font-size: 18px;
+  padding: 20px;
+  margin-top: 12px;
 }
 
 .annual-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: #1e293b;
-  letter-spacing: 0.2px;
+  display: block;
+  margin-bottom: 12px;
 }
 
-.annual-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+.annual-list {
+  
 }
 
-.annual-item {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 12px;
-  padding: 16px 14px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+.annual-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.item-wide {
-  grid-column: span 2;
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  border-color: rgba(16, 185, 129, 0.15);
+.annual-row.row-last {
+  border-bottom: none;
 }
 
 .annual-label {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 14px;
   color: #64748b;
-  display: block;
-  margin-bottom: 6px;
-  letter-spacing: 0.2px;
 }
 
 .annual-value {
-  font-size: 19px;
-  font-weight: 800;
+  font-size: 15px;
+  font-weight: 700;
   color: #1e293b;
-  letter-spacing: -0.3px;
+}
+
+.annual-value.red {
+  color: #dc2626;
+}
+
+.annual-value.bold {
+  font-weight: 800;
+  color: #10b981;
 }
 
 .annual-unit {
   font-size: 12px;
-  font-weight: 600;
   color: #94a3b8;
-  margin-left: 3px;
+  font-weight: 400;
+  margin-left: 2px;
 }
 
-.annual-tax {
-  color: #dc2626;
-}
-
-.annual-after {
-  color: #059669;
-  font-size: 21px;
-}
-
-/* ========== Detail Card ========== */
-.detail-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 20px 18px;
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    0 4px 16px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  margin-bottom: 16px;
-}
-
-.detail-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1.5px solid rgba(0, 0, 0, 0.05);
-}
-
-.detail-icon {
-  font-size: 18px;
-  color: #10b981;
+/* 计算明细 */
+.detail-box {
+  background: #f8fafc;
+  border-radius: 20px;
+  padding: 20px;
+  margin-top: 12px;
 }
 
 .detail-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: #1e293b;
-  letter-spacing: 0.2px;
+  display: block;
+  margin-bottom: 12px;
 }
 
 .detail-list {
-  display: flex;
-  flex-direction: column;
+  
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 11px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-}
-
-.detail-row:last-child {
-  border-bottom: none;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .detail-label {
   font-size: 13px;
-  font-weight: 500;
   color: #64748b;
 }
 
 .detail-value {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: #1e293b;
-  letter-spacing: -0.2px;
 }
 
 .val-unit {
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11px;
   color: #94a3b8;
-  margin-left: 3px;
+  font-weight: 400;
+  margin-left: 2px;
 }
 
-.detail-value.positive {
-  color: #059669;
+/* 使用说明 */
+.tips-box {
+  background: #fefce8;
+  border-radius: 20px;
+  padding: 20px;
+  margin-top: 16px;
+  border-left: 3px solid #f59e0b;
 }
 
-.detail-value.negative {
-  color: #dc2626;
-}
-
-/* ========== Info Section ========== */
-.info-section {
-  animation: infoSlideUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.35s both;
-}
-
-@keyframes infoSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.info-card {
-  background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
-  border-radius: 18px;
-  padding: 22px 20px;
-  border-left: 4px solid #f59e0b;
-  box-shadow:
-    0 4px 12px rgba(245, 158, 11, 0.1),
-    0 2px 6px rgba(245, 158, 11, 0.05);
-}
-
-.info-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.info-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 800;
-  font-style: normal;
-}
-
-.info-title {
-  font-size: 15px;
+.tips-title {
+  font-size: 14px;
   font-weight: 700;
   color: #92400e;
-  letter-spacing: 0.2px;
+  display: block;
+  margin-bottom: 10px;
 }
 
-.info-content {
+.tips-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
-.info-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.info-bullet {
-  color: #f59e0b;
-  font-size: 8px;
-  margin-top: 6px;
-  flex-shrink: 0;
-}
-
-.info-text {
+.tip-line {
   font-size: 12px;
   color: #78716c;
-  line-height: 1.65;
-  font-weight: 500;
+  line-height: 1.5;
 }
 
 .bottom-space {
-  height: 60px;
-  flex-shrink: 0;
+  height: 40px;
+}
+
+/* 夜间模式 */
+.dark-mode page {
+  background-color: #0f1419;
+}
+
+.dark-mode .header-title {
+  color: #F1F5F9;
+}
+
+.dark-mode .form-section {
+  background: #232d42;
+}
+
+.dark-mode .form-label,
+.dark-mode .deduction-title {
+  color: #F1F5F9;
+}
+
+.dark-mode .input-row,
+.dark-mode .item-input {
+  background: #1a2035;
+  border-color: #374151;
+  color: #F1F5F9;
+}
+
+.dark-mode .item-name {
+  color: #CBD5E1;
+}
+
+.dark-mode .divider {
+  background-color: #374151;
+}
+
+.dark-mode .deduction-item {
+  border-bottom-color: #374151;
+}
+
+.dark-mode .result-main {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.dark-mode .grid-item {
+  background: #232d42;
+}
+
+.dark-mode .grid-label {
+  color: #94A3B8;
+}
+
+.dark-mode .grid-value {
+  color: #F1F5F9;
+}
+
+.dark-mode .annual-box,
+.dark-mode .detail-box {
+  background: #232d42;
+}
+
+.dark-mode .annual-title,
+.dark-mode .detail-title {
+  color: #F1F5F9;
+}
+
+.dark-mode .annual-label,
+.dark-mode .detail-label {
+  color: #94A3B8;
+}
+
+.dark-mode .annual-value,
+.dark-mode .detail-value {
+  color: #F1F5F9;
+}
+
+.dark-mode .tips-box {
+  background: #422006;
+  border-left-color: #FBBF24;
+}
+
+.dark-mode .tips-title {
+  color: #FBBF24;
+}
+
+.dark-mode .tip-line {
+  color: #D4A574;
 }

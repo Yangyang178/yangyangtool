@@ -4,6 +4,7 @@
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper green-gradient">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">🏠</text>
       </view>
       <text class="tool-title">房贷月供计算器</text>
@@ -52,10 +53,10 @@
 
     <!-- 操作按钮 -->
     <view class="action-btns">
-      <button class="primary-btn" bindtap="calculate">
+      <button class="btn-primary" bindtap="calculate">
         <text>开始计算</text>
       </button>
-      <button class="secondary-btn" bindtap="resetForm">
+      <button class="btn-secondary" bindtap="resetForm">
         <text>重置</text>
       </button>
     </view>

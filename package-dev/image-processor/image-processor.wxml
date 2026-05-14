@@ -5,6 +5,7 @@
     <!-- 工具头部 -->
     <view class="tool-header">
       <view class="icon-wrapper purple-gradient">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">🖼️</text>
       </view>
       <text class="tool-title">智能图片处理器</text>

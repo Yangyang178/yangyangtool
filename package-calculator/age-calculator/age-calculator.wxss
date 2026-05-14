@@ -1,3 +1,5 @@
+@import "../../styles/tool-common.wxss";
+
 page { background-color: var(--pageBg,#F8FAFC); }
 
 .tool-page {
@@ -7,136 +9,156 @@ page { background-color: var(--pageBg,#F8FAFC); }
 }
 
 .container {
-  padding: 20px;
+  padding: var(--space-lg, 20px);
+  padding-bottom: calc(var(--space-xl, 40px) + env(safe-area-inset-bottom));
 }
 
+/* ===================================
+   🎯 工具头部 - 粉色主题
+   =================================== */
 .tool-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 0 20px;
+  padding: var(--spaceXL, 24px) 0 var(--spaceLG, 20px);
 }
 
 .icon-wrapper {
-  width: 72px;
-  height: 72px;
-  border-radius: 20px;
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radiusXl, 24px);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: var(--spaceMD, 12px);
+  background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, #DB2777 100%);
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.3);
+  position: relative;
+  z-index: 2;
+}
+
+.icon-decoration {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--accentPink,#EC4899);
+  opacity: 0.15;
+  filter: blur(20px);
+  z-index: 1;
 }
 
 .tool-icon {
-  font-size: 36px;
+  font-size: 40px;
+  position: relative;
+  z-index: 2;
 }
 
 .tool-title {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: var(--fontSizeXl, 22px);
+  font-weight: var(--fontWeightBold, 700);
   color: var(--textPrimary,#1E293B);
-  margin-bottom: 6px;
+  margin-bottom: var(--spaceSM, 6px);
 }
 
 .tool-desc {
-  font-size: 13px;
+  font-size: var(--fontSizeSm, 13px);
   color: var(--textSecondary,#64748B);
 }
 
+/* ===================================
+   📥 输入区域
+   =================================== */
 .input-section {
-  margin-top: 10px;
+  margin-top: var(--spaceSM, 10px);
 }
 
 .input-card {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background: var(--cardBg,#FFFFFF);
+  border-radius: var(--radiusLg, 16px);
+  padding: var(--spaceXL, 24px);
+  box-shadow: var(--shadowMd, 0 4px 12px rgba(0, 0, 0, 0.08));
 }
 
 .input-group {
-  margin-bottom: 20px;
+  margin-bottom: var(--spaceXL, 20px);
 }
 
 .input-label {
   display: block;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--fontSizeSm, 14px);
+  font-weight: var(--fontWeightSemibold, 600);
   color: var(--textPrimary,#1E293B);
-  margin-bottom: 10px;
+  margin-bottom: var(--spaceMD, 10px);
 }
 
 .date-picker-box {
   height: 48px;
   background: var(--pageBg,#F8FAFC);
-  border-radius: 10px;
-  padding: 0 16px;
+  border-radius: var(--radiusMd, 10px);
+  padding: 0 var(--spaceLG, 16px);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 15px;
+  font-size: var(--fontSizeBase, 15px);
   color: var(--textPrimary,#1E293B);
   border: 2px solid transparent;
-  transition: border-color 0.2s ease;
+  transition: all var(--durationFast, 0.2s) ease;
 }
 
 .date-picker-box:active {
   border-color: var(--accentPink,#EC4899);
 }
 
-.picker-icon {
-  font-size: 18px;
-}
+.picker-icon { font-size: 18px; }
 
-.quick-birthdays {
-  margin-bottom: 24px;
-}
+.quick-birthdays { margin-bottom: var(--spaceXL, 24px); }
 
 .quick-label {
   display: block;
-  font-size: 13px;
+  font-size: var(--fontSizeSm, 13px);
   color: var(--textSecondary,#64748B);
-  margin-bottom: 10px;
+  margin-bottom: var(--spaceMD, 10px);
 }
 
 .quick-btn {
   display: inline-block;
-  padding: 6px 14px;
-  background: linear-gradient(135deg, var(--bgTipRed,#FEF2F2) 0%, var(--bgTipRed,#FEF2F2) 100%);
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: var(--spaceSM, 6px) var(--spaceMD, 14px);
+  background: var(--bgTipRed,#FEF2F2);
+  border-radius: var(--radiusLg, 16px);
+  font-size: var(--fontSizeXs, 12px);
+  font-weight: var(--fontWeightSemibold, 600);
   color: var(--accentPink,#EC4899);
-  margin-right: 8px;
-  margin-bottom: 8px;
-  transition: transform 0.2s ease;
+  margin-right: var(--spaceSM, 8px);
+  margin-bottom: var(--spaceSM, 8px);
+  transition: transform var(--durationFast, 0.2s) ease;
 }
 
-.quick-btn:active {
-  transform: scale(0.95);
-}
+.quick-btn:active { transform: scale(0.95); }
 
+/* ===================================
+   🔘 计算按钮 - 使用统一系统
+   =================================== */
 .calculate-btn {
   width: 100%;
   height: 52px;
-  background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, var(--accentPink,#EC4899) 100%);
-  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, #DB2777 100%);
+  border-radius: var(--radiusMd, 12px);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: var(--fontSizeBase, 16px);
+  font-weight: var(--fontWeightBold, 700);
   color: white;
   box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
 }
 
-.calculate-btn:active {
-  transform: scale(0.98);
-}
+.calculate-btn:active { transform: scale(0.98); }
 
-.result-section {
-  animation: slideUp 0.4s ease;
-}
+/* ===================================
+   📊 结果展示 - 粉色渐变主题
+   =================================== */
+.result-section { animation: slideUp var(--durationNormal, 0.4s) ease; }
 
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px); }
@@ -144,304 +166,165 @@ page { background-color: var(--pageBg,#F8FAFC); }
 }
 
 .age-display-card {
-  background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, var(--accentPink,#EC4899) 100%);
-  border-radius: 20px;
-  padding: 28px;
-  margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, #DB2777 100%);
+  border-radius: var(--radiusXl, 20px);
+  padding: var(--spaceXxl, 28px);
+  margin-bottom: var(--spaceXL, 20px);
   box-shadow: 0 8px 24px rgba(236, 72, 153, 0.3);
 }
 
 .age-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: var(--spaceMD, 12px);
+  margin-bottom: var(--spaceXL, 20px);
 }
 
-.zodiac-emoji {
-  font-size: 40px;
-}
+.zodiac-emoji { font-size: 40px; }
 
-.zodiac-info {
-  display: flex;
-  flex-direction: column;
-}
+.zodiac-info { display: flex; flex-direction: column; }
 
 .zodiac-name {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: var(--fontSizeLg, 18px);
+  font-weight: var(--fontWeightBold, 700);
   color: white;
 }
 
 .constellation-name {
-  font-size: 13px;
+  font-size: var(--fontSizeSm, 13px);
   color: rgba(255, 255, 255, 0.85);
 }
 
 .age-main {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--spaceXL, 20px);
 }
 
 .age-number {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 8px;
+  gap: var(--spaceMD, 8px);
 }
 
 .age-value {
   font-size: 64px;
-  font-weight: 800;
+  font-weight: var(--fontWeightBlack, 800);
   color: white;
   line-height: 1;
 }
 
 .age-unit {
-  font-size: 28px;
-  font-weight: 600;
+  font-size: var(--fontSizeXl, 28px);
+  font-weight: var(--fontWeightSemibold, 600);
   color: rgba(255, 255, 255, 0.9);
 }
 
-.age-detail {
-  margin-top: 8px;
-}
-
 .detail-text {
-  font-size: 16px;
+  font-size: var(--fontSizeBase, 16px);
   color: rgba(255, 255, 255, 0.85);
-  font-weight: 500;
+  font-weight: var(--fontWeightMedium, 500);
 }
 
 .next-birthday-info {
   background: rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: var(--radiusMd, 12px);
+  padding: var(--spaceLG, 16px);
   text-align: center;
-}
-
-.birthday-countdown {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-.countdown-label {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.9);
 }
 
 .countdown-days {
   font-size: 32px;
-  font-weight: 800;
+  font-weight: var(--fontWeightBlack, 800);
   color: var(--accentYellow,#F59E0B);
-}
-
-.countdown-unit {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 600;
-}
-
-.next-birthday-date {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.75);
 }
 
 .life-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: var(--spaceMD, 12px);
+  margin-bottom: var(--spaceXL, 20px);
 }
 
 .stat-card {
-  background: white;
-  border-radius: 14px;
-  padding: 16px 12px;
+  background: var(--cardBg,#FFFFFF);
+  border-radius: var(--radiusLg, 14px);
+  padding: var(--spaceLG, 16px) var(--spaceMD, 12px);
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadowSm, 0 2px 8px rgba(0, 0, 0, 0.06));
 }
 
 .stat-icon {
   font-size: 24px;
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: var(--spaceSM, 6px);
 }
 
 .stat-value {
-  font-size: 18px;
-  font-weight: 800;
+  font-size: var(--fontSizeLg, 18px);
+  font-weight: var(--fontWeightBlack, 800);
   color: var(--accentPink,#EC4899);
   display: block;
   line-height: 1.2;
 }
 
 .stat-label {
-  font-size: 11px;
+  font-size: var(--fontSizeMini, 11px);
   color: var(--textTertiary,#94A3B8);
-  font-weight: 600;
-  margin-top: 4px;
+  font-weight: var(--fontWeightSemibold, 600);
+  margin-top: var(--spaceXS, 4px);
   display: block;
 }
 
-.milestone-section {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  margin-bottom: 20px;
+/* ===================================
+   🏆 里程碑 + 历史记录
+   =================================== */
+.milestone-section,
+.history-section {
+  background: var(--cardBg,#FFFFFF);
+  border-radius: var(--radiusLg, 16px);
+  padding: var(--spaceXL, 20px);
+  box-shadow: var(--shadowSm, 0 2px 8px rgba(0, 0, 0, 0.06));
+  margin-bottom: var(--spaceXL, 20px);
 }
 
 .milestone-title {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: var(--fontSizeBase, 16px);
+  font-weight: var(--fontWeightBold, 700);
   color: var(--textPrimary,#1E293B);
   display: block;
-  margin-bottom: 14px;
-}
-
-.milestone-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.milestone-item {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  border-radius: 10px;
-  background: var(--pageBg,#F8FAFC);
-  transition: all 0.2s ease;
-}
-
-.milestone-item.passed {
-  background: linear-gradient(135deg, var(--bgTipGreen,#ECFDF5) 0%, var(--bgTipGreen,#ECFDF5) 100%);
-}
-
-.milestone-item.future {
-  background: linear-gradient(135deg, var(--bgTipYellowDeep,#FEF3C7) 0%, #FDE68A 100%);
-}
-
-.milestone-status {
-  font-size: 18px;
-  margin-right: 12px;
-}
-
-.milestone-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.milestone-age {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--textPrimary,#1E293B);
-}
-
-.milestone-name {
-  font-size: 12px;
-  color: var(--textSecondary,#64748B);
-  margin-top: 2px;
-}
-
-.milestone-date {
-  font-size: 12px;
-  color: var(--textTertiary,#94A3B8);
-  font-weight: 500;
+  margin-bottom: var(--spaceLG, 14px);
 }
 
 .action-buttons {
   display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: var(--spaceMD, 12px);
+  margin-bottom: var(--spaceXL, 20px);
 }
 
-.action-btn {
-  flex: 1;
-  height: 46px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 600;
-  transition: transform 0.2s ease;
+/* ===================================
+   🌙 夜间模式适配 (简化版)
+   =================================== */
+.dark-mode page { background-color: var(--pageBgNight,#0f1419); }
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.25);
 }
 
-.action-btn:active {
-  transform: scale(0.96);
+.dark-mode .icon-decoration { opacity: 0.1; }
+
+.dark-mode .tool-title { color: var(--textPrimary,#F1F5F9); }
+
+.dark-mode .input-card,
+.dark-mode .stat-card,
+.dark-mode .milestone-section,
+.dark-mode .history-section {
+  background: var(--elevatedBg,#232d42);
 }
 
-.action-btn.copy {
-  background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, var(--accentPink,#EC4899) 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
-}
+.dark-mode .input-label,
+.dark-mode .milestone-title { color: var(--textPrimary,#F1F5F9); }
 
-.action-btn.share {
-  background: linear-gradient(135deg, var(--bgTipRed,#FEF2F2) 0%, var(--bgTipRed,#FEF2F2) 100%);
-  color: var(--accentPink,#EC4899);
-}
+.dark-mode .date-picker-box { background: var(--cardBg,#1a2035); }
 
-.history-section {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-}
-
-.section-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--textPrimary,#1E293B);
-}
-
-.clear-history {
-  font-size: 13px;
-  color: var(--accentRed,#EF4444);
-  font-weight: 600;
-}
-
-.history-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.history-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  background: var(--pageBg,#F8FAFC);
-  border-radius: 10px;
-}
-
-.history-birth {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--textPrimary,#1E293B);
-}
-
-.history-age {
-  font-size: 13px;
-  color: var(--accentPink,#EC4899);
-  font-weight: 700;
-}
-
-.history-time {
-  font-size: 12px;
-  color: var(--textTertiary,#94A3B8);
-}
+.dark-mode .stat-value { color: var(--accentPink,#F472B6); }

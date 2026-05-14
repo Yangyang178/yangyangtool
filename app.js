@@ -277,5 +277,33 @@ App({
       query: '',
       imageUrl: poster
     };
+  },
+
+  onError: function(err) {
+    console.error('=== Global App Error ===', err)
+    
+    var errorMsg = '未知错误'
+    if (typeof err === 'string') {
+      errorMsg = err.length > 50 ? err.substring(0, 50) + '...' : err
+    } else if (err && err.message) {
+      errorMsg = err.message
+    }
+
+    wx.showToast({
+      title: '应用异常，请重试',
+      icon: 'none',
+      duration: 2000
+    })
+
+    try {
+      var errorLog = wx.getStorageSync('errorLog') || []
+      errorLog.push({
+        time: new Date().toISOString(),
+        error: errorMsg,
+        page: getCurrentPages().length > 0 ? getCurrentPages()[getCurrentPages().length - 1].route : 'unknown'
+      })
+      if (errorLog.length > 20) errorLog = errorLog.slice(-20)
+      wx.setStorageSync('errorLog', errorLog)
+    } catch (e) {}
   }
 })
