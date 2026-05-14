@@ -279,12 +279,14 @@
         <view class="contact-section">
           <text class="contact-title">联系我们</text>
           <view class="contact-items">
-            <contact-button
+            <button
               class="contact-item contact-service-btn"
               hover-class="contact-hover"
-              size="18"
-              color="#3B82F6"
+              open-type="contact"
               session-from="来自百宝工具箱-关于我们"
+              show-message-card="true"
+              send-message-title="百宝工具箱 - 意见反馈"
+              send-message-path="/pages/index/index"
             >
               <view class="contact-btn-content">
                 <text class="contact-icon">💬</text>
@@ -292,7 +294,15 @@
                 <text class="contact-value">点击咨询反馈</text>
                 <text class="contact-arrow">→</text>
               </view>
-            </contact-button>
+            </button>
+
+            <!-- 备用联系方式 -->
+            <view class="contact-item contact-wechat-id" bindtap="copyWechat" hover-class="contact-hover">
+              <text class="contact-icon">📱</text>
+              <text class="contact-label">微信号</text>
+              <text class="contact-value">y8849112640</text>
+              <text class="contact-arrow">📋</text>
+            </view>
           </view>
         </view>
 
