@@ -295,14 +295,6 @@
                 <text class="contact-arrow">→</text>
               </view>
             </button>
-
-            <!-- 备用联系方式 -->
-            <view class="contact-item contact-wechat-id" bindtap="copyWechat" hover-class="contact-hover">
-              <text class="contact-icon">📱</text>
-              <text class="contact-label">微信号</text>
-              <text class="contact-value">y8849112640</text>
-              <text class="contact-arrow">📋</text>
-            </view>
           </view>
         </view>
 

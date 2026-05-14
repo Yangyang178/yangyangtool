@@ -1979,20 +1979,6 @@ page {
   display: none !important;
 }
 
-/* 备用微信号样式 */
-.contact-wechat-id {
-  background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%) !important;
-  border-color: rgba(34, 197, 94, 0.2) !important;
-}
-
-.contact-wechat-id .contact-value {
-  color: #16A34A !important;
-}
-
-.contact-wechat-id .contact-arrow {
-  color: #16A34A !important;
-}
-
 .contact-btn-content {
   display: flex;
   align-items: center;
@@ -2127,20 +2113,6 @@ page {
 
 .dark-mode .contact-arrow {
   color: #60A5FA;
-}
-
-/* 暗黑模式 - 备用微信号 */
-.dark-mode .contact-wechat-id {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(74, 222, 128, 0.1) 100%) !important;
-  border-color: rgba(34, 197, 94, 0.3) !important;
-}
-
-.dark-mode .contact-wechat-id .contact-value {
-  color: #4ADE80 !important;
-}
-
-.dark-mode .contact-wechat-id .contact-arrow {
-  color: #4ADE80 !important;
 }
 
 .dark-mode .feature-desc,
