@@ -153,7 +153,7 @@ Page({
     tools: defaultTools,
     topTools: [],
     recentTools: [],  // 最近使用的工具列表
-    showAllRecent: false,  // 是否显示全部最近使用
+    showRecentModal: false,  // 是否显示最近使用弹窗
     totalUsageDisplay: '1.2万'
   },
 
@@ -675,29 +675,39 @@ Page({
   },
 
   /* ========================================================
-   *   [最近使用功能] 查看全部最近使用的工具
+   *   [最近使用功能] 查看全部最近使用的工具（弹窗模式）
    * ======================================================== */
 
   /**
-   * 切换显示全部最近使用
+   * 显示最近使用弹窗
    */
-  toggleShowAllRecent: function() {
+  showRecentModal: function() {
     try {
       wx.vibrateShort({ type: 'light' })
 
-      var currentShow = this.data.showAllRecent
-      this.setData({
-        showAllRecent: !currentShow
-      })
+      // 打开弹窗前重新加载最新数据
+      var recentTools = wx.getStorageSync('recentTools') || []
+      if (!Array.isArray(recentTools)) recentTools = []
 
-      if (!currentShow) {
-        // 打开时重新加载最新数据
-        var recentTools = wx.getStorageSync('recentTools') || []
-        if (!Array.isArray(recentTools)) recentTools = []
-        this.setData({ recentTools: recentTools })
-      }
+      this.setData({
+        showRecentModal: true,
+        recentTools: recentTools
+      })
     } catch(e) {
-      console.error('[toggleShowAllRecent] Error:', e)
+      console.error('[showRecentModal] Error:', e)
+    }
+  },
+
+  /**
+   * 隐藏最近使用弹窗
+   */
+  hideRecentModal: function() {
+    try {
+      this.setData({
+        showRecentModal: false
+      })
+    } catch(e) {
+      console.error('[hideRecentModal] Error:', e)
     }
   },
 

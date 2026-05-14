@@ -46,15 +46,15 @@
     <view class="recent-section" wx:if="{{recentTools.length > 0}}">
       <view class="recent-header">
         <text class="recent-title">🕐 最近使用</text>
-        <view class="recent-more-btn" bindtap="toggleShowAllRecent">
-          <text class="recent-more-text">{{showAllRecent ? '收起' : '查看全部'}}</text>
-          <text class="recent-arrow">{{showAllRecent ? '▲' : '▼'}}</text>
+        <view class="recent-more-btn" bindtap="showRecentModal">
+          <text class="recent-more-text">查看全部</text>
+          <text class="recent-arrow">›</text>
         </view>
       </view>
 
-      <!-- 折叠状态：只显示前3个 -->
-      <view class="recent-list-collapsed" wx:if="{{!showAllRecent}}">
-        <block wx:for="{{recentTools}}" wx:key="id" wx:if="{{index < 3}}">
+      <!-- 默认只显示前2个记录 -->
+      <view class="recent-list-inline">
+        <block wx:for="{{recentTools}}" wx:key="id" wx:if="{{index < 2}}">
           <view class="recent-item" bindtap="onRecentToolClick" data-tool="{{item}}">
             <view class="recent-icon-wrap" style="background: {{item.iconBg}}">{{item.icon}}</view>
             <view class="recent-info">
@@ -66,25 +66,43 @@
         </block>
       </view>
 
-      <!-- 展开状态：显示全部 -->
-      <view class="recent-list-expanded" wx:if="{{showAllRecent}}">
-        <scroll-view scroll-y class="recent-scroll" style="max-height: 400px;">
-          <block wx:for="{{recentTools}}" wx:key="id">
-            <view class="recent-item" bindtap="onRecentToolClick" data-tool="{{item}}">
-              <view class="recent-icon-wrap" style="background: {{item.iconBg}}">{{item.icon}}</view>
-              <view class="recent-info">
-                <text class="recent-name">{{item.name}}</text>
-                <text class="recent-time">{{item.usedAt ? item.usedAt : ''}}</text>
-              </view>
-              <text class="recent-arrow-right">›</text>
-            </view>
-          </block>
-        </scroll-view>
+      <!-- 更多提示 -->
+      <view class="recent-more-hint" wx:if="{{recentTools.length > 2}}" bindtap="showRecentModal">
+        <text class="recent-hint-text">还有 {{recentTools.length - 2}} 条使用记录</text>
+      </view>
+    </view>
 
-        <!-- 空状态提示 -->
-        <view class="recent-empty" wx:if="{{recentTools.length === 0}}">
-          <text class="recent-empty-text">暂无使用记录</text>
+    <!-- 最近使用弹窗 -->
+    <view class="modal-mask" wx:if="{{showRecentModal}}" bindtap="hideRecentModal"></view>
+    <view class="modal-container recent-modal" wx:if="{{showRecentModal}}">
+      <view class="modal-header">
+        <text class="modal-title">🕐 全部最近使用 ({{recentTools.length}})</text>
+        <view class="modal-close-btn" bindtap="hideRecentModal">
+          <text>✕</text>
         </view>
+      </view>
+
+      <scroll-view scroll-y class="modal-body" style="max-height: 500px;">
+        <block wx:for="{{recentTools}}" wx:key="id">
+          <view class="recent-item-modal" bindtap="onRecentToolClick" data-tool="{{item}}">
+            <view class="recent-icon-wrap" style="background: {{item.iconBg}}">{{item.icon}}</view>
+            <view class="recent-info">
+              <text class="recent-name">{{item.name}}</text>
+              <text class="recent-time">{{item.usedAt ? item.usedAt : ''}}</text>
+            </view>
+            <text class="recent-arrow-right">›</text>
+          </view>
+        </block>
+
+        <!-- 空状态 -->
+        <view class="recent-empty-modal" wx:if="{{recentTools.length === 0}}">
+          <text class="recent-empty-text">暂无使用记录</text>
+          <text class="recent-empty-desc">使用工具后会自动记录在这里</text>
+        </view>
+      </scroll-view>
+
+      <view class="modal-footer">
+        <button class="btn-secondary btn-sm" bindtap="hideRecentModal">关闭</button>
       </view>
     </view>
 
