@@ -1,4 +1,25 @@
+/**
+ * 首页主逻辑 - pages/index/index.js
+ * 
+ * 百宝工具箱首页核心文件
+ * 职责：工具展示、搜索、分类、编辑模式、分享等功能
+ * 
+ * 模块说明：
+ * - [配置区] 数据定义、路由映射、辅助函数
+ * - [生命周期] onLoad, onShow 等页面生命周期
+ * - [主题系统] 暗黑模式适配
+ * - [布局管理] 自定义排序、隐藏、重置
+ * - [搜索功能] 关键词搜索、历史记录
+ * - [交互功能] 点击、收藏、长按菜单
+ * - [数据统计] 使用记录、周统计
+ * - [分享功能] 海报绘制、分享配置
+ */
+
 var app = getApp()
+
+/* ============================================================
+ *   [配置区] 数据定义与路由映射
+ * ============================================================ */
 
 var urlMap = {
   1: '/package-calculator/exchange-rate/exchange-rate',
@@ -100,7 +121,12 @@ function getPinyinFirstLetter(str) {
   return pinyinMap[firstChar] || firstChar
 }
 
+/* ============================================================
+ *   [页面主体] Page 定义
+ * ============================================================ */
+
 Page({
+  
   data: {
     greetingText: '',
     searchKeyword: '',
@@ -129,12 +155,15 @@ Page({
     totalUsageDisplay: '1.2万'
   },
 
+  /* ========================================================
+   *   [生命周期]
+   * ======================================================== */
+
   onLoad: function() {
     this.updateGreeting()
     this.loadCustomLayout()
     this.filterTools()
     this.applyCurrentTheme()
-
     var favorites = wx.getStorageSync('favorites') || []
     if (!Array.isArray(favorites)) favorites = []
 
@@ -157,7 +186,6 @@ Page({
     var history = wx.getStorageSync('searchHistory') || []
     if (!Array.isArray(history)) history = []
     var hasSeenGuide = wx.getStorageSync('hasSeenGuide')
-
     this.drawSharePoster()
 
     var topTools = []
@@ -225,6 +253,10 @@ Page({
       menus: ['shareAppMessage', 'shareTimeline']
     })
   },
+
+  /* ========================================================
+   *   [主题系统] 暗黑模式适配
+   * ======================================================== */
 
   applyCurrentTheme: function() {
     try {
@@ -298,6 +330,10 @@ Page({
       }
     } catch(e) {}
   },
+
+  /* ========================================================
+   *   [布局管理] 自定义排序、隐藏、重置
+   * ======================================================== */
 
   loadCustomLayout: function() {
     try {
@@ -543,6 +579,10 @@ Page({
     } catch(e) {}
   },
 
+  /* ========================================================
+   *   [搜索功能] 关键词搜索、历史记录
+   * ======================================================== */
+
   addToSearchHistory: function(keyword) {
     if (!keyword.trim()) return
     var history = wx.getStorageSync('searchHistory') || []
@@ -626,6 +666,10 @@ Page({
     } catch(e) {}
   },
 
+  /* ========================================================
+   *   [交互功能] 工具点击、收藏、长按菜单
+   * ======================================================== */
+
   onToolClick: function(e) {
     try {
       var tool = e.currentTarget.dataset.tool
@@ -675,6 +719,10 @@ Page({
     setTimeout(function() { that.setData({ showHeart: false }) }, 800)
   },
 
+  /* ========================================================
+   *   [数据统计] 使用记录、周统计
+   * ======================================================== */
+
   recordWeeklyUsage: function() {
     try {
       var today = new Date()
@@ -716,6 +764,10 @@ Page({
       try { var appInst = getApp(); if (appInst && typeof appInst.cloudSyncUsage === 'function') appInst.cloudSyncUsage(tool.id, tool.name) } catch(err) {}
     } catch(e) {}
   },
+
+  /* ========================================================
+   *   [分享功能] 更多菜单、分享配置、海报绘制
+   * ======================================================== */
 
   showMoreMenu: function() {
     wx.showActionSheet({
