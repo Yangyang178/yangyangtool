@@ -152,7 +152,8 @@ Page({
     categories: categories,
     tools: defaultTools,
     topTools: [],
-    recentTools: [],  // 最近使用的工具列表
+    recentTools: [],  // 最近使用的工具列表（完整列表）
+    displayRecentTools: [],  // 首页显示的最近使用（最多2条）
     showRecentModal: false,  // 是否显示最近使用弹窗
     totalUsageDisplay: '1.2万'
   },
@@ -245,7 +246,8 @@ Page({
       searchHistory: history,
       showGuide: !hasSeenGuide,
       topTools: topTools,
-      recentTools: recentTools,  // 最近使用的工具列表
+      recentTools: recentTools,  // 最近使用的工具列表（完整）
+      displayRecentTools: recentTools.slice(0, 2),  // 首页只显示前2条
       totalUsageDisplay: totalUsageDisplay
     })
 
@@ -256,6 +258,20 @@ Page({
   onShow: function() {
     this.updateGreeting()
     this.applyCurrentTheme()
+
+    // 每次显示页面时刷新最近使用数据
+    try {
+      var recentTools = wx.getStorageSync('recentTools') || []
+      if (!Array.isArray(recentTools)) recentTools = []
+
+      this.setData({
+        recentTools: recentTools,
+        displayRecentTools: recentTools.slice(0, 2)
+      })
+    } catch(e) {
+      console.error('[onShow] 刷新recentTools失败:', e)
+    }
+
     wx.showShareMenu({
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline']
@@ -683,16 +699,24 @@ Page({
    */
   showRecentModal: function() {
     try {
+      console.log('[showRecentModal] 函数被调用')
+
       wx.vibrateShort({ type: 'light' })
 
       // 打开弹窗前重新加载最新数据
       var recentTools = wx.getStorageSync('recentTools') || []
       if (!Array.isArray(recentTools)) recentTools = []
 
+      console.log('[showRecentModal] recentTools数量:', recentTools.length)
+      console.log('[showRecentModal] 即将设置 showRecentModal = true')
+
       this.setData({
         showRecentModal: true,
-        recentTools: recentTools
+        recentTools: recentTools,
+        displayRecentTools: recentTools.slice(0, 2)  // 同步更新显示列表
       })
+
+      console.log('[showRecentModal] setData完成')
     } catch(e) {
       console.error('[showRecentModal] Error:', e)
     }

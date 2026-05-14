@@ -52,9 +52,9 @@
         </view>
       </view>
 
-      <!-- 默认只显示前2个记录 -->
+      <!-- 默认只显示前2个记录（使用JS层过滤后的数组） -->
       <view class="recent-list-inline">
-        <block wx:for="{{recentTools}}" wx:key="id" wx:if="{{index < 2}}">
+        <block wx:for="{{displayRecentTools}}" wx:key="id">
           <view class="recent-item" bindtap="onRecentToolClick" data-tool="{{item}}">
             <view class="recent-icon-wrap" style="background: {{item.iconBg}}">{{item.icon}}</view>
             <view class="recent-info">
