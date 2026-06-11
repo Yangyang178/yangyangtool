@@ -1,4 +1,8 @@
-const sampleJson = `{
+var storageUtil = require('../../utils/storage.js')
+var toolActions = require('../utils/tool-actions.js')
+var poster = require('../utils/poster.js')
+var i18n = require('../../utils/i18n.js')
+var sampleJson = `{
   "name": "百宝工具箱",
   "version": "1.0.0",
   "author": {
@@ -33,20 +37,39 @@ Page({
       lines: 0,
       size: '0 B'
     },
-    historyList: []
+    historyList: [],
+    isDarkMode: false,
+    fontSizeSetting: 'medium'
   },
 
-  onLoad() {
+  onLoad: function() {
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
+    var i18nTexts = i18n.getToolPageTexts('jsonFormatter')
+    var tracker = getApp().tracker
+    if (tracker) tracker.pageView('JSON格式化')
+    var app = getApp()
+    var isDark = app.globalData.isDarkMode || false
+    this.setData({ isDarkMode: isDark, i18n: i18nTexts })
     this.loadHistory()
+    poster.setupForPage(this, 17)
+  },
+  onShow: function() {
+    var app = getApp()
+    var isDark = app.globalData.isDarkMode || false
+    var fontSize = storageUtil.get('fontSizeSetting', 'medium')
+    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('jsonFormatter') })
   },
 
   onInputChange(e) {
-    const value = e.detail.value
-    this.setData({ 
+    var value = e.detail.value
+    this.setData({
       inputJson: value,
       errorMsg: ''
     })
-    
+
     if (value.trim()) {
       this.setData({ jsonSize: value.length })
       this.validateJsonSilent(value)
@@ -67,19 +90,19 @@ Page({
   formatJson() {
     wx.vibrateShort({ type: 'medium' })
 
-    const { inputJson } = this.data
-    
+    var { inputJson } = this.data
+
     if (!inputJson.trim()) {
-      wx.showToast({ title: '请输入JSON数据', icon: 'none' })
+      wx.showToast({ title: this.data.i18n.pleaseInputJson, icon: 'none' })
       return
     }
 
     try {
-      const parsed = JSON.parse(inputJson)
-      const formatted = JSON.stringify(parsed, null, 2)
-      
-      const stats = this.calculateStats(formatted)
-      
+      var parsed = JSON.parse(inputJson)
+      var formatted = JSON.stringify(parsed, null, 2)
+
+      var stats = this.calculateStats(formatted)
+
       this.setData({
         outputJson: formatted,
         errorMsg: '',
@@ -87,9 +110,11 @@ Page({
       })
 
       this.addToHistory(inputJson, 'format')
-      wx.showToast({ title: '格式化成功！', icon: 'success' })
+      wx.showToast({ title: this.data.i18n.formatSuccess, icon: 'success' })
+      var tracker = getApp().tracker
+      if (tracker) tracker.toolUse(17, 'JSON格式化', false)
     } catch (e) {
-      const errorInfo = this.parseError(e.message, inputJson)
+      var errorInfo = this.parseError(e.message, inputJson)
       this.setData({
         errorMsg: errorInfo,
         outputJson: ''
@@ -100,19 +125,19 @@ Page({
   compressJson() {
     wx.vibrateShort({ type: 'medium' })
 
-    const { inputJson } = this.data
+    var { inputJson } = this.data
 
     if (!inputJson.trim()) {
-      wx.showToast({ title: '请输入JSON数据', icon: 'none' })
+      wx.showToast({ title: this.data.i18n.pleaseInputJson, icon: 'none' })
       return
     }
 
     try {
-      const parsed = JSON.parse(inputJson)
-      const compressed = JSON.stringify(parsed)
-      
-      const stats = this.calculateStats(compressed)
-      
+      var parsed = JSON.parse(inputJson)
+      var compressed = JSON.stringify(parsed)
+
+      var stats = this.calculateStats(compressed)
+
       this.setData({
         outputJson: compressed,
         errorMsg: '',
@@ -120,9 +145,11 @@ Page({
       })
 
       this.addToHistory(inputJson, 'compress')
-      wx.showToast({ title: '压缩成功！', icon: 'success' })
+      wx.showToast({ title: this.data.i18n.compressSuccess, icon: 'success' })
+      var tracker = getApp().tracker
+      if (tracker) tracker.toolUse(17, 'JSON格式化', false)
     } catch (e) {
-      const errorInfo = this.parseError(e.message, inputJson)
+      var errorInfo = this.parseError(e.message, inputJson)
       this.setData({
         errorMsg: errorInfo,
         outputJson: ''
@@ -133,19 +160,19 @@ Page({
   validateJson() {
     wx.vibrateShort({ type: 'medium' })
 
-    const { inputJson } = this.data
+    var { inputJson } = this.data
 
     if (!inputJson.trim()) {
-      wx.showToast({ title: '请输入JSON数据', icon: 'none' })
+      wx.showToast({ title: this.data.i18n.pleaseInputJson, icon: 'none' })
       return
     }
 
     try {
       JSON.parse(inputJson)
-      
-      const parsed = JSON.parse(inputJson)
-      const formatted = JSON.stringify(parsed, null, 2)
-      const stats = this.calculateStats(formatted)
+
+      var parsed = JSON.parse(inputJson)
+      var formatted = JSON.stringify(parsed, null, 2)
+      var stats = this.calculateStats(formatted)
 
       this.setData({
         outputJson: formatted,
@@ -155,13 +182,13 @@ Page({
       })
 
       wx.showModal({
-        title: '✅ 验证通过',
-        content: `JSON格式完全正确！\n\n字符数：${inputJson.length}\n数据类型：${this.getDataType(parsed)}`,
+        title: this.data.i18n.validatePassTitle,
+        content: this.data.i18n.validatePassContent + '\n\n' + this.data.i18n.charCountLabel + inputJson.length + '\n' + this.data.i18n.dataTypeLabel + this.getDataType(parsed),
         showCancel: false,
-        confirmText: '太好了！'
+        confirmText: this.data.i18n.greatBtn
       })
     } catch (e) {
-      const errorInfo = this.parseError(e.message, inputJson)
+      var errorInfo = this.parseError(e.message, inputJson)
       this.setData({
         errorMsg: errorInfo,
         outputJson: ''
@@ -170,23 +197,23 @@ Page({
   },
 
   parseError(errorMessage, jsonStr) {
-    let positionMatch = errorMessage.match(/position\s+(\d+)/i)
-    let lineMatch = errorMessage.match(/line\s+(\d+)/i)
-    
+    var positionMatch = errorMessage.match(/position\s+(\d+)/i)
+    var lineMatch = errorMessage.match(/line\s+(\d+)/i)
+
     if (positionMatch) {
-      const pos = parseInt(positionMatch[1])
-      const previewStart = Math.max(0, pos - 30)
-      const previewEnd = Math.min(jsonStr.length, pos + 30)
-      const preview = jsonStr.substring(previewStart, previewEnd)
-      
-      return `语法错误（位置 ${pos}）:\n${errorMessage}\n\n附近内容：...${preview}...`
-    }
-    
-    if (lineMatch) {
-      return `第 ${lineMatch[1]} 行出错:\n${errorMessage}`
+      var pos = parseInt(positionMatch[1])
+      var previewStart = Math.max(0, pos - 30)
+      var previewEnd = Math.min(jsonStr.length, pos + 30)
+      var preview = jsonStr.substring(previewStart, previewEnd)
+
+      return '语法错误（位置 ' + pos + '）:\n' + errorMessage + '\n\n附近内容：...' + preview + '...'
     }
 
-    return `JSON解析错误:\n${errorMessage}`
+    if (lineMatch) {
+      return '第 ' + lineMatch[1] + ' 行出错:\n' + errorMessage
+    }
+
+    return 'JSON解析错误:\n' + errorMessage
   },
 
   getDataType(data) {
@@ -196,11 +223,11 @@ Page({
   },
 
   calculateStats(jsonStr) {
-    const chars = jsonStr.length
-    const lines = jsonStr.split('\n').length
-    const bytes = new Blob([jsonStr]).size
-    
-    let sizeStr = ''
+    var chars = jsonStr.length
+    var lines = jsonStr.split('\n').length
+    var bytes = new Blob([jsonStr]).size
+
+    var sizeStr = ''
     if (bytes < 1024) {
       sizeStr = bytes + ' B'
     } else if (bytes < 1024 * 1024) {
@@ -218,26 +245,26 @@ Page({
 
   pasteFromClipboard() {
     wx.vibrateShort({ type: 'light' })
-    
+    var that = this
     wx.getClipboardData({
-      success: (res) => {
+      success: function(res) {
         if (res.data.trim()) {
-          this.setData({ 
+          that.setData({
             inputJson: res.data,
             errorMsg: ''
           })
-          
-          if (this.validateJsonSilent(res.data)) {
-            this.setData({ jsonSize: res.data.length })
+
+          if (that.validateJsonSilent(res.data)) {
+            that.setData({ jsonSize: res.data.length })
           }
-          
-          wx.showToast({ title: '已粘贴', icon: 'success' })
+
+          wx.showToast({ title: this.data.i18n.pasted, icon: 'success' })
         } else {
-          wx.showToast({ title: '剪贴板为空', icon: 'none' })
+          wx.showToast({ title: this.data.i18n.clipboardEmpty, icon: 'none' })
         }
       },
-      fail: () => {
-        wx.showToast({ title: '读取失败', icon: 'none' })
+      fail: function() {
+        wx.showToast({ title: this.data.i18n.readFailed, icon: 'none' })
       }
     })
   },
@@ -249,7 +276,7 @@ Page({
       errorMsg: '',
       jsonSize: sampleJson.length
     })
-    wx.showToast({ title: '已加载示例', icon: 'success' })
+    wx.showToast({ title: this.data.i18n.sampleLoaded, icon: 'success' })
   },
 
   clearInput() {
@@ -262,47 +289,47 @@ Page({
     })
   },
 
-  copyOutput() {
+  copyOutput: function() {
     wx.vibrateShort({ type: 'light' })
 
     if (!this.data.outputJson) {
-      wx.showToast({ title: '没有可复制的内容', icon: 'none' })
+      wx.showToast({ title: this.data.i18n.noContentToCopy, icon: 'none' })
       return
     }
 
     wx.setClipboardData({
       data: this.data.outputJson,
-      success: () => {
-        wx.showToast({ title: '已复制到剪贴板', icon: 'success' })
+      success: function() {
+        wx.showToast({ title: this.data.i18n.copiedToClipboard, icon: 'success' })
       }
     })
   },
 
   addToHistory(jsonStr, type) {
-    const history = wx.getStorageSync('json_formatter_history') || []
-    
-    const preview = jsonStr.substring(0, 50) + (jsonStr.length > 50 ? '...' : '')
-    
-    const newRecord = {
+    var history = storageUtil.safeGetArray('json_formatter_history')
+
+    var preview = jsonStr.substring(0, 50) + (jsonStr.length > 50 ? '...' : '')
+
+    var newRecord = {
       original: jsonStr,
       preview,
       type,
-      typeText: type === 'format' ? '格式化' : '压缩',
+      typeText: type === 'format' ? this.data.i18n.format : this.data.i18n.compress,
       time: Date.now(),
       timeText: this.formatTime(new Date())
     }
 
     history.unshift(newRecord)
-    const saved = history.slice(0, 15)
+    var saved = history.slice(0, 15)
     wx.setStorageSync('json_formatter_history', saved)
     this.setData({ historyList: saved.slice(0, 8) })
   },
 
   loadHistoryItem(e) {
     wx.vibrateShort({ type: 'light' })
-    const index = e.currentTarget.dataset.index
-    const item = this.data.historyList[index]
-    
+    var index = e.currentTarget.dataset.index
+    var item = this.data.historyList[index]
+
     this.setData({
       inputJson: item.original,
       errorMsg: '',
@@ -311,37 +338,50 @@ Page({
   },
 
   formatTime(date) {
-    const hours = String(date.getHours()).padStart(2, '0')
-    const minutes = String(date.getMinutes()).padStart(2, '0')
-    return `${hours}:${minutes}`
+    var hours = String(date.getHours()).padStart(2, '0')
+    var minutes = String(date.getMinutes()).padStart(2, '0')
+    return hours + ':' + minutes
   },
 
   loadHistory() {
-    const history = wx.getStorageSync('json_formatter_history') || []
+    var history = storageUtil.safeGetArray('json_formatter_history')
     this.setData({ historyList: history.slice(0, 8) })
   },
 
   clearHistory() {
+    var that = this
     wx.showModal({
-      title: '提示',
-      content: '确定要清空历史记录吗？',
-      success: (res) => {
+      title: this.data.i18n.tipTitle,
+      content: this.data.i18n.confirmClearHistory,
+      success: function(res) {
         if (res.confirm) {
           wx.removeStorageSync('json_formatter_history')
-          this.setData({ historyList: [] })
-          wx.showToast({ title: '已清空', icon: 'success' })
+          that.setData({ historyList: [] })
+          wx.showToast({ title: this.data.i18n.cleared, icon: 'success' })
         }
       }
     })
   },
 
-  onShareAppMessage() {
-    return {
-      title: 'JSON格式化 - 百宝工具箱',
-      path: '/pages/tools/json-formatter/json-formatter'
-    }
+  copyResult: function() {
+    toolActions.copyText(this.data.outputText, this.data.i18n.copiedToClipboard, this.data.i18n)
   },
-  onShareTimeline() {
-    return { title: '' }
+
+  onShareAppMessage: function() {
+    return poster.getShareConfig('{} JSON格式化 - 百宝工具箱', '/package-dev/json-formatter/json-formatter')
+  },
+  resetData: function() {
+    var that = this
+    toolActions.resetConfirm(function() {
+      that.setData({
+        inputJson: '',
+        outputJson: '',
+        errorMsg: '',
+        jsonSize: 0
+      })
+    }, that.data.i18n)
+  },
+  onShareTimeline: function() {
+    return poster.getTimelineConfig('{} JSON格式化 - 百宝工具箱')
   }
 })

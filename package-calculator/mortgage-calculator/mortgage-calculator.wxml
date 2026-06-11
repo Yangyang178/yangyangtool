@@ -1,51 +1,51 @@
-<navigation-bar title="房贷计算器" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
 
-<scroll-view class="tool-page" scroll-y>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper green-gradient">
         <view class="icon-decoration"></view>
         <text class="tool-icon">🏠</text>
       </view>
-      <text class="tool-title">房贷月供计算器</text>
-      <text class="tool-desc">精准计算月供、利息和还款总额</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
     <!-- 输入表单 -->
     <view class="form-section">
       <view class="input-group">
         <view class="label-row">
-          <text class="label">贷款金额</text>
-          <text class="unit-hint">单位：万元（如 50 表示50万）</text>
+          <text class="label">{{i18n.loanAmount}}</text>
+          <text class="unit-hint">{{i18n.unitWan}}</text>
         </view>
-        <input class="input" type="digit" placeholder="请输入贷款金额，如 50" value="{{loanAmount}}" bindinput="onLoanAmountInput"/>
+        <input class="input" type="digit" placeholder="{{i18n.inputLoanAmount}}" value="{{loanAmount}}" bindinput="onLoanAmountInput"/>
       </view>
 
       <view class="input-group">
-        <text class="label">贷款年限</text>
+        <text class="label">{{i18n.loanYears}}</text>
         <picker mode="selector" range="{{yearOptions}}" value="{{yearIndex}}" bindchange="onYearChange">
-          <view class="picker-value">{{yearOptions[yearIndex]}}年 ▼</view>
+          <view class="picker-value">{{yearOptions[yearIndex]}}{{i18n.years}} ▼</view>
         </picker>
       </view>
 
       <view class="input-group">
-        <text class="label">年利率（%）</text>
-        <input class="input" type="digit" placeholder="如 4.2" value="{{interestRate}}" bindinput="onRateInput"/>
+        <text class="label">{{i18n.annualRate}}</text>
+        <input class="input" type="digit" placeholder="{{i18n.ratePlaceholder}}" value="{{interestRate}}" bindinput="onRateInput"/>
         <view class="rate-tips">
           <text class="tip-item" wx:for="{{ratePresets}}" wx:key="rate" data-rate="{{item.rate}}" bindtap="usePresetRate">{{item.label}}</text>
         </view>
       </view>
 
       <view class="input-group">
-        <text class="label">还款方式</text>
+        <text class="label">{{i18n.repaymentMethod}}</text>
         <view class="type-selector">
           <view class="type-btn {{repaymentType === 'equalPayment' ? 'active' : ''}}" data-type="equalPayment" bindtap="onTypeChange">
-            <text>等额本息</text>
-            <text class="type-desc">每月还款额相同</text>
+            <text>{{i18n.equalPayment}}</text>
+            <text class="type-desc">{{i18n.equalPaymentDesc}}</text>
           </view>
           <view class="type-btn {{repaymentType === 'equalPrincipal' ? 'active' : ''}}" data-type="equalPrincipal" bindtap="onTypeChange">
-            <text>等额本金</text>
-            <text class="type-desc">逐月递减，总利息少</text>
+            <text>{{i18n.equalPrincipal}}</text>
+            <text class="type-desc">{{i18n.equalPrincipalDesc}}</text>
           </view>
         </view>
       </view>
@@ -54,82 +54,125 @@
     <!-- 操作按钮 -->
     <view class="action-btns">
       <button class="btn-primary" bindtap="calculate">
-        <text>开始计算</text>
+        <text>{{i18n.calculate}}</text>
       </button>
       <button class="btn-secondary" bindtap="resetForm">
-        <text>重置</text>
+        <text>{{i18n.reset}}</text>
       </button>
     </view>
 
     <!-- 计算结果 -->
     <view class="result-section" wx:if="{{hasCalculated}}">
       <view class="result-card main-result">
-        <text class="result-label">{{repaymentType === 'equalPayment' ? '每月还款' : '首月还款'}}</text>
+        <text class="result-label">{{monthlyPaymentLabel}}</text>
         <text class="result-value">{{monthlyPayment}}</text>
-        <text class="result-unit">元/月</text>
-        <text class="amount-info">贷款 {{amountDisplay}} 元 · {{totalMonths}}期 · 年利率{{interestRate}}%</text>
+        <text class="result-unit">{{i18n.yuanPerMonth}}</text>
+        <text class="amount-info">{{loanSummaryText}}</text>
       </view>
 
       <view class="result-grid">
         <view class="result-item">
-          <text class="item-label">支付利息</text>
+          <text class="item-label">{{i18n.interestPaid}}</text>
           <text class="item-value interest">{{totalInterest}}</text>
-          <text class="item-unit">元</text>
+          <text class="item-unit">{{i18n.yuan}}</text>
         </view>
         <view class="result-item">
-          <text class="item-label">还款总额</text>
+          <text class="item-label">{{i18n.totalRepayment}}</text>
           <text class="item-value">{{totalPayment}}</text>
-          <text class="item-unit">元</text>
+          <text class="item-unit">{{i18n.yuan}}</text>
         </view>
         <view class="result-item">
-          <text class="item-label">贷款本金</text>
+          <text class="item-label">{{i18n.loanPrincipal}}</text>
           <text class="item-value">{{loanTotal}}</text>
-          <text class="item-unit">元</text>
+          <text class="item-unit">{{i18n.yuan}}</text>
         </view>
         <view class="result-item">
-          <text class="item-label">还款期限</text>
+          <text class="item-label">{{i18n.repaymentPeriod}}</text>
           <text class="item-value">{{totalMonths}}</text>
-          <text class="item-unit">个月 ({{yearOptions[yearIndex]}}年)</text>
+          <text class="item-unit">{{i18n.months}} ({{yearOptions[yearIndex]}}{{i18n.years}})</text>
         </view>
       </view>
 
       <!-- 等额本金额外信息 -->
       <view class="extra-info" wx:if="{{repaymentType === 'equalPrincipal'}}">
         <view class="info-row">
-          <text class="info-label">首月还款</text>
-          <text class="info-value">{{firstMonthPayment}} 元</text>
+          <text class="info-label">{{i18n.firstMonthPayment}}</text>
+          <text class="info-value">{{firstMonthPayment}} {{i18n.yuan}}</text>
         </view>
         <view class="info-row">
-          <text class="info-label">末月还款</text>
-          <text class="info-value">{{lastMonthPayment}} 元</text>
+          <text class="info-label">{{i18n.lastMonthPayment}}</text>
+          <text class="info-value">{{lastMonthPayment}} {{i18n.yuan}}</text>
         </view>
         <view class="info-row highlight">
-          <text class="info-label">每月递减</text>
+          <text class="info-label">{{i18n.monthlyDecrease}}</text>
           <text class="info-value">{{monthlyDecrease}}</text>
         </view>
       </view>
 
       <!-- 对比信息 -->
       <view class="compare-section">
-        <text class="compare-title">💡 还款分析</text>
+        <text class="compare-title">{{i18n.repaymentAnalysis}}</text>
         <view class="compare-item">
-          <text class="compare-text">贷款金额: {{amountDisplay}} 元</text>
+          <text class="compare-text">{{i18n.loanAmountLabel}}: {{amountDisplay}} {{i18n.yuan}}</text>
         </view>
         <view class="compare-item">
-          <text class="compare-text">利息占总额比例: {{interestRatio}}%</text>
+          <text class="compare-text">{{i18n.interestRatio}}: {{interestRatio}}%</text>
+        </view>
+      </view>
+
+      <!-- 还款对比图 -->
+      <view class="chart-section">
+        <view class="chart-header" bindtap="toggleChart">
+          <view class="chart-header-left">
+            <text class="chart-icon">📊</text>
+            <text class="chart-title">{{i18n.repaymentChart}}</text>
+          </view>
+          <view class="chart-header-right">
+            <text class="chart-arrow {{showChart ? 'expanded' : ''}}">▾</text>
+          </view>
+        </view>
+
+        <view class="chart-body" wx:if="{{showChart}}">
+          <view class="chart-type-tabs">
+            <view class="chart-type-tab {{chartType === 'pie' ? 'active' : ''}}" data-type="pie" bindtap="switchChartType">{{i18n.pieChart}}</view>
+            <view class="chart-type-tab {{chartType === 'bar' ? 'active' : ''}}" data-type="bar" bindtap="switchChartType">{{i18n.barChart}}</view>
+          </view>
+          <view class="chart-canvas-wrapper">
+            <canvas type="2d" id="pieCanvas" class="chart-canvas" wx:if="{{chartType === 'pie'}}"></canvas>
+            <canvas type="2d" id="barCanvas" class="chart-canvas" wx:if="{{chartType === 'bar'}}"></canvas>
+          </view>
+          <view class="chart-summary" wx:if="{{compareData}}">
+            <view class="summary-row">
+              <text class="summary-label">{{i18n.equalPaymentTotal}}</text>
+              <text class="summary-value">{{compareData.ep.interestRatio}}%{{i18n.isInterest}}</text>
+            </view>
+            <view class="summary-row">
+              <text class="summary-label">{{i18n.equalPrincipalTotal}}</text>
+              <text class="summary-value">{{compareData.epr.interestRatio}}%{{i18n.isInterest}}</text>
+            </view>
+            <view class="summary-row highlight">
+              <text class="summary-label">{{i18n.equalPrincipalSave}}</text>
+              <text class="summary-value saved">{{compareData.savedInterest > 0 ? compareData.savedInterest.toFixed(2) : '0.00'}} {{i18n.yuan}}</text>
+            </view>
+          </view>
         </view>
       </view>
     </view>
 
+    <view class="tool-actions-bar">
+      <view class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResult}}</view>
+    </view>
+
     <!-- 使用说明 -->
     <view class="tips-section">
-      <text class="tips-title">📖 计算说明</text>
+      <text class="tips-title">{{i18n.calculationNote}}</text>
       <view class="tips-list">
-        <text class="tip-item">• 等额本息：每月还款金额固定，前期还息多后期还本多</text>
-        <text class="tip-item">• 等额本金：每月还的本金固定，利息逐月递减，总利息更少</text>
-        <text class="tip-item">• 贷款金额请输入万元数，如贷款50万则输入 50</text>
-        <text class="tip-item">• LPR为贷款市场报价利率，以银行实际为准</text>
+        <text class="tip-item">• {{i18n.equalPaymentNote}}</text>
+        <text class="tip-item">• {{i18n.equalPrincipalNote}}</text>
+        <text class="tip-item">• {{i18n.loanAmountNote}}</text>
+        <text class="tip-item">• {{i18n.lprNote}}</text>
       </view>
     </view>
   </view>
 </scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

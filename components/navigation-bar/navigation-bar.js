@@ -1,3 +1,4 @@
+var logger = require('../../utils/logger.js')
 Component({
   options: {
     multipleSlots: true
@@ -85,7 +86,7 @@ Component({
         });
 
       } catch (e) {
-        console.log('nav error:', e);
+        logger.log('nav error:', e);
         that.setData({
           innerPaddingRight: 'padding-right: 100px',
           leftWidth: 'width: 100px',

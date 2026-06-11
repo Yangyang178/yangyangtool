@@ -1,0 +1,92 @@
+<navigation-bar title="{{i18n.navTitle}}" />
+
+<view class="container {{isDarkMode ? 'dark-mode' : ''}} {{fontClass}} font-size-{{fontSizeSetting}}" style="{{themeStyle}}">
+  <!-- 工具头部 -->
+  <view class="tool-header">
+    <view class="tool-icon-wrap">
+      <text class="tool-icon">🔮</text>
+    </view>
+    <view class="tool-info">
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
+    </view>
+  </view>
+
+  <!-- 测试列表页 -->
+  <view wx:if="{{page === 'list'}}" class="page-list">
+    <view class="test-card" wx:for="{{testList}}" wx:key="id" bindtap="selectTest" data-index="{{index}}">
+      <view class="test-card-icon-wrap">
+        <text class="test-card-icon">{{item.icon}}</text>
+      </view>
+      <view class="test-card-info">
+        <text class="test-card-title">{{item.title}}</text>
+        <text class="test-card-desc">{{item.desc}}</text>
+        <text class="test-card-count">{{item.questionCount}}{{i18n.questionCount}}</text>
+      </view>
+      <view class="test-card-arrow">
+        <text class="arrow-icon">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 答题页 -->
+  <view wx:if="{{page === 'test'}}" class="page-test">
+    <!-- 进度条 -->
+    <view class="progress-bar-wrap">
+      <view class="progress-bar">
+        <view class="progress-bar-fill" style="width: {{progressPercent}}%"></view>
+      </view>
+      <text class="progress-text">{{progressText}}</text>
+    </view>
+
+    <!-- 题目 -->
+    <view class="question-card">
+      <text class="question-text">{{currentQuestionText}}</text>
+    </view>
+
+    <!-- 选项列表 -->
+    <view class="options-list">
+      <view class="option-btn" wx:for="{{currentOptions}}" wx:key="index" bindtap="selectOption" data-score="{{item.score}}">
+        <view class="option-index-wrap">
+          <text class="option-index">{{index + 1}}</text>
+        </view>
+        <text class="option-text">{{item.text}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结果页 -->
+  <view wx:if="{{page === 'result'}}" class="page-result">
+    <view class="result-card">
+      <text class="result-emoji">{{resultInfo.emoji}}</text>
+      <text class="result-title">{{resultInfo.title}}</text>
+      <view class="result-score-wrap">
+        <text class="result-score-label">{{i18n.score}}</text>
+        <text class="result-score-value">{{totalScore}}</text>
+      </view>
+      <text class="result-desc">{{resultInfo.desc}}</text>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="result-actions">
+      <view class="action-btn action-btn-primary" bindtap="restartTest">
+        <text class="action-btn-text">{{i18n.retryTest}}</text>
+      </view>
+      <view class="action-btn action-btn-secondary" bindtap="backToList">
+        <text class="action-btn-text-secondary">{{i18n.backToList}}</text>
+      </view>
+    </view>
+
+    <!-- 分享按钮 -->
+    <view class="share-area">
+      <button class="share-btn" open-type="share">
+        <text class="share-btn-text">{{i18n.shareToFriend}}</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 免责声明 -->
+  <view class="disclaimer">
+    <text class="disclaimer-text">{{i18n.disclaimer}}</text>
+  </view>
+</view>

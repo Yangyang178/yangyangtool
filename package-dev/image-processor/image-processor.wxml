@@ -1,5 +1,5 @@
-<scroll-view scroll-y class="container">
-  <navigation-bar title="图片处理" />
+<scroll-view scroll-y class="tool-page container {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}">
+  <navigation-bar title="{{i18n.navTitle}}" />
 
   <view class="tool-content">
     <!-- 工具头部 -->
@@ -8,8 +8,8 @@
         <view class="icon-decoration"></view>
         <text class="tool-icon">🖼️</text>
       </view>
-      <text class="tool-title">智能图片处理器</text>
-      <text class="tool-desc">压缩 · 尺寸 · 拼接 · 裁剪 · 旋转</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
     <!-- 功能选项卡 -->
@@ -20,7 +20,7 @@
     </view>
 
     <!-- 图片选择区域 -->
-    <view class="image-section" wx:if="{{currentFunction !== 'stitch'}}">
+    <view class="image-section" wx:if="{{currentFunction !== 'stitch' && currentFunction !== 'batch'}}">
       <block wx:if="{{images.length > 0}}">
         <!-- 当前图片预览 -->
         <view class="current-image-container">
@@ -55,10 +55,10 @@
         <!-- 操作按钮 -->
         <view class="image-actions">
           <button class="action-btn secondary" size="mini" bindtap="chooseImage">
-            <text>📷 更换图片</text>
+            <text>📷 {{i18n.changeImage}}</text>
           </button>
           <button class="action-btn danger" size="mini" bindtap="clearAllImages">
-            <text>🗑️ 清除全部</text>
+            <text>🗑️ {{i18n.clearAll}}</text>
           </button>
         </view>
       </block>
@@ -66,8 +66,8 @@
       <block wx:else>
         <view class="upload-area" bindtap="chooseImage">
           <text class="upload-icon">📷</text>
-          <text class="upload-text">点击选择图片</text>
-          <text class="upload-hint">支持 JPG/PNG/WebP 格式</text>
+          <text class="upload-text">{{i18n.tapToSelect}}</text>
+          <text class="upload-hint">{{i18n.supportFormats}}</text>
         </view>
       </block>
     </view>
@@ -76,7 +76,7 @@
     <view class="panel" wx:if="{{currentFunction === 'compress'}}">
       <!-- 质量预设 -->
       <view class="section">
-        <text class="section-title">质量预设</text>
+        <text class="section-title">{{i18n.qualityPreset}}</text>
         <view class="preset-grid">
           <view 
             wx:for="{{qualityPresets}}" 
@@ -93,7 +93,7 @@
 
       <!-- 精确质量控制 -->
       <view class="section">
-        <text class="section-title">精确质量调节 ({{quality}}%)</text>
+        <text class="section-title">{{i18n.qualityAdjust}} ({{quality}}%)</text>
         <slider 
           class="quality-slider" 
           min="10" max="100" 
@@ -103,14 +103,14 @@
           bindchange="onQualityChange"
         />
         <view class="slider-labels">
-          <text>高压缩</text>
-          <text>原始画质</text>
+          <text>{{i18n.highCompress}}</text>
+          <text>{{i18n.originalQuality}}</text>
         </view>
       </view>
 
       <!-- 输出格式 -->
       <view class="section">
-        <text class="section-title">输出格式</text>
+        <text class="section-title">{{i18n.outputFormat}}</text>
         <view class="format-options">
           <view 
             wx:for="{{outputFormats}}" 
@@ -132,36 +132,36 @@
         loading="{{isProcessing}}"
         bindtap="compressImage"
       >
-        {{isProcessing ? '压缩中...' : '🗜️ 开始压缩'}}
+        {{isProcessing ? i18n.compressing : '🗜️ ' + i18n.startCompress}}
       </button>
 
       <!-- 压缩结果 -->
       <view class="result-card success" wx:if="{{compressResult}}">
         <view class="result-header">
           <text class="result-icon">✅</text>
-          <text class="result-title">压缩完成！</text>
+          <text class="result-title">{{i18n.compressDone}}</text>
         </view>
         <view class="result-grid">
           <view class="result-item">
-            <text class="result-label">原始大小</text>
+            <text class="result-label">{{i18n.originalSize}}</text>
             <text class="result-value">{{compressResult.originalSize}}</text>
           </view>
           <view class="result-item">
-            <text class="result-label">压缩后</text>
+            <text class="result-label">{{i18n.compressedSize}}</text>
             <text class="result-value highlight">{{compressResult.compressedSize}}</text>
           </view>
           <view class="result-item">
-            <text class="result-label">节省空间</text>
+            <text class="result-label">{{i18n.savedSpace}}</text>
             <text class="result-value success">{{compressResult.savedSize}}</text>
           </view>
           <view class="result-item highlight">
-            <text class="result-label">压缩比例</text>
+            <text class="result-label">{{i18n.compressRatio}}</text>
             <text class="result-value big">{{compressResult.ratio}}%</text>
           </view>
         </view>
         <view class="result-actions">
-          <button class="action-btn primary" bindtap="saveImage">💾 保存到相册</button>
-          <button class="action-btn secondary" bindtap="previewProcessedImage">👁️ 预览效果</button>
+          <button class="action-btn primary" bindtap="saveImage">💾 {{i18n.saveToAlbum}}</button>
+          <button class="action-btn secondary" bindtap="previewProcessedImage">👁️ {{i18n.previewEffect}}</button>
         </view>
       </view>
     </view>
@@ -170,7 +170,7 @@
     <view class="panel" wx:if="{{currentFunction === 'resize'}}">
       <!-- 百分比缩放 -->
       <view class="section">
-        <text class="section-title">百分比缩放 ({{scalePercent}}%)</text>
+        <text class="section-title">{{i18n.percentScale}} ({{scalePercent}}%)</text>
         <slider 
           class="scale-slider" 
           min="10" max="200" 
@@ -190,25 +190,25 @@
 
       <!-- 精确尺寸 -->
       <view class="section">
-        <text class="section-title">精确尺寸设置</text>
+        <text class="section-title">{{i18n.exactSize}}</text>
         <view class="size-inputs">
           <view class="size-box">
-            <text class="size-label">宽度 (px)</text>
+            <text class="size-label">{{i18n.widthPx}}</text>
             <input 
               class="size-input" 
               type="number" 
-              placeholder="{{images[currentImageIndex].width || '自动'}}"
+              placeholder="{{images[currentImageIndex].width || i18n.auto}}"
               value="{{targetWidth}}"
               bindinput="onTargetWidthInput"
             />
           </view>
           <text class="size-separator">×</text>
           <view class="size-box">
-            <text class="size-label">高度 (px)</text>
+            <text class="size-label">{{i18n.heightPx}}</text>
             <input 
               class="size-input" 
               type="number" 
-              placeholder="{{images[currentImageIndex].height || '自动'}}"
+              placeholder="{{images[currentImageIndex].height || i18n.auto}}"
               value="{{targetHeight}}"
               bindinput="onTargetHeightInput"
             />
@@ -216,13 +216,13 @@
         </view>
         <view class="lock-ratio" bindtap="toggleLockRatio">
           <text class="lock-icon">{{isLockedRatio ? '🔒' : '🔓'}}</text>
-          <text class="lock-text">{{isLockedRatio ? '锁定宽高比' : '自由调整'}}</text>
+          <text class="lock-text">{{isLockedRatio ? i18n.lockRatio : i18n.freeAdjust}}</text>
         </view>
       </view>
 
       <!-- 快捷预设 -->
       <view class="section">
-        <text class="section-title">快捷尺寸预设</text>
+        <text class="section-title">{{i18n.sizePresets}}</text>
         <view class="preset-grid-2col">
           <view 
             wx:for="{{presetSizes}}" 
@@ -245,7 +245,7 @@
         loading="{{isProcessing}}"
         bindtap="resizeImage"
       >
-        {{isProcessing ? '处理中...' : '📐 调整尺寸'}}
+        {{isProcessing ? i18n.processing : '📐 ' + i18n.resizeBtn}}
       </button>
     </view>
 
@@ -253,7 +253,7 @@
     <view class="panel" wx:if="{{currentFunction === 'stitch'}}">
       <!-- 拼接模式选择 -->
       <view class="section">
-        <text class="section-title">拼接模式</text>
+        <text class="section-title">{{i18n.stitchMode}}</text>
         <view class="mode-cards">
           <view 
             wx:for="{{stitchModes}}" 
@@ -272,15 +272,15 @@
       <view class="section">
         <view class="section-header">
           <view class="header-left">
-            <text class="section-title">已选图片 ({{stitchImages.length}}张)</text>
-            <text class="count-hint" wx:if="{{stitchImages.length < 2}}">至少需要2张</text>
+            <text class="section-title">{{i18n.selectedImages}} ({{stitchImages.length}})</text>
+            <text class="count-hint" wx:if="{{stitchImages.length < 2}}">{{i18n.needAtLeast2}}</text>
           </view>
           <view 
             class="clear-all-btn" 
             wx:if="{{stitchImages.length > 0}}"
             bindtap="clearStitchImages"
           >
-            <text>🗑️ 清除全部</text>
+            <text>🗑️ {{i18n.clearAllImages}}</text>
           </view>
         </view>
         
@@ -291,25 +291,32 @@
             class="stitch-img-item"
           >
             <image src="{{item.path}}" mode="aspectFill" class="stitch-thumb" />
+            <view class="stitch-img-index">
+              <text>{{index + 1}}</text>
+            </view>
             <view class="stitch-img-info">
               <text>{{item.sizeText}}</text>
               <text wx:if="{{item.width}}">{{item.width}}×{{item.height}}</text>
+            </view>
+            <view class="stitch-img-actions">
+              <view class="stitch-sort-btn" data-index="{{index}}" bindtap="moveStitchImageUp" wx:if="{{index > 0}}">↑</view>
+              <view class="stitch-sort-btn" data-index="{{index}}" bindtap="moveStitchImageDown" wx:if="{{index < stitchImages.length - 1}}">↓</view>
             </view>
             <view class="remove-stitch-btn" data-index="{{index}}" catchtap="removeStitchImage">✕</view>
           </view>
         </view>
 
         <view class="add-images-btn" bindtap="chooseImage">
-          <text>➕ 添加图片 (最多9张)</text>
+          <text>➕ {{i18n.addImages}} ({{i18n.max9}})</text>
         </view>
       </view>
 
       <!-- 拼接设置 -->
       <view class="section">
-        <text class="section-title">拼接设置</text>
+        <text class="section-title">{{i18n.stitchSettings}}</text>
         <view class="stitch-settings">
           <view class="setting-row">
-            <text class="setting-label">间距 (px)</text>
+            <text class="setting-label">{{i18n.gapPx}}</text>
             <slider 
               class="gap-slider"
               min="0" max="20"
@@ -319,31 +326,40 @@
             />
           </view>
           <view class="setting-row">
-            <text class="setting-label">背景颜色</text>
+            <text class="setting-label">{{i18n.gapColor}}</text>
             <view class="color-options">
               <view 
-                class="color-dot white {{stitchBgColor === '#FFFFFF' ? 'active' : ''}}"
-                data-color="#FFFFFF"
-                bindtap="setStitchBgColor"
-              ></view>
-              <view 
-                class="color-dot black {{stitchBgColor === '#000000' ? 'active' : ''}}"
-                data-color="#000000"
-                bindtap="setStitchBgColor"
-              ></view>
-              <view 
-                class="color-dot transparent {{stitchBgColor === 'transparent' ? 'active' : ''}}"
-                data-color="transparent"
-                bindtap="setStitchBgColor"
-              ></view>
+                wx:for="{{stitchGapColors}}" 
+                wx:key="color"
+                class="color-dot {{stitchGapColor === item.color ? 'active' : ''}}"
+                style="background:{{item.color}};"
+                data-color="{{item.color}}"
+                bindtap="setStitchGapColor"
+              >
+                <view class="color-check" wx:if="{{stitchGapColor === item.color}}">✓</view>
+              </view>
             </view>
           </view>
         </view>
       </view>
 
+      <!-- 圆角边框 -->
+      <view class="section">
+        <text class="section-title">{{i18n.borderRadius}}</text>
+        <view class="slider-row">
+          <text class="slider-label">{{i18n.borderRadiusLabel}}</text>
+          <slider class="slider" min="0" max="50" value="{{stitchBorderRadius}}" activeColor="#8B5CF6" block-size="18" bindchange="onStitchBorderRadiusChange" />
+          <text class="slider-value">{{stitchBorderRadius}}px</text>
+        </view>
+      </view>
+
+      <view class="info-box" wx:if="{{stitchMode === 'long'}}">
+        <text class="info-text">📜 {{i18n.longImageTip}}</text>
+      </view>
+
       <!-- 预览信息 -->
       <view class="info-box" wx:if="{{stitchImages.length >= 2}}">
-        <text class="info-text">💡 {{stitchMode === 'horizontal' ? '水平拼接' : stitchMode === 'vertical' ? '垂直拼接' : '网格拼接'}}将把{{stitchImages.length}}张图片合并为一张</text>
+        <text class="info-text">💡 {{stitchMode === 'horizontal' ? i18n.horizontalStitch : stitchMode === 'vertical' ? i18n.verticalStitch : stitchMode === 'long' ? i18n.longStitch : i18n.gridStitch}}{{i18n.stitchHint}}</text>
       </view>
 
       <!-- 拼接按钮 -->
@@ -353,14 +369,14 @@
         loading="{{isProcessing}}"
         bindtap="stitchImages"
       >
-        {{isProcessing ? '拼接中...' : '🧩 开始拼接'}}
+        {{isProcessing ? i18n.stitching : '🧩 ' + i18n.startStitch}}
       </button>
     </view>
 
     <!-- ========== 裁剪功能 ========== -->
     <view class="panel" wx:if="{{currentFunction === 'crop'}}">
       <view class="section">
-        <text class="section-title">裁剪模式</text>
+        <text class="section-title">{{i18n.cropMode}}</text>
         <view class="crop-modes">
           <view 
             wx:for="{{cropModes}}" 
@@ -375,8 +391,82 @@
         </view>
       </view>
 
-      <view class="info-box">
-        <text class="info-text">ℹ️ 选择裁剪模式后点击按钮，将自动按该模式裁剪图片</text>
+      <!-- 证件照预设 -->
+      <view class="section" wx:if="{{cropMode === 'idphoto'}}">
+        <text class="section-title">{{i18n.idPhotoSize}}</text>
+        <view class="idphoto-presets">
+          <view
+            wx:for="{{idPhotoPresets}}"
+            wx:key="name"
+            class="idphoto-preset {{selectedIdPhoto === index ? 'active' : ''}}"
+            data-index="{{index}}"
+            bindtap="selectIdPhotoPreset"
+          >
+            <text class="idphoto-name">{{item.name}}</text>
+            <text class="idphoto-size">{{item.width}}×{{item.height}}</text>
+            <text class="idphoto-desc">{{item.desc}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 自定义裁剪坐标 -->
+      <view class="section" wx:if="{{cropMode === 'custom' || cropMode === 'idphoto'}}">
+        <text class="section-title">{{i18n.cropCoords}}</text>
+        <view class="crop-coords">
+          <view class="coord-item">
+            <text class="coord-label">{{i18n.xStart}}</text>
+            <input class="coord-input" type="number" value="{{cropX}}" bindinput="onCropXInput" placeholder="0" />
+          </view>
+          <view class="coord-item">
+            <text class="coord-label">{{i18n.yStart}}</text>
+            <input class="coord-input" type="number" value="{{cropY}}" bindinput="onCropYInput" placeholder="0" />
+          </view>
+          <view class="coord-item">
+            <text class="coord-label">{{i18n.cropWidth}}</text>
+            <input class="coord-input" type="number" value="{{cropW}}" bindinput="onCropWInput" placeholder="0" />
+          </view>
+          <view class="coord-item">
+            <text class="coord-label">{{i18n.cropHeight}}</text>
+            <input class="coord-input" type="number" value="{{cropH}}" bindinput="onCropHInput" placeholder="0" />
+          </view>
+        </view>
+      </view>
+
+      <!-- 裁剪预览 -->
+      <view class="section" wx:if="{{cropMode === 'custom' || cropMode === 'idphoto'}}">
+        <text class="section-title">{{i18n.cropPreview}}</text>
+        <view class="crop-preview-container" wx:if="{{images[currentImageIndex] && images[currentImageIndex].width}}">
+          <view class="crop-preview-wrapper" style="{{cropPreviewStyle}}">
+            <image
+              class="crop-preview-img"
+              src="{{images[currentImageIndex].path}}"
+              mode="aspectFill"
+              style="width:100%;height:100%;"
+            />
+            <view class="crop-overlay-top" style="height:{{cropPreviewTop}}px;"></view>
+            <view class="crop-overlay-row">
+              <view class="crop-overlay-left" style="width:{{cropPreviewLeft}}px;"></view>
+              <view class="crop-selection" style="width:{{cropPreviewWidth}}px;height:{{cropPreviewHeight}}px;">
+                <view class="crop-corner tl"></view>
+                <view class="crop-corner tr"></view>
+                <view class="crop-corner bl"></view>
+                <view class="crop-corner br"></view>
+              </view>
+              <view class="crop-overlay-right" style="flex:1;"></view>
+            </view>
+            <view class="crop-overlay-bottom" style="flex:1;"></view>
+          </view>
+          <view class="crop-size-info">
+            <text>{{cropW}} × {{cropH}} px</text>
+          </view>
+        </view>
+        <view class="info-box" wx:else>
+          <text class="info-text">ℹ️ {{i18n.selectImageFirst}}</text>
+        </view>
+      </view>
+
+      <view class="info-box" wx:if="{{cropMode !== 'custom' && cropMode !== 'idphoto'}}">
+        <text class="info-text">ℹ️ {{i18n.selectCropModeTip}}</text>
       </view>
 
       <button 
@@ -385,7 +475,7 @@
         loading="{{isProcessing}}"
         bindtap="cropImage"
       >
-        {{isProcessing ? '裁剪中...' : '✂️ 执行裁剪'}}
+        {{isProcessing ? i18n.cropping : '✂️ ' + i18n.executeCrop}}
       </button>
     </view>
 
@@ -393,7 +483,7 @@
     <view class="panel" wx:if="{{currentFunction === 'rotate'}}">
       <!-- 旋转选项 -->
       <view class="section">
-        <text class="section-title">旋转角度</text>
+        <text class="section-title">{{i18n.rotationAngle}}</text>
         <view class="rotation-options">
           <view 
             wx:for="{{rotationOptions}}" 
@@ -410,21 +500,21 @@
 
       <!-- 翻转选项 -->
       <view class="section">
-        <text class="section-title">镜像翻转</text>
+        <text class="section-title">{{i18n.mirrorFlip}}</text>
         <view class="flip-options">
           <view class="flip-btn" data-direction="horizontal" bindtap="flipImage">
             <text class="flip-icon">↔️</text>
-            <text>水平翻转</text>
+            <text>{{i18n.horizontalFlip}}</text>
           </view>
           <view class="flip-btn" data-direction="vertical" bindtap="flipImage">
             <text class="flip-icon">↕️</text>
-            <text>垂直翻转</text>
+            <text>{{i18n.verticalFlip}}</text>
           </view>
         </view>
       </view>
 
       <view class="info-box">
-        <text class="info-text">🔄 旋转和翻转操作会生成新的图片，原图保持不变</text>
+        <text class="info-text">🔄 {{i18n.rotateFlipTip}}</text>
       </view>
 
       <button 
@@ -434,14 +524,14 @@
         bindtap="rotateImage"
         data-angle="90"
       >
-        {{isProcessing ? '处理中...' : '🔄 左转90° (默认)'}}
+        {{isProcessing ? i18n.processing : '🔄 ' + i18n.rotateDefault}}
       </button>
     </view>
 
     <!-- ========== 格式转换功能 ========== -->
     <view class="panel" wx:if="{{currentFunction === 'convert'}}">
       <view class="section">
-        <text class="section-title">目标格式</text>
+        <text class="section-title">{{i18n.targetFormat}}</text>
         <view class="format-cards">
           <view 
             wx:for="{{allFormats}}" 
@@ -458,10 +548,28 @@
       </view>
 
       <view class="format-detail" wx:if="{{formatInfo}}">
-        <text class="detail-title">{{formatInfo.name}} 格式说明</text>
+        <text class="detail-title">{{formatInfo.name}} {{i18n.formatDescription}}</text>
         <text class="detail-desc">{{formatInfo.description}}</text>
         <view class="feature-tags">
           <text wx:for="{{formatInfo.features}}" wx:key="*this" class="tag">{{item}}</text>
+        </view>
+      </view>
+
+      <view class="section" wx:if="{{convertCompare}}">
+        <text class="section-title">{{i18n.formatCompare}}</text>
+        <view class="convert-compare">
+          <view class="compare-row">
+            <text class="compare-label">{{i18n.originalSize}}</text>
+            <text class="compare-value">{{convertCompare.originalSize}}</text>
+          </view>
+          <view class="compare-row">
+            <text class="compare-label">{{i18n.convertedSize}}</text>
+            <text class="compare-value">{{convertCompare.newSize}}</text>
+          </view>
+          <view class="compare-row highlight">
+            <text class="compare-label">{{i18n.sizeChange}}</text>
+            <text class="compare-value {{convertCompare.isSmaller ? 'green' : 'red'}}">{{convertCompare.diffText}} ({{convertCompare.ratioText}})</text>
+          </view>
         </view>
       </view>
 
@@ -471,44 +579,440 @@
         loading="{{isProcessing}}"
         bindtap="convertFormat"
       >
-        {{isProcessing ? '转换中...' : '🔀 转换格式'}}
+        {{isProcessing ? i18n.converting : '🔀 ' + i18n.convertFormat}}
+      </button>
+    </view>
+
+    <!-- ========== 批量处理功能 ========== -->
+    <view class="panel" wx:if="{{currentFunction === 'batch'}}">
+      <!-- 批量模式选择 -->
+      <view class="section">
+        <text class="section-title">{{i18n.batchType}}</text>
+        <view class="batch-mode-cards">
+          <view 
+            wx:for="{{batchModes}}" 
+            wx:key="id"
+            class="batch-mode-card {{batchMode === item.id ? 'active' : ''}}"
+            data-id="{{item.id}}"
+            bindtap="selectBatchMode"
+          >
+            <text class="batch-mode-icon">{{item.icon}}</text>
+            <text class="batch-mode-name">{{item.name}}</text>
+            <text class="batch-mode-desc">{{item.desc}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 批量图片选择 -->
+      <view class="section">
+        <view class="section-header">
+          <view class="header-left">
+            <text class="section-title">{{i18n.selectedImages}} ({{batchImages.length}})</text>
+            <text class="count-hint" wx:if="{{batchImages.length === 0}}">{{i18n.selectImage}}</text>
+          </view>
+          <view 
+            class="clear-all-btn" 
+            wx:if="{{batchImages.length > 0}}"
+            bindtap="clearBatchImages"
+          >
+            <text>🗑️ {{i18n.clearAllImages}}</text>
+          </view>
+        </view>
+
+        <view class="batch-images-grid" wx:if="{{batchImages.length > 0}}">
+          <view 
+            wx:for="{{batchImages}}" 
+            wx:key="path"
+            class="batch-img-item"
+          >
+            <image src="{{item.path}}" mode="aspectFill" class="batch-thumb" />
+            <view class="batch-img-info">
+              <text wx:if="{{item.width}}">{{item.width}}×{{item.height}}</text>
+            </view>
+            <view class="remove-batch-btn" data-index="{{index}}" catchtap="removeBatchImage">✕</view>
+          </view>
+          <view class="add-batch-btn" bindtap="chooseImage">
+            <text>+</text>
+          </view>
+        </view>
+
+        <view class="add-images-btn" bindtap="chooseImage" wx:if="{{batchImages.length === 0}}">
+          <text>➕ {{i18n.selectMultiple}}</text>
+        </view>
+      </view>
+
+      <!-- 批量压缩设置 -->
+      <view class="section" wx:if="{{batchMode === 'compress'}}">
+        <text class="section-title">{{i18n.batchCompressSettings}}</text>
+        <view class="batch-settings">
+          <view class="setting-row">
+            <text class="setting-label">{{i18n.quality}} ({{batchQuality}}%)</text>
+            <slider 
+              min="10" max="100" 
+              value="{{batchQuality}}"
+              activeColor="#8B5CF6"
+              show-value
+              bindchange="onBatchQualityChange"
+            />
+          </view>
+          <view class="setting-row">
+            <text class="setting-label">{{i18n.outputFormat}}</text>
+            <view class="format-options">
+              <view 
+                wx:for="{{outputFormats}}" 
+                wx:key="value"
+                class="format-opt {{batchOutputFormat === item.value ? 'active' : ''}}"
+                style="--color: {{item.color}}"
+                data-value="{{item.value}}"
+                bindtap="selectBatchOutputFormat"
+              >
+                <text>{{item.label}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 批量裁剪设置 -->
+      <view class="section" wx:if="{{batchMode === 'crop'}}">
+        <text class="section-title">{{i18n.cropRatio}}</text>
+        <view class="crop-modes">
+          <view 
+            wx:for="{{batchCropModes}}" 
+            wx:key="id"
+            class="crop-mode {{batchCropMode === item.id ? 'active' : ''}}"
+            data-id="{{item.id}}"
+            bindtap="selectBatchCropMode"
+          >
+            <text class="crop-icon">{{item.icon}}</text>
+            <text class="crop-name">{{item.name}}</text>
+          </view>
+        </view>
+        <view class="info-box">
+          <text class="info-text">ℹ️ {{i18n.autoCenterCrop}}</text>
+        </view>
+      </view>
+
+      <!-- 批量水印设置 -->
+      <view class="section" wx:if="{{batchMode === 'watermark'}}">
+        <text class="section-title">{{i18n.watermarkSettings}}</text>
+        <view class="batch-settings">
+          <view class="setting-row">
+            <text class="setting-label">{{i18n.watermarkText}}</text>
+            <input 
+              class="watermark-input" 
+              placeholder="{{i18n.watermarkPlaceholder}}" 
+              value="{{batchWatermarkText}}"
+              bindinput="onWatermarkTextInput"
+            />
+          </view>
+          <view class="setting-row">
+            <text class="setting-label">{{i18n.watermarkPosition}}</text>
+            <view class="position-options">
+              <view 
+                wx:for="{{watermarkPositions}}" 
+                wx:key="id"
+                class="position-btn {{batchWatermarkPosition === item.id ? 'active' : ''}}"
+                data-id="{{item.id}}"
+                bindtap="selectWatermarkPosition"
+              >
+                <text>{{item.name}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="setting-row">
+            <text class="setting-label">{{i18n.opacity}} ({{batchWatermarkOpacity}}%)</text>
+            <slider 
+              min="10" max="100" 
+              value="{{batchWatermarkOpacity}}"
+              activeColor="#8B5CF6"
+              show-value
+              bindchange="onWatermarkOpacityChange"
+            />
+          </view>
+          <view class="setting-row">
+            <text class="setting-label">{{i18n.fontSize}} ({{batchWatermarkSize}}px)</text>
+            <slider 
+              min="12" max="72" 
+              value="{{batchWatermarkSize}}"
+              activeColor="#8B5CF6"
+              show-value
+              bindchange="onWatermarkSizeChange"
+            />
+          </view>
+        </view>
+      </view>
+
+      <!-- 进度条 -->
+      <view class="batch-progress-section" wx:if="{{batchProcessing}}">
+        <view class="progress-header">
+          <text class="progress-title">⏳ {{i18n.batchProcessing}}</text>
+          <text class="progress-count">{{batchProgress}}/{{batchTotal}}</text>
+        </view>
+        <view class="progress-bar-bg">
+          <view class="progress-bar-fill" style="width: {{batchTotal > 0 ? (batchProgress / batchTotal * 100) : 0}}%"></view>
+        </view>
+        <text class="progress-percent">{{batchProgressPercent}}%</text>
+      </view>
+
+      <!-- 批量处理按钮 -->
+      <button 
+        class="primary-btn purple" 
+        disabled="{{batchImages.length === 0 || batchProcessing}}"
+        loading="{{batchProcessing}}"
+        bindtap="startBatchProcess"
+      >
+        {{batchProcessing ? i18n.processing : '📦 ' + i18n.startBatch}}
+      </button>
+
+      <!-- 批量处理结果 -->
+      <view class="batch-results" wx:if="{{batchResults.length > 0}}">
+        <view class="batch-summary" wx:if="{{batchSummary}}">
+          <view class="summary-header">
+            <text class="summary-icon">✅</text>
+            <text class="summary-title">{{i18n.processDone}}</text>
+          </view>
+          <view class="summary-grid">
+            <view class="summary-item">
+              <text class="summary-label">{{i18n.total}}</text>
+              <text class="summary-value">{{batchSummary.total}}</text>
+            </view>
+            <view class="summary-item success">
+              <text class="summary-label">{{i18n.success}}</text>
+              <text class="summary-value">{{batchSummary.successCount}}</text>
+            </view>
+            <view class="summary-item fail" wx:if="{{batchSummary.failCount > 0}}">
+              <text class="summary-label">{{i18n.fail}}</text>
+              <text class="summary-value">{{batchSummary.failCount}}</text>
+            </view>
+          </view>
+          <button class="action-btn primary save-all-btn" bindtap="saveAllBatchResults">💾 {{i18n.saveAllToAlbum}}</button>
+        </view>
+
+        <view class="batch-result-list">
+          <view 
+            wx:for="{{batchResults}}" 
+            wx:key="index"
+            class="batch-result-item {{item.success ? '' : 'failed'}}"
+          >
+            <image 
+              wx:if="{{item.path}}" 
+              src="{{item.path}}" 
+              mode="aspectFill" 
+              class="batch-result-thumb"
+              data-index="{{index}}"
+              bindtap="previewBatchResult"
+            />
+            <view class="batch-result-info">
+              <text class="result-status">{{item.success ? '✅ ' + i18n.successLabel : '❌ ' + i18n.failLabel}}</text>
+              <text class="result-size" wx:if="{{item.success && batchMode === 'compress'}}">{{item.compressedSize}} ({{i18n.saved}}{{item.ratio}}%)</text>
+            </view>
+            <view class="batch-result-actions" wx:if="{{item.success}}">
+              <view class="result-action-btn" data-index="{{index}}" bindtap="saveBatchResult">💾</view>
+              <view class="result-action-btn" data-index="{{index}}" bindtap="previewBatchResult">👁️</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== 水印功能 ========== -->
+    <view class="panel" wx:if="{{currentFunction === 'watermark'}}">
+      <view class="section">
+        <text class="section-title">{{i18n.watermarkMode}}</text>
+        <view class="wm-modes">
+          <view class="wm-mode {{wmMode === 'single' ? 'active' : ''}}" data-mode="single" bindtap="onWmModeChange">
+            <text>📍 {{i18n.singleWatermark}}</text>
+          </view>
+          <view class="wm-mode {{wmMode === 'tile' ? 'active' : ''}}" data-mode="tile" bindtap="onWmModeChange">
+            <text>🔄 {{i18n.tileWatermark}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="section">
+        <text class="section-title">{{i18n.watermarkText}}</text>
+        <input class="wm-input" placeholder="{{i18n.watermarkPlaceholder}}" value="{{wmText}}" bindinput="onWmTextInput" maxlength="30" />
+      </view>
+
+      <view class="section" wx:if="{{wmMode === 'single'}}">
+        <text class="section-title">{{i18n.watermarkPosition}}</text>
+        <view class="wm-positions">
+          <view 
+            wx:for="{{watermarkPositions}}" 
+            wx:key="id"
+            class="wm-pos {{wmPosition === item.id ? 'active' : ''}}"
+            data-id="{{item.id}}"
+            bindtap="selectWmPosition"
+          >
+            <text>{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="section">
+        <text class="section-title">{{i18n.watermarkStyle}}</text>
+        <view class="slider-row">
+          <text class="slider-label">{{i18n.opacity}}</text>
+          <slider class="slider" min="10" max="100" value="{{wmOpacity}}" activeColor="#8B5CF6" block-size="18" bindchange="onWmOpacityChange" />
+          <text class="slider-value">{{wmOpacity}}%</text>
+        </view>
+        <view class="slider-row">
+          <text class="slider-label">{{i18n.fontSize}}</text>
+          <slider class="slider" min="12" max="120" value="{{wmSize}}" activeColor="#8B5CF6" block-size="18" bindchange="onWmSizeChange" />
+          <text class="slider-value">{{wmSize}}px</text>
+        </view>
+        <view class="slider-row">
+          <text class="slider-label">{{i18n.angle}}</text>
+          <slider class="slider" min="-90" max="90" value="{{wmAngle}}" activeColor="#8B5CF6" block-size="18" bindchange="onWmAngleChange" />
+          <text class="slider-value">{{wmAngle}}°</text>
+        </view>
+      </view>
+
+      <view class="section">
+        <text class="section-title">{{i18n.watermarkColor}}</text>
+        <view class="color-options">
+          <view 
+            wx:for="{{wmColors}}" 
+            wx:key="color"
+            class="color-dot {{wmColor === item.color ? 'active' : ''}}"
+            style="background:{{item.color}};"
+            data-color="{{item.color}}"
+            bindtap="selectWmColor"
+          >
+            <view class="color-check" wx:if="{{wmColor === item.color}}">✓</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="info-box" wx:if="{{wmMode === 'tile'}}">
+        <text class="info-text">🔄 {{i18n.tileWatermarkTip}}</text>
+      </view>
+
+      <button 
+        class="primary-btn purple" 
+        disabled="{{!images[currentImageIndex].path || !wmText || isProcessing}}"
+        loading="{{isProcessing}}"
+        bindtap="applyWatermark"
+      >
+        {{isProcessing ? i18n.adding : '💧 ' + i18n.addWatermark}}
       </button>
     </view>
 
     <!-- ========== 图片信息功能 ========== -->
     <view class="panel" wx:if="{{currentFunction === 'info'}}">
-      <view class="info-cards" wx:if="{{images[currentImageIndex] && images[currentImageIndex].info}}">
-        <view class="info-card">
-          <text class="card-label">文件名</text>
-          <text class="card-value">{{images[currentImageIndex].path.split('/').pop()}}</text>
+      <view class="info-tabs" wx:if="{{images.length > 0}}">
+        <view class="info-tab {{infoTab === 'basic' ? 'active' : ''}}" data-tab="basic" bindtap="onInfoTabChange">
+          <text>📋 {{i18n.basicInfo}}</text>
         </view>
-        <view class="info-card">
-          <text class="card-label">文件大小</text>
-          <text class="card-value">{{images[currentImageIndex].sizeText}}</text>
+        <view class="info-tab {{infoTab === 'exif' ? 'active' : ''}}" data-tab="exif" bindtap="onInfoTabChange">
+          <text>📷 {{i18n.exif}}</text>
         </view>
-        <view class="info-card">
-          <text class="card-label">像素尺寸</text>
-          <text class="card-value">{{images[currentImageIndex].width}} × {{images[currentImageIndex].height}}</text>
-        </view>
-        <view class="info-card">
-          <text class="card-label">格式类型</text>
-          <text class="card-value">{{images[currentImageIndex].info.type}}</text>
-        </view>
-        <view class="info-card full">
-          <text class="card-label">文件路径</text>
-          <text class="card-value small">{{images[currentImageIndex].path}}</text>
+        <view class="info-tab {{infoTab === 'color' ? 'active' : ''}}" data-tab="color" bindtap="onInfoTabChange">
+          <text>🎨 {{i18n.dominantColor}}</text>
         </view>
       </view>
 
-      <view class="empty-state" wx:else>
+      <!-- 基本信息 -->
+      <view wx:if="{{infoTab === 'basic'}}">
+        <view class="info-cards" wx:if="{{images[currentImageIndex]}}">
+          <view class="info-card">
+            <text class="card-label">{{i18n.fileName}}</text>
+            <text class="card-value">{{images[currentImageIndex].path.split('/').pop()}}</text>
+          </view>
+          <view class="info-card">
+            <text class="card-label">{{i18n.fileSize}}</text>
+            <text class="card-value">{{images[currentImageIndex].sizeText}}</text>
+          </view>
+          <view class="info-card">
+            <text class="card-label">{{i18n.pixelSize}}</text>
+            <text class="card-value">{{images[currentImageIndex].width}} × {{images[currentImageIndex].height}}</text>
+          </view>
+          <view class="info-card" wx:if="{{imageDetailInfo}}">
+            <text class="card-label">{{i18n.megapixels}}</text>
+            <text class="card-value">{{imageDetailInfo.megapixels}} MP</text>
+          </view>
+          <view class="info-card" wx:if="{{imageDetailInfo}}">
+            <text class="card-label">{{i18n.aspectRatio}}</text>
+            <text class="card-value">{{imageDetailInfo.aspectRatio}}</text>
+          </view>
+          <view class="info-card">
+            <text class="card-label">{{i18n.formatType}}</text>
+            <text class="card-value">{{images[currentImageIndex].info.type}}</text>
+          </view>
+          <view class="info-card" wx:if="{{imageDetailInfo}}">
+            <text class="card-label">DPI</text>
+            <text class="card-value">{{imageDetailInfo.dpi}}</text>
+          </view>
+          <view class="info-card" wx:if="{{imageDetailInfo}}">
+            <text class="card-label">{{i18n.colorSpace}}</text>
+            <text class="card-value">{{imageDetailInfo.colorSpace}}</text>
+          </view>
+          <view class="info-card" wx:if="{{imageDetailInfo}}">
+            <text class="card-label">{{i18n.orientation}}</text>
+            <text class="card-value">{{imageDetailInfo.orientation}}</text>
+          </view>
+          <view class="info-card full">
+            <text class="card-label">{{i18n.filePath}}</text>
+            <text class="card-value small">{{images[currentImageIndex].path}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- EXIF信息 -->
+      <view wx:if="{{infoTab === 'exif'}}">
+        <view wx:if="{{imageEXIF && imageEXIF.items && imageEXIF.items.length > 0}}" class="exif-list">
+          <view class="exif-item" wx:for="{{imageEXIF.items}}" wx:key="key">
+            <text class="exif-key">{{item.key}}</text>
+            <text class="exif-value">{{item.value}}</text>
+          </view>
+        </view>
+        <view wx:elif="{{imageEXIF && !imageEXIF.available}}" class="exif-empty">
+          <text class="empty-icon">📷</text>
+          <text class="empty-text">{{i18n.noExif}}</text>
+          <text class="empty-hint">{{i18n.exifHint}}</text>
+        </view>
+        <view wx:elif="{{!imageEXIF}}" class="exif-loading">
+          <text class="loading-text">{{i18n.readingExif}}</text>
+        </view>
+      </view>
+
+      <!-- 主色调 -->
+      <view wx:if="{{infoTab === 'color'}}">
+        <view wx:if="{{imageDominantColors.length > 0}}" class="color-section">
+          <view class="color-bar">
+            <view
+              wx:for="{{imageDominantColors}}"
+              wx:key="hex"
+              class="color-bar-segment"
+              style="background:{{item.hex}};width:{{item.percent}}%;"
+            ></view>
+          </view>
+          <view class="color-list">
+            <view class="color-item" wx:for="{{imageDominantColors}}" wx:key="hex">
+              <view class="color-swatch" style="background:{{item.hex}};"></view>
+              <view class="color-info">
+                <text class="color-hex">{{item.hex}}</text>
+                <text class="color-rgb">RGB({{item.r}}, {{item.g}}, {{item.b}})</text>
+              </view>
+              <text class="color-percent">{{item.percent}}%</text>
+            </view>
+          </view>
+        </view>
+        <view wx:elif="{{imageDominantColors.length === 0}}" class="exif-loading">
+          <text class="loading-text">{{i18n.extractingColor}}</text>
+        </view>
+      </view>
+
+      <view class="empty-state" wx:if="{{images.length === 0}}">
         <text class="empty-icon">🖼️</text>
-        <text class="empty-text">请先选择一张图片查看详细信息</text>
+        <text class="empty-text">{{i18n.selectImageForInfo}}</text>
       </view>
     </view>
 
     <!-- 结果预览区 -->
     <view class="result-section" wx:if="{{processedImagePath || stitchResult}}">
-      <text class="section-title">✨ 处理结果</text>
+      <text class="section-title">✨ {{i18n.processResult}}</text>
       
       <view class="result-preview">
         <image 
@@ -520,8 +1024,8 @@
       </view>
 
       <view class="result-actions">
-        <button class="action-btn primary" bindtap="saveImage">💾 保存到相册</button>
-        <button class="action-btn secondary" bindtap="previewProcessedImage">👁️ 全屏预览</button>
+        <button class="action-btn primary" bindtap="saveImage">💾 {{i18n.saveToAlbum}}</button>
+        <button class="action-btn secondary" bindtap="previewProcessedImage">👁️ {{i18n.fullPreview}}</button>
       </view>
     </view>
 
@@ -530,14 +1034,20 @@
 
     <!-- 使用提示 -->
     <view class="tips-section">
-      <text class="tips-title">💡 使用技巧</text>
+      <text class="tips-title">💡 {{i18n.usageTips}}</text>
       <view class="tips-list">
-        <text class="tip-item">• 压缩：质量70-80%可显著减小体积且保持较好画质</text>
-        <text class="tip-item">• WebP格式比JPG小25-35%，比PNG小80%</text>
-        <text class="tip-item">• 拼接：适合制作长图、对比图、拼图墙</text>
-        <text class="tip-item">• 裁剪：圆形裁剪适合制作头像和图标</text>
-        <text class="tip-item">• 所有处理均在本地完成，不会上传服务器</text>
+        <text class="tip-item">• {{i18n.tip1}}</text>
+        <text class="tip-item">• {{i18n.tip2}}</text>
+        <text class="tip-item">• {{i18n.tip3}}</text>
+        <text class="tip-item">• {{i18n.tip4}}</text>
+        <text class="tip-item">• {{i18n.tip5}}</text>
+        <text class="tip-item">• {{i18n.tip6}}</text>
+        <text class="tip-item">• {{i18n.tip7}}</text>
       </view>
     </view>
   </view>
 </scroll-view>
+
+<privacy-popup />
+
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

@@ -1,0 +1,127 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
+  <view class="container">
+
+    <!-- 工具头部 -->
+    <view class="tool-header">
+      <view class="icon-wrapper blue-gradient">
+        <view class="icon-decoration"></view>
+        <text class="tool-icon">⚡</text>
+      </view>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
+    </view>
+
+    <!-- 测试区域 -->
+    <view class="test-area" bindtap="onTapArea">
+      <view class="circle {{state}}">
+        <view wx:if="{{state === 'idle'}}" class="circle-content">
+          <text class="circle-emoji">👆</text>
+          <text class="circle-text">{{i18n.tapToStart}}</text>
+          <text class="circle-sub">{{i18n.testReaction}}</text>
+        </view>
+        <view wx:if="{{state === 'waiting'}}" class="circle-content">
+          <text class="circle-emoji">🔴</text>
+          <text class="circle-text">{{i18n.waitGreen}}</text>
+          <text class="circle-sub">{{i18n.dontTapEarly}}</text>
+        </view>
+        <view wx:if="{{state === 'ready'}}" class="circle-content">
+          <text class="circle-emoji">🟢</text>
+          <text class="circle-text">{{i18n.tapNow}}</text>
+          <text class="circle-sub">{{i18n.fasterBetter}}</text>
+        </view>
+        <view wx:if="{{state === 'result'}}" class="circle-content">
+          <text class="circle-time">{{lastTime}}</text>
+          <text class="circle-unit">{{i18n.millisecond}}</text>
+          <view class="rating-badge" style="background: {{ratingColor}};">
+            <text class="rating-text">{{rating}}</text>
+          </view>
+        </view>
+        <view wx:if="{{state === 'tooEarly'}}" class="circle-content">
+          <text class="circle-emoji">😅</text>
+          <text class="circle-text">{{i18n.tooEarly}}</text>
+          <text class="circle-sub">{{i18n.tapRestart}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 结果统计区域 -->
+    <view class="stats-section" wx:if="{{bestTime > 0 || results.length > 0}}">
+      <view class="stats-card">
+        <view class="stats-row">
+          <view class="stat-item">
+            <text class="stat-value">{{bestTime > 0 ? bestTime : '-'}}</text>
+            <text class="stat-label">{{i18n.bestScoreMs}}</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value">{{avgTime > 0 ? avgTime : '-'}}</text>
+            <text class="stat-label">{{i18n.avgTimeMs}}</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value">{{results.length}}</text>
+            <text class="stat-label">{{i18n.testCount}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 最近5次结果 -->
+      <view class="recent-section" wx:if="{{results.length > 0}}">
+        <view class="recent-header">
+          <text class="recent-title">{{i18n.recentRecords}}</text>
+          <text class="recent-clear" bindtap="resetResults">{{i18n.reset}}</text>
+        </view>
+        <view class="recent-list">
+          <view wx:for="{{results}}" wx:key="index" wx:if="{{index < 5}}" class="recent-item">
+            <view class="recent-rank">{{index + 1}}</view>
+            <view class="recent-bar-wrapper">
+              <view class="recent-bar" style="width: {{item < 200 ? 100 : item < 300 ? 80 : item < 400 ? 60 : item < 500 ? 40 : 20}}%; background: {{item < 200 ? '#F59E0B' : item < 300 ? '#EF4444' : item < 400 ? '#10B981' : item < 500 ? '#3B82F6' : '#8B5CF6'}};"></view>
+            </view>
+            <text class="recent-time">{{item}}ms</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分享按钮 -->
+    <button class="share-btn" open-type="share">
+      <text class="share-icon">📤</text>
+      <text class="share-text">{{i18n.shareChallenge}}</text>
+    </button>
+
+    <!-- 提示卡片 -->
+    <view class="tips-section">
+      <view class="tips-title">{{i18n.tipsTitle}}</view>
+      <view class="tips-content">
+        <text class="tip-item">{{i18n.tip1}}</text>
+        <text class="tip-item">{{i18n.tip2}}</text>
+        <text class="tip-item">{{i18n.tip3}}</text>
+        <text class="tip-item">{{i18n.tip4}}</text>
+      </view>
+    </view>
+
+  </view>
+</scroll-view>
+<!-- 结果弹窗 -->
+<view class="result-modal-mask" wx:if="{{showResultModal}}" bindtap="closeResultModal">
+  <view class="result-modal" catchtap="">
+    <view class="result-modal-poster" wx:if="{{_posterPath}}">
+      <image src="{{_posterPath}}" mode="widthFix" class="result-poster-img"></image>
+    </view>
+    <view class="result-modal-info" wx:else>
+      <text class="result-modal-icon">{{_resultData.icon}}</text>
+      <text class="result-modal-title">{{_resultData.title}}</text>
+      <text class="result-modal-score">{{_resultData.mainScore}}</text>
+      <text class="result-modal-label">{{_resultData.mainScoreLabel}}</text>
+      <text class="result-modal-rating" wx:if="{{_resultData.rating}}">{{_resultData.rating}}</text>
+    </view>
+    <view class="result-modal-actions">
+      <button class="result-modal-share" open-type="share">{{i18n.shareChallenge}}</button>
+      <view class="result-modal-close" bindtap="closeResultModal">{{i18n.close}}</view>
+    </view>
+  </view>
+</view>
+<!-- 结果海报Canvas -->
+<canvas type="2d" id="resultPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:420px;height:560px;"></canvas>

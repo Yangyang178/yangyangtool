@@ -1,145 +1,38 @@
-/**
- * 首页主逻辑 - pages/index/index.js
- * 
- * 百宝工具箱首页核心文件
- * 职责：工具展示、搜索、分类、编辑模式、分享等功能
- * 
- * 模块说明：
- * - [配置区] 数据定义、路由映射、辅助函数
- * - [生命周期] onLoad, onShow 等页面生命周期
- * - [主题系统] 暗黑模式适配
- * - [布局管理] 自定义排序、隐藏、重置
- * - [搜索功能] 关键词搜索、历史记录
- * - [交互功能] 点击、收藏、长按菜单
- * - [数据统计] 使用记录、周统计
- * - [分享功能] 海报绘制、分享配置
- */
-
 var app = getApp()
-
-/* ============================================================
- *   [配置区] 数据定义与路由映射
- * ============================================================ */
-
-var urlMap = {
-  1: '/package-calculator/exchange-rate/exchange-rate',
-  2: '/package-calculator/unit-converter/unit-converter',
-  3: '/package-calculator/mortgage-calculator/mortgage-calculator',
-  4: '/package-calculator/tip-calculator/tip-calculator',
-  5: '/package-text/word-count/word-count',
-  6: '/package-text/case-converter/case-converter',
-  7: '/package-text/base64-tool/base64-tool',
-  9: '/package-life/pomodoro/pomodoro',
-  10: '/package-life/water-reminder/water-reminder',
-  11: '/package-life/random-decision/random-decision',
-  12: '/package-life/garbage-sorting/garbage-sorting',
-  13: '/package-life/date-calculator/date-calculator',
-  14: '/package-life/countdown/countdown',
-  15: '/package-life/world-clock/world-clock',
-  16: '/package-calculator/age-calculator/age-calculator',
-  17: '/package-dev/json-formatter/json-formatter',
-  18: '/package-dev/color-converter/color-converter',
-  19: '/package-text/url-encoder/url-encoder',
-  20: '/package-text/regex-tester/regex-tester',
-  21: '/package-dev/image-processor/image-processor',
-  22: '/package-dev/password-generator/password-generator',
-  23: '/package-calculator/bmi-calculator/bmi-calculator',
-  24: '/package-text/text-diff/text-diff',
-  25: '/package-calculator/tax-calculator/tax-calculator'
-}
-
-var defaultTools = [
-  { id: 21, name: '图片处理', description: '压缩/转换/裁剪/信息查看', icon: '📹', iconBg: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)', category: 'dev', isHot: true, isFavorite: false },
-  { id: 2, name: '单位换算', description: '长度/重量/温度等转换', icon: '📏', iconBg: 'linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%)', category: 'calculator', isHot: false, isFavorite: false },
-  { id: 1, name: '汇率换算', description: '实时汇率，快速换汇', icon: '💱', iconBg: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)', category: 'calculator', isHot: true, isFavorite: false },
-  { id: 3, name: '房贷计算器', description: '月供、利息一目了然', icon: '🏠', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', category: 'calculator', isHot: true, isFavorite: false },
-  { id: 5, name: '字数统计', description: '中英文字符精准统计', icon: '#️⃣', iconBg: 'linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%)', category: 'text', isHot: true, isFavorite: false },
-  { id: 13, name: '日期计算器', description: '间隔天数精确计算', icon: '📅', iconBg: 'linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)', category: 'datetime', isHot: true, isFavorite: false },
-  { id: 11, name: '随机决定', description: '抽签做决定不再纠结', icon: '🎲', iconBg: 'linear-gradient(135deg, #FECDD3 0%, #FDA4AF 100%)', category: 'life', isHot: false, isFavorite: false },
-  { id: 4, name: '小费计算器', description: '快速计算小费金额', icon: '💰', iconBg: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)', category: 'calculator', isHot: false, isFavorite: false },
-  { id: 6, name: '大小写转换', description: '英文大小写一键切换', icon: '🔤', iconBg: 'linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%)', category: 'text', isHot: false, isFavorite: false },
-  { id: 7, name: 'Base64编解码', description: 'Base64编码解码工具', icon: '🔐', iconBg: 'linear-gradient(135deg, #CCFBF1 0%, #99F6E4 100%)', category: 'text', isHot: false, isFavorite: false },
-  { id: 9, name: '番茄计时', description: '专注工作25分钟', icon: '🍅', iconBg: 'linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%)', category: 'life', isHot: true, isFavorite: false },
-  { id: 10, name: '喝水提醒', description: '健康饮水定时提醒', icon: '💧', iconBg: 'linear-gradient(135deg, #BAE6FD 0%, #7DD3FC 100%)', category: 'life', isHot: false, isFavorite: false },
-  { id: 12, name: '垃圾分类查询', description: '智能识别垃圾类型', icon: '♻️', iconBg: 'linear-gradient(135deg, #BBF7D0 0%, #86EFAC 100%)', category: 'life', isHot: false, isFavorite: false },
-  { id: 14, name: '倒计时', description: '重要日期倒计时', icon: '⏰', iconBg: 'linear-gradient(135deg, #93C5FD 0%, #60A5FA 100%)', category: 'datetime', isHot: false, isFavorite: false },
-  { id: 15, name: '世界时钟', description: '全球时区时间查看', icon: '🌍', iconBg: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)', category: 'datetime', isHot: false, isFavorite: false },
-  { id: 16, name: '年龄计算器', description: '精确到天的年龄计算', icon: '🧓', iconBg: 'linear-gradient(135deg, #FDA4AF 0%, #FB7185 100%)', category: 'datetime', isHot: false, isFavorite: false },
-  { id: 17, name: 'JSON格式化', description: 'JSON美化压缩工具', icon: '{}', iconBg: 'linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)', category: 'dev', isHot: true, isFavorite: false },
-  { id: 18, name: '颜色转换', description: 'HEX/RGB/HSL互转', icon: '🎨', iconBg: 'linear-gradient(135deg, #F472B6 0%, #EC4899 100%)', category: 'dev', isHot: false, isFavorite: false },
-  { id: 19, name: 'URL编解码', description: 'URL编码解码工具', icon: '🔗', iconBg: 'linear-gradient(135deg, #67E8F9 0%, #22D3EE 100%)', category: 'dev', isHot: false, isFavorite: false },
-  { id: 20, name: '正则表达式测试', description: '正则表达式在线测试', icon: '✨', iconBg: 'linear-gradient(135deg, #C4B5FD 0%, #A78BFA 100%)', category: 'dev', isHot: false, isFavorite: false },
-  { id: 22, name: '密码生成器', description: '自定义长度/字符类型，一键生成强密码', icon: '🔐', iconBg: 'linear-gradient(135deg, #CCFBF1 0%, #99F6E4 100%)', category: 'dev', isHot: false, isFavorite: false },
-  { id: 23, name: 'BMI 计算器', description: '身高体重→BMI指数+健康建议', icon: '⚖️', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', category: 'life', isHot: true, isFavorite: false },
-  { id: 24, name: '文本对比', description: '两段文本差异对比，高亮显示不同处', icon: '🔄', iconBg: 'linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%)', category: 'text', isHot: false, isFavorite: false },
-  { id: 25, name: '个税计算器', description: '2024最新个税专项扣除，月薪→税后工资', icon: '💰', iconBg: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)', category: 'calculator', isHot: true, isFavorite: false }
-]
-
-var categories = [
-  { id: 'all', name: '全部' },
-  { id: 'calculator', name: '计算转换' },
-  { id: 'text', name: '文本处理' },
-  { id: 'life', name: '生活助手' },
-  { id: 'datetime', name: '日期时间' },
-  { id: 'dev', name: '开发调试' }
-]
-
-var hotSearchWords = ['汇率', '房贷', 'BMI', '个税', '字数', '番茄', 'JSON', '图片', '密码', '随机']
-
-var pinyinMap = {
-  'a': 'a', 'b': 'b', 'c': 'c', 'd': 'd', 'e': 'e', 'f': 'f', 'g': 'g', 'h': 'h',
-  'i': 'i', 'j': 'j', 'k': 'k', 'l': 'l', 'm': 'm', 'n': 'n', 'o': 'o', 'p': 'p',
-  'q': 'q', 'r': 'r', 's': 's', 't': 't', 'u': 'u', 'v': 'v', 'w': 'w', 'x': 'x',
-  'y': 'y', 'z': 'z',
-  '阿': 'a', '爱': 'a', '安': 'a',
-  '把': 'b', '百': 'b', '半': 'b', '本': 'b', '比': 'b', '变': 'b', '表': 'b', '别': 'b', '不': 'b',
-  '查': 'c', '差': 'c', '产': 'c', '常': 'c', '成': 'c', '程': 'c', '尺': 'c', '冲': 'c', '处': 'c', '除': 'c', '测': 'c', '策': 'c', '存': 'c', '操': 'c',
-  '大': 'd', '单': 'd', '当': 'd', '倒': 'd', '导': 'd', '得': 'd', '的': 'd', '地': 'd', '第': 'd', '典': 'd', '定': 'd', '丢': 'd', '度': 'd', '段': 'd', '短': 'd', '对': 'd', '达': 'd', '代': 'd', '二': 'e',
-  '发': 'f', '法': 'f', '反': 'f', '范': 'f', '房': 'f', '费': 'f', '分': 'f', '份': 'f', '风': 'f', '复': 'f', '付': 'f', '负': 'f',
-  '改': 'g', '概': 'g', '干': 'g', '刚': 'g', '高': 'g', '个': 'g', '格': 'g', '更': 'g', '工': 'g', '公': 'g', '功': 'g', '管': 'g', '规': 'g', '国': 'g', '过': 'g',
-  '还': 'h', '海': 'h', '含': 'h', '行': 'h', '好': 'h', '号': 'h', '合': 'h', '和': 'h', '红': 'h', '后': 'h', '互': 'h', '划': 'h', '化': 'h', '换': 'h', '黄': 'h', '汇': 'h', '会': 'h', '混': 'h', '活': 'h', '或': 'h', '获': 'h', '喝': 'h', '黑': 'h', '恒': 'h',
-  '机': 'j', '基': 'j', '及': 'j', '几': 'j', '计': 'j', '记': 'j', '际': 'j', '加': 'j', '家': 'j', '价': 'j', '检': 'j', '简': 'j', '建': 'j', '健': 'j', '将': 'j', '降': 'j', '交': 'j', '角': 'j', '教': 'j', '接': 'j', '结': 'j', '解': 'j', '界': 'j', '借': 'j', '今': 'j', '金': 'j', '紧': 'j', '进': 'j', '近': 'j', '经': 'j', '精': 'j', '警': 'j', '竞': 'j', '镜': 'j', '究': 'j', '九': 'j', '久': 'j', '旧': 'j', '局': 'j', '决': 'j', '觉': 'j', '绝': 'j', '具': 'j', '卷': 'j',
-  '开': 'k', '看': 'k', '科': 'k', '可': 'k', '克': 'k', '客': 'k', '空': 'k', '控': 'k', '口': 'k', '快': 'k', '宽': 'k', '框': 'k',
-  '拉': 'l', '来': 'l', '蓝': 'l', '朗': 'l', '类': 'l', '累': 'l', '离': 'l', '理': 'l', '历': 'l', '立': 'l', '利': 'l', '力': 'l', '例': 'l', '连': 'l', '联': 'l', '两': 'l', '量': 'l', '聊': 'l', '列': 'l', '临': 'l', '龄': 'l', '领': 'l', '另': 'l', '流': 'l', '录': 'l', '乱': 'l', '率': 'l', '滤': 'l', '轮': 'l', '逻': 'l', '落': 'l', '垃': 'l', '栏': 'l', '楼': 'l',
-  '码': 'm', '买': 'm', '满': 'm', '漫': 'm', '猫': 'm', '冒': 'm', '贸': 'm', '眉': 'm', '每': 'm', '美': 'm', '门': 'm', '米': 'm', '密': 'm', '面': 'm', '民': 'm', '名': 'm', '明': 'm', '命': 'm', '模': 'm', '末': 'm', '目': 'm', '默': 'm',
-  '那': 'n', '内': 'n', '纳': 'n', '能': 'n', '年': 'n', '念': 'n', '农': 'n', '浓': 'n', '暖': 'n',
-  '欧': 'o', '偶': 'o',
-  '排': 'p', '判': 'p', '旁': 'p', '跑': 'p', '配': 'p', '批': 'p', '片': 'p', '偏': 'p', '拼': 'p', '频': 'p', '评': 'p', '屏': 'p', '平': 'p', '凭': 'p',
-  '期': 'q', '齐': 'q', '其': 'q', '棋': 'q', '启': 'q', '气': 'q', '千': 'q', '签': 'q', '前': 'q', '钱': 'q', '强': 'q', '切': 'q', '清': 'q', '情': 'q', '请': 'q', '秋': 'q', '求': 'q', '区': 'q', '取': 'q', '趣': 'q', '去': 'q', '圈': 'q', '全': 'q', '权': 'q', '确': 'q',
-  '然': 'r', '让': 'r', '热': 'r', '人': 'r', '认': 'r', '任': 'r', '日': 'r', '容': 'r', '入': 'r', '软': 'r',
-  '三': 's', '散': 's', '扫': 's', '色': 's', '删': 's', '上': 's', '少': 's', '设': 's', '深': 's', '审': 's', '生': 's', '失': 's', '时': 's', '实': 't', '识': 's', '世': 's', '式': 's', '示': 's', '事': 's', '是': 's', '手': 's', '首': 's', '受': 's', '数': 's', '刷': 's', '双': 's', '水': 's', '顺': 's', '说': 's', '搜': 's', '速': 's', '随': 's', '碎': 's', '算': 's', '虽': 's', '缩': 's', '锁': 's',
-  '他': 't', '台': 't', '谈': 't', '弹': 't', '特': 't', '提': 't', '天': 't', '填': 't', '条': 't', '贴': 't', '铁': 't', '通': 't', '同': 't', '统': 't', '头': 't', '图': 't', '突': 't', '团': 't', '退': 't', '拖': 't',
-  '外': 'w', '完': 'w', '网': 'w', '危': 'w', '维': 'w', '围': 'w', '位': 'w', '文': 'w', '稳': 'w', '问': 'w', '卧': 'w', '无': 'w', '五': 'w', '物': 'w',
-  '下': 'x', '先': 'x', '显': 'x', '现': 'x', '线': 'x', '限': 'x', '相': 'x', '向': 'x', '项': 'x', '消': 'x', '小': 'x', '效': 'x', '些': 'x', '协': 'x', '信': 'x', '星': 'x', '行': 'x', '修': 'x', '秀': 'x', '虚': 'x', '需': 'x', '序': 'x', '选': 'x', '学': 'x', '雪': 'x', '寻': 'x', '循': 'x', '验': 'x', '响': 'x', '像': 'x', '享': 'x', '心': 'x', '新': 'x', '醒': 'x', '详': 'x', '降': 'x', '写': 'x',
-  '颜': 'y', '羊': 'y', '阳': 'y', '样': 'y', '摇': 'y', '要': 'y', '也': 'y', '一': 'y', '以': 'y', '易': 'y', '意': 'y', '因': 'y', '引': 'y', '应': 'y', '映': 'y', '拥': 'y', '永': 'y', '用': 'y', '优': 'y', '由': 'y', '邮': 'y', '有': 'y', '右': 'y', '于': 'y', '余': 'y', '与': 'y', '预': 'y', '域': 'y', '员': 'y', '原': 'y', '源': 'y', '远': 'y', '愿': 'y', '月': 'y', '阅': 'y', '越': 'y', '云': 'y', '允': 'y', '运': 'y', '韵': 'y', '压': 'y', '亚': 'y', '严': 'y', '眼': 'y', '演': 'y', '养': 'y', '页': 'y', '依': 'y', '移': 'y', '已': 'y', '益': 'y', '义': 'y', '音': 'y', '阴': 'y', '银': 'y', '印': 'y', '英': 'y', '迎': 'y', '盈': 'y', '影': 'y', '硬': 'y', '勇': 'y', '悠': 'y', '油': 'y', '游': 'y', '友': 'y', '又': 'y', '幼': 'y', '鱼': 'y', '愉': 'y', '渔': 'y', '予': 'y', '宇': 'y', '羽': 'y', '雨': 'y', '语': 'y', '玉': 'y', '育': 'y', '浴': 'y', '蚌': 'y', '御': 'y', '优': 'y', '遇': 'y', '誉': 'y', '愈': 'y', '欲': 'y', '圆': 'y', '缘': 'y', '日': 'y', '约': 'y', '跃': 'y', '钥': 'y', '岳': 'y', '悦': 'y', '均': 'y', '蕴': 'y',
-  '在': 'z', '咱': 'z', '杂': 'z', '灾': 'z', '载': 'z', '暂': 'z', '赞': 'z', '脏': 'z', '郭': 'z', '早': 'z', '造': 'z', '噪': 'z', '责': 'z', '择': 'z', '则': 'z', '泽': 'z', '贼': 'z', '怎': 'z', '增': 'z', '赠': 'z', '扎': 'z', '眨': 'z', '占': 'z', '展': 'z', '站': 'z', '张': 'z', '掌': 'z', '丈': 'z', '帐': 'z', '账': 'z', '障': 'z', '招': 'z', '找': 'z', '照': 'z', '罩': 'z', '折': 'z', '哲': 'z', '者': 'z', '这': 'z', '浙': 'z', '针': 'z', '侦': 'z', '真': 'z', '诊': 'z', '枕': 'z', '阵': 'z', '振': 'z', '镇': 'z', '震': 'z', '争': 'z', '征': 'z', '整': 'z', '正': 'z', '证': 'z', '政': 'z', '症': 'z', '之': 'z', '支': 'z', '知': 'z', '织': 'z', '脂': 'z', '执': 'z', '值': 'z', '职': 'z', '直': 'z', '植': 'z', '殖': 'z', '止': 'z', '旨': 'z', '指': 'z', '纸': 'z', '至': 'z', '志': 'z', '制': 'z', '质': 'z', '治': 'z', '秩': 'z', '智': 'z', '置': 'z', '中': 'zh', '忠': 'zh', '钟': 'zh', '终': 'zh', '种': 'zh', '众': 'zh', '周': 'zhou', '洲': 'z', '粥': 'z', '轴': 'z', '肘': 'z', '皱': 'z', '竹': 'z', '筑': 'z', '主': 'z', '煮': 'z', '嘱': 'z', '住': 'z', '注': 'z', '驻': 'z', '柱': 'z', '助': 'z', '筑': 'z', '祝': 'z', '著': 'z', '抓': 'z', '拽': 'z', '专': 'z', '转': 'z', '赚': 'z', '庄': 'z', '装': 'z', '壮': 'z', '状': 'z', '撞': 'z', '追': 'z', '准': 'z', '捕': 'z', '桌': 'z', '着': 'z', '兹': 'z', '资': 'z', '姿': 'z', '滋': 'z', '粒': 'z', '子': 'z', '字': 'z', '自': 'z', '宗': 'z', '综': 'z', '总': 'z', '纵': 'z'
-}
-
-function getPinyinFirstLetter(str) {
-  if (!str) return ''
-  var firstChar = str.charAt(0).toLowerCase()
-  return pinyinMap[firstChar] || firstChar
-}
-
-/* ============================================================
- *   [页面主体] Page 定义
- * ============================================================ */
+var toolsData = require('../../data/tools.js')
+var categoriesData = require('../../data/categories.js')
+var helpers = require('../../utils/helpers.js')
+var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
+var perf = require('../../utils/perf.js')
+var i18n = require('../../utils/i18n.js')
 
 Page({
-  
   data: {
     greetingText: '',
-    searchKeyword: '',
-    searchHistory: [],
-    hotSearchWords: hotSearchWords,
-    showSearchPanel: false,
     currentCategory: 'all',
     isRefreshing: false,
     scrollTop: 0,
     isDarkMode: false,
+    fontSizeSetting: 'medium',
+    fontClass: '',
+    i18n: {},
+    activeTheme: null,
+    themeStyle: '',
     showGuide: false,
-    sharePosterPath: '',
     isLoading: true,
+    categories: categoriesData.categories,
+    hotSearchWords: categoriesData.hotSearchWords,
+    tools: [],
+    filteredTools: [],
+    topTools: [],
+    recentTools: [],
+    displayRecentTools: [],
+    showRecentModal: false,
+    totalUsageDisplay: '1.2万',
+    searchKeyword: '',
+    searchHistory: [],
+    showSearchPanel: false,
     isEditMode: false,
     isDragging: false,
     dragIndex: -1,
@@ -149,151 +42,306 @@ Page({
     customOrder: [],
     hiddenTools: [],
     hiddenToolsList: [],
-    categories: categories,
-    tools: defaultTools,
-    topTools: [],
-    recentTools: [],  // 最近使用的工具列表（完整列表）
-    displayRecentTools: [],  // 首页显示的最近使用（最多2条）
-    showRecentModal: false,  // 是否显示最近使用弹窗
-    totalUsageDisplay: '1.2万'
+    sharePosterPath: '',
+    recommendedTools: [],
+    todayTip: null,
+    moreRecordsText: '',
+    hiddenToolsText: '',
+    allRecentUseText: ''
   },
 
-  /* ========================================================
-   *   [生命周期]
-   * ======================================================== */
-
-  onLoad: function() {
+  onLoad: function(options) {
+    perf.markPageStart('index')
+    var tracker = getApp().tracker; tracker.pageView('home')
     this.updateGreeting()
-    this.loadCustomLayout()
-    this.filterTools()
-    this.applyCurrentTheme()
-    var favorites = wx.getStorageSync('favorites') || []
-    if (!Array.isArray(favorites)) favorites = []
 
+    if (options && options.inviteCode) {
+      var inviteResult = points.recordInvite(options.inviteCode)
+      if (inviteResult.success) {
+        setTimeout(function() {
+          wx.showModal({
+            title: '🎉 欢迎加入',
+            content: '使用邀请码成功！奖励 +' + inviteResult.points + '积分',
+            showCancel: false,
+            confirmText: '太棒了',
+            confirmColor: '#3B82F6'
+          })
+        }, 1500)
+      }
+    }
+
+    var favorites = storageUtil.safeGetArray('favorites')
+    var allTools = toolsData.getToolsWithFavorites(favorites)
+    // 趣味测试工具不在首页卡片列表显示，通过专属横幅入口进入
     var tools = []
-    for (var i = 0; i < defaultTools.length; i++) {
-      var t = {}
-      for (var key in defaultTools[i]) {
-        t[key] = defaultTools[i][key]
-      }
-      t.isFavorite = false
-      for (var j = 0; j < favorites.length; j++) {
-        if (favorites[j] === t.id) {
-          t.isFavorite = true
-          break
-        }
-      }
-      tools.push(t)
+    for (var fi = 0; fi < allTools.length; fi++) {
+      if (allTools[fi].category !== 'fun') tools.push(allTools[fi])
     }
+    // 立即翻译工具数据
+    tools = i18n.translateTools(tools)
 
-    var history = wx.getStorageSync('searchHistory') || []
-    if (!Array.isArray(history)) history = []
-    var hasSeenGuide = wx.getStorageSync('hasSeenGuide')
+    var history = storageUtil.safeGetArray('searchHistory')
+    var hasSeenGuide = storageUtil.get('hasSeenGuide')
+    var guideVersion = storageUtil.get('guideVersion')
+    var currentGuideVersion = 3
+    var shouldShowGuide = !hasSeenGuide || guideVersion < currentGuideVersion
 
-    // 加载最近使用的工具列表
-    var recentTools = wx.getStorageSync('recentTools') || []
-    if (!Array.isArray(recentTools)) recentTools = []
+    var recentTools = storageUtil.safeGetArray('recentTools')
+    recentTools = i18n.translateTools(recentTools)
 
-    this.drawSharePoster()
-
-    var topTools = []
-    try {
-      var weeklyUsage = wx.getStorageSync('weeklyUsage') || {}
-      if (typeof weeklyUsage !== 'object' || Array.isArray(weeklyUsage)) weeklyUsage = {}
-
-      var sortedTools = []
-      for (var ti = 0; ti < tools.length; ti++) {
-        var toolId = tools[ti].id
-        var usageCount = 0
-        if (weeklyUsage[toolId]) {
-          usageCount = parseInt(weeklyUsage[toolId], 10) || 0
-        }
-        sortedTools.push({
-          id: tools[ti].id,
-          name: tools[ti].name,
-          icon: tools[ti].icon,
-          iconBg: tools[ti].iconBg,
-          count: usageCount
-        })
-      }
-
-      sortedTools.sort(function(a, b) { return b.count - a.count })
-      topTools = sortedTools.slice(0, 3)
-    } catch(e) {
-      topTools = [
-        { id: 1, name: '汇率换算', icon: '💱', iconBg: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)' },
-        { id: 3, name: '房贷计算器', icon: '🏠', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)' },
-        { id: 23, name: 'BMI 计算器', icon: '⚖️', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)' }
-      ]
-    }
-
-    var totalUsage = 0
-    try {
-      totalUsage = wx.getStorageSync('totalUsageCount') || 0
-      totalUsage = parseInt(totalUsage, 10) || 0
-    } catch(e) {}
-
-    var totalUsageDisplay = '1.2万'
-    if (totalUsage > 10000) {
-      totalUsageDisplay = (totalUsage / 10000).toFixed(1) + '万'
-    } else if (totalUsage > 0) {
-      totalUsageDisplay = totalUsage.toString()
-    }
+    // 翻译分类
+    var categories = i18n.translateCategories(categoriesData.categories)
+    var hotSearchWords = i18n.getHotSearchWords()
 
     this.setData({
       tools: tools,
       filteredTools: tools,
       searchHistory: history,
-      showGuide: !hasSeenGuide,
-      topTools: topTools,
-      recentTools: recentTools,  // 最近使用的工具列表（完整）
-      displayRecentTools: recentTools.slice(0, 2),  // 首页只显示前2条
-      totalUsageDisplay: totalUsageDisplay
+      showGuide: shouldShowGuide,
+      recentTools: recentTools,
+      displayRecentTools: recentTools.slice(0, 2),
+      categories: categories,
+      hotSearchWords: hotSearchWords,
+      i18n: i18n.getAllTexts()
     })
 
+    this.loadCustomLayout()
+    this.filterTools()
+    this.applyCurrentTheme()
+    this.computeTopTools(tools)
+    this.computeRecommendations(tools)
+    this.computeTodayTip(tools)
+
+    var totalUsage = 0
+    try {
+      totalUsage = storageUtil.get('totalUsageCount', 0)
+      totalUsage = parseInt(totalUsage, 10) || 0
+    } catch(e) {}
+
+    var totalUsageDisplay = '1.2万'
+    if (totalUsage > 10000) {
+      totalUsageDisplay = (totalUsage / 10000).toFixed(1) + i18n.t('tenThousand')
+    } else if (totalUsage > 0) {
+      totalUsageDisplay = totalUsage.toString()
+    }
+
+    this.setData({ totalUsageDisplay: totalUsageDisplay })
+
     var that = this
-    setTimeout(function() { that.setData({ isLoading: false }) }, 600)
+    setTimeout(function() {
+      that.setData({ isLoading: false })
+      perf.markPageReady('index')
+      that.drawSharePoster()
+    }, 600)
   },
 
   onShow: function() {
     this.updateGreeting()
     this.applyCurrentTheme()
-
-    // 每次显示页面时刷新最近使用数据
+    this.applyLanguage()
     try {
-      var recentTools = wx.getStorageSync('recentTools') || []
-      if (!Array.isArray(recentTools)) recentTools = []
-
-      this.setData({
-        recentTools: recentTools,
-        displayRecentTools: recentTools.slice(0, 2)
-      })
-    } catch(e) {
-      console.error('[onShow] 刷新recentTools失败:', e)
-    }
-
-    wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage', 'shareTimeline']
-    })
+      var recentTools = storageUtil.safeGetArray('recentTools')
+      recentTools = i18n.translateTools(recentTools)
+      var moreRecordsText = ''
+      if (recentTools.length > 2) {
+        moreRecordsText = i18n.t('moreRecords', { count: recentTools.length - 2 })
+      }
+      var allRecentUseText = i18n.t('allRecentUse', { count: recentTools.length })
+      this.setData({ recentTools: recentTools, displayRecentTools: recentTools.slice(0, 2), moreRecordsText: moreRecordsText, allRecentUseText: allRecentUseText })
+    } catch(e) {}
+    wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] })
   },
 
-  /* ========================================================
-   *   [主题系统] 暗黑模式适配
-   * ======================================================== */
+  applyLanguage: function() {
+    var allTexts = i18n.getAllTexts()
+    var categories = i18n.translateCategories(categoriesData.categories)
+    var hotSearchWords = i18n.getHotSearchWords()
+    var tools = i18n.translateTools(this.data.tools)
+    var filteredTools = i18n.translateTools(this.data.filteredTools)
+    var topTools = i18n.translateTools(this.data.topTools)
+    var recentTools = i18n.translateTools(this.data.recentTools)
+    var displayRecentTools = i18n.translateTools(this.data.displayRecentTools)
+    var recommendedTools = i18n.translateTools(this.data.recommendedTools)
+    var hiddenToolsList = i18n.translateTools(this.data.hiddenToolsList)
+    // Clear _highlighted to prevent stale cached Chinese names from overriding translated names
+    var clearHighlighted = function(list) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i]._highlighted) {
+          list[i]._highlighted = { name: list[i].name, description: list[i].description }
+        }
+      }
+    }
+    clearHighlighted(tools)
+    clearHighlighted(filteredTools)
+    clearHighlighted(topTools)
+    clearHighlighted(recentTools)
+    clearHighlighted(displayRecentTools)
+    clearHighlighted(recommendedTools)
+    clearHighlighted(hiddenToolsList)
+    var moreRecordsText = ''
+    if (this.data.recentTools.length > 2) {
+      moreRecordsText = i18n.t('moreRecords', { count: this.data.recentTools.length - 2 })
+    }
+    var hiddenToolsText = i18n.t('hiddenTools', { count: this.data.hiddenToolsList.length })
+    var allRecentUseText = i18n.t('allRecentUse', { count: this.data.recentTools.length })
+    this.setData({
+      i18n: allTexts,
+      categories: categories,
+      hotSearchWords: hotSearchWords,
+      tools: tools,
+      filteredTools: filteredTools,
+      topTools: topTools,
+      recentTools: recentTools,
+      displayRecentTools: displayRecentTools,
+      recommendedTools: recommendedTools,
+      hiddenToolsList: hiddenToolsList,
+      moreRecordsText: moreRecordsText,
+      hiddenToolsText: hiddenToolsText,
+      allRecentUseText: allRecentUseText
+    })
+    this.computeTodayTip(tools)
+  },
+
+  computeTopTools: function(tools) {
+    var topTools = []
+    try {
+      var weeklyUsage = storageUtil.get('weeklyUsage', {})
+      if (typeof weeklyUsage !== 'object' || Array.isArray(weeklyUsage)) weeklyUsage = {}
+      var sortedTools = []
+      for (var ti = 0; ti < tools.length; ti++) {
+        var usageCount = parseInt(weeklyUsage[tools[ti].id], 10) || 0
+        sortedTools.push({ id: tools[ti].id, name: tools[ti].name, icon: tools[ti].icon, iconBg: tools[ti].iconBg, count: usageCount })
+      }
+      sortedTools.sort(function(a, b) { return b.count - a.count })
+      topTools = sortedTools.slice(0, 3)
+    } catch(e) {
+      topTools = toolsData.getHotTools().slice(0, 3)
+    }
+    this.setData({ topTools: i18n.translateTools(topTools) })
+  },
+
+  computeRecommendations: function(tools) {
+    try {
+      var tracker = getApp().tracker
+      if (!tracker || typeof tracker.getRecommendedTools !== 'function') {
+        var hotTools = toolsData.getHotTools().slice(0, 4)
+        for (var h = 0; h < hotTools.length; h++) {
+          hotTools[h].reason = i18n.t('hotSearch')
+        }
+        this.setData({ recommendedTools: i18n.translateTools(hotTools) })
+        return
+      }
+      var recommended = tracker.getRecommendedTools(tools, 4)
+      for (var ri = 0; ri < recommended.length; ri++) {
+        if (recommended[ri].reason === '经常使用') {
+          recommended[ri].reason = i18n.t('reasonFrequentUse')
+        } else if (recommended[ri].reason === '同类推荐') {
+          recommended[ri].reason = i18n.t('reasonSameCategory')
+        } else if (recommended[ri].reason === '热门工具') {
+          recommended[ri].reason = i18n.t('reasonHotTool')
+        }
+      }
+      this.setData({ recommendedTools: i18n.translateTools(recommended) })
+    } catch(e) {
+      var fallback = toolsData.getHotTools().slice(0, 4)
+      for (var f = 0; f < fallback.length; f++) {
+        fallback[f].reason = i18n.t('hotSearch')
+      }
+      this.setData({ recommendedTools: i18n.translateTools(fallback) })
+    }
+  },
+
+  computeTodayTip: function(tools) {
+    var tips = [
+      { toolId: 9, title: i18n.t('todayTipTitle1'), desc: i18n.t('todayTipDesc1'), category: i18n.t('todayTipCat1') },
+      { toolId: 10, title: i18n.t('todayTipTitle2'), desc: i18n.t('todayTipDesc2'), category: i18n.t('todayTipCat2') },
+      { toolId: 8, title: i18n.t('todayTipTitle3'), desc: i18n.t('todayTipDesc3'), category: i18n.t('todayTipCat3') },
+      { toolId: 21, title: i18n.t('todayTipTitle4'), desc: i18n.t('todayTipDesc4'), category: i18n.t('todayTipCat4') },
+      { toolId: 1, title: i18n.t('todayTipTitle5'), desc: i18n.t('todayTipDesc5'), category: i18n.t('todayTipCat5') },
+      { toolId: 17, title: i18n.t('todayTipTitle6'), desc: i18n.t('todayTipDesc6'), category: i18n.t('todayTipCat6') },
+      { toolId: 30, title: i18n.t('todayTipTitle7'), desc: i18n.t('todayTipDesc7'), category: i18n.t('todayTipCat7') },
+      { toolId: 13, title: i18n.t('todayTipTitle8'), desc: i18n.t('todayTipDesc8'), category: i18n.t('todayTipCat8') },
+      { toolId: 3, title: i18n.t('todayTipTitle9'), desc: i18n.t('todayTipDesc9'), category: i18n.t('todayTipCat9') },
+      { toolId: 26, title: i18n.t('todayTipTitle10'), desc: i18n.t('todayTipDesc10'), category: i18n.t('todayTipCat10') },
+      { toolId: 5, title: i18n.t('todayTipTitle11'), desc: i18n.t('todayTipDesc11'), category: i18n.t('todayTipCat11') },
+      { toolId: 32, title: i18n.t('todayTipTitle12'), desc: i18n.t('todayTipDesc12'), category: i18n.t('todayTipCat12') },
+      { toolId: 34, title: i18n.t('todayTipTitle13'), desc: i18n.t('todayTipDesc13'), category: i18n.t('todayTipCat13') },
+      { toolId: 15, title: i18n.t('todayTipTitle14'), desc: i18n.t('todayTipDesc14'), category: i18n.t('todayTipCat14') },
+      { toolId: 33, title: i18n.t('todayTipTitle15'), desc: i18n.t('todayTipDesc15'), category: i18n.t('todayTipCat15') }
+    ]
+
+    var today = new Date()
+    var dayIndex = (today.getFullYear() * 366 + today.getMonth() * 31 + today.getDate()) % tips.length
+    var tip = tips[dayIndex]
+
+    var tipTool = null
+    for (var i = 0; i < tools.length; i++) {
+      if (tools[i].id === tip.toolId) {
+        tipTool = tools[i]
+        break
+      }
+    }
+
+    if (tipTool) {
+      tip.tool = tipTool
+    }
+
+    // 翻译分类
+    if (tipTool && tipTool.category) {
+      tip.category = i18n.getCategoryName(tipTool.category)
+    }
+
+    this.setData({ todayTip: tip })
+  },
+
+  onRecommendToolClick: function(e) {
+    var tool = e.currentTarget.dataset.tool
+    if (!tool) return
+    var tracker = getApp().tracker
+    if (tracker) tracker.toolUse(tool.id, tool.name, this._isFirstUse(tool.id))
+    wx.vibrateShort({ type: 'light' })
+    this.saveRecentTool(tool)
+    this.recordWeeklyUsage()
+    points.recordToolUse(tool.id)
+    var url = toolsData.getRouteByToolId(tool.id)
+    if (url) {
+      wx.navigateTo({ url: url, fail: function() { wx.showToast({ title: i18n.t('pageJumpFailed'), icon: 'none' }) } })
+    } else {
+      wx.showToast({ title: i18n.t('featureInDev'), icon: 'none', duration: 1500 })
+    }
+  },
+
+  onTodayTipClick: function() {
+    if (!this.data.todayTip || !this.data.todayTip.tool) return
+    wx.vibrateShort({ type: 'light' })
+    var tool = this.data.todayTip.tool
+    var tracker = getApp().tracker
+    if (tracker) tracker.toolUse(tool.id, tool.name, this._isFirstUse(tool.id))
+    this.saveRecentTool(tool)
+    this.recordWeeklyUsage()
+    points.recordToolUse(tool.id)
+    var url = toolsData.getRouteByToolId(tool.id)
+    if (url) {
+      wx.navigateTo({ url: url, fail: function() { wx.showToast({ title: i18n.t('pageJumpFailed'), icon: 'none' }) } })
+    } else {
+      wx.showToast({ title: i18n.t('featureInDev'), icon: 'none', duration: 1500 })
+    }
+  },
 
   applyCurrentTheme: function() {
     try {
       var appInstance = getApp()
       if (appInstance) {
-        var isDark = appInstance.globalData.isDarkMode || wx.getStorageSync('darkMode') === true
+        var isDark = appInstance.globalData.isDarkMode || storageUtil.get('darkMode') === true
         this.setData({ isDarkMode: isDark })
+        var fontSize = storageUtil.get('fontSizeSetting', 'medium')
+        this.setData({ fontSizeSetting: fontSize })
         var bgColor = isDark ? '#0F172A' : '#F8FAFC'
-        wx.setBackgroundColor({
-          backgroundColor: bgColor,
-          backgroundColorTop: bgColor,
-          backgroundColorBottom: bgColor
-        })
+        wx.setBackgroundColor({ backgroundColor: bgColor, backgroundColorTop: bgColor, backgroundColorBottom: bgColor })
+        var activeTheme = points.getActiveTheme()
+        var themeStyle = points.getThemeStyle()
+        var fontClass = points.getFontClass()
+        this.setData({ activeTheme: activeTheme, themeStyle: themeStyle, fontClass: fontClass, i18n: i18n.getAllTexts() })
       }
     } catch(e) {}
   },
@@ -302,41 +350,33 @@ Page({
     try {
       var hour = new Date().getHours()
       var greeting = ''
-      if (hour >= 5 && hour < 12) greeting = '上午好'
-      else if (hour >= 12 && hour < 14) greeting = '中午好'
-      else if (hour >= 14 && hour < 18) greeting = '下午好'
-      else if (hour >= 18 && hour < 22) greeting = '晚上好'
-      else greeting = '夜深了'
-
-      var weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+      if (hour >= 5 && hour < 12) greeting = i18n.t('goodMorning')
+      else if (hour >= 12 && hour < 14) greeting = i18n.t('goodNoon')
+      else if (hour >= 14 && hour < 18) greeting = i18n.t('goodAfternoon')
+      else if (hour >= 18 && hour < 22) greeting = i18n.t('goodEvening')
+      else greeting = i18n.t('goodNight')
+      var weekDaysStr = i18n.t('weekDays')
+      var weekDays = weekDaysStr.split(',')
       var now = new Date()
-      var dateStr = weekDays[now.getDay()] + ',' + (now.getMonth() + 1) + '月' + now.getDate() + '日'
+      var dayName = weekDays[now.getDay()] || ''
+      var monthVal = now.getMonth() + 1
+      var dateVal = now.getDate()
+      var dateStr = dayName + ',' + i18n.t('monthDay', { month: monthVal, day: dateVal })
       this.setData({ greetingText: greeting + '\n' + dateStr })
     } catch(e) {
-      this.setData({ greetingText: '欢迎使用' })
+      this.setData({ greetingText: i18n.t('welcomeUse') })
     }
   },
 
-  onGuideClose: function() {
-    this.setData({ showGuide: false })
-  },
+  onGuideClose: function() { this.setData({ showGuide: false }) },
 
   onPullDownRefresh: function() {
     this.setData({ isRefreshing: true })
     var that = this
-    setTimeout(function() {
-      that.updateGreeting()
-      that.setData({ isRefreshing: false })
-      wx.stopPullDownRefresh()
-      wx.showToast({ title: '刷新成功', icon: 'success' })
-    }, 1000)
+    setTimeout(function() { that.updateGreeting(); that.setData({ isRefreshing: false }); wx.stopPullDownRefresh(); wx.showToast({ title: i18n.t('refreshSuccess'), icon: 'success' }) }, 1000)
   },
 
-  onScrollToUpper: function() {
-    var that = this
-    this.setData({ scrollTop: 1 })
-    setTimeout(function() { that.setData({ scrollTop: 0 }) }, 50)
-  },
+  onScrollToUpper: function() { var that = this; this.setData({ scrollTop: 1 }); setTimeout(function() { that.setData({ scrollTop: 0 }) }, 50) },
 
   onPageScroll: function(e) {
     try {
@@ -345,55 +385,258 @@ Page({
       else if (e.detail && e.detail.scrollY !== undefined) st = e.detail.scrollY
       if (st < 5 && st > -50) {
         var self = this
-        if (!this._scrollFixTimer) {
-          this._scrollFixTimer = setTimeout(function() {
-            self._scrollFixTimer = null
-            if (self.data.scrollTop !== 0) self.setData({ scrollTop: 0 })
-          }, 100)
-        }
+        if (!this._scrollFixTimer) { this._scrollFixTimer = setTimeout(function() { self._scrollFixTimer = null; if (self.data.scrollTop !== 0) self.setData({ scrollTop: 0 }) }, 100) }
       }
     } catch(e) {}
   },
 
-  /* ========================================================
-   *   [布局管理] 自定义排序、隐藏、重置
-   * ======================================================== */
+  onCategoryChange: function(e) {
+    this.setData({ currentCategory: e.currentTarget.dataset.id, showSearchPanel: false })
+    this.filterTools()
+  },
+
+  showRecentModalFn: function() {
+    try {
+      wx.vibrateShort({ type: 'light' })
+      var recentTools = storageUtil.safeGetArray('recentTools')
+      recentTools = i18n.translateTools(recentTools)
+      var allRecentUseText = i18n.t('allRecentUse', { count: recentTools.length })
+      this.setData({ showRecentModal: true, recentTools: recentTools, displayRecentTools: recentTools.slice(0, 2), allRecentUseText: allRecentUseText })
+    } catch(e) {}
+  },
+
+  openFunZone: function() {
+    wx.vibrateShort({ type: 'light' })
+    wx.navigateTo({ url: '/package-fun/fun-home/fun-home' })
+  },
+
+  hideRecentModal: function() { this.setData({ showRecentModal: false }) },
+
+  onRecentToolClick: function(e) {
+    try {
+      var tool = e.currentTarget.dataset.tool
+      if (!tool) return
+      wx.vibrateShort({ type: 'light' })
+      points.recordToolUse(tool.id)
+      var url = toolsData.getRouteByToolId(tool.id)
+      if (url) { wx.navigateTo({ url: url, fail: function() { wx.showToast({ title: i18n.t('pageJumpFailed'), icon: 'none' }) } }) }
+      else { wx.showToast({ title: i18n.t('featureInDev'), icon: 'none', duration: 1500 }) }
+    } catch(e) {}
+  },
+
+  onToolClick: function(e) {
+    try {
+      var tool = e.currentTarget.dataset.tool
+      if (!tool) return
+      var tracker = getApp().tracker; tracker.toolUse(tool.id, tool.name, this._isFirstUse(tool.id))
+      wx.vibrateShort({ type: 'light' })
+      this.saveRecentTool(tool)
+      this.recordWeeklyUsage()
+      points.recordToolUse(tool.id)
+      var url = toolsData.getRouteByToolId(tool.id)
+      if (url) { wx.navigateTo({ url: url, fail: function() { wx.showToast({ title: i18n.t('pageJumpFailed'), icon: 'none' }) } }) }
+      else { wx.showToast({ title: i18n.t('featureInDev'), icon: 'none', duration: 1500 }) }
+    } catch(e) {}
+  },
+
+  toggleFavorite: function(e) {
+    try {
+      var tracker = getApp().tracker
+      var id = e.currentTarget.dataset.id
+      var toolsList = this.data.tools || []
+      var tools = []
+      for (var i = 0; i < toolsList.length; i++) {
+        var t = {}; var src = toolsList[i]
+        for (var key in src) t[key] = src[key]
+        if (t.id === id) t.isFavorite = !t.isFavorite
+        tools.push(t)
+      }
+      var favorites = []
+      for (var j = 0; j < tools.length; j++) { if (tools[j].isFavorite) favorites.push(tools[j].id) }
+      wx.setStorageSync('favorites', favorites)
+      wx.vibrateShort({ type: 'light' })
+      this.setData({ tools: tools })
+      this.filterTools()
+      var hasId = false
+      for (var k = 0; k < favorites.length; k++) { if (favorites[k] === id) { hasId = true; break } }
+      if (hasId) { this.showHeartAnimation(); tracker.favoriteAction(id, 'add') } else { tracker.favoriteAction(id, 'remove') }
+    } catch(e) {}
+  },
+
+  _isFirstUse: function(toolId) {
+    var recentTools = this.data.recentTools || []
+    for (var i = 0; i < recentTools.length; i++) {
+      if (recentTools[i].id === toolId) return false
+    }
+    return true
+  },
+
+  onToolLongPress: function(e) {
+    try { wx.vibrateShort({ type: 'medium' }); var tool = e.currentTarget.dataset.tool; this.setData({ showMenu: true, menuTool: tool }) } catch(e) {}
+  },
+
+  closeMenu: function() { this.setData({ showMenu: false, menuTool: null }) },
+
+  showHeartAnimation: function() {
+    this.setData({ showHeart: true })
+    var that = this
+    setTimeout(function() { that.setData({ showHeart: false }) }, 800)
+  },
+
+  recordWeeklyUsage: function() {
+    try {
+      var today = new Date()
+      var y = today.getFullYear(), mo = today.getMonth() + 1, d = today.getDate()
+      var moStr = mo < 10 ? ('0' + mo) : ('' + mo), dStr = d < 10 ? ('0' + d) : ('' + d)
+      var dateKey = y + '-' + moStr + '-' + dStr
+      var weeklyRecord = storageUtil.get('weeklyUsage', {})
+      if (typeof weeklyRecord !== 'object' || Array.isArray(weeklyRecord)) weeklyRecord = {}
+      weeklyRecord[dateKey] = (weeklyRecord[dateKey] || 0) + 1
+      var oneWeekAgo = new Date(); oneWeekAgo.setDate(today.getDate() - 7)
+      var keysToRemove = []
+      for (var key in weeklyRecord) {
+        if (weeklyRecord.hasOwnProperty(key)) {
+          var parts = key.split('-')
+          if (parts.length === 3) {
+            var kdDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10))
+            if (kdDate < oneWeekAgo) keysToRemove.push(key)
+          }
+        }
+      }
+      for (var kr = 0; kr < keysToRemove.length; kr++) delete weeklyRecord[keysToRemove[kr]]
+      wx.setStorageSync('weeklyUsage', weeklyRecord)
+    } catch(e) {}
+  },
+
+  saveRecentTool: function(tool) {
+    try {
+      if (!tool || !tool.id) return
+      var recentTools = storageUtil.safeGetArray('recentTools')
+      var newRecent = []
+      for (var i = 0; i < recentTools.length; i++) { if (recentTools[i].id !== tool.id) newRecent.push(recentTools[i]) }
+      newRecent.unshift({ id: tool.id, name: tool.name, icon: tool.icon, iconBg: tool.iconBg, usedAt: new Date().getTime() })
+      if (newRecent.length > 20) newRecent = newRecent.slice(0, 20)
+      wx.setStorageSync('recentTools', newRecent)
+      var usageLog = storageUtil.safeGetArray('toolUsageLog')
+      usageLog.unshift({ id: tool.id, usedAt: new Date().getTime() })
+      if (usageLog.length > 200) usageLog = usageLog.slice(0, 200)
+      wx.setStorageSync('toolUsageLog', usageLog)
+      var count = storageUtil.get('totalUsageCount', 0)
+      count = parseInt(count, 10) || 0
+      wx.setStorageSync('totalUsageCount', count + 1)
+      try { var appInst = getApp(); if (appInst && typeof appInst.cloudSyncUsage === 'function') appInst.cloudSyncUsage(tool.id, tool.name) } catch(err) {}
+    } catch(e) {}
+  },
+
+  showMoreMenu: function() {
+    wx.showActionSheet({
+      itemList: [i18n.t('aboutUsMenu'), i18n.t('feedbackMenu'), i18n.t('shareToFriend')],
+      success: function(res) { switch (res.tapIndex) { case 0: wx.showToast({ title: i18n.t('brandTitle') + ' v1.0', icon: 'none' }); break; case 1: wx.showToast({ title: i18n.t('feedback'), icon: 'none' }); break } },
+      fail: function() {}
+    })
+  },
+
+  addToSearchHistory: function(keyword) {
+    if (!keyword || !keyword.trim()) return
+    var history = storageUtil.safeGetArray('searchHistory')
+    var newHistory = []
+    for (var i = 0; i < history.length; i++) { if (history[i] !== keyword) newHistory.push(history[i]) }
+    newHistory.unshift(keyword)
+    if (newHistory.length > 10) newHistory = newHistory.slice(0, 10)
+    wx.setStorageSync('searchHistory', newHistory)
+    this.setData({ searchHistory: newHistory })
+  },
+
+  clearSearchHistory: function() {
+    var that = this
+    wx.showModal({ title: i18n.t('clearSearchHistoryTitle'), content: i18n.t('clearSearchHistoryContent'), confirmText: i18n.t('clearAll'), confirmColor: '#EF4444',
+      success: function(res) { if (res.confirm) { wx.removeStorageSync('searchHistory'); that.setData({ searchHistory: [] }); wx.showToast({ title: i18n.t('cleared'), icon: 'success' }) } }
+    })
+  },
+
+  onHotSearchClick: function(e) {
+    var word = e.currentTarget.dataset.word
+    this.setData({ searchKeyword: word })
+    this.addToSearchHistory(word)
+    this.filterTools()
+  },
+
+  onHistoryClick: function(e) {
+    var word = e.currentTarget.dataset.word
+    this.setData({ searchKeyword: word })
+    this.filterTools()
+  },
+
+  onSearchInput: function(e) {
+    this.setData({ searchKeyword: e.detail.value.trim() })
+    this.filterTools()
+  },
+
+  clearSearch: function() { this.setData({ searchKeyword: '', showSearchPanel: false }); this.filterTools() },
+
+  onSearchFocus: function() { this.setData({ showSearchPanel: true }) },
+
+  onSearchBlur: function() { var that = this; setTimeout(function() { that.setData({ showSearchPanel: false }) }, 200) },
+
+  filterTools: function() {
+    try {
+      var filtered = [].concat(this.data.tools || [])
+      if (this.data.currentCategory !== 'all') {
+        var catFiltered = []
+        for (var i = 0; i < filtered.length; i++) { if (filtered[i].category === this.data.currentCategory) catFiltered.push(filtered[i]) }
+        filtered = catFiltered
+      }
+      if (this.data.searchKeyword) {
+        var keyword = this.data.searchKeyword.toLowerCase()
+        var result = []
+        for (var j = 0; j < filtered.length; j++) {
+          var tool = filtered[j]
+          var nameMatch = helpers.fuzzyMatch(tool.name, keyword)
+          var descMatch = helpers.fuzzyMatch(tool.description, keyword)
+          // Also match against Chinese original name for pinyin search
+          var zhName = i18n.getToolName(tool.id, '')
+          var zhDesc = i18n.getToolDesc(tool.id, '')
+          var zhNameMatch = zhName && zhName !== tool.name ? helpers.fuzzyMatch(zhName, keyword) : false
+          var zhDescMatch = zhDesc && zhDesc !== tool.description ? helpers.fuzzyMatch(zhDesc, keyword) : false
+          if (nameMatch || descMatch || zhNameMatch || zhDescMatch) {
+            var highlighted = {}
+            highlighted.name = nameMatch ? helpers.highlightText(tool.name, this.data.searchKeyword, this.data.isDarkMode) : tool.name
+            highlighted.description = descMatch ? helpers.highlightText(tool.description, this.data.searchKeyword, this.data.isDarkMode) : tool.description
+            tool._highlighted = highlighted
+            result.push(tool)
+          }
+        }
+        filtered = result
+        this.addToSearchHistory(this.data.searchKeyword)
+      } else {
+        for (var k = 0; k < filtered.length; k++) {
+          filtered[k]._highlighted = { name: filtered[k].name, description: filtered[k].description }
+        }
+      }
+      this.setData({ filteredTools: filtered })
+    } catch(e) {}
+  },
 
   loadCustomLayout: function() {
     try {
-      var customOrder = wx.getStorageSync('customToolOrder') || []
-      var hiddenTools = wx.getStorageSync('hiddenTools') || []
-      if (!Array.isArray(customOrder)) customOrder = []
-      if (!Array.isArray(hiddenTools)) hiddenTools = []
-
+      var customOrder = storageUtil.safeGetArray('customToolOrder')
+      var hiddenTools = storageUtil.safeGetArray('hiddenTools')
       this.setData({ customOrder: customOrder, hiddenTools: hiddenTools })
-
       var tools = this.data.tools || []
       if (!Array.isArray(tools) || tools.length === 0) return
-
       if (customOrder.length > 0) {
         var orderedTools = []
         for (var oi = 0; oi < customOrder.length; oi++) {
           var isHidden = false
-          for (var hi = 0; hi < hiddenTools.length; hi++) {
-            if (hiddenTools[hi] === customOrder[oi]) { isHidden = true; break }
-          }
-          if (!isHidden) {
-            for (var ti = 0; ti < tools.length; ti++) {
-              if (tools[ti].id === customOrder[oi]) { orderedTools.push(tools[ti]); break }
-            }
-          }
+          for (var hi = 0; hi < hiddenTools.length; hi++) { if (hiddenTools[hi] === customOrder[oi]) { isHidden = true; break } }
+          if (!isHidden) { for (var ti = 0; ti < tools.length; ti++) { if (tools[ti].id === customOrder[oi]) { orderedTools.push(tools[ti]); break } } }
         }
         var remainingTools = []
         for (var ri = 0; ri < tools.length; ri++) {
           var inOrdered = false
-          for (var ci = 0; ci < customOrder.length; ci++) {
-            if (customOrder[ci] === tools[ri].id) { inOrdered = true; break }
-          }
+          for (var ci = 0; ci < customOrder.length; ci++) { if (customOrder[ci] === tools[ri].id) { inOrdered = true; break } }
           var isHidden2 = false
-          for (var hi2 = 0; hi2 < hiddenTools.length; hi2++) {
-            if (hiddenTools[hi2] === tools[ri].id) { isHidden2 = true; break }
-          }
+          for (var hi2 = 0; hi2 < hiddenTools.length; hi2++) { if (hiddenTools[hi2] === tools[ri].id) { isHidden2 = true; break } }
           if (!inOrdered && !isHidden2) remainingTools.push(tools[ri])
         }
         var finalTools = orderedTools.concat(remainingTools)
@@ -402,14 +645,11 @@ Page({
         var visibleTools = []
         for (var vi = 0; vi < tools.length; vi++) {
           var hFound = false
-          for (var hi3 = 0; hi3 < hiddenTools.length; hi3++) {
-            if (hiddenTools[hi3] === tools[vi].id) { hFound = true; break }
-          }
+          for (var hi3 = 0; hi3 < hiddenTools.length; hi3++) { if (hiddenTools[hi3] === tools[vi].id) { hFound = true; break } }
           if (!hFound) visibleTools.push(tools[vi])
         }
         this.setData({ tools: visibleTools, filteredTools: visibleTools })
       }
-
       this.updateHiddenToolsList(hiddenTools)
     } catch(e) {}
   },
@@ -418,20 +658,10 @@ Page({
     try {
       wx.vibrateShort({ type: 'light' })
       if (!this.data.isEditMode) {
-        wx.showModal({
-          title: '📝 编辑模式',
-          content: '点击工具卡片选中\n再次点击另一个卡片可交换位置\n点击眼睛图标可隐藏工具',
-          showCancel: false, confirmText: '我知道了', confirmColor: '#3B82F6'
-        })
+        wx.showModal({ title: i18n.t('editModeTitle'), content: i18n.t('editModeContent'), showCancel: false, confirmText: i18n.t('iKnow'), confirmColor: '#3B82F6' })
       }
-      this.setData({
-        isEditMode: !this.data.isEditMode,
-        selectedToolIndex: -1, canUndo: false, editHistory: []
-      })
-      if (!this.data.isEditMode) {
-        this.saveCustomLayout()
-        wx.showToast({ title: '布局已保存 ✅', icon: 'success', duration: 1500 })
-      }
+      this.setData({ isEditMode: !this.data.isEditMode, selectedToolIndex: -1, canUndo: false, editHistory: [] })
+      if (!this.data.isEditMode) { this.saveCustomLayout(); wx.showToast({ title: i18n.t('layoutSaved'), icon: 'success', duration: 1500 }) }
     } catch(e) {}
   },
 
@@ -440,14 +670,8 @@ Page({
       if (!this.data.isEditMode) return
       var index = e.currentTarget.dataset.index
       var currentSelected = this.data.selectedToolIndex
-      if (currentSelected === -1) {
-        wx.vibrateShort({ type: 'light' })
-        this.setData({ selectedToolIndex: index }); return
-      }
-      if (currentSelected === index) {
-        wx.vibrateShort({ type: 'light' })
-        this.setData({ selectedToolIndex: -1 }); return
-      }
+      if (currentSelected === -1) { wx.vibrateShort({ type: 'light' }); this.setData({ selectedToolIndex: index }); return }
+      if (currentSelected === index) { wx.vibrateShort({ type: 'light' }); this.setData({ selectedToolIndex: -1 }); return }
       wx.vibrateShort({ type: 'medium' })
       var filteredTools = this.data.filteredTools || []
       if (!filteredTools[currentSelected] || !filteredTools[index]) return
@@ -457,7 +681,7 @@ Page({
       filteredTools[index] = temp
       this.setData({ filteredTools: filteredTools, selectedToolIndex: -1, canUndo: true })
       this.saveCustomLayout()
-      wx.showToast({ title: '已交换位置', icon: 'success', duration: 800 })
+      wx.showToast({ title: i18n.t('swappedPosition'), icon: 'success', duration: 800 })
     } catch(e) {}
   },
 
@@ -480,24 +704,20 @@ Page({
   undoLastAction: function() {
     try {
       var history = this.data.editHistory || []
-      if (history.length === 0) { wx.showToast({ title: '没有可撤销的操作', icon: 'none', duration: 1200 }); return }
+      if (history.length === 0) { wx.showToast({ title: i18n.t('noUndoAction'), icon: 'none', duration: 1200 }); return }
       wx.vibrateShort({ type: 'light' })
       var newHistory = history.slice()
       var prevState = newHistory.pop()
       var allTools = this.data.tools || []
       var restoredOrder = []
       if (prevState.order && Array.isArray(prevState.order)) {
-        for (var oi = 0; oi < prevState.order.length; oi++) {
-          for (var ti = 0; ti < allTools.length; ti++) {
-            if (allTools[ti].id === prevState.order[oi]) { restoredOrder.push(allTools[ti]); break }
-          }
-        }
+        for (var oi = 0; oi < prevState.order.length; oi++) { for (var ti = 0; ti < allTools.length; ti++) { if (allTools[ti].id === prevState.order[oi]) { restoredOrder.push(allTools[ti]); break } } }
       }
       var restoredHidden = (prevState.hidden && Array.isArray(prevState.hidden)) ? prevState.hidden : []
       this.setData({ filteredTools: restoredOrder, hiddenTools: restoredHidden, editHistory: newHistory, canUndo: newHistory.length > 0, selectedToolIndex: -1 })
       this.updateHiddenToolsList(restoredHidden)
       this.saveCustomLayout()
-      wx.showToast({ title: '已撤销 ↩️', icon: 'none', duration: 800 })
+      wx.showToast({ title: i18n.t('undoLastStep'), icon: 'none', duration: 800 })
     } catch(e) {}
   },
 
@@ -507,12 +727,11 @@ Page({
       wx.vibrateShort({ type: 'light' })
       this.pushEditHistory()
       var id = e.currentTarget.dataset.id
-      var hiddenTools = this.data.hiddenTools || []
-      hiddenTools = hiddenTools.slice()
+      var hiddenTools = (this.data.hiddenTools || []).slice()
       var foundIdx = -1
       for (var i = 0; i < hiddenTools.length; i++) { if (hiddenTools[i] === id) { foundIdx = i; break } }
-      if (foundIdx > -1) { hiddenTools.splice(foundIdx, 1); wx.showToast({ title: '已显示 ✓', icon: 'none', duration: 1000 }) }
-      else { hiddenTools.push(id); wx.showToast({ title: '已隐藏 👁', icon: 'none', duration: 1000 }) }
+      if (foundIdx > -1) { hiddenTools.splice(foundIdx, 1); wx.showToast({ title: i18n.getLanguage() === 'zh' ? '已显示 ✓' : 'Shown ✓', icon: 'none', duration: 1000 }) }
+      else { hiddenTools.push(id); wx.showToast({ title: i18n.getLanguage() === 'zh' ? '已隐藏 👁' : 'Hidden 👁', icon: 'none', duration: 1000 }) }
       this.updateHiddenToolsList(hiddenTools)
       var filteredTools = this.data.filteredTools || []
       var visibleTools = []
@@ -544,8 +763,8 @@ Page({
         if (!alreadyExists) visibleTools.push(restoredTool)
       }
       this.setData({ hiddenTools: hiddenTools, filteredTools: visibleTools })
-      var displayName = restoredTool ? restoredTool.name : '工具'
-      wx.showToast({ title: displayName + ' 已恢复 ✓', icon: 'success', duration: 1000 })
+      var displayName = restoredTool ? restoredTool.name : ''
+      wx.showToast({ title: i18n.t('toolRestored', { name: displayName }), icon: 'success', duration: 1000 })
     } catch(e) {}
   },
 
@@ -554,9 +773,7 @@ Page({
       if (!hiddenTools || !Array.isArray(hiddenTools) || hiddenTools.length === 0) { this.setData({ hiddenToolsList: [] }); return }
       var allTools = this.data.tools || []
       var hiddenList = []
-      for (var i = 0; i < allTools.length; i++) {
-        for (var j = 0; j < hiddenTools.length; j++) { if (hiddenTools[j] === allTools[i].id) { hiddenList.push(allTools[i]); break } }
-      }
+      for (var i = 0; i < allTools.length; i++) { for (var j = 0; j < hiddenTools.length; j++) { if (hiddenTools[j] === allTools[i].id) { hiddenList.push(allTools[i]); break } } }
       this.setData({ hiddenToolsList: hiddenList })
     } catch(e) {}
   },
@@ -577,305 +794,59 @@ Page({
       wx.vibrateShort({ type: 'medium' })
       var that = this
       wx.showModal({
-        title: '⚠️ 重置布局', content: '确定要恢复默认布局吗？\n所有自定义排序和隐藏设置将被清除。',
-        confirmText: '重置', cancelText: '取消', confirmColor: '#EF4444',
+        title: i18n.t('resetLayoutTitle'), content: i18n.t('resetLayoutContent'),
+        confirmText: i18n.t('resetLayout'), cancelText: i18n.t('cancel'), confirmColor: '#EF4444',
         success: function(res) {
           if (res.confirm) {
             that.pushEditHistory()
             wx.removeStorageSync('customToolOrder')
             wx.removeStorageSync('hiddenTools')
             that.setData({ customOrder: [], hiddenTools: [], isEditMode: false, canUndo: true, selectedToolIndex: -1 })
-            var favs = wx.getStorageSync('favorites') || []
-            if (!Array.isArray(favs)) favs = []
-            var defaultToolsCopy = []
-            for (var di = 0; di < defaultTools.length; di++) {
-              var tcopy = {}; var src = defaultTools[di]
-              for (var key in src) tcopy[key] = src[key]
-              tcopy.isFavorite = false
-              for (var fi = 0; fi < favs.length; fi++) { if (favs[fi] === tcopy.id) { tcopy.isFavorite = true; break } }
-              defaultToolsCopy.push(tcopy)
-            }
+            var favs = storageUtil.safeGetArray('favorites')
+            var defaultToolsCopy = toolsData.getToolsWithFavorites(favs)
+            defaultToolsCopy = i18n.translateTools(defaultToolsCopy)
             that.setData({ tools: defaultToolsCopy, filteredTools: defaultToolsCopy })
-            wx.showToast({ title: '已恢复默认布局', icon: 'success' })
+            wx.showToast({ title: i18n.t('defaultLayoutRestored'), icon: 'success' })
           }
         }
       })
     } catch(e) {}
   },
 
-  /* ========================================================
-   *   [搜索功能] 关键词搜索、历史记录
-   * ======================================================== */
-
-  addToSearchHistory: function(keyword) {
-    if (!keyword.trim()) return
-    var history = wx.getStorageSync('searchHistory') || []
-    var newHistory = []
-    for (var i = 0; i < history.length; i++) {
-      if (history[i] !== keyword) newHistory.push(history[i])
-    }
-    newHistory.unshift(keyword)
-    if (newHistory.length > 10) newHistory = newHistory.slice(0, 10)
-    wx.setStorageSync('searchHistory', newHistory)
-    this.setData({ searchHistory: newHistory })
-  },
-
-  clearSearchHistory: function() {
-    var that = this
-    wx.showModal({ title: '清空搜索历史', content: '确定要清空所有搜索历史吗？', confirmText: '清空', confirmColor: '#EF4444',
-      success: function(res) { if (res.confirm) { wx.removeStorageSync('searchHistory'); that.setData({ searchHistory: [] }); wx.showToast({ title: '已清空', icon: 'success' }) } }
-    })
-  },
-
-  onHotSearchClick: function(e) {
-    var word = e.currentTarget.dataset.word
-    this.setData({ searchKeyword: word })
-    this.addToSearchHistory(word)
-    this.filterTools()
-  },
-
-  onHistoryClick: function(e) {
-    var word = e.currentTarget.dataset.word
-    this.setData({ searchKeyword: word })
-    this.filterTools()
-  },
-
-  onSearchInput: function(e) {
-    var keyword = e.detail.value.trim()
-    this.setData({ searchKeyword: keyword })
-    this.filterTools()
-  },
-
-  clearSearch: function() {
-    this.setData({ searchKeyword: '', showSearchPanel: false })
-    this.filterTools()
-  },
-
-  onCategoryChange: function(e) {
-    var categoryId = e.currentTarget.dataset.id
-    this.setData({ currentCategory: categoryId, showSearchPanel: false })
-    this.filterTools()
-  },
-
-  onSearchFocus: function() { this.setData({ showSearchPanel: true }) },
-
-  onSearchBlur: function() {
-    var that = this
-    setTimeout(function() { that.setData({ showSearchPanel: false }) }, 200)
-  },
-
-  filterTools: function() {
+  onShareAppMessage: function() {
+    var tracker = getApp().tracker; tracker.shareAction('friend', '')
     try {
-      var filtered = [].concat(this.data.tools || [])
-      if (this.data.currentCategory !== 'all') {
-        var catFiltered = []
-        for (var i = 0; i < filtered.length; i++) { if (filtered[i].category === this.data.currentCategory) catFiltered.push(filtered[i]) }
-        filtered = catFiltered
-      }
-      if (this.data.searchKeyword) {
-        var keyword = this.data.searchKeyword.toLowerCase()
-        var pinyinKeyword = getPinyinFirstLetter(keyword)
-        var result = []
-        for (var j = 0; j < filtered.length; j++) {
-          var tool = filtered[j]
-          var nameMatch = tool.name.toLowerCase().indexOf(keyword) > -1
-          var descMatch = tool.description.toLowerCase().indexOf(keyword) > -1
-          var pinyinMatch = getPinyinFirstLetter(tool.name).toLowerCase().indexOf(pinyinKeyword) > -1
-          if (nameMatch || descMatch || pinyinMatch) result.push(tool)
-        }
-        filtered = result
-        this.addToSearchHistory(this.data.searchKeyword)
-      }
-      this.setData({ filteredTools: filtered })
-    } catch(e) {}
-  },
-
-  /* ========================================================
-   *   [最近使用功能] 查看全部最近使用的工具（弹窗模式）
-   * ======================================================== */
-
-  /**
-   * 显示最近使用弹窗
-   */
-  showRecentModal: function() {
-    try {
-      console.log('[showRecentModal] 函数被调用')
-
-      wx.vibrateShort({ type: 'light' })
-
-      // 打开弹窗前重新加载最新数据
-      var recentTools = wx.getStorageSync('recentTools') || []
-      if (!Array.isArray(recentTools)) recentTools = []
-
-      console.log('[showRecentModal] recentTools数量:', recentTools.length)
-      console.log('[showRecentModal] 即将设置 showRecentModal = true')
-
-      this.setData({
-        showRecentModal: true,
-        recentTools: recentTools,
-        displayRecentTools: recentTools.slice(0, 2)  // 同步更新显示列表
-      })
-
-      console.log('[showRecentModal] setData完成')
-    } catch(e) {
-      console.error('[showRecentModal] Error:', e)
-    }
-  },
-
-  /**
-   * 隐藏最近使用弹窗
-   */
-  hideRecentModal: function() {
-    try {
-      this.setData({
-        showRecentModal: false
-      })
-    } catch(e) {
-      console.error('[hideRecentModal] Error:', e)
-    }
-  },
-
-  /**
-   * 从最近使用列表中点击工具跳转
-   */
-  onRecentToolClick: function(e) {
-    try {
-      var tool = e.currentTarget.dataset.tool
-      if (!tool) return
-
-      wx.vibrateShort({ type: 'light' })
-
-      // 跳转到对应工具页面
-      var url = urlMap[tool.id]
-      if (url) {
-        wx.navigateTo({
-          url: url,
-          fail: function(err) {
-            console.error('[recent] 跳转失败:', err)
-            wx.showToast({ title: '页面跳转失败', icon: 'none' })
-          }
-        })
-      } else {
-        wx.showToast({ title: '功能开发中...', icon: 'none', duration: 1500 })
-      }
-    } catch(e) {
-      console.error('[onRecentToolClick] Error:', e)
-    }
-  },
-
-  /* ========================================================
-   *   [交互功能] 工具点击、收藏、长按菜单
-   * ======================================================== */
-
-  onToolClick: function(e) {
-    try {
-      var tool = e.currentTarget.dataset.tool
-      if (!tool) return
-      wx.vibrateShort({ type: 'light' })
-      this.saveRecentTool(tool)
-      this.recordWeeklyUsage()
-      var url = urlMap[tool.id]
-      if (url) {
-        wx.navigateTo({ url: url, fail: function(err) { console.log('[tool] 跳转失败:', err); wx.showToast({ title: '页面跳转失败', icon: 'none' }) } })
-      } else { wx.showToast({ title: '功能开发中...', icon: 'none', duration: 1500 }) }
-    } catch(e) {}
-  },
-
-  toggleFavorite: function(e) {
-    try {
-      var id = e.currentTarget.dataset.id
-      var toolsData = this.data.tools || []
-      var tools = []
-      for (var i = 0; i < toolsData.length; i++) {
-        var t = {}; var src = toolsData[i]
-        for (var key in src) t[key] = src[key]
-        if (t.id === id) t.isFavorite = !t.isFavorite
-        tools.push(t)
-      }
-      var favorites = []
-      for (var j = 0; j < tools.length; j++) { if (tools[j].isFavorite) favorites.push(tools[j].id) }
-      wx.setStorageSync('favorites', favorites)
-      wx.vibrateShort({ type: 'light' })
-      this.setData({ tools: tools })
-      this.filterTools()
-      var hasId = false
-      for (var k = 0; k < favorites.length; k++) { if (favorites[k] === id) { hasId = true; break } }
-      if (hasId) this.showHeartAnimation()
-    } catch(e) {}
-  },
-
-  onToolLongPress: function(e) {
-    try { wx.vibrateShort({ type: 'medium' }); var tool = e.currentTarget.dataset.tool; this.setData({ showMenu: true, menuTool: tool }) } catch(e) {}
-  },
-
-  closeMenu: function() { this.setData({ showMenu: false, menuTool: null }) },
-
-  showHeartAnimation: function() {
-    this.setData({ showHeart: true })
-    var that = this
-    setTimeout(function() { that.setData({ showHeart: false }) }, 800)
-  },
-
-  /* ========================================================
-   *   [数据统计] 使用记录、周统计
-   * ======================================================== */
-
-  recordWeeklyUsage: function() {
-    try {
-      var today = new Date()
-      var y = today.getFullYear(), mo = today.getMonth() + 1, d = today.getDate()
-      var moStr = mo < 10 ? ('0' + mo) : ('' + mo), dStr = d < 10 ? ('0' + d) : ('' + d)
-      var dateKey = y + '-' + moStr + '-' + dStr
-      var weeklyRecord = wx.getStorageSync('weeklyUsage') || {}
-      if (typeof weeklyRecord !== 'object' || Array.isArray(weeklyRecord)) weeklyRecord = {}
-      weeklyRecord[dateKey] = (weeklyRecord[dateKey] || 0) + 1
-      var oneWeekAgo = new Date(); oneWeekAgo.setDate(today.getDate() - 7)
-      var keysToRemove = []
-      for (var key in weeklyRecord) {
-        if (weeklyRecord.hasOwnProperty(key)) {
-          var parts = key.split('-')
-          if (parts.length === 3) {
-            var kdDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10))
-            if (kdDate < oneWeekAgo) keysToRemove.push(key)
-          }
+      var taskInfo = points.getDailyTasks()
+      var shareTaskCompleted = false
+      for (var i = 0; i < taskInfo.tasks.length; i++) {
+        if (taskInfo.tasks[i].id === 'share_once' && taskInfo.tasks[i].completed) {
+          shareTaskCompleted = true
+          break
         }
       }
-      for (var kr = 0; kr < keysToRemove.length; kr++) delete weeklyRecord[keysToRemove[kr]]
-      wx.setStorageSync('weeklyUsage', weeklyRecord)
+      if (!shareTaskCompleted) {
+        points.recordShare()
+      }
     } catch(e) {}
+    return { title: '🧰 百宝工具箱 - 40+实用小工具合集', path: '/pages/index/index', imageUrl: this.data.sharePosterPath || '' }
   },
 
-  saveRecentTool: function(tool) {
+  onShareTimeline: function() {
     try {
-      if (!tool || !tool.id) return
-      var recentTools = wx.getStorageSync('recentTools') || []
-      if (!Array.isArray(recentTools)) recentTools = []
-      var newRecent = []
-      for (var i = 0; i < recentTools.length; i++) { if (recentTools[i].id !== tool.id) newRecent.push(recentTools[i]) }
-      newRecent.unshift({ id: tool.id, name: tool.name, icon: tool.icon, iconBg: tool.iconBg, usedAt: new Date().getTime() })
-      if (newRecent.length > 20) newRecent = newRecent.slice(0, 20)
-      wx.setStorageSync('recentTools', newRecent)
-      var count = wx.getStorageSync('totalUsageCount') || 0
-      count = parseInt(count, 10) || 0
-      wx.setStorageSync('totalUsageCount', count + 1)
-      try { var appInst = getApp(); if (appInst && typeof appInst.cloudSyncUsage === 'function') appInst.cloudSyncUsage(tool.id, tool.name) } catch(err) {}
+      var taskInfo = points.getDailyTasks()
+      var shareTaskCompleted = false
+      for (var i = 0; i < taskInfo.tasks.length; i++) {
+        if (taskInfo.tasks[i].id === 'share_once' && taskInfo.tasks[i].completed) {
+          shareTaskCompleted = true
+          break
+        }
+      }
+      if (!shareTaskCompleted) {
+        points.recordShare()
+      }
     } catch(e) {}
+    return { title: '🧰 百宝工具箱 - 汇率换算、单位转换等40+实用工具', query: '', imageUrl: this.data.sharePosterPath || '' }
   },
-
-  /* ========================================================
-   *   [分享功能] 更多菜单、分享配置、海报绘制
-   * ======================================================== */
-
-  showMoreMenu: function() {
-    wx.showActionSheet({
-      itemList: ['关于我们', '意见反馈', '分享给朋友'],
-      success: function(res) { switch (res.tapIndex) { case 0: wx.showToast({ title: '百宝工具箱 v1.0', icon: 'none' }); break; case 1: wx.showToast({ title: '感谢您的反馈！', icon: 'none' }); break } }
-    })
-  },
-
-  onShareAppMessage: function() { return { title: '🧰 百宝工具箱 - 24+实用小工具合集', path: '/pages/index/index', imageUrl: this.data.sharePosterPath || '' } },
-
-  onShareTimeline: function() { return { title: '🧰 百宝工具箱 - 汇率换算、单位转换等24+实用工具', query: '', imageUrl: this.data.sharePosterPath || '' } },
 
   drawSharePoster: function() {
     var that = this
@@ -901,30 +872,25 @@ Page({
         ctx.globalAlpha = 1
         ctx.font = 'bold 44px -apple-system, system-ui, sans-serif'; ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🧰 百宝工具箱', 250, 72)
         ctx.font = '16px -apple-system, system-ui, sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.fillText('即用即走 · 轻量高效 · 实用便捷', 250, 105)
-        var tools = [{ icon: '💹', name: '汇率' }, { icon: '📐', name: '单位' }, { icon: '🏠', name: '房贷' }, { icon: '💰', name: '小费' }, { icon: '🔢', name: '字数' }, { icon: '🔤', name: '大小写' }, { icon: '🔐', name: 'Base64' }, { icon: '🍅', name: '番茄钟' }, { icon: '💧', name: '喝水' }, { icon: '🎲', name: '随机' }, { icon: '🗑️', name: '垃圾分类' }, { icon: '📅', name: '日期' }]
+        var posterTools = [{ icon: '💹', name: '汇率' }, { icon: '📐', name: '单位' }, { icon: '🏠', name: '房贷' }, { icon: '💰', name: '小费' }, { icon: '🔢', name: '字数' }, { icon: '🔤', name: '大小写' }, { icon: '🔐', name: 'Base64' }, { icon: '🍅', name: '番茄钟' }, { icon: '💧', name: '喝水' }, { icon: '🎲', name: '随机' }, { icon: '🗑️', name: '垃圾分类' }, { icon: '📅', name: '日期' }]
         var cardX = 30, cardY = 130, cardW = 440, cardH = 180
         ctx.fillStyle = 'rgba(255,255,255,0.06)'
         ctx.beginPath(); ctx.moveTo(cardX, cardY + 18); ctx.lineTo(cardX + cardW, cardY + 18); ctx.quadraticCurveTo(cardX + cardW, cardY, cardX + cardW - 18, cardY); ctx.lineTo(cardX + 18, cardY); ctx.quadraticCurveTo(cardX, cardY, cardX, cardY + 18); ctx.fill()
         var cols = 6, rows = 2, itemW = 68, itemH = 76, gapX = (cardW - cols * itemW) / (cols + 1), gapY = (cardH - rows * itemH) / (rows + 1)
-        for (var ti = 0; ti < tools.length; ti++) {
+        for (var ti = 0; ti < posterTools.length; ti++) {
           var col = ti % cols, row = Math.floor(ti / cols)
           var ix = cardX + gapX + col * (itemW + gapX), iy = cardY + gapY + row * (itemH + gapY)
           ctx.globalAlpha = 0.12; ctx.beginPath(); ctx.arc(ix + itemW / 2, iy + itemH / 2, 28, 0, Math.PI * 2); ctx.fill()
-          ctx.globalAlpha = 1; ctx.font = '26px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(tools[ti].icon, ix + itemW / 2, iy + itemH / 2 - 8)
-          ctx.font = '11px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.65)'; ctx.fillText(tools[ti].name, ix + itemW / 2, iy + itemH - 14)
+          ctx.globalAlpha = 1; ctx.font = '26px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(posterTools[ti].icon, ix + itemW / 2, iy + itemH / 2 - 8)
+          ctx.font = '11px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.65)'; ctx.fillText(posterTools[ti].name, ix + itemW / 2, iy + itemH - 14)
         }
         ctx.textAlign = 'center'; var bottomGrad = ctx.createLinearGradient(250, 330, 250, 380)
         bottomGrad.addColorStop(0, '#3B82F6'); bottomGrad.addColorStop(1, '#1D4ED8')
         ctx.beginPath(); ctx.moveTo(50, 336); ctx.lineTo(450, 336); ctx.quadraticCurveTo(450, 360, 426, 360); ctx.lineTo(74, 360); ctx.quadraticCurveTo(50, 360, 50, 336); ctx.closePath(); ctx.fillStyle = bottomGrad; ctx.fill()
-        ctx.font = '600 18px -apple-system, system-ui, sans-serif'; ctx.fillStyle = '#FFFFFF'; ctx.fillText('✨ 24+ 实用工具，一键即达', 250, 355)
+        ctx.font = '600 18px -apple-system, system-ui, sans-serif'; ctx.fillStyle = '#FFFFFF'; ctx.fillText('✨ 40+ 实用工具，一键即达', 250, 355)
         setTimeout(function() {
           wx.canvasToTempFilePath({ canvas: canvas, width: 500, height: 400, destWidth: 500, destHeight: 400, fileType: 'png', quality: 1,
-            success: function(res) { 
-              if (res.tempFilePath) { 
-                appInstance.globalData.sharePosterPath = res.tempFilePath 
-                that.setData({ sharePosterPath: res.tempFilePath }) 
-              } 
-            }
+            success: function(res) { if (res.tempFilePath) { appInstance.globalData.sharePosterPath = res.tempFilePath; that.setData({ sharePosterPath: res.tempFilePath }) } }
           })
         }, 100)
       })

@@ -1,5 +1,12 @@
+var storageUtil = require('../../utils/storage.js')
+var toolActions = require('../utils/tool-actions.js')
+var logger = require('../../utils/logger.js')
+var poster = require('../utils/poster.js')
+var csvExport = require('../utils/csv-export.js')
+var i18n = require('../../utils/i18n.js')
 Page({
   data: {
+    i18n: {},
     isRunning: false,
     isPaused: false,
     timeLeft: 25 * 60,
@@ -23,15 +30,39 @@ Page({
 
     todayRecords: [],
 
+    dailyGoal: 8,
+    todayFocusMinutes: 0,
+    todayPomodoroCount: 0,
+    goalProgress: 0,
+
     timerInterval: null,
 
     timerStartTime: 0,
-    timerStartLeft: 0
+    timerStartLeft: 0,
+
+    isDarkMode: false,
+    fontSizeSetting: 'medium',
+    weekData: [],
+    weekTotalPomodoros: 0,
+    weekTotalMinutes: 0,
+    streakDays: 0
   },
 
   onLoad: function() {
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
+    var tracker = getApp().tracker
+    if (tracker) tracker.pageView('番茄计时')
+    var app = getApp()
+    var isDark = app.globalData.isDarkMode || false
+    this.setData({ isDarkMode: isDark, i18n: i18n.getToolPageTexts('pomodoro') })
+
     this.loadTodayRecords()
+    this.loadWeekData()
     this.drawProgressRing(1)
+    poster.setupForPage(this, 9)
   },
 
   onUnload: function() {
@@ -39,6 +70,12 @@ Page({
   },
 
   onShow: function() {
+    var app = getApp()
+    var isDark = app.globalData.isDarkMode || false
+    this.setData({ isDarkMode: isDark })
+    var fontSize = storageUtil.get('fontSizeSetting', 'medium')
+    this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('pomodoro') })
+
     if (this.data.isRunning && this.data.timerStartTime > 0) {
       this.syncTimeFromTimestamp()
     }
@@ -112,6 +149,9 @@ Page({
       timerStartLeft: this.data.timeLeft
     })
 
+    var tracker = getApp().tracker
+    if (tracker) tracker.toolUse(9, '番茄计时', false)
+
     this.clearTimer()
 
     this.data.timerInterval = setInterval(function() {
@@ -173,12 +213,14 @@ Page({
     wx.setKeepScreenOn({ keepScreenOn: false })
     wx.vibrateLong()
 
+    this.requestSubscribeMessage()
+
     var that = this
     wx.showModal({
-      title: that.data.currentMode === 'work' ? '\uD83C\uDF89 \u4E13\u6CE8\u5B8C\u6210\uFF01' : '\u2615 \u4F11\u606F\u7ED3\u675F\uFF01',
-      content: that.data.currentMode === 'work' ? '\u4F11\u606F\u4E00\u4E0B\u5427~' : '\u51C6\u5907\u597D\u7EE7\u7EED\u4E86\u5417\uFF1F',
-      confirmText: that.data.currentMode === 'work' ? '\u5F00\u59CB\u4F11\u606F' : '\u5F00\u59CB\u5DE5\u4F5C',
-      cancelText: '\u7A0D\u540E',
+      title: that.data.currentMode === 'work' ? that.data.i18n.focusComplete : that.data.i18n.restComplete,
+      content: that.data.currentMode === 'work' ? that.data.i18n.takeBreak : that.data.i18n.readyToContinue,
+      confirmText: that.data.currentMode === 'work' ? that.data.i18n.startBreak : that.data.i18n.startWork,
+      cancelText: that.data.i18n.laterBtn,
       success: function(res) {
         if (res.confirm) {
           if (that.data.currentMode === 'work') {
@@ -332,6 +374,16 @@ Page({
     wx.vibrateShort({ type: 'light' })
   },
 
+  requestSubscribeMessage: function() {
+    try {
+      wx.requestSubscribeMessage({
+        tmplIds: [],
+        success: function() {},
+        fail: function() {}
+      })
+    } catch(e) {}
+  },
+
   addRecord: function() {
     var now = new Date()
     var timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0')
@@ -353,30 +405,30 @@ Page({
 
     try {
       var today = new Date().toDateString()
-      var allRecords = wx.getStorageSync('pomodoro_records') || {}
+      var allRecords = storageUtil.get('pomodoro_records', {})
       allRecords[today] = records
       wx.setStorageSync('pomodoro_records', allRecords)
     } catch (e) {
-      console.error('Save record error:', e)
-      wx.showToast({ title: '\u8BB0\u5F55\u4FDD\u5B58\u5931\u8D25', icon: 'none', duration: 2000 })
+      logger.error('Save record error:', e)
+      wx.showToast({ title: that.data.i18n.recordSaveFailed, icon: 'none', duration: 2000 })
       setTimeout(function() {
         wx.showModal({
-          title: '\u26A0\uFE0F \u6570\u636E\u4FDD\u5B58\u5931\u8D25',
-          content: '\u756a\u8304\u949F\u8BB0\u5F55\u53EF\u80FD\u672A\u6B63\u786E\u4FDD\u5B58\uFF0C\u662F\u5426\u91CD\u8BD5\uFF1F',
-          confirmText: '\u91CD\u8BD5',
-          cancelText: '\u7A0D\u540E',
+          title: that.data.i18n.dataSaveFailed,
+          content: that.data.i18n.dataSaveFailedMsg,
+          confirmText: that.data.i18n.retryBtn,
+          cancelText: that.data.i18n.laterBtn,
           success: function(res) {
             if (res.confirm) {
               try {
-                var allRec = wx.getStorageSync('pomodoro_records') || {}
+                var allRec = storageUtil.get('pomodoro_records', {})
                 var todayKey = new Date().toDateString()
                 var existing = allRec[todayKey] || []
                 existing.push(record)
                 allRec[todayKey] = existing
                 wx.setStorageSync('pomodoro_records', allRec)
-                wx.showToast({ title: '\u91CD\u8BD5\u6210\u529F', icon: 'success' })
+                wx.showToast({ title: that.data.i18n.retrySuccess, icon: 'success' })
               } catch(e2) {
-                wx.showToast({ title: '\u4ECD\u7136\u5931\u8D25', icon: 'none' })
+                wx.showToast({ title: that.data.i18n.stillFailed, icon: 'none' })
               }
             }
           }
@@ -395,23 +447,332 @@ Page({
         date: today
       })
     }
+
+    this.loadTodayRecords()
+    this.loadWeekData()
   },
 
   loadTodayRecords: function() {
     try {
       var today = new Date().toDateString()
-      var allRecords = wx.getStorageSync('pomodoro_records') || {}
+      var allRecords = storageUtil.get('pomodoro_records', {})
       var todayRecords = allRecords[today] || []
       this.setData({ todayRecords: todayRecords })
+
+      var focusMinutes = 0
+      var pomodoroCount = 0
+      for (var i = 0; i < todayRecords.length; i++) {
+        if (todayRecords[i].type === 'work') {
+          focusMinutes += (todayRecords[i].duration || 0)
+          pomodoroCount++
+        }
+      }
+
+      var goal = storageUtil.get('pomodoro_daily_goal', 8)
+      var progress = goal > 0 ? Math.min(100, Math.round((pomodoroCount / goal) * 100)) : 0
+
+      this.setData({
+        todayFocusMinutes: focusMinutes,
+        todayPomodoroCount: pomodoroCount,
+        dailyGoal: goal,
+        goalProgress: progress
+      })
     } catch (e) {
-      console.error('Load records error:', e)
+      logger.error('Load records error:', e)
     }
   },
 
+  changeDailyGoal: function(e) {
+    var goal = parseInt(e.currentTarget.dataset.goal)
+    if (!goal) return
+    wx.vibrateShort({ type: 'light' })
+    this.setData({ dailyGoal: goal })
+    wx.setStorageSync('pomodoro_daily_goal', goal)
+    var progress = goal > 0 ? Math.min(100, Math.round((this.data.todayPomodoroCount / goal) * 100)) : 0
+    this.setData({ goalProgress: progress })
+  },
+
+  loadWeekData: function() {
+    try {
+      var allRecords = storageUtil.get('pomodoro_records', {})
+      var today = new Date()
+      var dayOfWeek = today.getDay()
+      if (dayOfWeek === 0) dayOfWeek = 7
+      var weekData = []
+      var dayNames = ['一', '二', '三', '四', '五', '六', '日']
+      var totalPomodoros = 0
+      var totalMinutes = 0
+      var streak = 0
+
+      for (var i = 6; i >= 0; i--) {
+        var d = new Date(today)
+        d.setDate(d.getDate() - (dayOfWeek - 1 - (6 - i)))
+        var key = d.toDateString()
+        var records = allRecords[key] || []
+        var count = 0
+        var minutes = 0
+        for (var j = 0; j < records.length; j++) {
+          if (records[j].type === 'work') {
+            count++
+            minutes += (records[j].duration || 0)
+          }
+        }
+        var isToday = key === today.toDateString()
+        var label = dayNames[6 - i]
+        weekData.push({
+          date: key,
+          dayLabel: label,
+          count: count,
+          minutes: minutes,
+          isToday: isToday
+        })
+        totalPomodoros += count
+        totalMinutes += minutes
+        if (count > 0) {
+          streak++
+        } else if (!isToday) {
+          streak = 0
+        }
+      }
+
+      this.setData({
+        weekData: weekData,
+        weekTotalPomodoros: totalPomodoros,
+        weekTotalMinutes: totalMinutes,
+        streakDays: streak
+      })
+
+      var that = this
+      setTimeout(function() { that.drawWeekChart() }, 150)
+    } catch(e) {}
+  },
+
+  drawWeekChart: function() {
+    var weekData = this.data.weekData
+    if (weekData.length === 0) return
+    var isDark = this.data.isDarkMode
+    var that = this
+
+    var query = wx.createSelectorQuery()
+    query.select('#weekCanvas').fields({ node: true, size: true }).exec(function(res) {
+      if (!res || !res[0] || !res[0].node) return
+      var canvas = res[0].node
+      var ctx = canvas.getContext('2d')
+      var dpr = wx.getWindowInfo().pixelRatio
+      var width = res[0].width
+      var height = res[0].height
+      canvas.width = width * dpr
+      canvas.height = height * dpr
+      ctx.scale(dpr, dpr)
+      ctx.clearRect(0, 0, width, height)
+
+      var padLeft = 35
+      var padRight = 12
+      var padTop = 12
+      var padBottom = 28
+      var chartW = width - padLeft - padRight
+      var chartH = height - padTop - padBottom
+
+      var maxCount = 0
+      for (var mi = 0; mi < weekData.length; mi++) {
+        if (weekData[mi].count > maxCount) maxCount = weekData[mi].count
+      }
+      if (maxCount === 0) maxCount = that.data.dailyGoal || 8
+      maxCount = Math.ceil(maxCount * 1.2)
+
+      ctx.strokeStyle = isDark ? 'rgba(148,163,184,0.1)' : 'rgba(226,232,240,0.5)'
+      ctx.lineWidth = 0.5
+      for (var g = 0; g <= 3; g++) {
+        var gy = padTop + chartH * (1 - g / 3)
+        ctx.beginPath()
+        ctx.moveTo(padLeft, gy)
+        ctx.lineTo(padLeft + chartW, gy)
+        ctx.stroke()
+        ctx.fillStyle = isDark ? '#64748B' : '#94A3B8'
+        ctx.font = '9px sans-serif'
+        ctx.textAlign = 'right'
+        ctx.fillText(Math.round(maxCount * g / 3), padLeft - 5, gy + 3)
+      }
+
+      var barGap = chartW / weekData.length
+      var barW = Math.min(barGap * 0.5, 28)
+
+      for (var bi = 0; bi < weekData.length; bi++) {
+        var bx = padLeft + barGap * bi + (barGap - barW) / 2
+        var bh = maxCount > 0 ? (weekData[bi].count / maxCount) * chartH : 0
+        if (bh < 2 && weekData[bi].count > 0) bh = 4
+        var by = padTop + chartH - bh
+
+        if (weekData[bi].isToday) {
+          var grad = ctx.createLinearGradient(bx, by, bx, padTop + chartH)
+          grad.addColorStop(0, '#EF4444')
+          grad.addColorStop(1, '#FCA5A5')
+          ctx.fillStyle = grad
+        } else if (weekData[bi].count > 0) {
+          var grad2 = ctx.createLinearGradient(bx, by, bx, padTop + chartH)
+          grad2.addColorStop(0, '#F87171')
+          grad2.addColorStop(1, '#FECACA')
+          ctx.fillStyle = grad2
+        } else {
+          ctx.fillStyle = isDark ? 'rgba(148,163,184,0.1)' : '#F1F5F9'
+          bh = 4
+          by = padTop + chartH - bh
+        }
+
+        var r = Math.min(4, barW / 4)
+        ctx.beginPath()
+        ctx.moveTo(bx + r, by)
+        ctx.lineTo(bx + barW - r, by)
+        ctx.quadraticCurveTo(bx + barW, by, bx + barW, by + r)
+        ctx.lineTo(bx + barW, padTop + chartH)
+        ctx.lineTo(bx, padTop + chartH)
+        ctx.lineTo(bx, by + r)
+        ctx.quadraticCurveTo(bx, by, bx + r, by)
+        ctx.fill()
+
+        if (weekData[bi].count > 0) {
+          ctx.fillStyle = isDark ? '#F1F5F9' : '#1E293B'
+          ctx.font = 'bold 9px sans-serif'
+          ctx.textAlign = 'center'
+          ctx.fillText(weekData[bi].count, bx + barW / 2, by - 4)
+        }
+
+        ctx.fillStyle = weekData[bi].isToday ? '#EF4444' : (isDark ? '#94A3B8' : '#64748B')
+        ctx.font = (weekData[bi].isToday ? 'bold ' : '') + '10px sans-serif'
+        ctx.textAlign = 'center'
+        ctx.fillText(weekData[bi].dayLabel, bx + barW / 2, padTop + chartH + 16)
+      }
+
+      var goalLine = that.data.dailyGoal || 8
+      if (goalLine > 0 && goalLine <= maxCount) {
+        var goalY = padTop + chartH - (goalLine / maxCount) * chartH
+        ctx.setLineDash([4, 3])
+        ctx.strokeStyle = '#F59E0B'
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        ctx.moveTo(padLeft, goalY)
+        ctx.lineTo(padLeft + chartW, goalY)
+        ctx.stroke()
+        ctx.setLineDash([])
+        ctx.fillStyle = '#F59E0B'
+        ctx.font = '8px sans-serif'
+        ctx.textAlign = 'right'
+        ctx.fillText('目标', padLeft + chartW, goalY - 3)
+      }
+    })
+  },
+
+  copyResult: function() {
+    var text = '🍅 专注' + this.data.todayFocusMinutes + '分钟 | 今日完成' + this.data.todayPomodoroCount + '个番茄钟'
+    toolActions.copyText(text)
+  },
+
+  exportCSV: function() {
+    var allRecords = storageUtil.get('pomodoro_records', {})
+    var dateKeys = Object.keys(allRecords)
+    if (dateKeys.length === 0) {
+      wx.showToast({ title: this.data.i18n.noDataToExport, icon: 'none' })
+      return
+    }
+
+    var headers = [
+      { key: 'date', label: '日期' },
+      { key: 'time', label: '时间' },
+      { key: 'type', label: '类型' },
+      { key: 'duration', label: '时长(分钟)' }
+    ]
+
+    var rows = []
+    var sortedKeys = dateKeys.sort().reverse()
+    for (var k = 0; k < sortedKeys.length; k++) {
+      var dateKey = sortedKeys[k]
+      var dayRecords = allRecords[dateKey]
+      for (var r = 0; r < dayRecords.length; r++) {
+        var rec = dayRecords[r]
+        var dateStr = dateKey
+        if (dateKey.indexOf('Mon') !== -1 || dateKey.indexOf('Tue') !== -1 || dateKey.indexOf('Wed') !== -1) {
+          var d = new Date(dateKey)
+          if (!isNaN(d.getTime())) {
+            var yy = d.getFullYear()
+            var mm = d.getMonth() + 1
+            var dd = d.getDate()
+            dateStr = yy + '-' + (mm < 10 ? '0' + mm : '' + mm) + '-' + (dd < 10 ? '0' + dd : '' + dd)
+          }
+        }
+        rows.push({
+          date: dateStr,
+          time: rec.time || '',
+          type: rec.type === 'work' ? '专注' : '休息',
+          duration: rec.duration || 0
+        })
+      }
+    }
+
+    if (rows.length === 0) {
+      wx.showToast({ title: this.data.i18n.noDataToExport, icon: 'none' })
+      return
+    }
+
+    var csv = csvExport.generateCSV(headers, rows)
+    var fileName = csvExport.makeFileName('pomodoro')
+    csvExport.saveCSV(csv, fileName)
+  },
+
+  shareCSV: function() {
+    var allRecords = storageUtil.get('pomodoro_records', {})
+    var dateKeys = Object.keys(allRecords)
+    if (dateKeys.length === 0) {
+      wx.showToast({ title: this.data.i18n.noDataToShare, icon: 'none' })
+      return
+    }
+
+    var headers = [
+      { key: 'date', label: '日期' },
+      { key: 'time', label: '时间' },
+      { key: 'type', label: '类型' },
+      { key: 'duration', label: '时长(分钟)' }
+    ]
+
+    var rows = []
+    var sortedKeys = dateKeys.sort().reverse()
+    for (var k = 0; k < sortedKeys.length; k++) {
+      var dateKey = sortedKeys[k]
+      var dayRecords = allRecords[dateKey]
+      for (var r = 0; r < dayRecords.length; r++) {
+        var rec = dayRecords[r]
+        var dateStr = dateKey
+        if (dateKey.indexOf('Mon') !== -1 || dateKey.indexOf('Tue') !== -1 || dateKey.indexOf('Wed') !== -1) {
+          var d = new Date(dateKey)
+          if (!isNaN(d.getTime())) {
+            var yy = d.getFullYear()
+            var mm = d.getMonth() + 1
+            var dd = d.getDate()
+            dateStr = yy + '-' + (mm < 10 ? '0' + mm : '' + mm) + '-' + (dd < 10 ? '0' + dd : '' + dd)
+          }
+        }
+        rows.push({
+          date: dateStr,
+          time: rec.time || '',
+          type: rec.type === 'work' ? '专注' : '休息',
+          duration: rec.duration || 0
+        })
+      }
+    }
+
+    if (rows.length === 0) {
+      wx.showToast({ title: this.data.i18n.noDataToShare, icon: 'none' })
+      return
+    }
+
+    var csv = csvExport.generateCSV(headers, rows)
+    var fileName = csvExport.makeFileName('pomodoro')
+    csvExport.shareCSV(csv, fileName)
+  },
+
   onShareAppMessage: function() {
-    return { title: '\u756a\u8304\u8BA1\u65F6 - \u597D\u7528\u65B9\u4FBF\u7684\u5DE5\u5177\u96C6', path: '/pages/index/index' }
+    return poster.getShareConfig('🍅 番茄计时 - 百宝工具箱', '/package-life/pomodoro/pomodoro')
   },
   onShareTimeline: function() {
-    return { title: '' }
+    return poster.getTimelineConfig('🍅 番茄计时 - 百宝工具箱')
   }
 })

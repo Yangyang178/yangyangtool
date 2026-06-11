@@ -1,0 +1,115 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<view class="privacy-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}">
+  <view class="privacy-content">
+    <text class="privacy-title">{{i18n.mainTitle}}</text>
+    <text class="privacy-update">{{i18n.updateDate}}</text>
+    <text class="privacy-update">{{i18n.effectiveDate}}</text>
+
+    <text class="privacy-section-title">{{i18n.section1Title}}</text>
+    <text class="privacy-paragraph">{{i18n.section1Content}}</text>
+
+    <text class="privacy-section-title">{{i18n.section2Title}}</text>
+    <text class="privacy-paragraph">{{i18n.section2Intro}}</text>
+
+    <text class="privacy-sub-title">{{i18n.sub1Title}}</text>
+    <text class="privacy-paragraph">{{i18n.sub1Intro}}</text>
+    <text class="privacy-list">{{i18n.sub1Item1}}</text>
+    <text class="privacy-list">{{i18n.sub1Item2}}</text>
+    <text class="privacy-list">{{i18n.sub1Item3}}</text>
+    <text class="privacy-list">{{i18n.sub1Item4}}</text>
+    <text class="privacy-list">{{i18n.sub1Item5}}</text>
+    <text class="privacy-paragraph">{{i18n.sub1Api}}</text>
+
+    <text class="privacy-sub-title">{{i18n.sub2Title}}</text>
+    <text class="privacy-paragraph">{{i18n.sub2Intro}}</text>
+    <text class="privacy-list">{{i18n.sub2Item1}}</text>
+    <text class="privacy-paragraph">{{i18n.sub2Api}}</text>
+
+    <text class="privacy-sub-title">{{i18n.sub3Title}}</text>
+    <text class="privacy-paragraph">{{i18n.sub3Intro}}</text>
+    <text class="privacy-list">{{i18n.sub3Item1}}</text>
+    <text class="privacy-list">{{i18n.sub3Item2}}</text>
+    <text class="privacy-list">{{i18n.sub3Item3}}</text>
+    <text class="privacy-list">{{i18n.sub3Item4}}</text>
+    <text class="privacy-list">{{i18n.sub3Item5}}</text>
+    <text class="privacy-list">{{i18n.sub3Item6}}</text>
+    <text class="privacy-list">{{i18n.sub3Item7}}</text>
+    <text class="privacy-paragraph">{{i18n.sub3Api}}</text>
+
+    <text class="privacy-sub-title">{{i18n.sub4Title}}</text>
+    <text class="privacy-paragraph">{{i18n.sub4Intro}}</text>
+    <text class="privacy-list">{{i18n.sub4Item1}}</text>
+    <text class="privacy-paragraph">{{i18n.sub4Api}}</text>
+
+    <text class="privacy-sub-title">{{i18n.sub5Title}}</text>
+    <text class="privacy-paragraph">{{i18n.sub5Intro}}</text>
+    <text class="privacy-list">{{i18n.sub5Item1}}</text>
+    <text class="privacy-paragraph">{{i18n.sub5Api}}</text>
+
+    <text class="privacy-sub-title">{{i18n.sub6Title}}</text>
+    <text class="privacy-paragraph">{{i18n.sub6Intro}}</text>
+    <text class="privacy-list">{{i18n.sub6Item1}}</text>
+    <text class="privacy-list">{{i18n.sub6Item2}}</text>
+    <text class="privacy-list">{{i18n.sub6Item3}}</text>
+    <text class="privacy-paragraph">{{i18n.sub6Api}}</text>
+
+    <text class="privacy-sub-title">{{i18n.sub7Title}}</text>
+    <text class="privacy-paragraph">{{i18n.sub7Intro}}</text>
+    <text class="privacy-list">{{i18n.sub7Item1}}</text>
+    <text class="privacy-list">{{i18n.sub7Item2}}</text>
+    <text class="privacy-list">{{i18n.sub7Item3}}</text>
+    <text class="privacy-list">{{i18n.sub7Item4}}</text>
+    <text class="privacy-list">{{i18n.sub7Item5}}</text>
+    <text class="privacy-paragraph">{{i18n.sub7Api}}</text>
+
+    <text class="privacy-sub-title">{{i18n.sub8Title}}</text>
+    <text class="privacy-paragraph">{{i18n.sub8Intro}}</text>
+    <text class="privacy-list">{{i18n.sub8Item1}}</text>
+    <text class="privacy-list">{{i18n.sub8Item2}}</text>
+    <text class="privacy-list">{{i18n.sub8Item3}}</text>
+    <text class="privacy-list">{{i18n.sub8Item4}}</text>
+    <text class="privacy-paragraph">{{i18n.sub8Api}}</text>
+
+    <text class="privacy-section-title">{{i18n.section3Title}}</text>
+    <text class="privacy-paragraph">{{i18n.section3Intro}}</text>
+    <text class="privacy-list">{{i18n.section3Item1}}</text>
+    <text class="privacy-list">{{i18n.section3Item2}}</text>
+    <text class="privacy-list">{{i18n.section3Item3}}</text>
+    <text class="privacy-list">{{i18n.section3Item4}}</text>
+    <text class="privacy-list">{{i18n.section3Item5}}</text>
+
+    <text class="privacy-section-title">{{i18n.section4Title}}</text>
+    <text class="privacy-paragraph">{{i18n.section4Intro}}</text>
+    <text class="privacy-list">{{i18n.section4Item1}}</text>
+    <text class="privacy-list">{{i18n.section4Item2}}</text>
+    <text class="privacy-list">{{i18n.section4Item3}}</text>
+
+    <text class="privacy-section-title">{{i18n.section5Title}}</text>
+    <text class="privacy-paragraph">{{i18n.section5Item1}}</text>
+    <text class="privacy-paragraph">{{i18n.section5Item2}}</text>
+    <text class="privacy-paragraph">{{i18n.section5Item3}}</text>
+    <text class="privacy-paragraph">{{i18n.section5Item4}}</text>
+
+    <text class="privacy-section-title">{{i18n.section6Title}}</text>
+    <text class="privacy-paragraph">{{i18n.section6Intro}}</text>
+    <text class="privacy-list">{{i18n.section6Item1}}</text>
+    <text class="privacy-list">{{i18n.section6Item2}}</text>
+    <text class="privacy-list">{{i18n.section6Item3}}</text>
+    <text class="privacy-list">{{i18n.section6Item4}}</text>
+
+    <text class="privacy-section-title">{{i18n.section7Title}}</text>
+    <text class="privacy-paragraph">{{i18n.section7Content}}</text>
+
+    <text class="privacy-section-title">{{i18n.section8Title}}</text>
+    <text class="privacy-paragraph">{{i18n.section8Content}}</text>
+
+    <text class="privacy-section-title">{{i18n.section9Title}}</text>
+    <text class="privacy-paragraph">{{i18n.section9Intro}}</text>
+    <text class="privacy-list">{{i18n.section9Item1}}</text>
+    <text class="privacy-list">{{i18n.section9Item2}}</text>
+    <text class="privacy-paragraph">{{i18n.section9Outro}}</text>
+
+    <view class="privacy-bottom-space"></view>
+  </view>
+</view>

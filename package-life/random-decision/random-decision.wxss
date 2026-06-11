@@ -16,6 +16,21 @@ page { background-color: var(--pageBg,#F8FAFC); }
 .input-section { background: var(--cardBg,#FFFFFF); border-radius: 20px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 20px; }
 .section-label { font-size: 15px; font-weight: 600; color: var(--textPrimary,#1E293B); display: block; margin-bottom: 14px; }
 
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.section-header .section-label { margin-bottom: 0; }
+.weight-toggle { padding: 6px 12px; border-radius: 8px; background: var(--surfaceBg,#F1F5F9); }
+.weight-toggle-text { font-size: 12px; font-weight: 600; color: var(--accentYellow,#F59E0B); }
+
+.weight-badge { padding: 2px 8px; border-radius: 6px; background: rgba(249,115,22,0.12); font-size: 11px; font-weight: 700; color: #F97316; margin-left: 8px; flex-shrink: 0; }
+
+.weight-panel { background: var(--surfaceBg,#F8FAFC); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+.weight-panel-title { font-size: 12px; font-weight: 600; color: var(--textSecondary,#64748B); display: block; margin-bottom: 12px; }
+.weight-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--borderLight,#E2E8F0); }
+.weight-row:last-child { border-bottom: none; }
+.weight-name { font-size: 14px; font-weight: 500; color: var(--textPrimary,#1E293B); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 12px; }
+.weight-control { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.weight-input { width: 48px; height: 32px; border-radius: 8px; background: var(--cardBg,#FFFFFF); text-align: center; font-size: 15px; font-weight: 700; color: #F97316; border: 1.5px solid var(--borderLight,#E2E8F0); padding: 0; }
+
 .option-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; min-height: 60px; }
 .option-item { display: flex; align-items: center; padding: 14px 16px; background: var(--pageBg,#F8FAFC); border-radius: 12px; transition: all 0.2s ease; border: 2px solid transparent; }
 .option-item.selected { background: linear-gradient(135deg, var(--bgTipYellowDeep,#FEF3C7) 0%, #FDE68A 100%); border-color: var(--accentYellow,#F59E0B); }
@@ -70,6 +85,47 @@ page { background-color: var(--pageBg,#F8FAFC); }
 
 /* 历史记录 */
 .history-section { background: var(--cardBg,#FFFFFF); border-radius: 20px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 20px; }
+
+.mode-tabs { display: flex; gap: 6px; margin-bottom: 16px; background: var(--surfaceBg,#F1F5F9); border-radius: 14px; padding: 4px; overflow-x: auto; white-space: nowrap; }
+.mode-tab { flex-shrink: 0; text-align: center; padding: 10px 12px; border-radius: 11px; font-size: 12px; font-weight: 600; color: var(--textSecondary,#64748B); transition: all 0.2s; }
+.mode-tab.active { background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); color: #FFFFFF; box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3); }
+
+.dice-section, .number-section, .lottery-section { background: var(--cardBg,#FFFFFF); border-radius: 20px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 16px; }
+.dice-count-row { display: flex; gap: 8px; margin: 12px 0 20px; }
+.dice-count-btn { flex: 1; text-align: center; padding: 10px 0; border-radius: 12px; font-size: 15px; font-weight: 700; background: var(--surfaceBg,#F1F5F9); color: var(--textSecondary,#64748B); }
+.dice-count-btn.active { background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); color: #FFFFFF; }
+.dice-display { display: flex; justify-content: center; gap: 16px; margin: 20px 0; flex-wrap: wrap; }
+.dice-item { width: 72px; height: 72px; background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border: 2px solid #F59E0B; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(245,158,11,0.15); }
+.dice-item.rolling { animation: dice-shake 0.1s infinite; }
+.dice-face { font-size: 36px; font-weight: 800; color: #EA580C; }
+.dice-total { text-align: center; margin-bottom: 16px; }
+.dice-total-label { font-size: 13px; color: var(--textTertiary,#94A3B8); margin-right: 8px; }
+.dice-total-value { font-size: 28px; font-weight: 800; color: #F97316; }
+
+.number-range-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.number-input-group { flex: 1; }
+.number-label { font-size: 12px; font-weight: 600; color: var(--textTertiary,#94A3B8); display: block; margin-bottom: 6px; }
+.number-input { background: var(--surfaceBg,#F8FAFC); border-radius: 12px; padding: 12px 16px; font-size: 18px; font-weight: 700; color: var(--textPrimary,#1E293B); text-align: center; }
+.number-sep { font-size: 24px; font-weight: 800; color: var(--textTertiary,#94A3B8); }
+.number-result { text-align: center; margin: 20px 0; }
+.number-result-value { font-size: 56px; font-weight: 900; color: #3B82F6; }
+.number-result-value.rolling { animation: number-flash 0.1s infinite; }
+
+.lottery-textarea { background: var(--surfaceBg,#F8FAFC); border-radius: 12px; padding: 14px 16px; font-size: 14px; color: var(--textPrimary,#1E293B); width: 100%; min-height: 80px; margin-top: 8px; box-sizing: border-box; }
+.lottery-count-row { display: flex; align-items: center; gap: 12px; margin-top: 16px; margin-bottom: 20px; }
+.lottery-count-label { font-size: 14px; font-weight: 600; color: var(--textSecondary,#64748B); }
+.lottery-count-btns { display: flex; gap: 8px; flex: 1; }
+.lottery-count-btn { flex: 1; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; background: var(--surfaceBg,#F1F5F9); color: var(--textSecondary,#64748B); transition: all 0.2s ease; }
+.lottery-count-btn.active { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); color: #FFFFFF; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+.lottery-result { margin: 20px 0; text-align: center; }
+.lottery-result-title { font-size: 15px; font-weight: 700; color: var(--textPrimary,#1E293B); display: block; margin-bottom: 10px; }
+.lottery-result-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.lottery-result-item { padding: 8px 18px; background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border-radius: 20px; font-size: 15px; font-weight: 700; color: #92400E; }
+.lottery-result-item.rolling { opacity: 0.6; }
+.lottery-action { margin-top: 24px; }
+
+@keyframes dice-shake { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+@keyframes number-flash { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
 .history-title { font-size: 16px; font-weight: 700; color: var(--textPrimary,#1E293B); display: block; margin-bottom: 14px; }
 .history-list { max-height: 180px; margin-bottom: 12px; }
 .history-item { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--pageBg,#F8FAFC); }
@@ -83,6 +139,29 @@ page { background-color: var(--pageBg,#F8FAFC); }
 .tips-title { font-size: 15px; font-weight: 600; color: #9A3412; display: block; margin-bottom: 12px; }
 .tips-content { display: flex; flex-direction: column; gap: 6px; }
 .tip-item { font-size: 13px; color: #9A3412; line-height: 1.5; }
+
+.wheel-section { margin-bottom: 16px; }
+.wheel-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; position: relative; }
+.wheel-pointer-wrap { z-index: 10; margin-bottom: -14px; position: relative; }
+.wheel-pointer-arrow { width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 24px solid #EF4444; filter: drop-shadow(0 3px 4px rgba(239,68,68,0.4)); position: relative; }
+.wheel-pointer-arrow::after { content: ''; position: absolute; top: -24px; left: -10px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 18px solid #F87171; }
+.wheel-wrapper { width: 280px; height: 280px; border-radius: 50%; overflow: hidden; }
+.wheel-canvas { width: 280px; height: 280px; display: block; }
+.wheel-result-section { margin-bottom: 16px; }
+
+.stats-section { background: var(--cardBg,#FFFFFF); border-radius: 20px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 16px; }
+.stats-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.stats-title { font-size: 16px; font-weight: 700; color: var(--textPrimary,#1E293B); }
+.stats-actions { display: flex; align-items: center; gap: 12px; }
+.stats-toggle { font-size: 13px; font-weight: 600; color: #F97316; }
+.stats-clear { font-size: 16px; }
+.stats-list { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+.stats-item { display: flex; flex-direction: column; gap: 6px; }
+.stats-info { display: flex; align-items: center; justify-content: space-between; }
+.stats-name { font-size: 14px; font-weight: 600; color: var(--textPrimary,#1E293B); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stats-count { font-size: 12px; font-weight: 600; color: var(--textSecondary,#64748B); }
+.stats-bar-bg { height: 8px; border-radius: 4px; background: var(--surfaceBg,#F1F5F9); overflow: hidden; }
+.stats-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #F97316 0%, #EA580C 100%); transition: width 0.5s ease; min-width: 4px; }
 
 /* ===================================
    🌙 夜间模式完整适配 - 橙色主题
@@ -212,4 +291,68 @@ page { background-color: var(--pageBg,#F8FAFC); }
 
 .dark-mode .tip-item {
   color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .weight-toggle {
+  background: var(--elevatedBg,#232d42);
+}
+
+.dark-mode .weight-toggle-text {
+  color: var(--accentOrange,#FB923C);
+}
+
+.dark-mode .weight-badge {
+  background: rgba(249,115,22,0.18);
+  color: #FB923C;
+}
+
+.dark-mode .weight-panel {
+  background: var(--elevatedBg,#232d42);
+}
+
+.dark-mode .weight-panel-title {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .weight-row {
+  border-bottom-color: var(--borderLight,#374151);
+}
+
+.dark-mode .weight-name {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .weight-input {
+  background: var(--cardBg,#1a2035);
+  color: #FB923C;
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .stats-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+
+.dark-mode .stats-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .stats-toggle {
+  color: #FB923C;
+}
+
+.dark-mode .stats-name {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .stats-count {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .stats-bar-bg {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .stats-bar {
+  background: linear-gradient(90deg, #FB923C 0%, #F97316 100%);
 }

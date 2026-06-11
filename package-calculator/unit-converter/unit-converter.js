@@ -1,4 +1,13 @@
-const UNITS_DATA = {
+var storageUtil = require('../../utils/storage.js')
+var logger = require('../../utils/logger.js')
+var toolActions = require('../utils/tool-actions.js')
+var poster = require('../utils/poster.js')
+var i18n = require('../../utils/i18n.js')
+
+var FAVORITES_KEY = 'unit_converter_favorites'
+var RECENT_KEY = 'unit_converter_recent'
+
+var UNITS_DATA = {
   length: [
     { name: '光年', factor: 9.461e15 },
     { name: '千米', factor: 1000 },
@@ -135,11 +144,113 @@ const UNITS_DATA = {
     { name: '英尺-磅(ft·lbf)', factor: 1.35582 },
     { name: '尔格(erg)', factor: 1e-7 },
     { name: '吨TNT当量', factor: 4184000000 }
+  ],
+  fuel: [
+    { name: 'L/100km', factor: 1 },
+    { name: 'km/L', factor: 100 },
+    { name: 'MPG(美)', factor: 42.517 },
+    { name: 'MPG(英)', factor: 35.406 },
+    { name: '英里/英制加仑', factor: 35.406 },
+    { name: '英里/美制加仑', factor: 42.517 }
+  ],
+  power: [
+    { name: '瓦特(W)', factor: 1 },
+    { name: '千瓦(kW)', factor: 1000 },
+    { name: '兆瓦(MW)', factor: 1000000 },
+    { name: '马力(公制)', factor: 735.499 },
+    { name: '马力(英制)', factor: 745.7 },
+    { name: '英热单位/时(BTU/h)', factor: 0.293071 },
+    { name: '焦耳/秒(J/s)', factor: 1 },
+    { name: '千卡/分(kcal/min)', factor: 69.7333 },
+    { name: '英尺-磅/秒(ft·lbf/s)', factor: 1.35582 }
+  ],
+  angle: [
+    { name: '度(°)', factor: 1 },
+    { name: '弧度(rad)', factor: 57.2958 },
+    { name: '梯度(grad)', factor: 0.9 },
+    { name: '角分(\')', factor: 0.0166667 },
+    { name: '角秒(")', factor: 0.000277778 },
+    { name: '圈(turn)', factor: 360 },
+    { name: '毫弧度(mrad)', factor: 0.0572958 }
+  ]
+}
+
+var CONVERSION_LISTS = {
+  length: [
+    { from: '1 千米', to: '1000 米' },
+    { from: '1 米', to: '100 厘米' },
+    { from: '1 英寸', to: '2.54 厘米' },
+    { from: '1 英尺', to: '0.3048 米' },
+    { from: '1 海里', to: '1.852 千米' }
+  ],
+  weight: [
+    { from: '1 千克', to: '1000 克' },
+    { from: '1 斤', to: '500 克' },
+    { from: '1 磅', to: '453.59 克' },
+    { from: '1 吨', to: '1000 千克' },
+    { from: '1 盎司', to: '28.35 克' }
+  ],
+  temperature: [
+    { from: '0°C', to: '32°F' },
+    { from: '100°C', to: '212°F' },
+    { from: '0°C', to: '273.15K' },
+    { from: '-273.15°C', to: '0K' },
+    { from: '37°C', to: '98.6°F (体温)' }
+  ],
+  area: [
+    { from: '1 公顷', to: '10000 平方米' },
+    { from: '1 亩', to: '666.67 平方米' },
+    { from: '1 平方千米', to: '100 公顷' },
+    { from: '1 平方英里', to: '2.59 平方千米' },
+    { from: '1 英亩', to: '4046.86 平方米' }
+  ],
+  volume: [
+    { from: '1 升', to: '1000 毫升' },
+    { from: '1 加仑(美)', to: '3.78541 升' },
+    { from: '1 桶(石油)', to: '158.987 升' },
+    { from: '1 立方米', to: '1000 升' },
+    { from: '1 杯(美)', to: '236.588 毫升' }
+  ],
+  time: [
+    { from: '1 天', to: '24 小时' },
+    { from: '1 小时', to: '60 分钟' },
+    { from: '1 分钟', to: '60 秒' },
+    { from: '1 年(365天)', to: '8760 小时' },
+    { from: '1 周', to: '168 小时' }
+  ],
+  speed: [
+    { from: '100 千米/时', to: '27.78 米/秒' },
+    { from: '60 英里/时', to: '96.56 千米/时' },
+    { from: '1 马赫(20°C)', to: '343 米/秒' },
+    { from: '1 节', to: '1.852 千米/时' },
+    { from: '光速', to: '299,792,458 米/秒' }
+  ],
+  data: [
+    { from: '1 GB', to: '1024 MB' },
+    { from: '1 MB', to: '1024 KB' },
+    { from: '1 KB', to: '1024 字节' },
+    { from: '1 TB', to: '1024 GB' },
+    { from: '8 bit', to: '1 字节' }
+  ],
+  pressure: [
+    { from: '1 标准大气压', to: '101.325 kPa' },
+    { from: '1 巴(bar)', to: '100 kPa' },
+    { from: '1 psi', to: '6.89476 kPa' },
+    { from: '760 mmHg', to: '1 标准大气压' },
+    { from: '1 工程大气压', to: '98.0665 kPa' }
+  ],
+  energy: [
+    { from: '1 kWh', to: '3.6 MJ' },
+    { from: '1 kcal', to: '4184 J' },
+    { from: '1 BTU', to: '1055.06 J' },
+    { from: '1 电子伏特(eV)', to: '1.602×10⁻¹⁹ J' },
+    { from: '1 吨 TNT 当量', to: '4.184 GJ' }
   ]
 }
 
 Page({
   data: {
+    i18n: {},
     currentCategory: 'length',
     inputValue: '',
     resultValue: '0',
@@ -149,7 +260,14 @@ Page({
     showUnitPicker: false,
     pickerType: 'from',
     currentUnits: [],
-
+    favorites: [],
+    recentUsed: [],
+    showFavorites: false,
+    showRecent: false,
+    exchangeRate: null,
+    exchangeLoading: false,
+    isDarkMode: false,
+    fontSizeSetting: 'medium',
     categories: [
       { id: 'length', name: '长度', icon: '📏' },
       { id: 'weight', name: '重量', icon: '⚖️' },
@@ -158,264 +276,394 @@ Page({
       { id: 'volume', name: '体积', icon: '🧊' },
       { id: 'time', name: '时间', icon: '⏰' },
       { id: 'speed', name: '速度', icon: '💨' },
-      { id: 'data', name: '数据存储', icon: '💾' },
+      { id: 'data', name: '数据', icon: '💾' },
       { id: 'pressure', name: '压强', icon: '🔵' },
-      { id: 'energy', name: '能量', icon: '⚡' }
+      { id: 'energy', name: '能量', icon: '⚡' },
+      { id: 'power', name: '功率', icon: '🔌' },
+      { id: 'fuel', name: '油耗', icon: '⛽' },
+      { id: 'angle', name: '角度', icon: '📐' }
     ],
-
     conversionList: []
   },
 
-  onLoad() {
+  onLoad: function() {
+    this.setData({ i18n: i18n.getToolPageTexts('unit') })
+    var i18nTexts = this.data.i18n
+    this.setData({
+      categories: [
+        { id: 'length', name: i18nTexts.catLength, icon: '📏' },
+        { id: 'weight', name: i18nTexts.catWeight, icon: '⚖️' },
+        { id: 'temperature', name: i18nTexts.catTemperature, icon: '🌡️' },
+        { id: 'area', name: i18nTexts.catArea, icon: '⬜' },
+        { id: 'volume', name: i18nTexts.catVolume, icon: '🧊' },
+        { id: 'time', name: i18nTexts.catTime, icon: '⏰' },
+        { id: 'speed', name: i18nTexts.catSpeed, icon: '💨' },
+        { id: 'data', name: i18nTexts.catData, icon: '💾' },
+        { id: 'pressure', name: i18nTexts.catPressure, icon: '🔵' },
+        { id: 'energy', name: i18nTexts.catEnergy, icon: '⚡' },
+        { id: 'power', name: i18nTexts.catPower, icon: '🔌' },
+        { id: 'fuel', name: i18nTexts.catFuel, icon: '⛽' },
+        { id: 'angle', name: i18nTexts.catAngle, icon: '📐' }
+      ]
+    })
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
+    var tracker = getApp().tracker
+    if (tracker) tracker.pageView('单位换算')
+    var app = getApp()
+    var isDark = app.globalData.isDarkMode || false
+    this.setData({ isDarkMode: isDark })
     this.updateConversionList()
     this.calculate()
+    this._loadFavorites()
+    this._loadRecent()
+    this._loadExchangeRate()
+    poster.setupForPage(this, 2)
   },
 
-  onCategoryChange(e) {
-    const categoryId = e.currentTarget.dataset.id
-    const category = UNITS_DATA[categoryId]
+  onShow: function() {
+    this.setData({ i18n: i18n.getToolPageTexts('unit') })
+    var i18nTexts = this.data.i18n
+    this.setData({
+      categories: [
+        { id: 'length', name: i18nTexts.catLength, icon: '📏' },
+        { id: 'weight', name: i18nTexts.catWeight, icon: '⚖️' },
+        { id: 'temperature', name: i18nTexts.catTemperature, icon: '🌡️' },
+        { id: 'area', name: i18nTexts.catArea, icon: '⬜' },
+        { id: 'volume', name: i18nTexts.catVolume, icon: '🧊' },
+        { id: 'time', name: i18nTexts.catTime, icon: '⏰' },
+        { id: 'speed', name: i18nTexts.catSpeed, icon: '💨' },
+        { id: 'data', name: i18nTexts.catData, icon: '💾' },
+        { id: 'pressure', name: i18nTexts.catPressure, icon: '🔵' },
+        { id: 'energy', name: i18nTexts.catEnergy, icon: '⚡' },
+        { id: 'power', name: i18nTexts.catPower, icon: '🔌' },
+        { id: 'fuel', name: i18nTexts.catFuel, icon: '⛽' },
+        { id: 'angle', name: i18nTexts.catAngle, icon: '📐' }
+      ]
+    })
+    var app = getApp()
+    var isDark = app.globalData.isDarkMode || false
+    this.setData({ isDarkMode: isDark })
+    var fontSize = storageUtil.get('fontSizeSetting', 'medium')
+    this.setData({ fontSizeSetting: fontSize })
+  },
 
-    if (!category || category.length === 0) {
-      return
-    }
-
-    const firstUnit = category[0].name || category[0].type || ''
-    const secondUnit = category[1] ? (category[1].name || category[1].type) : firstUnit
-
+  onCategoryChange: function(e) {
+    var categoryId = e.currentTarget.dataset.id
+    var category = UNITS_DATA[categoryId]
+    if (!category || category.length === 0) return
+    var firstUnit = category[0].name || category[0].type || ''
+    var secondUnit = category[1] ? (category[1].name || category[1].type) : firstUnit
     this.setData({
       currentCategory: categoryId,
       fromUnit: firstUnit,
       toUnit: secondUnit,
       inputValue: '',
-      resultValue: '0'})
-  
-      this.updateConversionList()
+      resultValue: '0'
+    })
+    this.updateConversionList()
     wx.vibrateShort({ type: 'light' })
   },
 
-  onInput(e) {
-    const value = e.detail.value
+  onInput: function(e) {
+    var value = e.detail.value
     this.setData({ inputValue: value })
     this.calculate()
   },
 
-  showFromUnit() {
-    const units = UNITS_DATA[this.data.currentCategory]
-
+  showFromUnit: function() {
+    var units = UNITS_DATA[this.data.currentCategory]
     if (!units || units.length === 0) {
-      wx.showToast({ title: '暂无可用单位', icon: 'none' })
+      wx.showToast({ title: this.data.i18n.noUnits, icon: 'none' })
       return
     }
-
-    this.setData({
-      showUnitPicker: true,
-      pickerType: 'from',
-      currentUnits: units
-    })
-
+    this.setData({ showUnitPicker: true, pickerType: 'from', currentUnits: units })
     wx.vibrateShort({ type: 'light' })
   },
 
-  showToUnit() {
-    const units = UNITS_DATA[this.data.currentCategory]
-
+  showToUnit: function() {
+    var units = UNITS_DATA[this.data.currentCategory]
     if (!units || units.length === 0) {
-      wx.showToast({ title: '暂无可用单位', icon: 'none' })
+      wx.showToast({ title: this.data.i18n.noUnits, icon: 'none' })
       return
     }
-
-    this.setData({
-      showUnitPicker: true,
-      pickerType: 'to',
-      currentUnits: units
-    })
-
+    this.setData({ showUnitPicker: true, pickerType: 'to', currentUnits: units })
     wx.vibrateShort({ type: 'light' })
   },
 
-  hideUnitPicker() {
+  hideUnitPicker: function() {
     this.setData({ showUnitPicker: false })
   },
 
-  selectUnit(e) {
-    const unitName = e.currentTarget.dataset.name
-
+  selectUnit: function(e) {
+    var unitName = e.currentTarget.dataset.name
     if (this.data.pickerType === 'from') {
       this.setData({ fromUnit: unitName })
     } else {
       this.setData({ toUnit: unitName })
     }
-
     this.hideUnitPicker()
     this.calculate()
   },
 
-  swapUnits() {
+  swapUnits: function() {
     wx.vibrateShort({ type: 'light' })
-    
-    const temp = this.data.fromUnit
-    this.setData({
-      fromUnit: this.data.toUnit,
-      toUnit: temp
-    })
+    var temp = this.data.fromUnit
+    this.setData({ fromUnit: this.data.toUnit, toUnit: temp })
     this.calculate()
   },
 
-  calculate() {
+  _findUnit: function(category, unitName) {
+    for (var i = 0; i < category.length; i++) {
+      if ((category[i].name || category[i].type) === unitName) return category[i]
+    }
+    return null
+  },
+
+  calculate: function() {
     if (!this.data.inputValue || parseFloat(this.data.inputValue) === 0) {
       this.setData({ resultValue: '0' })
       return
     }
-
-    const value = parseFloat(this.data.inputValue)
-    const category = UNITS_DATA[this.data.currentCategory]
-
-    if (!category) {
-      console.log('未找到类别:', this.data.currentCategory)
-      return
-    }
+    var value = parseFloat(this.data.inputValue)
+    var category = UNITS_DATA[this.data.currentCategory]
+    if (!category) return
 
     if (this.data.currentCategory === 'temperature') {
       this.calculateTemperature(value)
     } else {
-      const fromUnit = category.find(u => (u.name || u.type) === this.data.fromUnit)
-      const toUnit = category.find(u => (u.name || u.type) === this.data.toUnit)
-
+      var fromUnit = this._findUnit(category, this.data.fromUnit)
+      var toUnit = this._findUnit(category, this.data.toUnit)
       if (fromUnit && toUnit && typeof fromUnit.factor !== 'undefined' && typeof toUnit.factor !== 'undefined') {
         if (toUnit.factor === 0) {
-          this.setData({ resultValue: '除数不能为0' })
+          this.setData({ resultValue: this.data.i18n.divByZero })
           return
         }
-        const result = (value * fromUnit.factor / toUnit.factor).toFixed(4)
+        var result = (value * fromUnit.factor / toUnit.factor).toFixed(4)
         this.setData({ resultValue: result.replace(/\.?0+$/, '') })
+        this._addRecent()
+        var tracker = getApp().tracker
+        if (tracker) tracker.toolUse(2, '单位换算', false)
       } else {
-        console.log('未找到单位:', this.data.fromUnit, this.data.toUnit)
-        this.setData({ resultValue: '换算失败' })
+        this.setData({ resultValue: this.data.i18n.convertFailed })
       }
     }
   },
 
-  calculateTemperature(value) {
-    let result = 0
-
+  calculateTemperature: function(value) {
+    var result = 0
     if (this.data.fromUnit === '摄氏度') {
-      if (this.data.toUnit === '华氏度') result = value * 9/5 + 32
+      if (this.data.toUnit === '华氏度') result = value * 9 / 5 + 32
       else if (this.data.toUnit === '开尔文') result = value + 273.15
-      else if (this.data.toUnit === '兰氏度') result = (value + 273.15) * 9/5
+      else if (this.data.toUnit === '兰氏度') result = (value + 273.15) * 9 / 5
       else result = value
     } else if (this.data.fromUnit === '华氏度') {
-      if (this.data.toUnit === '摄氏度') result = (value - 32) * 5/9
-      else if (this.data.toUnit === '开尔文') result = (value - 32) * 5/9 + 273.15
+      if (this.data.toUnit === '摄氏度') result = (value - 32) * 5 / 9
+      else if (this.data.toUnit === '开尔文') result = (value - 32) * 5 / 9 + 273.15
       else if (this.data.toUnit === '兰氏度') result = value + 459.67
       else result = value
     } else if (this.data.fromUnit === '开尔文') {
       if (this.data.toUnit === '摄氏度') result = value - 273.15
-      else if (this.data.toUnit === '华氏度') result = (value - 273.15) * 9/5 + 32
-      else if (this.data.toUnit === '兰氏度') result = value * 9/5
+      else if (this.data.toUnit === '华氏度') result = (value - 273.15) * 9 / 5 + 32
+      else if (this.data.toUnit === '兰氏度') result = value * 9 / 5
       else result = value
     } else {
-      if (this.data.toUnit === '摄氏度') result = (value - 491.67) * 5/9
+      if (this.data.toUnit === '摄氏度') result = (value - 491.67) * 5 / 9
       else if (this.data.toUnit === '华氏度') result = value - 459.67
-      else if (this.data.toUnit === '开尔文') result = value * 5/9
+      else if (this.data.toUnit === '开尔文') result = value * 5 / 9
       else result = value
     }
-
     this.setData({ resultValue: result.toFixed(2) })
+    this._addRecent()
+    var tracker = getApp().tracker
+    if (tracker) tracker.toolUse(2, '单位换算', false)
   },
 
-  updateConversionList() {
-    const lists = {
-      length: [
-        { from: '1 千米', to: '1000 米' },
-        { from: '1 米', to: '100 厘米' },
-        { from: '1 英寸', to: '2.54 厘米' },
-        { from: '1 英尺', to: '0.3048 米' },
-        { from: '1 海里', to: '1.852 千米' }
-      ],
-      weight: [
-        { from: '1 千克', to: '1000 克' },
-        { from: '1 斤', to: '500 克' },
-        { from: '1 磅', to: '453.59 克' },
-        { from: '1 吨', to: '1000 千克' },
-        { from: '1 盎司', to: '28.35 克' }
-      ],
-      temperature: [
-        { from: '0°C', to: '32°F' },
-        { from: '100°C', to: '212°F' },
-        { from: '0°C', to: '273.15K' },
-        { from: '-273.15°C', to: '0K' },
-        { from: '37°C', to: '98.6°F (体温)' }
-      ],
-      area: [
-        { from: '1 公顷', to: '10000 平方米' },
-        { from: '1 亩', to: '666.67 平方米' },
-        { from: '1 平方千米', to: '100 公顷' },
-        { from: '1 平方英里', to: '2.59 平方千米' },
-        { from: '1 英亩', to: '4046.86 平方米' }
-      ],
-      volume: [
-        { from: '1 升', to: '1000 毫升' },
-        { from: '1 加仑(美)', to: '3.78541 升' },
-        { from: '1 桶(石油)', to: '158.987 升' },
-        { from: '1 立方米', to: '1000 升' },
-        { from: '1 杯(美)', to: '236.588 毫升' }
-      ],
-      time: [
-        { from: '1 天', to: '24 小时' },
-        { from: '1 小时', to: '60 分钟' },
-        { from: '1 分钟', to: '60 秒' },
-        { from: '1 年(365天)', to: '8760 小时' },
-        { from: '1 周', to: '168 小时' }
-      ],
-      speed: [
-        { from: '100 千米/时', to: '27.78 米/秒' },
-        { from: '60 英里/时', to: '96.56 千米/时' },
-        { from: '1 马赫(20°C)', to: '343 米/秒' },
-        { from: '1 节', to: '1.852 千米/时' },
-        { from: '光速', to: '299,792,458 米/秒' }
-      ],
-      data: [
-        { from: '1 GB', to: '1024 MB' },
-        { from: '1 MB', to: '1024 KB' },
-        { from: '1 KB', to: '1024 字节' },
-        { from: '1 TB', to: '1024 GB' },
-        { from: '8 bit', to: '1 字节' }
-      ],
-      pressure: [
-        { from: '1 标准大气压', to: '101.325 kPa' },
-        { from: '1 巴(bar)', to: '100 kPa' },
-        { from: '1 psi', to: '6.89476 kPa' },
-        { from: '760 mmHg', to: '1 标准大气压' },
-        { from: '1 工程大气压', to: '98.0665 kPa' }
-      ],
-      energy: [
-        { from: '1 kWh', to: '3.6 MJ' },
-        { from: '1 kcal', to: '4184 J' },
-        { from: '1 BTU', to: '1055.06 J' },
-        { from: '1 电子伏特(eV)', to: '1.602×10⁻¹⁹ J' },
-        { from: '1 吨 TNT 当量', to: '4.184 GJ' }
-      ]
-    }
-
-    this.setData({ conversionList: lists[this.data.currentCategory] })
+  updateConversionList: function() {
+    this.setData({ conversionList: CONVERSION_LISTS[this.data.currentCategory] || [] })
   },
 
-  copyResult() {
+  copyResult: function() {
     wx.vibrateShort({ type: 'light' })
-    
-    const text = `${this.data.inputValue} ${this.data.fromUnit} = ${this.data.resultValue} ${this.data.toUnit}`
-    
+    var text = this.data.inputValue + ' ' + this.data.fromUnit + ' = ' + this.data.resultValue + ' ' + this.data.toUnit
     wx.setClipboardData({
       data: text,
-      success: () => {
-        wx.showToast({ title: '已复制', icon: 'success' })
-      }
+      success: function() { wx.showToast({ title: that.data.i18n.copied, icon: 'success' }) }
     })
   },
-  onShareAppMessage() {
-    return { title: '单位换算 - 好用方便的工具集', path: '/pages/index/index' }
+
+  addFavorite: function() {
+    var pair = {
+      category: this.data.currentCategory,
+      fromUnit: this.data.fromUnit,
+      toUnit: this.data.toUnit,
+      label: this.data.fromUnit + ' → ' + this.data.toUnit
+    }
+    var favs = this.data.favorites.slice()
+    for (var i = 0; i < favs.length; i++) {
+      if (favs[i].category === pair.category && favs[i].fromUnit === pair.fromUnit && favs[i].toUnit === pair.toUnit) {
+        wx.showToast({ title: this.data.i18n.alreadyFav, icon: 'none' })
+        return
+      }
+    }
+    if (favs.length >= 20) {
+      wx.showToast({ title: this.data.i18n.maxFav, icon: 'none' })
+      return
+    }
+    favs.unshift(pair)
+    this.setData({ favorites: favs })
+    this._saveFavorites(favs)
+    wx.vibrateShort({ type: 'light' })
+    wx.showToast({ title: this.data.i18n.favAdded, icon: 'success' })
   },
-  onShareTimeline() {
-    return { title: '' }
+
+  removeFavorite: function(e) {
+    var idx = e.currentTarget.dataset.index
+    var favs = this.data.favorites.slice()
+    favs.splice(idx, 1)
+    this.setData({ favorites: favs })
+    this._saveFavorites(favs)
+    wx.vibrateShort({ type: 'light' })
+  },
+
+  useFavorite: function(e) {
+    var idx = e.currentTarget.dataset.index
+    var fav = this.data.favorites[idx]
+    if (!fav) return
+    wx.vibrateShort({ type: 'light' })
+    this.setData({
+      currentCategory: fav.category,
+      fromUnit: fav.fromUnit,
+      toUnit: fav.toUnit,
+      showFavorites: false
+    })
+    this.updateConversionList()
+    this.calculate()
+  },
+
+  toggleFavorites: function() {
+    this.setData({ showFavorites: !this.data.showFavorites, showRecent: false })
+  },
+
+  _loadFavorites: function() {
+    var favs = storageUtil.safeGetArray(FAVORITES_KEY)
+    if (favs && favs.length > 0) this.setData({ favorites: favs })
+  },
+
+  _saveFavorites: function(favs) {
+    try { wx.setStorageSync(FAVORITES_KEY, favs) } catch (e) {}
+  },
+
+  toggleRecent: function() {
+    this.setData({ showRecent: !this.data.showRecent, showFavorites: false })
+  },
+
+  useRecent: function(e) {
+    var idx = e.currentTarget.dataset.index
+    var item = this.data.recentUsed[idx]
+    if (!item) return
+    wx.vibrateShort({ type: 'light' })
+    this.setData({
+      currentCategory: item.category,
+      fromUnit: item.fromUnit,
+      toUnit: item.toUnit,
+      inputValue: item.inputValue || '',
+      showRecent: false
+    })
+    this.updateConversionList()
+    this.calculate()
+  },
+
+  clearRecent: function() {
+    this.setData({ recentUsed: [] })
+    try { wx.removeStorageSync(RECENT_KEY) } catch (e) {}
+    wx.vibrateShort({ type: 'light' })
+  },
+
+  _addRecent: function() {
+    var item = {
+      category: this.data.currentCategory,
+      fromUnit: this.data.fromUnit,
+      toUnit: this.data.toUnit,
+      inputValue: this.data.inputValue,
+      time: this._formatTime(new Date())
+    }
+    var recent = this.data.recentUsed.slice()
+    for (var i = 0; i < recent.length; i++) {
+      if (recent[i].category === item.category && recent[i].fromUnit === item.fromUnit && recent[i].toUnit === item.toUnit) {
+        recent.splice(i, 1)
+        break
+      }
+    }
+    recent.unshift(item)
+    if (recent.length > 10) recent = recent.slice(0, 10)
+    this.setData({ recentUsed: recent })
+    try { wx.setStorageSync(RECENT_KEY, recent) } catch (e) {}
+  },
+
+  _loadRecent: function() {
+    var recent = storageUtil.safeGetArray(RECENT_KEY)
+    if (recent && recent.length > 0) this.setData({ recentUsed: recent })
+  },
+
+  _formatTime: function(date) {
+    var h = date.getHours()
+    var m = date.getMinutes()
+    return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m
+  },
+
+  _loadExchangeRate: function() {
+    var cached = storageUtil.get('cachedRates', null)
+    if (!cached) return
+    var rates = {}
+    var quickRates = cached.quickRates
+    if (quickRates && quickRates.length > 0) {
+      for (var i = 0; i < quickRates.length; i++) {
+        var q = quickRates[i]
+        if (q.code === 'USD' || q.code === 'EUR' || q.code === 'JPY' || q.code === 'GBP') {
+          rates[q.code] = q.rate
+        }
+      }
+    }
+    if (Object.keys(rates).length > 0) {
+      var updateTime = ''
+      if (cached.cachedAt) {
+        var d = new Date(cached.cachedAt)
+        var month = d.getMonth() + 1
+        var day = d.getDate()
+        var hour = d.getHours()
+        var min = d.getMinutes()
+        updateTime = (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day + ' ' + (hour < 10 ? '0' : '') + hour + ':' + (min < 10 ? '0' : '') + min
+      }
+      this.setData({
+        exchangeRate: {
+          base: 'CNY',
+          updateTime: updateTime,
+          rates: rates
+        }
+      })
+    }
+  },
+
+  goToExchangeRate: function() {
+    wx.vibrateShort({ type: 'light' })
+    wx.navigateTo({ url: '/package-calculator/exchange-rate/exchange-rate' })
+  },
+
+  resetData: function() {
+    var that = this
+    toolActions.resetConfirm(function() {
+      that.setData({ inputValue: '', resultValue: '0' })
+    })
+  },
+
+  onShareAppMessage: function() {
+    return poster.getShareConfig('📏 单位换算 - 百宝工具箱', '/package-calculator/unit-converter/unit-converter')
+  },
+
+  onShareTimeline: function() {
+    return poster.getTimelineConfig('📏 单位换算 - 百宝工具箱')
   }
 })

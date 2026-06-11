@@ -1,41 +1,155 @@
-/**
- * 辅助函数库 - utils/helpers.js
- * 
- * 包含通用的工具函数
- * - 拼音首字母转换（用于搜索功能）
- */
-
 var pinyinMap = {
   'a': 'a', 'b': 'b', 'c': 'c', 'd': 'd', 'e': 'e', 'f': 'f', 'g': 'g', 'h': 'h',
   'i': 'i', 'j': 'j', 'k': 'k', 'l': 'l', 'm': 'm', 'n': 'n', 'o': 'o', 'p': 'p',
   'q': 'q', 'r': 'r', 's': 's', 't': 't', 'u': 'u', 'v': 'v', 'w': 'w', 'x': 'x',
   'y': 'y', 'z': 'z',
-  '阿': 'a', '爱': 'a', '安': 'a',
-  '把': 'b', '百': 'b', '半': 'b', '本': 'b', '比': 'b', '变': 'b', '表': 'b', '别': 'b', '不': 'b',
-  '查': 'c', '差': 'c', '产': 'c', '常': 'c', '成': 'c', '程': 'c', '尺': 'c', '冲': 'c', '处': 'c', '除': 'c', '测': 'c', '策': 'c', '存': 'c', '操': 'c',
-  '大': 'd', '单': 'd', '当': 'd', '倒': 'd', '导': 'd', '得': 'd', '的': 'd', '地': 'd', '第': 'd', '典': 'd', '定': 'd', '丢': 'd', '度': 'd', '段': 'd', '短': 'd', '对': 'd', '达': 'd', '代': 'd', '二': 'e',
-  '发': 'f', '法': 'f', '反': 'f', '范': 'f', '房': 'f', '费': 'f', '分': 'f', '份': 'f', '风': 'f', '复': 'f', '付': 'f', '负': 'f',
-  '改': 'g', '概': 'g', '干': 'g', '刚': 'g', '高': 'g', '个': 'g', '格': 'g', '更': 'g', '工': 'g', '公': 'g', '功': 'g', '管': 'g', '规': 'g', '国': 'g', '过': 'g',
-  '还': 'h', '海': 'h', '含': 'h', '行': 'h', '好': 'h', '号': 'h', '合': 'h', '和': 'h', '红': 'h', '后': 'h', '互': 'h', '划': 'h', '化': 'h', '换': 'h', '黄': 'h', '汇': 'h', '会': 'h', '混': 'h', '活': 'h', '或': 'h', '获': 'h', '喝': 'h', '黑': 'h', '恒': 'h',
-  '机': 'j', '基': 'j', '及': 'j', '几': 'j', '计': 'j', '记': 'j', '际': 'j', '加': 'j', '家': 'j', '价': 'j', '检': 'j', '简': 'j', '建': 'j', '健': 'j', '将': 'j', '降': 'j', '交': 'j', '角': 'j', '教': 'j', '接': 'j', '结': 'j', '解': 'j', '界': 'j', '借': 'j', '今': 'j', '金': 'j', '紧': 'j', '进': 'j', '近': 'j', '经': 'j', '精': 'j', '警': 'j', '竞': 'j', '镜': 'j', '究': 'j', '九': 'j', '久': 'j', '旧': 'j', '局': 'j', '决': 'j', '觉': 'j', '绝': 'j', '具': 'j', '卷': 'j',
-  '开': 'k', '看': 'k', '科': 'k', '可': 'k', '克': 'k', '客': 'k', '空': 'k', '控': 'k', '口': 'k', '快': 'k', '宽': 'k', '框': 'k',
-  '拉': 'l', '来': 'l', '蓝': 'l', '朗': 'l', '类': 'l', '累': 'l', '离': 'l', '理': 'l', '历': 'l', '立': 'l', '利': 'l', '力': 'l', '例': 'l', '连': 'l', '联': 'l', '两': 'l', '量': 'l', '聊': 'l', '列': 'l', '临': 'l', '龄': 'l', '领': 'l', '另': 'l', '流': 'l', '录': 'l', '乱': 'l', '率': 'l', '滤': 'l', '轮': 'l', '逻': 'l', '落': 'l', '垃': 'l', '栏': 'l', '楼': 'l',
-  '码': 'm', '买': 'm', '满': 'm', '漫': 'm', '猫': 'm', '冒': 'm', '贸': 'm', '眉': 'm', '每': 'm', '美': 'm', '门': 'm', '米': 'm', '密': 'm', '面': 'm', '民': 'm', '名': 'm', '明': 'm', '命': 'm', '模': 'm', '末': 'm', '目': 'm', '默': 'm',
-  '那': 'n', '内': 'n', '纳': 'n', '能': 'n', '年': 'n', '念': 'n', '农': 'n', '浓': 'n', '暖': 'n',
-  '欧': 'o', '偶': 'o',
-  '排': 'p', '判': 'p', '旁': 'p', '跑': 'p', '配': 'p', '批': 'p', '片': 'p', '偏': 'p', '拼': 'p', '频': 'p', '评': 'p', '屏': 'p', '平': 'p', '凭': 'p',
-  '期': 'q', '齐': 'q', '其': 'q', '棋': 'q', '启': 'q', '气': 'q', '千': 'q', '签': 'q', '前': 'q', '钱': 'q', '强': 'q', '切': 'q', '清': 'q', '情': 'q', '请': 'q', '秋': 'q', '求': 'q', '区': 'q', '取': 'q', '趣': 'q', '去': 'q', '圈': 'q', '全': 'q', '权': 'q', '确': 'q',
-  '然': 'r', '让': 'r', '热': 'r', '人': 'r', '认': 'r', '任': 'r', '日': 'r', '容': 'r', '入': 'r', '软': 'r',
-  '三': 's', '散': 's', '扫': 's', '色': 's', '删': 's', '上': 's', '少': 's', '设': 's', '深': 's', '审': 's', '生': 's', '失': 's', '时': 's', '实': 't', '识': 's', '世': 's', '式': 's', '示': 's', '事': 's', '是': 's', '手': 's', '首': 's', '受': 's', '数': 's', '刷': 's', '双': 's', '水': 's', '顺': 's', '说': 's', '搜': 's', '速': 's', '随': 's', '碎': 's', '算': 's', '虽': 's', '缩': 's', '锁': 's',
-  '他': 't', '台': 't', '谈': 't', '弹': 't', '特': 't', '提': 't', '天': 't', '填': 't', '条': 't', '贴': 't', '铁': 't', '通': 't', '同': 't', '统': 't', '头': 't', '图': 't', '突': 't', '团': 't', '退': 't', '拖': 't',
-  '外': 'w', '完': 'w', '网': 'w', '危': 'w', '维': 'w', '围': 'w', '位': 'w', '文': 'w', '稳': 'w', '问': 'w', '卧': 'w', '无': 'w', '五': 'w', '物': 'w',
-  '下': 'x', '先': 'x', '显': 'x', '现': 'x', '线': 'x', '限': 'x', '相': 'x', '向': 'x', '项': 'x', '消': 'x', '小': 'x', '效': 'x', '些': 'x', '协': 'x', '信': 'x', '星': 'x', '行': 'x', '修': 'x', '秀': 'x', '虚': 'x', '需': 'x', '序': 'x', '选': 'x', '学': 'x', '雪': 'x', '寻': 'x', '循': 'x', '验': 'x', '响': 'x', '像': 'x', '享': 'x', '心': 'x', '新': 'x', '醒': 'x', '详': 'x', '降': 'x', '写': 'x',
-  '颜': 'y', '羊': 'y', '阳': 'y', '样': 'y', '摇': 'y', '要': 'y', '也': 'y', '一': 'y', '以': 'y', '易': 'y', '意': 'y', '因': 'y', '引': 'y', '应': 'y', '映': 'y', '拥': 'y', '永': 'y', '用': 'y', '优': 'y', '由': 'y', '邮': 'y', '有': 'y', '右': 'y', '于': 'y', '余': 'y', '与': 'y', '预': 'y', '域': 'y', '员': 'y', '原': 'y', '源': 'y', '远': 'y', '愿': 'y', '月': 'y', '阅': 'y', '越': 'y', '云': 'y', '允': 'y', '运': 'y', '韵': 'y', '压': 'y', '亚': 'y', '严': 'y', '眼': 'y', '演': 'y', '养': 'y', '页': 'y', '依': 'y', '移': 'y', '已': 'y', '益': 'y', '义': 'y', '音': 'y', '阴': 'y', '银': 'y', '印': 'y', '英': 'y', '迎': 'y', '盈': 'y', '影': 'y', '硬': 'y', '勇': 'y', '悠': 'y', '油': 'y', '游': 'y', '友': 'y', '又': 'y', '幼': 'y', '鱼': 'y', '愉': 'y', '渔': 'y', '予': 'y', '宇': 'y', '羽': 'y', '雨': 'y', '语': 'y', '玉': 'y', '育': 'y', '浴': 'y', '蚌': 'y', '御': 'y', '优': 'y', '遇': 'y', '誉': 'y', '愈': 'y', '欲': 'y', '圆': 'y', '缘': 'y', '日': 'y', '约': 'y', '跃': 'y', '钥': 'y', '岳': 'y', '悦': 'y', '均': 'y', '蕴': 'y',
-  '在': 'z', '咱': 'z', '杂': 'z', '灾': 'z', '载': 'z', '暂': 'z', '赞': 'z', '脏': 'z', '郭': 'z', '早': 'z', '造': 'z', '噪': 'z', '责': 'z', '择': 'z', '则': 'z', '泽': 'z', '贼': 'z', '怎': 'z', '增': 'z', '赠': 'z', '扎': 'z', '眨': 'z', '占': 'z', '展': 'z', '站': 'z', '张': 'z', '掌': 'z', '丈': 'z', '帐': 'z', '账': 'z', '障': 'z', '招': 'z', '找': 'z', '照': 'z', '罩': 'z', '折': 'z', '哲': 'z', '者': 'z', '这': 'z', '浙': 'z', '针': 'z', '侦': 'z', '真': 'z', '诊': 'z', '枕': 'z', '阵': 'z', '振': 'z', '镇': 'z', '震': 'z', '争': 'z', '征': 'z', '整': 'z', '正': 'z', '证': 'z', '政': 'z', '症': 'z', '之': 'z', '支': 'z', '知': 'z', '织': 'z', '脂': 'z', '执': 'z', '值': 'z', '职': 'z', '直': 'z', '植': 'z', '殖': 'z', '止': 'z', '旨': 'z', '指': 'z', '纸': 'z', '至': 'z', '志': 'z', '制': 'z', '质': 'z', '治': 'z', '秩': 'z', '智': 'z', '置': 'z', '中': 'zh', '忠': 'zh', '钟': 'zh', '终': 'zh', '种': 'zh', '众': 'zh', '周': 'zhou', '洲': 'z', '粥': 'z', '轴': 'z', '肘': 'z', '皱': 'z', '竹': 'z', '筑': 'z', '主': 'z', '煮': 'z', '嘱': 'z', '住': 'z', '注': 'z', '驻': 'z', '柱': 'z', '助': 'z', '筑': 'z', '祝': 'z', '著': 'z', '抓': 'z', '拽': 'z', '专': 'z', '转': 'z', '赚': 'z', '庄': 'z', '装': 'z', '壮': 'z', '状': 'z', '撞': 'z', '追': 'z', '准': 'z', '捕': 'z', '桌': 'z', '着': 'z', '兹': 'z', '资': 'z', '姿': 'z', '滋': 'z', '粒': 'z', '子': 'z', '字': 'z', '自': 'z', '宗': 'z', '综': 'z', '总': 'z', '纵': 'z'
+  '阿': 'a', '爱': 'ai', '安': 'an',
+  '把': 'ba', '百': 'bai', '半': 'ban', '本': 'ben', '比': 'bi', '变': 'bian', '表': 'biao', '别': 'bie', '不': 'bu', '班': 'ban', '版': 'ban', '包': 'bao', '备': 'bei', '编': 'bian', '标': 'biao', '宾': 'bin', '播': 'bo', '补': 'bu',
+  '查': 'cha', '差': 'cha', '产': 'chan', '常': 'chang', '成': 'cheng', '程': 'cheng', '尺': 'chi', '冲': 'chong', '处': 'chu', '除': 'chu', '测': 'ce', '策': 'ce', '存': 'cun', '操': 'cao', '城': 'cheng', '持': 'chi', '创': 'chuang', '催': 'cui',
+  '大': 'da', '单': 'dan', '当': 'dang', '倒': 'dao', '导': 'dao', '得': 'de', '的': 'de', '地': 'di', '第': 'di', '典': 'dian', '定': 'ding', '丢': 'diu', '度': 'du', '段': 'duan', '短': 'duan', '对': 'dui', '达': 'da', '代': 'dai', '二': 'er', '打': 'da', '带': 'dai', '待': 'dai', '弹': 'dan', '倒': 'dao', '等': 'deng', '低': 'di', '点': 'dian', '电': 'dian', '调': 'diao', '顶': 'ding', '动': 'dong', '读': 'du', '多': 'duo',
+  '发': 'fa', '法': 'fa', '反': 'fan', '范': 'fan', '房': 'fang', '费': 'fei', '分': 'fen', '份': 'fen', '风': 'feng', '复': 'fu', '付': 'fu', '负': 'fu', '翻': 'fan', '方': 'fang', '非': 'fei', '封': 'feng', '符': 'fu',
+  '改': 'gai', '概': 'gai', '干': 'gan', '刚': 'gang', '高': 'gao', '个': 'ge', '格': 'ge', '更': 'geng', '工': 'gong', '公': 'gong', '功': 'gong', '管': 'guan', '规': 'gui', '国': 'guo', '过': 'guo', '感': 'gan', '给': 'gei', '关': 'guan', '光': 'guang', '广': 'guang', '归': 'gui',
+  '还': 'hai', '海': 'hai', '含': 'han', '行': 'hang', '好': 'hao', '号': 'hao', '合': 'he', '和': 'he', '红': 'hong', '后': 'hou', '互': 'hu', '划': 'hua', '化': 'hua', '换': 'huan', '黄': 'huang', '汇': 'hui', '会': 'hui', '混': 'hun', '活': 'huo', '或': 'huo', '获': 'huo', '喝': 'he', '黑': 'hei', '恒': 'heng', '回': 'hui', '环': 'huan', '灰': 'hui', '婚': 'hun',
+  '机': 'ji', '基': 'ji', '及': 'ji', '几': 'ji', '计': 'ji', '记': 'ji', '际': 'ji', '加': 'jia', '家': 'jia', '价': 'jia', '检': 'jian', '简': 'jian', '建': 'jian', '健': 'jian', '将': 'jiang', '降': 'jiang', '交': 'jiao', '角': 'jiao', '教': 'jiao', '接': 'jie', '结': 'jie', '解': 'jie', '界': 'jie', '借': 'jie', '今': 'jin', '金': 'jin', '紧': 'jin', '进': 'jin', '近': 'jin', '经': 'jing', '精': 'jing', '警': 'jing', '竞': 'jing', '镜': 'jing', '究': 'jiu', '九': 'jiu', '久': 'jiu', '旧': 'jiu', '局': 'ju', '决': 'jue', '觉': 'jue', '绝': 'jue', '具': 'ju', '卷': 'juan', '级': 'ji', '集': 'ji', '积': 'ji', '技': 'ji', '季': 'ji', '济': 'ji', '寄': 'ji', '加': 'jia', '减': 'jian', '剪': 'jian', '见': 'jian', '间': 'jian', '渐': 'jian', '箭': 'jian', '奖': 'jiang', '讲': 'jiang', '酱': 'jiang', '交': 'jiao', '较': 'jiao', '阶': 'jie', '节': 'jie', '截': 'jie', '仅': 'jin', '禁': 'jin', '景': 'jing', '净': 'jing', '静': 'jing', '纠': 'jiu', '就': 'jiu', '居': 'ju', '举': 'ju', '据': 'ju', '距': 'ju', '剧': 'ju',
+  '开': 'kai', '看': 'kan', '科': 'ke', '可': 'ke', '克': 'ke', '客': 'ke', '空': 'kong', '控': 'kong', '口': 'kou', '快': 'kuai', '宽': 'kuan', '框': 'kuang', '卡': 'ka', '考': 'kao', '课': 'ke', '块': 'kuai', '款': 'kuan',
+  '拉': 'la', '来': 'lai', '蓝': 'lan', '朗': 'lang', '类': 'lei', '累': 'lei', '离': 'li', '理': 'li', '历': 'li', '立': 'li', '利': 'li', '力': 'li', '例': 'li', '连': 'lian', '联': 'lian', '两': 'liang', '量': 'liang', '聊': 'liao', '列': 'lie', '临': 'lin', '龄': 'ling', '领': 'ling', '另': 'ling', '流': 'liu', '录': 'lu', '乱': 'luan', '率': 'lv', '滤': 'lv', '轮': 'lun', '逻': 'luo', '落': 'luo', '垃': 'la', '栏': 'lan', '楼': 'lou', '乐': 'le', '冷': 'leng', '里': 'li', '礼': 'li', '亮': 'liang', '零': 'ling', '留': 'liu', '路': 'lu', '绿': 'lv', '乱': 'luan',
+  '码': 'ma', '买': 'mai', '满': 'man', '漫': 'man', '猫': 'mao', '冒': 'mao', '贸': 'mao', '眉': 'mei', '每': 'mei', '美': 'mei', '门': 'men', '米': 'mi', '密': 'mi', '面': 'mian', '民': 'min', '名': 'ming', '明': 'ming', '命': 'ming', '模': 'mo', '末': 'mo', '目': 'mu', '默': 'mo', '妈': 'ma', '慢': 'man', '忙': 'mang', '毛': 'mao', '没': 'mei', '描': 'miao', '秒': 'miao', '摸': 'mo', '魔': 'mo', '某': 'mou',
+  '那': 'na', '内': 'nei', '纳': 'na', '能': 'neng', '年': 'nian', '念': 'nian', '农': 'nong', '浓': 'nong', '暖': 'nuan', '男': 'nan', '南': 'nan', '难': 'nan', '脑': 'nao', '你': 'ni', '逆': 'ni', '宁': 'ning', '女': 'nv',
+  '欧': 'ou', '偶': 'ou',
+  '排': 'pai', '判': 'pan', '旁': 'pang', '跑': 'pao', '配': 'pei', '批': 'pi', '片': 'pian', '偏': 'pian', '拼': 'pin', '频': 'pin', '评': 'ping', '屏': 'ping', '平': 'ping', '凭': 'ping', '盘': 'pan', '炮': 'pao', '朋': 'peng', '票': 'piao', '品': 'pin', '破': 'po',
+  '期': 'qi', '齐': 'qi', '其': 'qi', '棋': 'qi', '启': 'qi', '气': 'qi', '千': 'qian', '签': 'qian', '前': 'qian', '钱': 'qian', '强': 'qiang', '切': 'qie', '清': 'qing', '情': 'qing', '请': 'qing', '秋': 'qiu', '求': 'qiu', '区': 'qu', '取': 'qu', '趣': 'qu', '去': 'qu', '圈': 'quan', '全': 'quan', '权': 'quan', '确': 'que', '七': 'qi', '奇': 'qi', '起': 'qi', '器': 'qi', '亲': 'qin', '轻': 'qing', '庆': 'qing', '穷': 'qiong', '群': 'qun',
+  '然': 'ran', '让': 'rang', '热': 're', '人': 'ren', '认': 'ren', '任': 'ren', '日': 'ri', '容': 'rong', '入': 'ru', '软': 'ruan', '仍': 'reng', '如': 'ru', '弱': 'ruo',
+  '三': 'san', '散': 'san', '扫': 'sao', '色': 'se', '删': 'shan', '上': 'shang', '少': 'shao', '设': 'she', '深': 'shen', '审': 'shen', '生': 'sheng', '失': 'shi', '时': 'shi', '实': 'shi', '识': 'shi', '世': 'shi', '式': 'shi', '示': 'shi', '事': 'shi', '是': 'shi', '手': 'shou', '首': 'shou', '受': 'shou', '数': 'shu', '刷': 'shua', '双': 'shuang', '水': 'shui', '顺': 'shun', '说': 'shuo', '搜': 'sou', '速': 'su', '随': 'sui', '碎': 'sui', '算': 'suan', '虽': 'sui', '缩': 'suo', '锁': 'suo', '四': 'si', '似': 'si', '松': 'song', '送': 'song', '素': 'su', '俗': 'su', '算': 'suan',
+  '他': 'ta', '台': 'tai', '谈': 'tan', '弹': 'tan', '特': 'te', '提': 'ti', '天': 'tian', '填': 'tian', '条': 'tiao', '贴': 'tie', '铁': 'tie', '通': 'tong', '同': 'tong', '统': 'tong', '头': 'tou', '图': 'tu', '突': 'tu', '团': 'tuan', '退': 'tui', '拖': 'tuo', '太': 'tai', '探': 'tan', '逃': 'tao', '套': 'tao', '体': 'ti', '跳': 'tiao', '听': 'ting', '停': 'ting', '推': 'tui', '脱': 'tuo',
+  '外': 'wai', '完': 'wan', '网': 'wang', '危': 'wei', '维': 'wei', '围': 'wei', '位': 'wei', '文': 'wen', '稳': 'wen', '问': 'wen', '卧': 'wo', '无': 'wu', '五': 'wu', '物': 'wu', '万': 'wan', '王': 'wang', '望': 'wang', '微': 'wei', '为': 'wei', '未': 'wei', '温': 'wen', '我': 'wo', '误': 'wu',
+  '下': 'xia', '先': 'xian', '显': 'xian', '现': 'xian', '线': 'xian', '限': 'xian', '相': 'xiang', '向': 'xiang', '项': 'xiang', '消': 'xiao', '小': 'xiao', '效': 'xiao', '些': 'xie', '协': 'xie', '信': 'xin', '星': 'xing', '行': 'xing', '修': 'xiu', '秀': 'xiu', '虚': 'xu', '需': 'xu', '序': 'xu', '选': 'xuan', '学': 'xue', '雪': 'xue', '寻': 'xun', '循': 'xun', '验': 'yan', '响': 'xiang', '像': 'xiang', '享': 'xiang', '心': 'xin', '新': 'xin', '醒': 'xing', '详': 'xiang', '降': 'xiang', '写': 'xie', '西': 'xi', '系': 'xi', '喜': 'xi', '戏': 'xi', '细': 'xi', '夏': 'xia', '鲜': 'xian', '想': 'xiang', '笑': 'xiao', '校': 'xiao', '谢': 'xie', '辛': 'xin', '兴': 'xing', '型': 'xing', '修': 'xiu', '许': 'xu', '续': 'xu', '宣': 'xuan',
+  '颜': 'yan', '羊': 'yang', '阳': 'yang', '样': 'yang', '摇': 'yao', '要': 'yao', '也': 'ye', '一': 'yi', '以': 'yi', '易': 'yi', '意': 'yi', '因': 'yin', '引': 'yin', '应': 'ying', '映': 'ying', '拥': 'yong', '永': 'yong', '用': 'yong', '优': 'you', '由': 'you', '邮': 'you', '有': 'you', '右': 'you', '于': 'yu', '余': 'yu', '与': 'yu', '预': 'yu', '域': 'yu', '员': 'yuan', '原': 'yuan', '源': 'yuan', '远': 'yuan', '愿': 'yuan', '月': 'yue', '阅': 'yue', '越': 'yue', '云': 'yun', '允': 'yun', '运': 'yun', '韵': 'yun', '压': 'ya', '亚': 'ya', '严': 'yan', '眼': 'yan', '演': 'yan', '养': 'yang', '页': 'ye', '依': 'yi', '移': 'yi', '已': 'yi', '益': 'yi', '义': 'yi', '音': 'yin', '阴': 'yin', '银': 'yin', '印': 'yin', '英': 'ying', '迎': 'ying', '盈': 'ying', '影': 'ying', '硬': 'ying', '勇': 'yong', '悠': 'you', '油': 'you', '游': 'you', '友': 'you', '又': 'you', '幼': 'you', '鱼': 'yu', '愉': 'yu', '渔': 'yu', '予': 'yu', '宇': 'yu', '羽': 'yu', '雨': 'yu', '语': 'yu', '玉': 'yu', '育': 'yu', '浴': 'yu', '御': 'yu', '遇': 'yu', '誉': 'yu', '愈': 'yu', '欲': 'yu', '圆': 'yuan', '缘': 'yuan', '约': 'yue', '跃': 'yue', '钥': 'yue', '岳': 'yue', '悦': 'yue', '均': 'yun', '蕴': 'yun', '言': 'yan', '盐': 'yan', '延': 'yan', '岩': 'yan', '沿': 'yan', '炎': 'yan', '研': 'yan', '盐': 'yan', '颜': 'yan', '掩': 'yan', '眼': 'yan', '验': 'yan', '央': 'yang', '扬': 'yang', '羊': 'yang', '仰': 'yang', '氧': 'yang', '样': 'yang', '腰': 'yao', '咬': 'yao', '药': 'yao', '钥': 'yao', '耀': 'yao', '爷': 'ye', '野': 'ye', '业': 'ye', '叶': 'ye', '夜': 'ye', '液': 'ye', '仪': 'yi', '宜': 'yi', '姨': 'yi', '遗': 'yi', '疑': 'yi', '乙': 'yi', '忆': 'yi', '译': 'yi', '异': 'yi', '役': 'yi', '抑': 'yi', '疫': 'yi', '溢': 'yi', '姻': 'yin', '银': 'yin', '饮': 'yin', '隐': 'yin', '樱': 'ying', '营': 'ying', '赢': 'ying', '拥': 'yong', '涌': 'yong', '涌': 'yong', '踊': 'yong', '优': 'you', '忧': 'you', '幽': 'you', '犹': 'you', '油': 'you', '游': 'you', '诱': 'you', '舆': 'yu', '屿': 'yu', '冤': 'yuan', '园': 'yuan', '援': 'yuan', '院': 'yuan', '怨': 'yuan', '曰': 'yue', '晕': 'yun',
+  '在': 'zai', '咱': 'zan', '杂': 'za', '灾': 'zai', '载': 'zai', '暂': 'zan', '赞': 'zan', '脏': 'zang', '郭': 'guo', '早': 'zao', '造': 'zao', '噪': 'zao', '责': 'ze', '择': 'ze', '则': 'ze', '泽': 'ze', '贼': 'zei', '怎': 'zen', '增': 'zeng', '赠': 'zeng', '扎': 'zha', '眨': 'zha', '占': 'zhan', '展': 'zhan', '站': 'zhan', '张': 'zhang', '掌': 'zhang', '丈': 'zhang', '帐': 'zhang', '账': 'zhang', '障': 'zhang', '招': 'zhao', '找': 'zhao', '照': 'zhao', '罩': 'zhao', '折': 'zhe', '哲': 'zhe', '者': 'zhe', '这': 'zhe', '浙': 'zhe', '针': 'zhen', '侦': 'zhen', '真': 'zhen', '诊': 'zhen', '枕': 'zhen', '阵': 'zhen', '振': 'zhen', '镇': 'zhen', '震': 'zhen', '争': 'zheng', '征': 'zheng', '整': 'zheng', '正': 'zheng', '证': 'zheng', '政': 'zheng', '症': 'zheng', '之': 'zhi', '支': 'zhi', '知': 'zhi', '织': 'zhi', '脂': 'zhi', '执': 'zhi', '值': 'zhi', '职': 'zhi', '直': 'zhi', '植': 'zhi', '殖': 'zhi', '止': 'zhi', '旨': 'zhi', '指': 'zhi', '纸': 'zhi', '至': 'zhi', '志': 'zhi', '制': 'zhi', '质': 'zhi', '治': 'zhi', '秩': 'zhi', '智': 'zhi', '置': 'zhi', '中': 'zhong', '忠': 'zhong', '钟': 'zhong', '终': 'zhong', '种': 'zhong', '众': 'zhong', '周': 'zhou', '洲': 'zhou', '粥': 'zhou', '轴': 'zhou', '肘': 'zhou', '皱': 'zhou', '竹': 'zhu', '筑': 'zhu', '主': 'zhu', '煮': 'zhu', '嘱': 'zhu', '住': 'zhu', '注': 'zhu', '驻': 'zhu', '柱': 'zhu', '助': 'zhu', '祝': 'zhu', '著': 'zhu', '抓': 'zhua', '拽': 'zhuai', '专': 'zhuan', '转': 'zhuan', '赚': 'zhuan', '庄': 'zhuang', '装': 'zhuang', '壮': 'zhuang', '状': 'zhuang', '撞': 'zhuang', '追': 'zhui', '准': 'zhun', '捕': 'bu', '桌': 'zhuo', '着': 'zhe', '兹': 'zi', '资': 'zi', '姿': 'zi', '滋': 'zi', '粒': 'li', '子': 'zi', '字': 'zi', '自': 'zi', '宗': 'zong', '综': 'zong', '总': 'zong', '纵': 'zong', '组': 'zu', '嘴': 'zui', '最': 'zui', '罪': 'zui', '尊': 'zun', '左': 'zuo', '做': 'zuo', '座': 'zuo'
 }
 
 function getPinyinFirstLetter(str) {
   if (!str) return ''
   var firstChar = str.charAt(0).toLowerCase()
-  return pinyinMap[firstChar] || firstChar
+  return pinyinMap[firstChar] ? pinyinMap[firstChar].charAt(0) : firstChar
+}
+
+function getFullPinyin(str) {
+  if (!str) return ''
+  var result = ''
+  for (var i = 0; i < str.length; i++) {
+    var ch = str.charAt(i)
+    var py = pinyinMap[ch]
+    if (py) {
+      result += py
+    } else if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z') {
+      result += ch.toLowerCase()
+    } else if (ch >= '0' && ch <= '9') {
+      result += ch
+    }
+  }
+  return result
+}
+
+function getPinyinInitials(str) {
+  if (!str) return ''
+  var result = ''
+  for (var i = 0; i < str.length; i++) {
+    var ch = str.charAt(i)
+    var py = pinyinMap[ch]
+    if (py) {
+      result += py.charAt(0)
+    } else if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z') {
+      result += ch.toLowerCase()
+    }
+  }
+  return result
+}
+
+function fuzzyMatch(source, keyword) {
+  if (!source || !keyword) return false
+  var s = source.toLowerCase()
+  var k = keyword.toLowerCase()
+  if (s.indexOf(k) > -1) return true
+  var fullPinyin = getFullPinyin(source)
+  if (fullPinyin.indexOf(k) > -1) return true
+  var initials = getPinyinInitials(source)
+  if (initials.indexOf(k) > -1) return true
+  return false
+}
+
+function highlightText(text, keyword, isDarkMode) {
+  if (!text || !keyword) return [{ type: 'text', text: text || '' }]
+  var lowerText = text.toLowerCase()
+  var lowerKeyword = keyword.toLowerCase()
+  var highlightColor = isDarkMode ? '#60A5FA' : '#3B82F6'
+  var highlightBg = isDarkMode ? 'rgba(96,165,250,0.15)' : 'rgba(59,130,246,0.1)'
+  var highlightStyle = 'color:' + highlightColor + ';font-weight:700;background:' + highlightBg + ';border-radius:3px;padding:0 2px;'
+
+  var pos = lowerText.indexOf(lowerKeyword)
+  if (pos > -1) {
+    var nodes = []
+    if (pos > 0) nodes.push({ type: 'text', text: text.substring(0, pos) })
+    nodes.push({ name: 'span', attrs: { style: highlightStyle }, children: [{ type: 'text', text: text.substring(pos, pos + keyword.length) }] })
+    if (pos + keyword.length < text.length) nodes.push({ type: 'text', text: text.substring(pos + keyword.length) })
+    return nodes
+  }
+
+  var fullPinyin = getFullPinyin(text)
+  var pinyinPos = fullPinyin.toLowerCase().indexOf(lowerKeyword)
+  if (pinyinPos > -1) {
+    var startChar = 0
+    var endChar = text.length
+    var pinyinOffset = 0
+    for (var i = 0; i < text.length; i++) {
+      var py = pinyinMap[text.charAt(i)]
+      var pyLen = py ? py.length : 1
+      if (pinyinOffset <= pinyinPos && pinyinOffset + pyLen > pinyinPos) {
+        startChar = i
+      }
+      if (pinyinOffset < pinyinPos + keyword.length && pinyinOffset + pyLen >= pinyinPos + keyword.length) {
+        endChar = i + 1
+        break
+      }
+      pinyinOffset += pyLen
+    }
+    var nodes = []
+    if (startChar > 0) nodes.push({ type: 'text', text: text.substring(0, startChar) })
+    nodes.push({ name: 'span', attrs: { style: highlightStyle }, children: [{ type: 'text', text: text.substring(startChar, endChar) }] })
+    if (endChar < text.length) nodes.push({ type: 'text', text: text.substring(endChar) })
+    return nodes
+  }
+
+  var initials = getPinyinInitials(text)
+  var initialsPos = initials.toLowerCase().indexOf(lowerKeyword)
+  if (initialsPos > -1) {
+    var positions = []
+    for (var j = 0; j < text.length; j++) {
+      var ch = text.charAt(j)
+      var py2 = pinyinMap[ch]
+      if (py2 || ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z') {
+        positions.push(j)
+      }
+    }
+    if (initialsPos + lowerKeyword.length <= positions.length) {
+      var startIdx = positions[initialsPos]
+      var endIdx = positions[initialsPos + lowerKeyword.length - 1] + 1
+      if (startIdx !== undefined && endIdx !== undefined) {
+        var nodes = []
+        if (startIdx > 0) nodes.push({ type: 'text', text: text.substring(0, startIdx) })
+        nodes.push({ name: 'span', attrs: { style: highlightStyle }, children: [{ type: 'text', text: text.substring(startIdx, endIdx) }] })
+        if (endIdx < text.length) nodes.push({ type: 'text', text: text.substring(endIdx) })
+        return nodes
+      }
+    }
+  }
+
+  return [{ type: 'text', text: text }]
+}
+
+module.exports = {
+  getPinyinFirstLetter: getPinyinFirstLetter,
+  getFullPinyin: getFullPinyin,
+  getPinyinInitials: getPinyinInitials,
+  fuzzyMatch: fuzzyMatch,
+  highlightText: highlightText
 }

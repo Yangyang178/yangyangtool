@@ -1,0 +1,124 @@
+<navigation-bar title="{{i18n.navTitle}}" />
+
+<view class="container {{isDarkMode ? 'dark-mode' : ''}} {{fontClass}} font-size-{{fontSizeSetting}}" style="{{themeStyle}}">
+  <!-- 工具头部 -->
+  <view class="tool-header">
+    <view class="tool-icon-wrap">
+      <text class="tool-icon">🏰</text>
+    </view>
+    <view class="tool-info">
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
+    </view>
+  </view>
+
+  <!-- 难度选择 -->
+  <view class="difficulty-bar">
+    <view class="diff-btn {{difficulty === 'easy' ? 'diff-active' : ''}}" bindtap="changeDifficulty" data-diff="easy">
+      <text class="diff-btn-text">{{i18n.easy}}</text>
+      <text class="diff-btn-sub">8×8</text>
+    </view>
+    <view class="diff-btn {{difficulty === 'medium' ? 'diff-active' : ''}}" bindtap="changeDifficulty" data-diff="medium">
+      <text class="diff-btn-text">{{i18n.medium}}</text>
+      <text class="diff-btn-sub">10×10</text>
+    </view>
+    <view class="diff-btn {{difficulty === 'hard' ? 'diff-active' : ''}}" bindtap="changeDifficulty" data-diff="hard">
+      <text class="diff-btn-text">{{i18n.hard}}</text>
+      <text class="diff-btn-sub">12×12</text>
+    </view>
+  </view>
+
+  <!-- 状态栏 -->
+  <view class="status-bar">
+    <view class="status-item">
+      <text class="status-icon">👣</text>
+      <text class="status-value step-value">{{stepCount}}</text>
+      <text class="status-label">{{i18n.steps}}</text>
+    </view>
+    <view class="status-divider"></view>
+    <view class="status-item">
+      <text class="status-icon">⏱</text>
+      <text class="status-value time-value">{{timeElapsed}}</text>
+      <text class="status-label">{{i18n.timeUsedSec}}</text>
+    </view>
+  </view>
+
+  <!-- 游戏消息 -->
+  <view class="state-text-wrap" wx:if="{{message}}">
+    <text class="state-text {{gameState === 'won' ? 'state-win' : ''}}">{{message}}</text>
+  </view>
+
+  <!-- Canvas画布 -->
+  <view class="canvas-area">
+    <canvas type="2d" id="mazeCanvas" class="maze-canvas"
+      bindtouchstart="onTouchStart"
+      bindtouchend="onTouchEnd"></canvas>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-area">
+    <view class="start-btn" bindtap="newGame">
+      <text class="start-btn-text">{{i18n.newMaze}}</text>
+    </view>
+  </view>
+
+  <!-- 最佳记录区 -->
+  <view class="stats-section">
+    <view class="stats-title">
+      <text class="stats-title-icon">📊</text>
+      <text class="stats-title-text">{{i18n.gameRecords}}</text>
+    </view>
+    <view class="stats-grid">
+      <view class="stats-card">
+        <text class="stats-card-value">{{bestTimeDisplay}}</text>
+        <text class="stats-card-label">{{i18n.bestTime}}</text>
+      </view>
+      <view class="stats-card">
+        <text class="stats-card-value">{{totalWins}}</text>
+        <text class="stats-card-label">{{i18n.clearCount}}</text>
+      </view>
+      <view class="stats-card">
+        <text class="stats-card-value">{{difficultyLabel}}</text>
+        <text class="stats-card-label">{{i18n.currentDifficulty}}</text>
+      </view>
+    </view>
+    <view class="reset-btn" bindtap="resetStats">
+      <text class="reset-btn-text">{{i18n.resetRecords}}</text>
+    </view>
+  </view>
+
+  <!-- 规则提示 -->
+  <view class="tip-card">
+    <view class="tip-header">
+      <text class="tip-icon">💡</text>
+      <text class="tip-title">{{i18n.gameRules}}</text>
+    </view>
+    <view class="tip-content">
+      <text class="tip-item">{{i18n.rule1}}</text>
+      <text class="tip-item">{{i18n.rule2}}</text>
+      <text class="tip-item">{{i18n.rule3}}</text>
+      <text class="tip-item">{{i18n.rule4}}</text>
+    </view>
+  </view>
+</view>
+<!-- 结果弹窗 -->
+<view class="result-modal-mask" wx:if="{{showResultModal}}" bindtap="closeResultModal">
+  <view class="result-modal" catchtap="">
+    <view class="result-modal-poster" wx:if="{{_posterPath}}">
+      <image src="{{_posterPath}}" mode="widthFix" class="result-poster-img"></image>
+    </view>
+    <view class="result-modal-info" wx:else>
+      <text class="result-modal-icon">{{_resultData.icon}}</text>
+      <text class="result-modal-title">{{_resultData.title}}</text>
+      <text class="result-modal-score">{{_resultData.mainScore}}</text>
+      <text class="result-modal-label">{{_resultData.mainScoreLabel}}</text>
+      <text class="result-modal-rating" wx:if="{{_resultData.rating}}">{{_resultData.rating}}</text>
+    </view>
+    <view class="result-modal-actions">
+      <button class="result-modal-share" open-type="share">{{i18n.shareChallenge}}</button>
+      <view class="result-modal-close" bindtap="closeResultModal">{{i18n.close}}</view>
+    </view>
+  </view>
+</view>
+<!-- 结果海报Canvas -->
+<canvas type="2d" id="resultPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:420px;height:560px;"></canvas>

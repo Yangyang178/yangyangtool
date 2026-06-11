@@ -1,53 +1,40 @@
 var storageUtil = require('./utils/storage.js')
+var toolsData = require('./data/tools.js')
+var tracker = require('./utils/tracker.js')
+var remoteConfig = require('./utils/remote-config.js')
+var logger = require('./utils/logger.js')
+var perf = require('./utils/perf.js')
+var points = require('./utils/points.js')
 
 App({
   storage: storageUtil,
+  toolsData: toolsData,
+  tracker: tracker,
+  remoteConfig: remoteConfig,
+  perf: perf,
 
   globalData: {
     userInfo: null,
     isDarkMode: false,
     sharePosterPath: '',
+    toolPosterPath: '',
     openid: '',
-    cloudReady: false,
-    tools: [
-      { id: 1, name: '汇率换算', category: 'calculator' },
-      { id: 2, name: '单位换算', category: 'calculator' },
-      { id: 3, name: '房贷计算器', category: 'calculator' },
-      { id: 4, name: '小费计算器', category: 'calculator' },
-      { id: 5, name: '字数统计', category: 'text' },
-      { id: 6, name: '大小写转换', category: 'text' },
-      { id: 7, name: 'Base64编解码', category: 'text' },
-      { id: 8, name: '二维码生成器', category: 'text' },
-      { id: 9, name: '番茄计时', category: 'life' },
-      { id: 10, name: '喝水提醒', category: 'life' },
-      { id: 11, name: '随机决定', category: 'life' },
-      { id: 12, name: '垃圾分类查询', category: 'life' },
-      { id: 13, name: '日期计算器', category: 'datetime' },
-      { id: 14, name: '倒计时', category: 'datetime' },
-      { id: 15, name: '世界时钟', category: 'datetime' },
-      { id: 16, name: '年龄计算器', category: 'datetime' },
-      { id: 17, name: 'JSON格式化', category: 'dev' },
-      { id: 18, name: '颜色转换', category: 'dev' },
-      { id: 19, name: 'URL编解码', category: 'dev' },
-      { id: 20, name: '正则表达式测试', category: 'dev' },
-      { id: 21, name: '图片处理', category: 'dev' },
-      { id: 22, name: '密码生成器', category: 'dev' },
-      { id: 23, name: 'BMI 计算器', category: 'life' },
-      { id: 24, name: '文本对比', category: 'text' },
-      { id: 25, name: '个税计算器', category: 'calculator' }
-    ]
+    cloudReady: false
   },
 
   onLaunch: function() {
-    console.log('百宝工具箱启动')
+    logger.log('百宝工具箱启动')
 
+    perf.init()
     this.initCloud()
     this.initLocalData()
+    tracker.init()
+    remoteConfig.init()
     this.applyTheme()
 
     if (wx.onThemeChange) {
       wx.onThemeChange(function(result) {
-        var setting = wx.getStorageSync('darkModeSetting') || 'system'
+        var setting = storageUtil.get('darkModeSetting', 'system')
         if (setting === 'system') {
           this.applyTheme()
         }
@@ -55,11 +42,23 @@ App({
     }
   },
 
+  onShow: function() {
+    if (!this._appReadyMarked) {
+      this._appReadyMarked = true
+      var readyMs = perf.markAppReady()
+      logger.log('[性能监控] App Ready: ' + readyMs + 'ms')
+    }
+  },
+
+  onHide: function() {
+    tracker.flush()
+  },
+
   initCloud: function() {
     var that = this
 
     if (!wx.cloud) {
-      console.log('[云开发] 当前版本不支持云开发，使用本地模式')
+      logger.log('[云开发] 当前版本不支持云开发，使用本地模式')
       return
     }
 
@@ -69,42 +68,67 @@ App({
       })
 
       that.globalData.cloudReady = true
-      console.log('[云开发] 初始化成功(自动环境)')
+      logger.log('[云开发] 初始化成功(自动环境)')
 
       setTimeout(function() {
         try {
           var db = wx.cloud.database()
           db.collection('tool_records').count({
             success: function(res) {
-              console.log('[云数据库] 连接成功! tool_records记录数:', res.total)
+              logger.log('[云数据库] 连接成功! tool_records记录数:', res.total)
               that.syncLocalToCloud()
             },
             fail: function(err) {
-              console.log('[云数据库] 连接失败，使用纯本地模式')
+              logger.log('[云数据库] 连接失败，使用纯本地模式')
               that.globalData.cloudReady = false
             }
           })
         } catch(e) {
-          console.log('[云数据库] 检测连接异常:', e.message || e)
+          logger.log('[云数据库] 检测连接异常:', e.message || e)
           that.globalData.cloudReady = false
         }
       }, 2000)
     } catch(e) {
-      console.log('[云开发] 初始化异常:', e.message || e)
+      logger.log('[云开发] 初始化异常:', e.message || e)
       that.globalData.cloudReady = false
     }
   },
 
   initLocalData: function() {
-    var storage = this.storage
+    this._migrateWrappedKeys()
+  },
 
-    if (storage.get('favorites') === null) {
-      storage.set('favorites', [])
-    }
-
-    if (storage.get('recentTools') === null) {
-      storage.set('recentTools', [])
-    }
+  _migrateWrappedKeys: function() {
+    try {
+      var migrated = wx.getStorageSync('_storage_migrated_v2')
+      if (migrated) return
+      var keysToMigrate = [
+        'favorites', 'recentTools', 'totalUsageCount', 'weeklyUsage', 'toolUsageLog',
+        'checkin_records', 'user_points', 'total_earned_points',
+        'searchHistory', 'customToolOrder', 'hiddenTools',
+        'unlocked_achievements', 'achievement_progress',
+        'feedbackHistory', 'userProfile', 'toolRequests',
+        'darkMode', 'darkModeSetting', 'hasSeenGuide', 'guideVersion',
+        'age_calc_history', 'date_calc_history', 'json_formatter_history',
+        'cachedRates', 'world_clock_cities', 'water_reminder_interval',
+        'water_reminder_last_time', 'water_records', 'countdown_events',
+        'ruler_cal_version', 'ruler_calibration', 'white_noise_state',
+        'danmaku_history', 'relative_call_history', 'ts_converter_history',
+        'garbage_history', 'calc_history', 'random_decision_history',
+        'pomodoro_records', 'pomodoro_daily_goal', 'qr_history'
+      ]
+      for (var i = 0; i < keysToMigrate.length; i++) {
+        var key = keysToMigrate[i]
+        try {
+          var raw = wx.getStorageSync(key)
+          if (raw === '' || raw === undefined || raw === null) continue
+          if (typeof raw === 'object' && raw !== null && !Array.isArray(raw) && 'v' in raw && 'd' in raw && typeof raw.v === 'number' && 't' in raw) {
+            wx.setStorageSync(key, raw.d)
+          }
+        } catch(e) {}
+      }
+      wx.setStorageSync('_storage_migrated_v2', true)
+    } catch(e) {}
   },
 
   syncLocalToCloud: function() {
@@ -116,12 +140,12 @@ App({
       try {
         var db = wx.cloud.database()
         var totalUsage = 0
-        try { totalUsage = wx.getStorageSync('totalUsageCount') || 0; } catch(e) {}
+        try { totalUsage = storageUtil.get('totalUsageCount', 0); } catch(e) {}
         var todayStr = new Date().toDateString()
         var todayCount = 0
-        try { todayCount = (wx.getStorageSync('weeklyUsage') || {})[todayStr] || 0; } catch(e) {}
+        try { todayCount = (storageUtil.get('weeklyUsage', {}))[todayStr] || 0; } catch(e) {}
         var recentTools = []
-        try { recentTools = wx.getStorageSync('recentTools') || []; } catch(e) {}
+        try { recentTools = storageUtil.safeGetArray('recentTools'); } catch(e) {}
 
         db.collection('usage_log').add({
           data: {
@@ -132,9 +156,9 @@ App({
             createdAt: db.serverDate()
           }
         }).then(function() {
-          console.log('[云端同步] usage_log 写入成功')
+          logger.log('[云端同步] usage_log 写入成功')
         }).catch(function(err) {
-          console.log('[云端同步] usage_log 失败:', (err && err.errMsg) || 'unknown')
+          logger.log('[云端同步] usage_log 失败:', (err && err.errMsg) || 'unknown')
         })
       } catch(e) {}
     }, 1000)
@@ -193,27 +217,35 @@ App({
 
   cloudSyncFeedback: function(feedback) {
     if (!this.globalData.cloudReady) return
+    var typeLabels = { bug: '问题反馈', suggestion: '功能建议', other: '其他', tool_request: '工具需求' }
     setTimeout(function() {
       try {
         var db = wx.cloud.database()
         db.collection('user_feedbacks').add({
           data: {
-            content: feedback.content || '',
             type: feedback.type || 'feedback',
+            typeName: typeLabels[feedback.type] || feedback.type || '其他',
+            content: feedback.content || '',
             contact: feedback.contact || '',
+            category: feedback.category || '',
+            priority: feedback.priority || '',
+            device: feedback.device || '',
+            time: feedback.time || '',
+            timestamp: Date.now(),
+            status: 'pending',
             createdAt: db.serverDate()
           }
         }).then(function() {
-          console.log('[云端同步] 反馈已保存到 user_feedbacks')
+          logger.log('[云端同步] 反馈已保存到 user_feedbacks')
         }).catch(function(err) {
-          console.log('[云端同步] 反馈失败:', (err && err.errMsg) || 'unknown')
+          logger.log('[云端同步] 反馈失败:', (err && err.errMsg) || 'unknown')
         })
       } catch(e) {}
     }, 500)
   },
 
   applyTheme: function() {
-    var setting = wx.getStorageSync('darkModeSetting') || 'system'
+    var setting = storageUtil.get('darkModeSetting', 'system')
     var isDark = false
 
     if (setting === 'system') {
@@ -263,8 +295,21 @@ App({
 
   onShareAppMessage: function() {
     var poster = this.globalData.sharePosterPath || ''
+    try {
+      var taskInfo = points.getDailyTasks()
+      var shareTaskCompleted = false
+      for (var i = 0; i < taskInfo.tasks.length; i++) {
+        if (taskInfo.tasks[i].id === 'share_once' && taskInfo.tasks[i].completed) {
+          shareTaskCompleted = true
+          break
+        }
+      }
+      if (!shareTaskCompleted) {
+        points.recordShare()
+      }
+    } catch(e) {}
     return {
-      title: '\uD83C\uDFE0 \u767E\u5B9D\u5DE5\u5177\u7BB1 - 24+\u5B9E\u7528\u5C0F\u5DE5\u5177\u5408\u96C6',
+      title: '\uD83C\uDFE0 \u767E\u5B9D\u5DE5\u5177\u7BB1 - 40+\u5B9E\u7528\u5C0F\u5DE5\u5177\u5408\u96C6',
       path: '/pages/index/index',
       imageUrl: poster
     };
@@ -272,15 +317,28 @@ App({
 
   onShareTimeline: function() {
     var poster = this.globalData.sharePosterPath || ''
+    try {
+      var taskInfo = points.getDailyTasks()
+      var shareTaskCompleted = false
+      for (var i = 0; i < taskInfo.tasks.length; i++) {
+        if (taskInfo.tasks[i].id === 'share_once' && taskInfo.tasks[i].completed) {
+          shareTaskCompleted = true
+          break
+        }
+      }
+      if (!shareTaskCompleted) {
+        points.recordShare()
+      }
+    } catch(e) {}
     return {
-      title: '\uD83C\uDFE0 \u767E\u5B9D\u5DE5\u5177\u7BB1 - \u6C47\u7387\u6362\u7B97\u3001\u5355\u4F4D\u8F6C\u6362\u7B4924+\u5B9E\u7528\u5DE5\u5177',
+      title: '\uD83C\uDFE0 \u767E\u5B9D\u5DE5\u5177\u7BB1 - \u6C47\u7387\u6362\u7B97\u3001\u5355\u4F4D\u8F6C\u6362\u7B4940+\u5B9E\u7528\u5DE5\u5177',
       query: '',
       imageUrl: poster
     };
   },
 
   onError: function(err) {
-    console.error('=== Global App Error ===', err)
+    logger.error('=== Global App Error ===', err)
     
     var errorMsg = '未知错误'
     if (typeof err === 'string') {
@@ -296,7 +354,7 @@ App({
     })
 
     try {
-      var errorLog = wx.getStorageSync('errorLog') || []
+      var errorLog = storageUtil.safeGetArray('errorLog')
       errorLog.push({
         time: new Date().toISOString(),
         error: errorMsg,

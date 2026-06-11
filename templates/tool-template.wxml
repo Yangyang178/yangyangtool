@@ -6,15 +6,15 @@
   badge="{{badge}}"
   actions="{{actionButtons}}"
   tips="{{tipList}}"
-  tipsTitle="💡 使用提示"
+  tipsTitle="{{i18n.tipsTitle}}"
 >
   
   <!-- 输入区（slot: input） -->
   <view slot="input" class="tp-input-section">
-    <text class="tp-label">输入内容</text>
+    <text class="tp-label">{{i18n.inputLabel}}</text>
     <input class="tp-standard-input" 
       type="text"
-      placeholder="请输入..."
+      placeholder="{{i18n.inputPlaceholder}}"
       value="{{inputValue}}"
       bindinput="onInput"
     />
@@ -29,13 +29,14 @@
     
     <!-- 详细结果列表 -->
     <view class="detail-row">
-      <text class="detail-label">项目1</text>
+      <text class="detail-label">{{i18n.item1}}</text>
       <text class="detail-value">{{detail1}}</text>
     </view>
     <view class="detail-row">
-      <text class="detail-label">项目2</text>
+      <text class="detail-label">{{i18n.item2}}</text>
       <text class="detail-value">{{detail2}}</text>
     </view>
   </view>
 
 </tool-page>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

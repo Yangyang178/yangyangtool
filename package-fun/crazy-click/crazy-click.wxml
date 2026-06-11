@@ -1,0 +1,110 @@
+<navigation-bar title="{{i18n.navTitle}}" />
+
+<view class="page-container {{isDarkMode ? 'dark-mode' : ''}} {{fontClass}} font-size-{{fontSizeSetting}}" style="{{themeStyle}}">
+
+  <!-- 工具头部 -->
+  <view class="tool-header">
+    <view class="tool-icon">👆</view>
+    <view class="tool-info">
+      <view class="tool-title">{{i18n.toolTitle}}</view>
+      <view class="tool-desc">{{i18n.toolDesc}}</view>
+    </view>
+  </view>
+
+  <!-- 倒计时进度条 -->
+  <view class="progress-section" wx:if="{{state === 'playing'}}">
+    <view class="progress-bar-bg">
+      <view class="progress-bar-fill" style="width: {{progressPercent}}%;"></view>
+    </view>
+    <view class="countdown-text">{{timeLeft}}s</view>
+  </view>
+
+  <!-- 主点击区域 -->
+  <view class="tap-area">
+    <!-- 空闲状态 -->
+    <view class="tap-button tap-button-idle" wx:if="{{state === 'idle'}}" bindtap="onTapButton">
+      <view class="tap-button-text">{{i18n.tapToStart}}</view>
+      <view class="tap-button-sub">{{i18n.tenSecChallenge}}</view>
+    </view>
+
+    <!-- 游戏中 -->
+    <view class="tap-button tap-button-playing" wx:if="{{state === 'playing'}}" bindtap="onTapButton">
+      <view class="tap-count">{{clicks}}</view>
+      <view class="tap-label">{{i18n.clickCount}}</view>
+      <view class="tap-cps">CPS: {{cps}}</view>
+    </view>
+
+    <!-- 结果状态 -->
+    <view class="tap-button tap-button-result" wx:if="{{state === 'result'}}" bindtap="onTapButton">
+      <view class="result-count">{{clicks}}</view>
+      <view class="result-label">{{i18n.totalClicks}}</view>
+    </view>
+  </view>
+
+  <!-- 结果展示 -->
+  <view class="result-section" wx:if="{{state === 'result'}}">
+    <view class="result-card">
+      <view class="result-row">
+        <view class="result-item">
+          <view class="result-value">{{cps}}</view>
+          <view class="result-key">{{i18n.cpsLabel}}</view>
+        </view>
+      </view>
+      <view class="rating-badge" style="background-color: {{ratingColor}};">
+        {{rating}}
+      </view>
+    </view>
+
+    <view class="result-actions">
+      <view class="restart-btn" bindtap="onTapButton">{{i18n.playAgain}}</view>
+    </view>
+  </view>
+
+  <!-- 统计数据 -->
+  <view class="stats-section">
+    <view class="stats-title">{{i18n.historyRecords}}</view>
+    <view class="stats-grid">
+      <view class="stat-card">
+        <view class="stat-value">{{bestClicks}}</view>
+        <view class="stat-label">{{i18n.bestClicks}}</view>
+      </view>
+      <view class="stat-card">
+        <view class="stat-value">{{bestCps}}</view>
+        <view class="stat-label">{{i18n.bestCps}}</view>
+      </view>
+      <view class="stat-card">
+        <view class="stat-value">{{totalGames}}</view>
+        <view class="stat-label">{{i18n.totalGames}}</view>
+      </view>
+    </view>
+    <view class="reset-stats" bindtap="resetStats" wx:if="{{totalGames > 0}}">{{i18n.resetRecords}}</view>
+  </view>
+
+  <!-- 提示卡片 -->
+  <view class="tip-card">
+    <view class="tip-icon">💡</view>
+    <view class="tip-text">{{i18n.tipText}}</view>
+  </view>
+
+</view>
+<!-- 结果弹窗 -->
+<view class="result-modal-mask" wx:if="{{showResultModal}}" bindtap="closeResultModal">
+  <view class="result-modal" catchtap="">
+    <view class="result-modal-poster" wx:if="{{_posterPath}}">
+      <image src="{{_posterPath}}" mode="widthFix" class="result-poster-img"></image>
+    </view>
+    <view class="result-modal-info" wx:else>
+      <text class="result-modal-icon">{{_resultData.icon}}</text>
+      <text class="result-modal-title">{{_resultData.title}}</text>
+      <text class="result-modal-score">{{_resultData.mainScore}}</text>
+      <text class="result-modal-label">{{_resultData.mainScoreLabel}}</text>
+      <text class="result-modal-rating" wx:if="{{_resultData.rating}}">{{_resultData.rating}}</text>
+    </view>
+    <view class="result-modal-actions">
+      <button class="result-modal-share" open-type="share">{{i18n.shareChallenge}}</button>
+      <view class="result-modal-close" bindtap="closeResultModal">{{i18n.close}}</view>
+    </view>
+  </view>
+</view>
+<!-- 结果海报Canvas -->
+<canvas type="2d" id="resultPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:420px;height:560px;"></canvas>

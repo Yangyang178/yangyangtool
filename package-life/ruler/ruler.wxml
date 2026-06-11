@@ -1,0 +1,275 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view scroll-y="{{true}}" class="tool-page page-scroll {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}">
+  <view class="container">
+
+    <view class="tool-header">
+      <view class="tool-icon-large" style="background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);">
+        <view class="tool-icon-decoration"></view>
+        <text class="header-icon">📏</text>
+      </view>
+      <view class="tool-info">
+        <text class="tool-title-main">{{i18n.toolTitle}}</text>
+        <text class="tool-desc-main">{{i18n.toolDesc}}</text>
+      </view>
+    </view>
+
+    <view class="mode-tabs">
+      <view class="mode-tab {{currentMode === 'ruler' ? 'active' : ''}}" data-mode="ruler" bindtap="switchMode">
+        <text class="mode-tab-icon">📏</text>
+        <text class="mode-tab-label">{{i18n.tabRuler}}</text>
+      </view>
+      <view class="mode-tab {{currentMode === 'protractor' ? 'active' : ''}}" data-mode="protractor" bindtap="switchMode">
+        <text class="mode-tab-icon">📐</text>
+        <text class="mode-tab-label">{{i18n.tabProtractor}}</text>
+      </view>
+      <view class="mode-tab {{currentMode === 'level' ? 'active' : ''}}" data-mode="level" bindtap="switchMode">
+        <text class="mode-tab-icon">⊙</text>
+        <text class="mode-tab-label">{{i18n.tabLevel}}</text>
+      </view>
+    </view>
+
+    <!-- ===== 尺子模式 ===== -->
+    <block wx:if="{{currentMode === 'ruler'}}">
+      <view class="top-bar">
+        <view class="unit-switch">
+          <view class="unit-btn {{unit === 'cm' ? 'active' : ''}}" data-unit="cm" bindtap="switchUnit">
+            <text>cm</text>
+          </view>
+          <view class="unit-btn {{unit === 'inch' ? 'active' : ''}}" data-unit="inch" bindtap="switchUnit">
+            <text>in</text>
+          </view>
+        </view>
+        <view class="scale-info" wx:if="{{scale !== 1}}">
+          <text class="scale-text">{{scale}}x</text>
+          <view class="reset-btn" bindtap="resetScale"><text>{{i18n.reset}}</text></view>
+        </view>
+      </view>
+
+      <view class="ruler-card">
+        <view class="ruler-label">
+          <text class="ruler-num">0</text>
+          <text class="ruler-unit">{{unit === 'cm' ? 'cm' : 'in'}}</text>
+        </view>
+        <scroll-view
+          class="ruler-scroll"
+          scroll-x="{{true}}"
+          bindtouchstart="onScaleStart"
+          bindtouchmove="onScaleMove"
+          bindtouchend="onScaleEnd"
+        >
+          <view class="ruler-track" style="width: {{ticks[ticks.length - 1].offset + 40}}px;">
+            <view
+              wx:for="{{ticks}}"
+              wx:key="index"
+              class="tick tick-{{item.type}}"
+              style="left: {{item.offset}}px;"
+            >
+              <text wx:if="{{item.label}}" class="tick-label">{{item.label}}</text>
+            </view>
+          </view>
+        </scroll-view>
+        <view class="ruler-edge">
+          <view class="edge-line"></view>
+          <text class="edge-text">{{i18n.screenLeftEdge}}</text>
+        </view>
+      </view>
+
+      <view class="action-row">
+        <view class="action-btn landscape-action" bindtap="enterLandscape">
+          <text class="action-icon">📱</text>
+          <text class="action-label">{{i18n.landscapeRuler}}</text>
+        </view>
+        <view class="action-btn calibrate-action" bindtap="toggleCalibration">
+          <text class="action-icon">🔧</text>
+          <text class="action-label">{{i18n.calibrateScale}}</text>
+        </view>
+        <view class="action-btn record-action" bindtap="saveLengthRecord">
+          <text class="action-icon">💾</text>
+          <text class="action-label">{{i18n.saveRecord}}</text>
+        </view>
+      </view>
+
+      <view class="calibration-card" wx:if="{{showCalibration}}">
+        <text class="calibration-tip">{{i18n.calibrationTip}}</text>
+        <slider
+          min="0.8"
+          max="1.2"
+          step="0.01"
+          value="{{calibration}}"
+          activeColor="#3B82F6"
+          bindchange="onCalibrationChange"
+        />
+        <view class="calibration-info">
+          <text class="calibration-value">{{i18n.coefficient}}: {{calibration}}x</text>
+          <view class="calibration-reset" bindtap="resetCalibration"><text>{{i18n.reset}}</text></view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ===== 量角器模式 ===== -->
+    <block wx:if="{{currentMode === 'protractor'}}">
+      <view class="protractor-card">
+        <view class="protractor-canvas-wrap"
+          bindtouchstart="onProtractorTouchStart"
+          bindtouchmove="onProtractorTouchMove"
+          bindtouchend="onProtractorTouchEnd">
+          <canvas type="2d" id="protractorCanvas"
+            style="width: {{protractorCanvasSize}}px; height: {{protractorCanvasSize}}px;">
+          </canvas>
+        </view>
+        <view class="protractor-result">
+          <view class="angle-display">
+            <text class="angle-value">{{protractorAngleDisplay}}</text>
+            <text class="angle-unit">°</text>
+          </view>
+          <text class="angle-hint">{{i18n.dragAngleHint}}</text>
+        </view>
+        <view class="protractor-actions">
+          <view class="prot-action-btn" bindtap="saveAngleRecord">
+            <text class="prot-action-icon">💾</text>
+            <text class="prot-action-label">{{i18n.saveRecord}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="prot-tip-card">
+        <text class="prot-tip-item">{{i18n.protTip1}}</text>
+        <text class="prot-tip-item">{{i18n.protTip2}}</text>
+        <text class="prot-tip-item">{{i18n.protTip3}}</text>
+      </view>
+    </block>
+
+    <!-- ===== 水平仪模式 ===== -->
+    <block wx:if="{{currentMode === 'level'}}">
+      <view class="level-card">
+        <view class="level-bubble-wrap">
+          <view class="level-bubble-container">
+            <view class="level-crosshair"></view>
+            <view class="level-bubble {{levelIsFlat ? 'flat' : ''}}"
+              style="left: {{levelBubbleX}}%; top: {{levelBubbleY}}%;">
+            </view>
+            <view class="level-center-ring"></view>
+          </view>
+        </view>
+
+        <view class="level-angles">
+          <view class="level-angle-item">
+            <text class="level-angle-label">{{i18n.xTilt}}</text>
+            <text class="level-angle-value {{levelIsFlat ? 'flat' : ''}}">{{levelAngleX}}°</text>
+          </view>
+          <view class="level-angle-item">
+            <text class="level-angle-label">{{i18n.yTilt}}</text>
+            <text class="level-angle-value {{levelIsFlat ? 'flat' : ''}}">{{levelAngleY}}°</text>
+          </view>
+          <view class="level-angle-item">
+            <text class="level-angle-label">{{i18n.totalTilt}}</text>
+            <text class="level-angle-value {{levelIsFlat ? 'flat' : ''}}">{{levelTotalAngle}}°</text>
+          </view>
+        </view>
+
+        <view class="level-status">
+          <view class="level-status-dot {{levelIsFlat ? 'flat' : 'tilted'}}"></view>
+          <text class="level-status-text">{{levelIsFlat ? i18n.horizontal : i18n.tilted}}</text>
+        </view>
+
+        <view class="level-actions">
+          <view class="level-action-btn" bindtap="saveLevelRecord">
+            <text class="prot-action-icon">💾</text>
+            <text class="prot-action-label">{{i18n.saveRecord}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="prot-tip-card">
+        <text class="prot-tip-item">{{i18n.levelTip1}}</text>
+        <text class="prot-tip-item">{{i18n.levelTip2}}</text>
+        <text class="prot-tip-item">{{i18n.levelTip3}}</text>
+      </view>
+    </block>
+
+    <!-- ===== 测量记录 ===== -->
+    <view class="records-section">
+      <view class="section-title-row" bindtap="toggleRecords">
+        <text class="section-title-text">{{i18n.measureRecords}} ({{measureRecords.length}})</text>
+        <text class="section-toggle">{{showRecords ? i18n.collapse : i18n.expand}}</text>
+      </view>
+      <view class="records-list" wx:if="{{showRecords && measureRecords.length > 0}}">
+        <view class="record-item" wx:for="{{measureRecords}}" wx:key="id">
+          <view class="record-icon-wrap record-type-{{item.type}}">
+            <text class="record-icon">{{item.type === 'length' ? '📏' : item.type === 'angle' ? '📐' : '⊙'}}</text>
+          </view>
+          <view class="record-info">
+            <text class="record-value">{{item.value}}{{item.unit}}</text>
+            <text class="record-meta">{{item.desc}} · {{item.time}}</text>
+          </view>
+          <view class="record-del" catchtap="removeRecord" data-id="{{item.id}}">✕</view>
+        </view>
+      </view>
+      <view class="records-empty" wx:if="{{showRecords && measureRecords.length === 0}}">
+        <text class="records-empty-text">{{i18n.noRecords}}</text>
+      </view>
+      <view class="records-clear" wx:if="{{showRecords && measureRecords.length > 0}}" bindtap="clearRecords">
+        <text>{{i18n.clearAllRecords}}</text>
+      </view>
+    </view>
+
+    <view class="tool-actions-bar" wx:if="{{currentMode === 'ruler'}}">
+      <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResult}}</button>
+      <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">{{i18n.reset}}</button>
+    </view>
+
+    <view class="tip-card" wx:if="{{showTip && currentMode === 'ruler'}}">
+      <view class="tip-header">
+        <text class="tip-icon">💡</text>
+        <text class="tip-title">{{i18n.usageTips}}</text>
+        <view class="tip-close" bindtap="dismissTip"><text>✕</text></view>
+      </view>
+      <view class="tip-content">
+        <text class="tip-item">{{i18n.rulerTip1}}</text>
+        <text class="tip-item">{{i18n.rulerTip2}}</text>
+        <text class="tip-item">{{i18n.rulerTip3}}</text>
+        <text class="tip-item">{{i18n.rulerTip4}}</text>
+      </view>
+    </view>
+  </view>
+</scroll-view>
+
+<view class="landscape-mode {{isDarkMode ? 'dark-mode' : ''}} {{isLandscape ? '' : 'landscape-hidden'}}" style="width: {{landscapeWidth}}px; height: {{landscapeHeight}}px;">
+  <view class="landscape-ruler">
+    <view class="landscape-ruler-label">
+      <text class="ls-label-num">0</text>
+      <text class="ls-label-unit">{{unit === 'cm' ? 'cm' : 'in'}}</text>
+    </view>
+    <scroll-view class="landscape-ruler-scroll" scroll-x="{{true}}">
+      <view class="landscape-ruler-track" style="width: {{landscapeTicks[landscapeTicks.length - 1].offset + 60}}px;">
+        <view
+          wx:for="{{landscapeTicks}}"
+          wx:key="index"
+          class="ltick ltick-{{item.type}}"
+          style="left: {{item.offset}}px;"
+        >
+          <text wx:if="{{item.label}}" class="ltick-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="landscape-edge">
+      <view class="ls-edge-line"></view>
+      <text class="ls-edge-text">{{i18n.screenLeftEdge}}</text>
+    </view>
+  </view>
+  <view class="landscape-controls">
+    <view class="ls-unit-switch">
+      <view class="ls-unit-btn {{unit === 'cm' ? 'active' : ''}}" data-unit="cm" bindtap="switchUnit"><text>cm</text></view>
+      <view class="ls-unit-btn {{unit === 'inch' ? 'active' : ''}}" data-unit="inch" bindtap="switchUnit"><text>in</text></view>
+    </view>
+    <view class="ls-calibration">
+      <view class="ls-cal-btn" bindtap="landscapeCalMinus"><text>-</text></view>
+      <text class="ls-cal-value">{{calibration}}x</text>
+      <view class="ls-cal-btn" bindtap="landscapeCalPlus"><text>+</text></view>
+    </view>
+    <view class="ls-exit-btn" bindtap="exitLandscape"><text>{{i18n.exitLandscape}}</text></view>
+  </view>
+</view>
+<privacy-popup />
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

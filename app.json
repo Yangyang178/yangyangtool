@@ -2,10 +2,10 @@
   "pages": [
     "pages/index/index",
     "pages/favorites/favorites",
-    "pages/recent/recent"
+    "pages/recent/recent",
+    "pages/privacy/privacy"
   ],
-  
-  "subpackages": [
+  "subPackages": [
     {
       "root": "package-calculator",
       "name": "calculator",
@@ -16,7 +16,10 @@
         "tip-calculator/tip-calculator",
         "bmi-calculator/bmi-calculator",
         "tax-calculator/tax-calculator",
-        "age-calculator/age-calculator"
+        "age-calculator/age-calculator",
+        "calculator/calculator",
+        "prepayment-calculator/prepayment-calculator",
+        "trig-calculator/trig-calculator"
       ]
     },
     {
@@ -28,7 +31,9 @@
         "base64-tool/base64-tool",
         "text-diff/text-diff",
         "url-encoder/url-encoder",
-        "regex-tester/regex-tester"
+        "regex-tester/regex-tester",
+        "qr-code/qr-code",
+        "morse-code/morse-code"
       ]
     },
     {
@@ -41,7 +46,14 @@
         "garbage-sorting/garbage-sorting",
         "date-calculator/date-calculator",
         "countdown/countdown",
-        "world-clock/world-clock"
+        "world-clock/world-clock",
+        "ruler/ruler",
+        "relative-call/relative-call",
+        "white-noise/white-noise",
+        "compass/compass",
+        "danmaku/danmaku",
+        "meme-maker/meme-maker",
+        "account-book/account-book"
       ]
     },
     {
@@ -51,26 +63,47 @@
         "json-formatter/json-formatter",
         "color-converter/color-converter",
         "image-processor/image-processor",
-        "password-generator/password-generator"
+        "password-generator/password-generator",
+        "timestamp-converter/timestamp-converter",
+        "base-converter/base-converter",
+        "ip-lookup/ip-lookup",
+        "bit-visualizer/bit-visualizer"
+      ]
+    },
+    {
+      "root": "package-fun",
+      "name": "fun",
+      "pages": [
+        "fun-home/fun-home",
+        "reaction-test/reaction-test",
+        "color-memory/color-memory",
+        "number-guess/number-guess",
+        "memory-card/memory-card",
+        "crazy-click/crazy-click",
+        "maze/maze",
+        "vision-test/vision-test",
+        "psychology-test/psychology-test",
+        "number-sequence/number-sequence",
+        "time-perception/time-perception",
+        "char-finder/char-finder",
+        "leaderboard/leaderboard"
       ]
     }
   ],
-  
   "preloadRule": {
     "pages/index/index": {
       "network": "all",
-      "packages": ["calculator", "text", "life", "dev"]
+      "packages": ["calculator", "life"]
     },
     "pages/favorites/favorites": {
       "network": "all",
-      "packages": ["calculator", "text", "life", "dev"]
+      "packages": ["text", "dev"]
     },
     "pages/recent/recent": {
       "network": "all",
-      "packages": ["calculator", "text", "life", "dev"]
+      "packages": ["life", "fun"]
     }
   },
-
   "window": {
     "navigationBarTextStyle": "black",
     "navigationStyle": "custom"
@@ -105,5 +138,14 @@
   "darkmode": true,
   "themeLocation": "theme.json",
   "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents"
+  "lazyCodeLoading": "requiredComponents",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "指南针需要获取您的位置信息以显示经纬度坐标"
+    }
+  },
+  "__usePrivacyCheck__": true,
+  "requiredPrivateInfos": [
+    "getLocation"
+  ]
 }

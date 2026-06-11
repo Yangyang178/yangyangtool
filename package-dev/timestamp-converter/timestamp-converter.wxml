@@ -1,0 +1,230 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
+  <view class="container">
+
+    <view class="tool-header">
+      <view class="icon-wrapper" style="background: linear-gradient(135deg, #3B82F633 0%, #3B82F666 100%);">
+        <view class="icon-decoration"></view>
+        <text class="tool-icon">⏱️</text>
+      </view>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
+    </view>
+
+    <view class="live-timestamp-card" bindtap="onCopyCurrentTs">
+      <view class="live-label">{{i18n.currentTimestamp}}</view>
+      <view class="live-value">{{currentTimestamp}}</view>
+      <view class="live-ms">{{i18n.millisecond}}: {{currentTimestampMs}}</view>
+      <view class="live-hint">{{i18n.copySecondTs}}</view>
+    </view>
+
+    <view class="quick-ts-section">
+      <text class="quick-ts-title">⚡ {{i18n.commonTimestamps}}</text>
+      <view class="quick-ts-grid">
+        <view 
+          wx:for="{{quickTimestamps}}" wx:key="label"
+          class="quick-ts-btn"
+          data-index="{{index}}"
+          bindtap="onQuickTimestamp"
+        >{{item.label}}</view>
+      </view>
+    </view>
+
+    <view class="tab-bar">
+      <view class="tab-item {{activeTab === 0 ? 'active' : ''}}" data-tab="{{0}}" bindtap="onTabChange">
+        <text class="tab-icon">📥</text>
+        <text class="tab-text">{{i18n.ts2date}}</text>
+      </view>
+      <view class="tab-item {{activeTab === 1 ? 'active' : ''}}" data-tab="{{1}}" bindtap="onTabChange">
+        <text class="tab-icon">📤</text>
+        <text class="tab-text">{{i18n.date2ts}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{activeTab === 0}}" class="convert-section">
+      <view class="input-card">
+        <view class="input-header">
+          <text class="input-label">🎯 {{i18n.inputTimestamp}}</text>
+          <view class="use-current-btn" bindtap="onUseCurrentTimestamp">{{i18n.useCurrent}}</view>
+        </view>
+        <view class="input-row">
+          <input
+            class="ts-input"
+            placeholder="{{i18n.tsInputPlaceholder}}"
+            value="{{timestampInput}}"
+            bindinput="onTimestampInput"
+            type="number"
+          />
+        </view>
+        <view class="unit-selector">
+          <view class="unit-item {{timestampUnit === 'auto' ? 'active' : ''}}" data-unit="auto" bindtap="onUnitChange">{{i18n.autoDetect}}</view>
+          <view class="unit-item {{timestampUnit === 's' ? 'active' : ''}}" data-unit="s" bindtap="onUnitChange">{{i18n.seconds}}</view>
+            <view class="unit-item {{timestampUnit === 'ms' ? 'active' : ''}}" data-unit="ms" bindtap="onUnitChange">{{i18n.milliseconds}}</view>
+        </view>
+        <view class="convert-btn" bindtap="onConvertTs2Date">
+            <text>{{i18n.convert}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{ts2dateResult}}" class="result-section">
+        <view class="result-title">📋 {{i18n.convertResult}}</view>
+        <view class="result-list">
+          <view class="result-row" bindtap="onCopyResult" data-text="{{ts2dateResult.local}}">
+              <text class="result-label">{{i18n.localTime}}</text>
+            <text class="result-value">{{ts2dateResult.local}}</text>
+          </view>
+          <view class="result-row" bindtap="onCopyResult" data-text="{{ts2dateResult.iso}}">
+            <text class="result-label">ISO 8601</text>
+            <text class="result-value mono">{{ts2dateResult.iso}}</text>
+          </view>
+          <view class="result-row" bindtap="onCopyResult" data-text="{{ts2dateResult.utc}}">
+              <text class="result-label">{{i18n.utcTime}}</text>
+            <text class="result-value mono">{{ts2dateResult.utc}}</text>
+          </view>
+          <view class="result-row" bindtap="onCopyResult" data-text="{{ts2dateResult.relative}}">
+              <text class="result-label">{{i18n.relativeTime}}</text>
+            <text class="result-value">{{ts2dateResult.relative}}</text>
+          </view>
+          <view class="result-row" bindtap="onCopyResult" data-text="{{ts2dateResult.seconds}}">
+              <text class="result-label">{{i18n.secondTs}}</text>
+            <text class="result-value mono">{{ts2dateResult.tsSeconds}}</text>
+          </view>
+          <view class="result-row" bindtap="onCopyResult" data-text="{{ts2dateResult.milliseconds}}">
+              <text class="result-label">{{i18n.msTs}}</text>
+            <text class="result-value mono">{{ts2dateResult.tsMillis}}</text>
+          </view>
+        </view>
+        <view class="copy-all-btn" bindtap="onCopyResult" data-text="{{ts2dateResult.local}}">
+          <text>📋 {{i18n.copyLocalTime}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{activeTab === 1}}" class="convert-section">
+      <view class="input-card">
+        <view class="input-header">
+          <text class="input-label">📅 {{i18n.selectDateTime}}</text>
+        </view>
+        <view class="picker-group">
+          <view class="picker-item">
+            <text class="picker-label">{{i18n.date}}</text>
+            <picker mode="date" value="{{dateValue}}" bindchange="onDateChange">
+              <view class="picker-value {{dateValue ? '' : 'placeholder'}}">
+                {{dateValue || i18n.selectDatePlaceholder}}
+              </view>
+            </picker>
+          </view>
+          <view class="picker-item">
+            <text class="picker-label">{{i18n.time}}</text>
+            <picker mode="time" value="{{timeValue}}" bindchange="onTimeChange">
+              <view class="picker-value {{timeValue ? '' : 'placeholder'}}">
+                {{timeValue || i18n.selectTimePlaceholder}}
+              </view>
+            </picker>
+          </view>
+        </view>
+        <view class="convert-btn" bindtap="onConvertDate2Ts">
+          <text>{{i18n.convert}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{dateTsResult}}" class="result-section">
+        <view class="result-title">📋 {{i18n.convertResult}}</view>
+        <view class="result-list">
+          <view class="result-row" bindtap="onCopyResult" data-text="{{dateTsResult.seconds}}">
+            <text class="result-label">{{i18n.secondTs}}</text>
+            <text class="result-value mono highlight">{{dateTsResult.seconds}}</text>
+          </view>
+          <view class="result-row" bindtap="onCopyResult" data-text="{{dateTsResult.millis}}">
+            <text class="result-label">{{i18n.msTs}}</text>
+            <text class="result-value mono">{{dateTsResult.millis}}</text>
+          </view>
+          <view class="result-row" bindtap="onCopyResult" data-text="{{dateTsResult.local}}">
+            <text class="result-label">{{i18n.localTime}}</text>
+            <text class="result-value">{{dateTsResult.local}}</text>
+          </view>
+          <view class="result-row" bindtap="onCopyResult" data-text="{{dateTsResult.iso}}">
+            <text class="result-label">ISO 8601</text>
+            <text class="result-value mono">{{dateTsResult.iso}}</text>
+          </view>
+          <view class="result-row" bindtap="onCopyResult" data-text="{{dateTsResult.utc}}">
+            <text class="result-label">{{i18n.utcTime}}</text>
+            <text class="result-value mono">{{dateTsResult.utc}}</text>
+          </view>
+        </view>
+        <view class="copy-all-btn" bindtap="onCopyResult" data-text="{{dateTsResult.seconds}}">
+          <text>📋 {{i18n.copySecondTsBtn}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">🔄 {{i18n.reset}}</button>
+    </view>
+
+    <view class="history-section" wx:if="{{history.length > 0}}">
+      <view class="history-header">
+        <text class="history-title">🕐 {{i18n.history}}</text>
+        <view class="history-clear" bindtap="onClearHistory">{{i18n.clearHistory}}</view>
+      </view>
+      <view class="history-list">
+        <view
+          class="history-item"
+          wx:for="{{history}}"
+          wx:key="time"
+          data-index="{{index}}"
+          bindtap="onHistoryItemTap"
+        >
+          <view class="history-main">
+            <text class="history-type">{{item.type === 'ts2date' ? '📥 ' + i18n.ts2date : '📤 ' + i18n.date2ts}}</text>
+            <text class="history-input">{{item.input}}</text>
+          </view>
+          <view class="history-output-wrap">
+            <text class="history-output">{{item.output}}</text>
+            <text class="history-time">{{item.time}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="batch-section">
+      <view class="batch-header" bindtap="toggleBatch">
+        <text class="batch-title">📦 {{i18n.batchConvert}}</text>
+        <text class="batch-arrow {{showBatch ? 'expanded' : ''}}">▾</text>
+      </view>
+      <view class="batch-body" wx:if="{{showBatch}}">
+        <text class="batch-desc">{{i18n.batchDesc}}</text>
+        <textarea 
+          class="batch-textarea" 
+          placeholder="{{i18n.batchPlaceholder}}"
+          value="{{batchInput}}"
+          bindinput="onBatchInput"
+          auto-height
+          maxlength="-1"
+        ></textarea>
+        <view class="batch-convert-btn" bindtap="onBatchConvert">🔄 {{i18n.batchConvertBtn}}</view>
+        <view class="batch-results" wx:if="{{batchResults.length > 0}}">
+          <view class="batch-result-item {{item.valid ? '' : 'invalid'}}" wx:for="{{batchResults}}" wx:key="input">
+            <view class="batch-result-main">
+              <text class="batch-result-ts">{{item.input}}</text>
+              <text class="batch-result-arrow">→</text>
+              <text class="batch-result-date" wx:if="{{item.valid}}">{{item.local}}</text>
+              <text class="batch-result-error" wx:else>{{item.error}}</text>
+            </view>
+            <view class="batch-result-detail" wx:if="{{item.valid}}">
+              <text class="batch-detail-text">{{i18n.isoLabel}}: {{item.iso}}</text>
+              <text class="batch-detail-text">{{i18n.relativeLabel}}: {{item.relative}}</text>
+            </view>
+            <view class="batch-result-copy" wx:if="{{item.valid}}" data-index="{{index}}" bindtap="onCopyBatchOne">{{i18n.copy}}</view>
+          </view>
+        </view>
+        <view class="batch-actions" wx:if="{{batchResults.length > 0}}">
+          <view class="batch-copyall-btn" bindtap="onCopyBatchAll">📋 {{i18n.copyAllResults}}</view>
+        </view>
+      </view>
+    </view>
+
+  </view>
+</scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

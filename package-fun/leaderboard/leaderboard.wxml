@@ -1,0 +1,93 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" />
+
+<view class="container {{isDarkMode ? 'dark-mode' : ''}} {{fontClass}} font-size-{{fontSizeSetting}}" style="{{themeStyle}}">
+
+  <!-- 游戏标签栏 -->
+  <scroll-view class="game-tabs" scroll-x="true" enhanced="true" show-scrollbar="{{false}}">
+    <view class="game-tabs-inner">
+      <view class="game-tab {{currentGame === index ? 'game-tab-active' : ''}}" wx:for="{{games}}" wx:key="id" data-index="{{index}}" bindtap="switchGame">
+        <text class="game-tab-icon">{{item.icon}}</text>
+        <text class="game-tab-name">{{item.name}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 最佳成绩卡片 -->
+  <view class="best-card">
+    <view class="best-card-bg"></view>
+    <view class="best-card-content">
+      <view class="best-icon-wrap">
+        <text class="best-icon">{{games[currentGame].icon}}</text>
+      </view>
+      <view class="best-info">
+        <text class="best-label">{{i18n.bestScore}}</text>
+        <text class="best-score">{{bestScoreDisplay}}</text>
+      </view>
+    </view>
+    <view class="best-stats">
+      <view class="stat-item">
+        <text class="stat-value">{{totalGames}}</text>
+        <text class="stat-label">{{i18n.gameCount}}</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-value">{{games[currentGame].lowerBetter ? i18n.lowerBetter : i18n.higherBetter}}</text>
+        <text class="stat-label">{{i18n.rankingRule}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 本地排行 TOP10 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-icon">🏅</text>
+      <text class="section-title">{{i18n.localRankTop10}}</text>
+    </view>
+
+    <view class="rank-list" wx:if="{{localRank.length > 0}}">
+      <view class="rank-item {{item.isMe ? 'rank-item-me' : ''}}" wx:for="{{localRank}}" wx:key="rank">
+        <view class="rank-left">
+          <text class="rank-medal" wx:if="{{item.rank === 1}}">🥇</text>
+          <text class="rank-medal" wx:elif="{{item.rank === 2}}">🥈</text>
+          <text class="rank-medal" wx:elif="{{item.rank === 3}}">🥉</text>
+          <text class="rank-number" wx:else>{{item.rank}}</text>
+        </view>
+        <view class="rank-center">
+          <text class="rank-name">{{item.name}}</text>
+        </view>
+        <view class="rank-right">
+          <text class="rank-score">{{item.score}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">🎮</text>
+      <text class="empty-text">{{i18n.noRecords}}</text>
+      <text class="empty-hint">{{i18n.goChallenge}}{{games[currentGame].name}}{{i18n.goChallengeSuffix}}</text>
+    </view>
+  </view>
+
+  <!-- 历史记录 -->
+  <view class="section" wx:if="{{historyRecords.length > 0}}">
+    <view class="section-header">
+      <text class="section-icon">📋</text>
+      <text class="section-title">{{i18n.historyRecords}}</text>
+    </view>
+    <view class="history-list">
+      <view class="history-item" wx:for="{{historyRecords}}" wx:key="index">
+        <text class="history-index">{{i18n.timesPrefix}}{{item.index}}{{i18n.timesSuffix}}</text>
+        <text class="history-score">{{item.score}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分享按钮 -->
+  <view class="share-section">
+    <button class="share-btn" open-type="share">
+      <text class="share-icon">🔗</text>
+      <text class="share-text">{{i18n.shareToFriend}}</text>
+    </button>
+  </view>
+
+</view>

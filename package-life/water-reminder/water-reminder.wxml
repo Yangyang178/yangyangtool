@@ -1,40 +1,42 @@
-<navigation-bar title="喝水提醒" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
 
-<view class="tool-page">
+<view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}">
   <view class="container">
-    <!-- 工具头部 -->
     <view class="tool-header">
       <view class="icon-wrapper blue-gradient">
         <view class="icon-decoration"></view>
         <text class="tool-icon">💧</text>
       </view>
-      <text class="tool-title">健康饮水助手</text>
-      <text class="tool-desc">定时提醒，保持身体水分充足</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
-    <!-- 今日统计卡片 -->
     <view class="stats-card">
       <view class="water-icon-large">
         <text class="water-emoji">💧</text>
         <text class="water-count">{{todayCount}}</text>
-        <text class="water-unit">杯</text>
+        <text class="water-unit">{{i18n.cupUnit}}</text>
       </view>
       
       <view class="stats-info">
-        <text class="stats-title">今日饮水</text>
-        <text class="stats-target">目标: {{targetCups}} 杯/天</text>
+        <text class="stats-title">{{i18n.todayWater}}</text>
+        <text class="stats-target">{{i18n.target}}: {{targetCups}} {{i18n.cupsPerDay}} · {{targetMl}}ml</text>
         
         <view class="progress-bar-wrapper">
           <view class="progress-bar" style="width: {{progressPercent}}%"></view>
         </view>
         
-        <text class="progress-text">{{progressPercent}}% 完成</text>
+        <text class="progress-text">{{progressPercent}}% · {{todayMl}}ml</text>
+      </view>
+
+      <view class="add-water-btn" bindtap="manualAddWater">
+        <text class="add-plus">+</text>
+        <text class="add-label">{{i18n.addWater}}</text>
       </view>
     </view>
 
-    <!-- 提醒间隔设置 -->
     <view class="settings-section">
-      <text class="section-title">⏰ 提醒间隔设置</text>
+      <text class="section-title">{{i18n.intervalSetting}}</text>
       
       <view class="interval-options">
         <view 
@@ -50,13 +52,64 @@
       </view>
     </view>
 
-    <!-- 控制按钮 -->
+    <view class="settings-section">
+      <text class="section-title">{{i18n.cupSizeSetting}}</text>
+      <view class="cup-options">
+        <view 
+          wx:for="{{cupSizeOptions}}" 
+          wx:key="value"
+          class="cup-btn {{cupSize === item.value && !isCustomCup ? 'active' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="selectCupSize"
+        >
+          <text class="cup-label">{{item.label}}</text>
+        </view>
+        <view 
+          class="cup-btn cup-btn-custom {{isCustomCup ? 'active' : ''}}"
+          data-value="custom"
+          bindtap="selectCupSize"
+        >
+          <text class="cup-label">{{isCustomCup ? cupSize + 'ml' : i18n.custom}}</text>
+        </view>
+      </view>
+      <text class="cup-hint">{{i18n.perCup}} {{cupSize}}ml，{{i18n.target}} {{targetMl}}ml/{{i18n.day}}</text>
+    </view>
+
+    <view class="cup-popup-mask" wx:if="{{showCupCustom}}" bindtap="hideCupCustom">
+      <view class="cup-popup" catchtap="doNothing">
+        <text class="cup-popup-title">{{i18n.customCupTitle}}</text>
+        <text class="cup-popup-desc">{{i18n.customCupDesc}}</text>
+        <view class="cup-popup-input-wrap" catchtap="doNothing">
+          <input 
+            class="cup-popup-input" 
+            type="number"
+            placeholder="{{i18n.inputMlPlaceholder}}"
+            value="{{customCupInput}}"
+            bindinput="onCustomCupInput"
+            catchtap="doNothing"
+          />
+          <text class="cup-popup-unit">ml</text>
+        </view>
+        <view class="cup-popup-quick">
+          <text class="cup-quick-label">{{i18n.quickSelect}}</text>
+          <view class="cup-quick-btn" data-val="100" bindtap="onQuickCup">100</view>
+          <view class="cup-quick-btn" data-val="350" bindtap="onQuickCup">350</view>
+          <view class="cup-quick-btn" data-val="400" bindtap="onQuickCup">400</view>
+          <view class="cup-quick-btn" data-val="500" bindtap="onQuickCup">500</view>
+        </view>
+        <view class="cup-popup-actions">
+          <view class="cup-popup-cancel" bindtap="hideCupCustom">{{i18n.cancel}}</view>
+          <view class="cup-popup-confirm" bindtap="saveCustomCup">{{i18n.confirm}}</view>
+        </view>
+      </view>
+    </view>
+
     <view class="control-section">
       <button 
         class="start-btn {{isRunning ? 'running' : ''}}" 
         bindtap="toggleReminder"
       >
-        <text>{{isRunning ? '⏸ 暂停提醒' : '▶ 开始提醒'}}</text>
+        <text>{{isRunning ? i18n.pauseReminder : i18n.startReminder}}</text>
       </button>
 
       <view class="status-display" wx:if="{{isRunning}}">
@@ -64,40 +117,94 @@
           <canvas type="2d" id="countdownRing" class="countdown-canvas"></canvas>
           <text class="countdown-text">{{nextRemainTime}}</text>
         </view>
-        <text class="status-label">下次提醒倒计时</text>
+        <text class="status-label">{{i18n.nextCountdown}}</text>
       </view>
 
       <view class="stopped-status" wx:if="{{!isRunning}}">
         <text class="stopped-icon">⏸️</text>
-        <text class="stopped-text">提醒已停止</text>
-        <text class="stopped-hint">点击上方按钮开始定时提醒</text>
+        <text class="stopped-text">{{i18n.reminderStopped}}</text>
+        <text class="stopped-hint">{{i18n.tapToStart}}</text>
       </view>
     </view>
 
-    <!-- 今日记录 -->
+    <view class="chart-section">
+      <view class="chart-header">
+        <text class="section-title">{{i18n.weekTrend}}</text>
+        <view class="chart-legend">
+          <view class="legend-item">
+            <view class="legend-dot legend-target"></view>
+            <text class="legend-text">{{i18n.targetLine}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="chart-container">
+        <canvas type="2d" id="weekChart" class="week-chart-canvas"></canvas>
+      </view>
+      <view class="chart-summary">
+        <view class="summary-item">
+          <text class="summary-value">{{weekData[6] || 0}}</text>
+          <text class="summary-label">{{i18n.today}}</text>
+        </view>
+        <view class="summary-item">
+          <text class="summary-value">{{weekAvg}}</text>
+          <text class="summary-label">{{i18n.weekAvg}}</text>
+        </view>
+        <view class="summary-item">
+          <text class="summary-value">{{weekHighest}}</text>
+          <text class="summary-label">{{i18n.highest}}</text>
+        </view>
+        <view class="summary-item">
+          <text class="summary-value streak">🔥{{streakDays}}</text>
+          <text class="summary-label">{{i18n.streakDays}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="month-section">
+      <view class="month-header" bindtap="toggleMonthChart">
+        <text class="section-title">{{i18n.monthTrend}}</text>
+        <text class="month-arrow {{showMonthChart ? 'expanded' : ''}}">▾</text>
+      </view>
+      <view class="month-body" wx:if="{{showMonthChart}}">
+        <view class="month-canvas-wrap">
+          <canvas type="2d" id="monthCanvas" class="month-canvas"></canvas>
+        </view>
+        <view class="month-legend">
+          <view class="legend-item"><view class="legend-dot" style="background:#06B6D4;"></view><text class="legend-text">{{i18n.waterIntake}}</text></view>
+          <view class="legend-item"><view class="legend-dot" style="background:#10B981;width:6px;height:6px;border-radius:50%;"></view><text class="legend-text">{{i18n.reachedDay}}</text></view>
+          <view class="legend-item"><view class="legend-dot" style="background:#F59E0B;"></view><text class="legend-text">{{i18n.targetLine}}</text></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResult}}</button>
+      <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">{{i18n.reset}}</button>
+    </view>
+
     <view class="records-section" wx:if="{{records.length > 0}}">
       <view class="records-header">
-        <text class="records-title">📋 今日饮水记录</text>
-        <button class="clear-btn" bindtap="clearRecords">清空</button>
+        <text class="records-title">{{i18n.todayRecords}}</text>
+        <button class="clear-btn" bindtap="clearRecords">{{i18n.clear}}</button>
       </view>
       
       <scroll-view class="records-list" scroll-y enhanced show-scrollbar="{{false}}">
         <view class="record-item" wx:for="{{records}}" wx:key="index">
           <text class="record-time">{{item.time}}</text>
-          <text class="record-cup">💧 第{{item.cup}}杯</text>
+          <text class="record-cup">💧 {{i18n.cupNo}}{{item.cup}}{{i18n.cupUnit}}</text>
         </view>
       </scroll-view>
     </view>
 
-    <!-- 健康提示 -->
     <view class="tips-section">
-      <text class="tips-title">💡 健康饮水小贴士</text>
+      <text class="tips-title">{{i18n.tipsTitle}}</text>
       <view class="tips-content">
-        <text class="tip-item">• 成人每天建议饮水量: 1500-2000ml (约8杯)</text>
-        <text class="tip-item">• 最佳饮水时间: 早起、餐前30分钟、运动后</text>
-        <text class="tip-item">• 不要等到口渴才喝水，要少量多次</text>
-        <text class="tip-item">• 颜色淡黄=水分充足，深黄=需要补水</text>
+        <text class="tip-item">{{i18n.tip1}}</text>
+        <text class="tip-item">{{i18n.tip2}}</text>
+        <text class="tip-item">{{i18n.tip3}}</text>
+        <text class="tip-item">{{i18n.tip4}}</text>
       </view>
     </view>
   </view>
 </view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

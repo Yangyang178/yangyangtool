@@ -1,0 +1,12 @@
+<view class="privacy-popup-mask" wx:if="{{showPrivacy}}" catchtap="disagreePrivacy">
+  <view class="privacy-popup" catchtap="">
+    <text class="privacy-popup-title">{{i18n.title}}</text>
+    <text class="privacy-popup-desc">{{i18n.desc1}}</text>
+    <text class="privacy-popup-desc">{{i18n.desc2}}</text>
+    <view class="privacy-popup-link" bindtap="openPrivacyPage">{{i18n.viewPrivacy}}</view>
+    <view class="privacy-popup-btns">
+      <view class="privacy-popup-btn privacy-popup-reject" catchtap="disagreePrivacy">{{i18n.reject}}</view>
+      <button id="agree-btn" class="privacy-popup-btn privacy-popup-agree" open-type="agreePrivacyAuthorization" bindtap="agreePrivacy">{{i18n.agree}}</button>
+    </view>
+  </view>
+</view>

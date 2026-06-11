@@ -1,0 +1,166 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
+  <view class="container">
+
+    <!-- 工具头部 -->
+    <view class="tool-header">
+      <view class="tool-icon-large green-gradient">
+        <view class="tool-icon-decoration"></view>
+        <text class="tool-icon-emoji">👁</text>
+      </view>
+      <view class="tool-info">
+        <text class="tool-title-main">{{i18n.toolTitle}}</text>
+        <text class="tool-desc-main">{{i18n.toolDesc}}</text>
+      </view>
+    </view>
+
+    <!-- Tab切换 -->
+    <view class="tab-bar">
+      <view class="tab-item {{currentTab === 'color' ? 'active' : ''}}" bindtap="switchTab" data-tab="color">
+        <text class="tab-icon">🎨</text>
+        <text class="tab-text">{{i18n.colorBlindTest}}</text>
+      </view>
+      <view class="tab-item {{currentTab === 'astigmatism' ? 'active' : ''}}" bindtap="switchTab" data-tab="astigmatism">
+        <text class="tab-icon">◎</text>
+        <text class="tab-text">{{i18n.astigmatismTest}}</text>
+      </view>
+      <view class="tab-item {{currentTab === 'acuity' ? 'active' : ''}}" bindtap="switchTab" data-tab="acuity">
+        <text class="tab-icon">E</text>
+        <text class="tab-text">{{i18n.acuityTest}}</text>
+      </view>
+    </view>
+
+    <!-- ==================== 色盲测试区域 ==================== -->
+    <view class="test-section" wx:if="{{currentTab === 'color'}}">
+      <!-- Canvas绘制色盲图 -->
+      <view class="canvas-wrapper" wx:if="{{!colorFinished}}">
+        <canvas type="2d" id="colorBlindCanvas" class="test-canvas"></canvas>
+      </view>
+
+      <!-- 输入区域 -->
+      <view class="input-section" wx:if="{{!colorFinished}}">
+        <text class="input-label">{{i18n.whatNumberSee}}</text>
+        <view class="input-wrapper">
+          <input class="input-field-common" type="number" maxlength="1" placeholder="{{i18n.inputDigit}}" value="{{colorAnswer}}" bindinput="onColorInput" confirm-type="done" bindconfirm="submitColorAnswer" />
+        </view>
+        <view class="btn-row">
+          <view class="btn-primary btn-sm" bindtap="submitColorAnswer">
+            <text>{{i18n.submitAnswer}}</text>
+          </view>
+        </view>
+        <text class="progress-text">{{i18n.questionNo}}{{colorProgress}}{{i18n.questionUnit}}</text>
+      </view>
+
+      <!-- 结果显示 -->
+      <view class="result-container" wx:if="{{colorFinished}}">
+        <text class="result-label">{{i18n.colorBlindResult}}</text>
+        <view class="result-score-row">
+          <text class="result-value">{{colorScore}}</text>
+          <text class="result-unit">{{i18n.scoreTotal}}</text>
+        </view>
+        <view class="result-badge {{colorResultType}}">
+          <text class="result-badge-text">{{colorResultType === 'good' ? i18n.resultNormal : colorResultType === 'warn' ? i18n.resultMildAbnormal : i18n.resultNeedCheck}}</text>
+        </view>
+        <text class="result-desc">{{colorResult}}</text>
+        <view class="btn-secondary btn-sm" bindtap="resetColorTest">
+          <text>{{i18n.retest}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ==================== 散光测试区域 ==================== -->
+    <view class="test-section" wx:if="{{currentTab === 'astigmatism'}}">
+      <!-- Canvas绘制放射线 -->
+      <view class="canvas-wrapper">
+        <canvas type="2d" id="astigmatismCanvas" class="test-canvas"></canvas>
+      </view>
+
+      <!-- 说明文字 -->
+      <view class="instruction-card">
+        <text class="instruction-title">{{i18n.testInstruction}}</text>
+        <text class="instruction-text">{{i18n.astigmatismInstruction}}</text>
+      </view>
+
+      <!-- 选择按钮 -->
+      <view class="choice-section" wx:if="{{!astigmatismResult}}">
+        <text class="choice-label">{{i18n.whatDoYouSee}}</text>
+        <view class="choice-btns">
+          <view class="choice-btn choice-good" bindtap="onAstigmatismSelect" data-choice="same">
+            <text class="choice-btn-icon">✅</text>
+            <text class="choice-btn-text">{{i18n.allLinesClear}}</text>
+          </view>
+          <view class="choice-btn choice-warn" bindtap="onAstigmatismSelect" data-choice="different">
+            <text class="choice-btn-icon">⚠️</text>
+            <text class="choice-btn-text">{{i18n.someLinesClearer}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 结果显示 -->
+      <view class="result-container" wx:if="{{astigmatismResult}}">
+        <text class="result-label">{{i18n.astigmatismResult}}</text>
+        <view class="result-badge {{astigmatismResultType}}">
+          <text class="result-badge-text">{{astigmatismResultType === 'good' ? i18n.resultNormalAstigmatism : i18n.resultPossibleAstigmatism}}</text>
+        </view>
+        <text class="result-desc">{{astigmatismResult}}</text>
+        <view class="btn-secondary btn-sm" bindtap="resetAstigmatism">
+          <text>{{i18n.retest}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ==================== 视力表区域 ==================== -->
+    <view class="test-section" wx:if="{{currentTab === 'acuity'}}">
+      <!-- E字显示区域 -->
+      <view class="e-display-area" wx:if="{{!acuityFinished}}">
+        <view class="e-char-wrapper" style="transform: rotate({{acuityERotation}});">
+          <text class="e-char" style="font-size: {{acuityCurrentSize}}px;">E</text>
+        </view>
+        <text class="e-level-label">{{i18n.visionLabel}}{{acuityCurrentVision}}</text>
+      </view>
+
+      <!-- 方向按钮 -->
+      <view class="direction-btns" wx:if="{{!acuityFinished}}">
+        <text class="choice-label">{{i18n.eDirection}}</text>
+        <view class="direction-grid">
+          <view class="dir-btn" bindtap="onDirectionClick" data-dir="up">
+            <text class="dir-arrow">↑</text>
+            <text class="dir-label">{{i18n.directionUp}}</text>
+          </view>
+          <view class="dir-btn" bindtap="onDirectionClick" data-dir="down">
+            <text class="dir-arrow">↓</text>
+            <text class="dir-label">{{i18n.directionDown}}</text>
+          </view>
+          <view class="dir-btn" bindtap="onDirectionClick" data-dir="left">
+            <text class="dir-arrow">←</text>
+            <text class="dir-label">{{i18n.directionLeft}}</text>
+          </view>
+          <view class="dir-btn" bindtap="onDirectionClick" data-dir="right">
+            <text class="dir-arrow">→</text>
+            <text class="dir-label">{{i18n.directionRight}}</text>
+          </view>
+        </view>
+        <text class="progress-text">{{i18n.questionNo}}{{acuityProgress}}{{i18n.questionUnit}}{{i18n.levelInfo}}{{acuityLevel + 1}}/{{acuityLevels.length}}</text>
+      </view>
+
+      <!-- 结果显示 -->
+      <view class="result-container" wx:if="{{acuityFinished}}">
+        <text class="result-label">{{i18n.acuityResult}}</text>
+        <view class="result-badge {{acuityResultType}}">
+          <text class="result-badge-text">{{acuityResultType === 'good' ? i18n.resultGoodVision : acuityResultType === 'warn' ? i18n.resultFairVision : i18n.resultCheckVision}}</text>
+        </view>
+        <text class="result-desc">{{acuityResult}}</text>
+        <view class="btn-secondary btn-sm" bindtap="resetAcuity">
+          <text>{{i18n.retest}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 免责声明 -->
+    <view class="disclaimer">
+      <text class="disclaimer-text">{{i18n.disclaimer}}</text>
+    </view>
+
+  </view>
+</scroll-view>

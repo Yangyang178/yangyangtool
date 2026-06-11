@@ -1,0 +1,228 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
+  <view class="container">
+
+    <view class="tool-header">
+      <view class="tool-icon-large" style="background: linear-gradient(135deg, #667eea33 0%, #764ba233 100%);">
+        <view class="tool-icon-decoration"></view>
+        <text>👨‍👩‍👧‍👦</text>
+      </view>
+      <view class="tool-info">
+        <text class="tool-title-main">{{i18n.toolTitle}}</text>
+        <text class="tool-desc-main">{{i18n.toolDesc}}</text>
+      </view>
+    </view>
+
+    <view class="tab-bar">
+      <view class="tab-item {{activeTab === 'query' ? 'tab-active' : ''}}" data-tab="query" bindtap="onTabChange">
+        <text class="tab-icon">🔍</text>
+        <text class="tab-text">{{i18n.tabQuery}}</text>
+      </view>
+      <view class="tab-item {{activeTab === 'quickref' ? 'tab-active' : ''}}" data-tab="quickref" bindtap="onTabChange">
+        <text class="tab-icon">📋</text>
+        <text class="tab-text">{{i18n.tabQuickRef}}</text>
+      </view>
+      <view class="tab-item {{activeTab === 'dialect' ? 'tab-active' : ''}}" data-tab="dialect" bindtap="onTabChange">
+        <text class="tab-icon">🗣️</text>
+        <text class="tab-text">{{i18n.tabDialect}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{activeTab === 'query'}}">
+      <view class="gender-section">
+        <text class="section-label">{{i18n.selectGender}}</text>
+        <view class="gender-group">
+          <view class="gender-btn {{gender === 'male' ? 'gender-active' : ''}}" data-gender="male" bindtap="onGenderSelect">
+            <text class="gender-icon">🧑</text>
+            <text class="gender-text">{{i18n.male}}</text>
+          </view>
+          <view class="gender-btn {{gender === 'female' ? 'gender-active' : ''}}" data-gender="female" bindtap="onGenderSelect">
+            <text class="gender-icon">👩</text>
+            <text class="gender-text">{{i18n.female}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{gender}}" class="chain-section">
+        <view class="chain-card">
+          <text class="chain-label">{{i18n.relationChain}}</text>
+          <view class="chain-nodes" wx:if="{{chainNodes.length > 0}}">
+            <view class="chain-node-wrap" wx:for="{{chainNodes}}" wx:key="id">
+              <view class="chain-node chain-node-{{item.type}}">
+                <text class="chain-node-label">{{item.label}}</text>
+              </view>
+              <view class="chain-connector" wx:if="{{index < chainNodes.length - 1}}">
+                <view class="connector-line"></view>
+                <text class="connector-arrow">›</text>
+              </view>
+            </view>
+          </view>
+          <view wx:if="{{chainNodes.length === 0}}" class="chain-display">
+            <text class="chain-placeholder">{{i18n.tapToSelectRelation}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{gender}}" class="buttons-section">
+        <text class="section-label">{{i18n.selectRelation}}</text>
+        <view class="button-grid">
+          <view
+            wx:for="{{stepButtons}}"
+            wx:key="code"
+            class="step-btn {{item.isSpouse ? 'step-btn-spouse' : ''}}"
+            data-code="{{item.code}}"
+            data-label="{{item.label}}"
+            bindtap="onStepSelect"
+          >
+            <text class="step-icon">{{item.icon}}</text>
+            <text class="step-label">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{result}}" class="result-section">
+        <view class="result-card">
+          <text class="result-title">{{result.title}}</text>
+          <text class="result-pinyin">{{result.pinyin}}</text>
+          <view class="result-divider"></view>
+          <view class="result-info-row">
+            <view class="result-info-item">
+              <text class="result-info-label">{{i18n.appellation}}</text>
+              <text class="result-info-value call-value">{{result.call}}</text>
+            </view>
+            <view class="result-info-sep"></view>
+            <view class="result-info-item">
+              <text class="result-info-label">{{i18n.relation}}</text>
+              <text class="result-info-value">{{result.desc}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{!result && chain.length > 0}}" class="no-result-section">
+        <view class="no-result-card">
+          <text class="no-result-icon">🤔</text>
+          <text class="no-result-text">{{i18n.noResultFound}}</text>
+          <text class="no-result-hint">{{i18n.continueOrRetry}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{chain.length > 0}}" class="action-section">
+        <view class="action-row">
+          <view class="action-btn back-btn" bindtap="onBackStep">
+            <text>{{i18n.backStep}}</text>
+          </view>
+          <view class="action-btn reset-btn" bindtap="onReset">
+            <text>{{i18n.startOver}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="tool-actions-bar">
+        <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResult}}</button>
+        <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">{{i18n.reset}}</button>
+      </view>
+
+      <view wx:if="{{history.length > 0}}" class="history-section">
+        <view class="history-header">
+          <text class="history-title">{{i18n.queryHistory}}</text>
+          <text class="history-clear" bindtap="onClearHistory">{{i18n.clearBtn}}</text>
+        </view>
+        <view class="history-list">
+          <view
+            wx:for="{{history}}"
+            wx:key="chainText"
+            class="history-item"
+            data-index="{{index}}"
+            bindtap="onHistoryTap"
+          >
+            <view class="history-left">
+              <text class="history-chain">{{item.chainText}}</text>
+              <text class="history-time">{{item.time}}</text>
+            </view>
+            <view class="history-right">
+              <text class="history-result">{{item.title}}</text>
+              <text class="history-call">{{item.call}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{activeTab === 'quickref'}}">
+      <view class="ref-section">
+        <text class="section-label">{{i18n.quickRefTitle}}</text>
+        <view class="ref-category-bar">
+          <view
+            wx:for="{{quickRefCategories}}"
+            wx:key="key"
+            class="ref-cat-btn {{quickRefCategory === item.key ? 'ref-cat-active' : ''}}"
+            data-category="{{item.key}}"
+            bindtap="onQuickRefCategory"
+          >
+            <text>{{item.name}}</text>
+          </view>
+        </view>
+        <view class="ref-list">
+          <view
+            wx:for="{{quickRefItems}}"
+            wx:key="relation"
+            class="ref-item"
+            data-index="{{index}}"
+            bindtap="onQuickRefItemTap"
+          >
+            <view class="ref-item-left">
+              <text class="ref-relation">{{item.relation}}</text>
+            </view>
+            <view class="ref-item-right">
+              <text class="ref-title">{{item.title}}</text>
+              <text class="ref-call">{{i18n.callLabel}}「{{item.call}}」</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{activeTab === 'dialect'}}">
+      <view class="dialect-section">
+        <text class="section-label">{{i18n.dialectTitle}}</text>
+        <view class="dialect-region-bar">
+          <view
+            wx:for="{{dialectRegions}}"
+            wx:key="key"
+            class="dialect-reg-btn {{dialectRegion === item.key ? 'dialect-reg-active' : ''}}"
+            data-region="{{item.key}}"
+            bindtap="onDialectRegion"
+          >
+            <text>{{item.name}}</text>
+          </view>
+        </view>
+        <view class="dialect-list">
+          <view
+            wx:for="{{dialectItems}}"
+            wx:key="standard"
+            class="dialect-item"
+          >
+            <view class="dialect-standard">
+              <text class="dialect-label">{{i18n.standard}}</text>
+              <text class="dialect-value">{{item.standard}}</text>
+            </view>
+            <view class="dialect-arrow-wrap">
+              <text class="dialect-arrow">→</text>
+            </view>
+            <view class="dialect-local">
+              <text class="dialect-label">{{i18n.dialect}}</text>
+              <text class="dialect-value dialect-local-value">{{item.dialect}}</text>
+            </view>
+            <view class="dialect-region-tag">
+              <text class="dialect-region-text">{{item.region}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+  </view>
+</scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

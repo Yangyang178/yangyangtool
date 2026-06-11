@@ -1,11 +1,15 @@
+var app = getApp()
+var storageUtil = require('../../utils/storage.js')
+var toolActions = require('../utils/tool-actions.js')
+var poster = require('../utils/poster.js')
+var i18n = require('../../utils/i18n.js')
+
 Page({
   data: {
-    // 统计
-    todayCount: 0,
+    i18n: {},
+    todayCups: 0,
     targetCups: 8,
     progressPercent: 0,
-    
-    // 设置
     selectedInterval: 30,
     intervalOptions: [
       { value: 15, unit: '分钟' },
@@ -15,54 +19,342 @@ Page({
       { value: 90, unit: '分钟' },
       { value: 120, unit: '分钟' }
     ],
-    
-    // 状态
     isRunning: false,
     nextRemainTime: '',
-    
-    // 记录
     records: [],
-    
-    // 定时器
     timerInterval: null,
-    countdownSeconds: 0
+    countdownSeconds: 0,
+    weekData: [],
+    weekLabels: [],
+    weekMax: 8,
+    weekAvg: '0.0',
+    weekHighest: 0,
+    isDarkMode: false,
+    fontSizeSetting: 'medium',
+    cupSize: 250,
+    cupSizeOptions: [
+      { value: 150, label: '150ml' },
+      { value: 200, label: '200ml' },
+      { value: 250, label: '250ml' },
+      { value: 300, label: '300ml' }
+    ],
+    isCustomCup: false,
+    showCupCustom: false,
+    customCupInput: '',
+    todayMl: 0,
+    targetMl: 2000,
+    streakDays: 0,
+    monthData: [],
+    showMonthChart: false
   },
 
-  onLoad() {
+  onLoad: function() {
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
+    var tracker = getApp().tracker
+    if (tracker) tracker.pageView('喝水提醒')
+    var app = getApp()
+    var isDark = app.globalData.isDarkMode || false
+    this.setData({ isDarkMode: isDark, i18n: i18n.getToolPageTexts('waterReminder') })
+
+    var savedInterval = storageUtil.get('water_reminder_interval', 30)
+    this.setData({ selectedInterval: savedInterval })
+
+    var savedCupSize = storageUtil.get('water_cup_size', 250)
+    var isPreset = false
+    for (var ci = 0; ci < this.data.cupSizeOptions.length; ci++) {
+      if (this.data.cupSizeOptions[ci].value === savedCupSize) { isPreset = true; break }
+    }
+    this.setData({
+      cupSize: savedCupSize,
+      targetMl: savedCupSize * this.data.targetCups,
+      isCustomCup: !isPreset
+    })
+
     this.loadTodayRecords()
     this.updateProgress()
+    this.loadWeekData()
+    this.calcStreak()
+    this.loadMonthData()
+    poster.setupForPage(this, 10)
   },
 
-  onUnload() {
+  onUnload: function() {
     this.stopTimer()
   },
 
-  onShow() {
+  onShow: function() {
+    var app = getApp()
+    var isDark = app.globalData.isDarkMode || false
+    this.setData({ isDarkMode: isDark })
+    var fontSize = storageUtil.get('fontSizeSetting', 'medium')
+    this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('waterReminder') })
+
     if (this.data.isRunning) {
-      // 页面显示时检查是否需要恢复计时
-      const lastTime = wx.getStorageSync('water_reminder_last_time')
+      var lastTime = storageUtil.get('water_reminder_last_time')
       if (lastTime) {
-        const elapsed = Math.floor((Date.now() - lastTime) / 1000)
-        const interval = this.data.selectedInterval * 60
-        const remain = interval - (elapsed % interval)
-        this.setData({ countdownSeconds: remain })
-        this.updateCountdownDisplay()
+        var elapsed = Math.floor((Date.now() - lastTime) / 1000)
+        var interval = this.data.selectedInterval * 60
+        var remain = interval - (elapsed % interval)
+        if (remain <= 0) {
+          this.triggerReminder()
+        } else {
+          this.setData({ countdownSeconds: remain })
+          this.updateCountdownDisplay()
+        }
       }
     }
   },
 
-  selectInterval(e) {
-    const value = e.currentTarget.dataset.value
+  selectInterval: function(e) {
+    var value = e.currentTarget.dataset.value
     this.setData({ selectedInterval: value })
+    wx.setStorageSync('water_reminder_interval', value)
     wx.vibrateShort({ type: 'light' })
 
-    // 如果正在运行，更新倒计时
     if (this.data.isRunning) {
       this.resetCountdown()
     }
   },
 
-  toggleReminder() {
+  selectCupSize: function(e) {
+    var value = e.currentTarget.dataset.value
+    if (value === 'custom') {
+      this.setData({ showCupCustom: true, customCupInput: '' })
+      return
+    }
+    wx.vibrateShort({ type: 'light' })
+    this.setData({
+      cupSize: value,
+      targetMl: value * this.data.targetCups,
+      isCustomCup: false
+    })
+    wx.setStorageSync('water_cup_size', value)
+    this.updateProgress()
+  },
+
+  doNothing: function() {},
+
+  onCustomCupInput: function(e) {
+    this.setData({ customCupInput: e.detail.value })
+  },
+
+  onQuickCup: function(e) {
+    var val = e.currentTarget.dataset.val
+    this.setData({ customCupInput: val })
+  },
+
+  hideCupCustom: function() {
+    this.setData({ showCupCustom: false })
+  },
+
+  saveCustomCup: function() {
+    var val = parseInt(this.data.customCupInput)
+    if (!val || val < 50 || val > 1000) {
+      wx.showToast({ title: this.data.i18n.inputCupRange, icon: 'none' })
+      return
+    }
+    wx.vibrateShort({ type: 'light' })
+    this.setData({
+      cupSize: val,
+      targetMl: val * this.data.targetCups,
+      isCustomCup: true,
+      showCupCustom: false
+    })
+    wx.setStorageSync('water_cup_size', val)
+    this.updateProgress()
+  },
+
+  toggleMonthChart: function() {
+    wx.vibrateShort({ type: 'light' })
+    var show = !this.data.showMonthChart
+    this.setData({ showMonthChart: show })
+    if (show) {
+      var that = this
+      setTimeout(function() { that.drawMonthChart() }, 150)
+    }
+  },
+
+  calcStreak: function() {
+    var allRecords = {}
+    try { allRecords = storageUtil.get('water_records', {}) } catch(e) {}
+    var target = this.data.targetCups
+    var streak = 0
+    var today = new Date()
+
+    for (var i = 0; i < 365; i++) {
+      var d = new Date(today)
+      d.setDate(d.getDate() - i)
+      var key = d.toDateString()
+      var dayData = allRecords[key] || {}
+      var count = dayData.count || 0
+      if (count >= target) {
+        streak++
+      } else if (i === 0) {
+        continue
+      } else {
+        break
+      }
+    }
+
+    this.setData({ streakDays: streak })
+  },
+
+  loadMonthData: function() {
+    var allRecords = {}
+    try { allRecords = storageUtil.get('water_records', {}) } catch(e) {}
+    var monthData = []
+    var target = this.data.targetCups
+
+    for (var i = 29; i >= 0; i--) {
+      var d = new Date()
+      d.setDate(d.getDate() - i)
+      var key = d.toDateString()
+      var dayData = allRecords[key] || {}
+      var count = dayData.count || 0
+      var isToday = i === 0
+      monthData.push({
+        date: key,
+        dayLabel: (d.getMonth() + 1) + '/' + d.getDate(),
+        count: count,
+        ml: count * this.data.cupSize,
+        reached: count >= target,
+        isToday: isToday
+      })
+    }
+
+    this.setData({ monthData: monthData })
+  },
+
+  drawMonthChart: function() {
+    var monthData = this.data.monthData
+    if (monthData.length === 0) return
+    var isDark = this.data.isDarkMode
+    var target = this.data.targetCups
+    var that = this
+
+    var query = wx.createSelectorQuery()
+    query.select('#monthCanvas').fields({ node: true, size: true }).exec(function(res) {
+      if (!res || !res[0] || !res[0].node) return
+      var canvas = res[0].node
+      var ctx = canvas.getContext('2d')
+      var dpr = wx.getWindowInfo().pixelRatio
+      var width = res[0].width
+      var height = res[0].height
+      canvas.width = width * dpr
+      canvas.height = height * dpr
+      ctx.scale(dpr, dpr)
+      ctx.clearRect(0, 0, width, height)
+
+      var padLeft = 35
+      var padRight = 8
+      var padTop = 14
+      var padBottom = 28
+      var chartW = width - padLeft - padRight
+      var chartH = height - padTop - padBottom
+
+      var maxCount = target
+      for (var mi = 0; mi < monthData.length; mi++) {
+        if (monthData[mi].count > maxCount) maxCount = monthData[mi].count
+      }
+      maxCount = Math.ceil(maxCount * 1.15)
+
+      ctx.strokeStyle = isDark ? 'rgba(148,163,184,0.1)' : 'rgba(226,232,240,0.5)'
+      ctx.lineWidth = 0.5
+      for (var g = 0; g <= 3; g++) {
+        var gy = padTop + chartH * (1 - g / 3)
+        ctx.beginPath()
+        ctx.moveTo(padLeft, gy)
+        ctx.lineTo(padLeft + chartW, gy)
+        ctx.stroke()
+        ctx.fillStyle = isDark ? '#64748B' : '#94A3B8'
+        ctx.font = '9px sans-serif'
+        ctx.textAlign = 'right'
+        ctx.fillText(Math.round(maxCount * g / 3), padLeft - 4, gy + 3)
+      }
+
+      var targetY = padTop + chartH - (target / maxCount) * chartH
+      ctx.setLineDash([4, 3])
+      ctx.strokeStyle = '#F59E0B'
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.moveTo(padLeft, targetY)
+      ctx.lineTo(padLeft + chartW, targetY)
+      ctx.stroke()
+      ctx.setLineDash([])
+      ctx.fillStyle = '#F59E0B'
+      ctx.font = '8px sans-serif'
+      ctx.textAlign = 'right'
+      ctx.fillText('目标', padLeft + chartW, targetY - 3)
+
+      var points = []
+      for (var pi = 0; pi < monthData.length; pi++) {
+        var px = padLeft + (chartW / (monthData.length - 1)) * pi
+        var py = padTop + chartH - ((monthData[pi].count || 0) / maxCount) * chartH
+        points.push({ x: px, y: py })
+      }
+
+      ctx.beginPath()
+      ctx.moveTo(points[0].x, padTop + chartH)
+      ctx.lineTo(points[0].x, points[0].y)
+      for (var si = 1; si < points.length; si++) {
+        var cpx = (points[si - 1].x + points[si].x) / 2
+        ctx.bezierCurveTo(cpx, points[si - 1].y, cpx, points[si].y, points[si].x, points[si].y)
+      }
+      ctx.lineTo(points[points.length - 1].x, padTop + chartH)
+      ctx.closePath()
+      var grad = ctx.createLinearGradient(0, padTop, 0, padTop + chartH)
+      grad.addColorStop(0, 'rgba(6,182,212,0.25)')
+      grad.addColorStop(1, 'rgba(6,182,212,0.02)')
+      ctx.fillStyle = grad
+      ctx.fill()
+
+      ctx.beginPath()
+      ctx.moveTo(points[0].x, points[0].y)
+      for (var li = 1; li < points.length; li++) {
+        var cpxL = (points[li - 1].x + points[li].x) / 2
+        ctx.bezierCurveTo(cpxL, points[li - 1].y, cpxL, points[li].y, points[li].x, points[li].y)
+      }
+      ctx.strokeStyle = '#06B6D4'
+      ctx.lineWidth = 2
+      ctx.lineJoin = 'round'
+      ctx.stroke()
+
+      for (var di = 0; di < monthData.length; di++) {
+        if (monthData[di].reached) {
+          ctx.beginPath()
+          ctx.arc(points[di].x, points[di].y, 2.5, 0, Math.PI * 2)
+          ctx.fillStyle = '#10B981'
+          ctx.fill()
+        }
+      }
+
+      var lastPt = points[points.length - 1]
+      ctx.beginPath()
+      ctx.arc(lastPt.x, lastPt.y, 4, 0, Math.PI * 2)
+      ctx.fillStyle = '#06B6D4'
+      ctx.fill()
+      ctx.beginPath()
+      ctx.arc(lastPt.x, lastPt.y, 7, 0, Math.PI * 2)
+      ctx.strokeStyle = '#06B6D4'
+      ctx.lineWidth = 1.5
+      ctx.globalAlpha = 0.4
+      ctx.stroke()
+      ctx.globalAlpha = 1
+
+      var labelStep = Math.max(1, Math.floor(monthData.length / 6))
+      ctx.fillStyle = isDark ? '#64748B' : '#94A3B8'
+      ctx.font = '9px sans-serif'
+      ctx.textAlign = 'center'
+      for (var xi = 0; xi < monthData.length; xi += labelStep) {
+        ctx.fillText(monthData[xi].dayLabel, points[xi].x, padTop + chartH + 16)
+      }
+    })
+  },
+
+  toggleReminder: function() {
     if (this.data.isRunning) {
       this.stopTimer()
     } else {
@@ -70,29 +362,26 @@ Page({
     }
   },
 
-  startTimer() {
+  startTimer: function() {
     wx.vibrateShort({ type: 'medium' })
 
-    this.setData({ 
+    this.setData({
       isRunning: true,
       countdownSeconds: this.data.selectedInterval * 60
     })
 
-    // 记录开始时间
     wx.setStorageSync('water_reminder_last_time', Date.now())
 
-    // 开始倒计时
     this.startCountdown()
 
-    // 显示启动提示
     wx.showToast({
-      title: `每${this.data.selectedInterval}分钟提醒一次`,
+      title: this.data.i18n.reminderInterval + this.data.selectedInterval + this.data.i18n.reminderIntervalSuffix,
       icon: 'none',
       duration: 2000
     })
   },
 
-  stopTimer() {
+  stopTimer: function() {
     wx.vibrateShort({ type: 'light' })
 
     if (this.data.timerInterval) {
@@ -100,28 +389,23 @@ Page({
       this.data.timerInterval = null
     }
 
-    this.setData({ 
+    this.setData({
       isRunning: false,
       nextRemainTime: ''
     })
 
     wx.removeStorageSync('water_reminder_last_time')
-
-    wx.showToast({ title: '已暂停提醒', icon: 'none' })
+    wx.showToast({ title: this.data.i18n.reminderPaused, icon: 'none' })
   },
 
-  startCountdown() {
-    const that = this
-
-    // 先立即更新一次显示
+  startCountdown: function() {
+    var that = this
     that.updateCountdownDisplay()
 
-    // 每秒更新倒计时
-    this.data.timerInterval = setInterval(() => {
-      let newSeconds = that.data.countdownSeconds - 1
+    this.data.timerInterval = setInterval(function() {
+      var newSeconds = that.data.countdownSeconds - 1
 
       if (newSeconds <= 0) {
-        // 触发提醒
         that.triggerReminder()
         return
       }
@@ -131,30 +415,29 @@ Page({
     }, 1000)
   },
 
-  resetCountdown() {
+  resetCountdown: function() {
     this.setData({ countdownSeconds: this.data.selectedInterval * 60 })
+    wx.setStorageSync('water_reminder_last_time', Date.now())
     this.updateCountdownDisplay()
   },
 
-  updateCountdownDisplay() {
-    const seconds = this.data.countdownSeconds
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    
-    let display = ''
+  updateCountdownDisplay: function() {
+    var seconds = this.data.countdownSeconds
+    var mins = Math.floor(seconds / 60)
+    var secs = seconds % 60
+
+    var display = ''
     if (mins > 0) {
-      display = `${mins}:${secs.toString().padStart(2, '0')}`
+      display = mins + ':' + (secs < 10 ? '0' : '') + secs
     } else {
-      display = `${secs}秒`
+      display = secs + '秒'
     }
 
     this.setData({ nextRemainTime: display })
-
-    // 更新圆形进度条
     this.drawCountdownRing(seconds / (this.data.selectedInterval * 60))
   },
 
-  drawCountdownRing(progress) {
+  drawCountdownRing: function(progress) {
     var query = wx.createSelectorQuery()
     query.select('#countdownRing')
       .fields({ node: true, size: true })
@@ -194,41 +477,42 @@ Page({
       })
   },
 
-  triggerReminder() {
-    // 震动提醒
+  triggerReminder: function() {
     wx.vibrateLong()
 
-    // 显示提醒对话框
+    var that = this
+
     wx.showModal({
-      title: '💧 该喝水啦！',
-      content: '保持身体水分充足，点击"已喝"记录本次饮水',
-      confirmText: '✅ 已喝',
-      cancelText: '稍后',
-      success: (res) => {
+      title: this.data.i18n.timeToDrink,
+      content: this.data.i18n.drinkWaterMsg,
+      confirmText: this.data.i18n.drankBtn,
+      cancelText: this.data.i18n.laterBtn,
+      success: function(res) {
         if (res.confirm) {
-          this.addRecord()
+          that.addRecord()
         }
-        
-        // 重置倒计时，继续下一轮
-        this.setData({ countdownSeconds: this.data.selectedInterval * 60 })
-        this.updateCountdownDisplay()
+        that.setData({ countdownSeconds: that.data.selectedInterval * 60 })
+        wx.setStorageSync('water_reminder_last_time', Date.now())
+        that.updateCountdownDisplay()
       }
     })
   },
 
-  addRecord() {
+  addRecord: function() {
     wx.vibrateShort({ type: 'light' })
 
-    const now = new Date()
-    const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
-    
-    const newCount = this.data.todayCount + 1
-    const record = {
+    var now = new Date()
+    var hours = now.getHours()
+    var minutes = now.getMinutes()
+    var timeStr = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes
+
+    var newCount = this.data.todayCount + 1
+    var record = {
       time: timeStr,
       cup: newCount
     }
 
-    const records = [record, ...this.data.records]
+    var records = [record].concat(this.data.records)
 
     this.setData({
       todayCount: newCount,
@@ -237,81 +521,253 @@ Page({
 
     this.updateProgress()
     this.saveRecords()
+    this.loadWeekData()
 
-    var appInstance = getApp()
-    if (appInstance.cloudSyncWaterRecord) {
-      appInstance.cloudSyncWaterRecord({
-        count: newCount,
-        time: timeStr,
-        date: new Date().toDateString()
-      })
-    }
+    var tracker = getApp().tracker
+    if (tracker) tracker.toolUse(10, '喝水提醒', false)
 
-    wx.showToast({ title: '\u7B2C ' + newCount + ' \u676F\u6C34 \uD83D\uDCAA', icon: 'none' })
+    wx.showToast({ title: this.data.i18n.cupNo + ' ' + newCount + this.data.i18n.cupWater, icon: 'none' })
   },
 
-  updateProgress() {
-    const percent = Math.min(Math.round((this.data.todayCount / this.data.targetCups) * 100), 100)
-    this.setData({ progressPercent: percent })
+  manualAddWater: function() {
+    this.addRecord()
   },
 
-  saveRecords() {
+  updateProgress: function() {
+    var percent = Math.min(Math.round((this.data.todayCount / this.data.targetCups) * 100), 100)
+    var ml = this.data.todayCount * this.data.cupSize
+    this.setData({ progressPercent: percent, todayMl: ml })
+  },
+
+  saveRecords: function() {
     try {
-      const today = new Date().toDateString()
-      let allRecords = wx.getStorageSync('water_records') || {}
+      var today = new Date().toDateString()
+      var allRecords = storageUtil.get('water_records', {})
       allRecords[today] = {
         count: this.data.todayCount,
         list: this.data.records
       }
       wx.setStorageSync('water_records', allRecords)
     } catch (e) {
-      console.error('Save water records error:', e)
-      wx.showToast({ title: '\u559D\u6C34\u8BB0\u5F55\u4FDD\u5B58\u5931\u8D25', icon: 'none', duration: 2000 })
+      wx.showToast({ title: this.data.i18n.recordSaveFailed, icon: 'none', duration: 2000 })
     }
   },
 
-  loadTodayRecords() {
+  loadTodayRecords: function() {
     try {
-      const today = new Date().toDateString()
-      const allRecords = wx.getStorageSync('water_records') || {}
-      const todayData = allRecords[today] || {}
+      var today = new Date().toDateString()
+      var allRecords = storageUtil.get('water_records', {})
+      var todayData = allRecords[today] || {}
 
       this.setData({
         todayCount: todayData.count || 0,
         records: todayData.list || []
       })
-    } catch (e) {
-      console.error('Load water records error:', e)
-    }
+    } catch (e) {}
   },
 
-  clearRecords() {
+  loadWeekData: function() {
+    var allRecords = {}
+    try { allRecords = storageUtil.get('water_records', {}) } catch(e) {}
+
+    var weekData = []
+    var weekLabels = []
+    var weekMax = this.data.targetCups
+    var dayNames = ['日', '一', '二', '三', '四', '五', '六']
+
+    for (var i = 6; i >= 0; i--) {
+      var d = new Date()
+      d.setDate(d.getDate() - i)
+      var key = d.toDateString()
+      var dayData = allRecords[key] || {}
+      var count = dayData.count || 0
+
+      weekData.push(count)
+      weekLabels.push('周' + dayNames[d.getDay()])
+
+      if (count > weekMax) weekMax = count
+    }
+
+    var weekTotal = 0
+    var weekHighest = 0
+    for (var j = 0; j < weekData.length; j++) {
+      weekTotal += weekData[j]
+      if (weekData[j] > weekHighest) weekHighest = weekData[j]
+    }
+    var weekAvg = (weekTotal / 7).toFixed(1)
+
+    this.setData({
+      weekData: weekData,
+      weekLabels: weekLabels,
+      weekMax: weekMax + 2,
+      weekAvg: weekAvg,
+      weekHighest: weekHighest
+    })
+
+    this.drawWeekChart()
+  },
+
+  drawWeekChart: function() {
+    var that = this
+    var query = wx.createSelectorQuery()
+    query.select('#weekChart')
+      .fields({ node: true, size: true })
+      .exec(function(res) {
+        if (!res || !res[0]) return
+        var canvas = res[0].node
+        var ctx = canvas.getContext('2d')
+        var dpr = wx.getSystemInfoSync().pixelRatio
+
+        canvas.width = res[0].width * dpr
+        canvas.height = res[0].height * dpr
+        ctx.scale(dpr, dpr)
+
+        var w = res[0].width
+        var h = res[0].height
+        var padding = { top: 20, right: 16, bottom: 30, left: 16 }
+        var chartW = w - padding.left - padding.right
+        var chartH = h - padding.top - padding.bottom
+
+        ctx.clearRect(0, 0, w, h)
+
+        var weekData = that.data.weekData
+        var weekLabels = that.data.weekLabels
+        var weekMax = that.data.weekMax
+        var targetCups = that.data.targetCups
+        var isDark = that.data.isDarkMode
+
+        var gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'
+        var textColor = isDark ? '#94A3B8' : '#94A3B8'
+        var barColor = '#06B6D4'
+        var barColorLight = 'rgba(6,182,212,0.15)'
+        var targetLineColor = isDark ? 'rgba(251,191,36,0.4)' : 'rgba(245,158,11,0.3)'
+
+        for (var g = 0; g <= 4; g++) {
+          var gy = padding.top + chartH - (chartH * g / 4)
+          ctx.beginPath()
+          ctx.moveTo(padding.left, gy)
+          ctx.lineTo(w - padding.right, gy)
+          ctx.strokeStyle = gridColor
+          ctx.lineWidth = 1
+          ctx.stroke()
+        }
+
+        var targetY = padding.top + chartH - (chartH * targetCups / weekMax)
+        ctx.beginPath()
+        ctx.setLineDash([4, 4])
+        ctx.moveTo(padding.left, targetY)
+        ctx.lineTo(w - padding.right, targetY)
+        ctx.strokeStyle = targetLineColor
+        ctx.lineWidth = 1
+        ctx.stroke()
+        ctx.setLineDash([])
+
+        var barWidth = chartW / 7 * 0.5
+        var gap = chartW / 7
+
+        for (var i = 0; i < 7; i++) {
+          var x = padding.left + gap * i + gap / 2
+          var barH = weekMax > 0 ? (weekData[i] / weekMax) * chartH : 0
+          var y = padding.top + chartH - barH
+
+          ctx.fillStyle = barColorLight
+          ctx.beginPath()
+          var r = Math.min(barWidth / 2, 6)
+          var bx = x - barWidth / 2
+          var by = y
+          var bw = barWidth
+          var bh = barH
+          if (bh > r * 2) {
+            ctx.moveTo(bx + r, by)
+            ctx.arcTo(bx + bw, by, bx + bw, by + bh, r)
+            ctx.lineTo(bx + bw, by + bh)
+            ctx.lineTo(bx, by + bh)
+            ctx.arcTo(bx, by, bx + bw, by, r)
+          } else if (bh > 0) {
+            ctx.rect(bx, by, bw, bh)
+          }
+          ctx.fill()
+
+          if (weekData[i] > 0) {
+            var fillH = Math.min(bh, bh * 0.7)
+            var fillY = padding.top + chartH - fillH
+            ctx.fillStyle = barColor
+            ctx.beginPath()
+            if (fillH > r * 2) {
+              ctx.moveTo(bx + r, fillY)
+              ctx.arcTo(bx + bw, fillY, bx + bw, fillY + fillH, r)
+              ctx.lineTo(bx + bw, by + bh)
+              ctx.lineTo(bx, by + bh)
+              ctx.arcTo(bx, fillY, bx + bw, fillY, r)
+            } else if (fillH > 0) {
+              ctx.rect(bx, fillY, bw, fillH)
+            }
+            ctx.fill()
+          }
+
+          if (weekData[i] > 0) {
+            ctx.fillStyle = barColor
+            ctx.font = '10px sans-serif'
+            ctx.textAlign = 'center'
+            ctx.fillText(weekData[i], x, y - 6)
+          }
+
+          ctx.fillStyle = textColor
+          ctx.font = '10px sans-serif'
+          ctx.textAlign = 'center'
+          ctx.fillText(weekLabels[i], x, h - 8)
+        }
+      })
+  },
+
+  clearRecords: function() {
+    var that = this
     wx.showModal({
-      title: '确认清空',
-      content: '确定要清空今天的所有饮水记录吗？',
-      confirmText: '清空',
+      title: that.data.i18n.confirmClear,
+      content: that.data.i18n.confirmClearRecords,
+      confirmText: that.data.i18n.clear,
       confirmColor: '#EF4444',
-      success: (res) => {
+      success: function(res) {
         if (res.confirm) {
           wx.vibrateShort({ type: 'medium' })
-          
-          this.setData({
+
+          that.setData({
             todayCount: 0,
             records: []
           })
-          
-          this.updateProgress()
-          this.saveRecords()
-          
-          wx.showToast({ title: '已清空记录', icon: 'success' })
+
+          that.updateProgress()
+          that.saveRecords()
+          that.loadWeekData()
+
+          wx.showToast({ title: that.data.i18n.recordsCleared, icon: 'success' })
         }
       }
     })
   },
-  onShareAppMessage() {
-    return { title: '喝水提醒 - 好用方便的工具集', path: '/pages/index/index' }
+
+  copyResult: function() {
+    var text = '今日饮水: ' + this.data.todayCount + '/' + this.data.targetCups + '杯, 完成度: ' + this.data.progressPercent + '%'
+    toolActions.copyText(text)
   },
-  onShareTimeline() {
-    return { title: '' }
+
+  resetData: function() {
+    var that = this
+    toolActions.resetConfirm(function() {
+      that.setData({
+        todayCount: 0,
+        records: []
+      })
+      that.updateProgress()
+      that.saveRecords()
+      that.loadWeekData()
+    })
+  },
+
+  onShareAppMessage: function() {
+    return poster.getShareConfig('💧 喝水提醒 - 百宝工具箱', '/package-life/water-reminder/water-reminder')
+  },
+  onShareTimeline: function() {
+    return poster.getTimelineConfig('💧 喝水提醒 - 百宝工具箱')
   }
 })

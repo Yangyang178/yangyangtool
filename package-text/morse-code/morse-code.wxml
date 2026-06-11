@@ -1,0 +1,238 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper purple-gradient">
+        <view class="icon-decoration"></view>
+        <text class="tool-icon">📡</text>
+      </view>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
+    </view>
+
+    <view class="main-tabs">
+      <view class="main-tab {{activeTab === 'convert' ? 'active' : ''}}" data-tab="convert" bindtap="onTabChange">
+        <text>{{i18n.tabConvert}}</text>
+      </view>
+      <view class="main-tab {{activeTab === 'learn' ? 'active' : ''}}" data-tab="learn" bindtap="onTabChange">
+        <text>{{i18n.tabLearn}}</text>
+      </view>
+      <view class="main-tab {{activeTab === 'abbr' ? 'active' : ''}}" data-tab="abbr" bindtap="onTabChange">
+        <text>{{i18n.tabAbbr}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{activeTab === 'convert'}}">
+      <view class="mode-selector">
+        <view class="mode-btn {{mode === 'encode' ? 'active' : ''}}" data-mode="encode" bindtap="onModeChange">
+          <text>{{i18n.modeEncode}}</text>
+        </view>
+        <view class="mode-btn {{mode === 'decode' ? 'active' : ''}}" data-mode="decode" bindtap="onModeChange">
+          <text>{{i18n.modeDecode}}</text>
+        </view>
+      </view>
+
+      <view class="input-section">
+        <view class="section-header">
+          <text class="section-label">{{mode === 'encode' ? i18n.inputText : i18n.inputMorse}}</text>
+          <text class="char-count">{{inputText.length}} {{i18n.charUnit}}</text>
+        </view>
+        <textarea
+          class="content-input"
+          placeholder="{{mode === 'encode' ? i18n.placeholderEncode : i18n.placeholderDecode}}"
+          value="{{inputText}}"
+          bindinput="onInput"
+          maxlength="-1"
+          auto-height
+        ></textarea>
+      </view>
+
+      <view class="output-section" wx:if="{{hasResult}}">
+        <view class="section-header">
+          <text class="section-label">{{mode === 'encode' ? i18n.outputMorse : i18n.outputText}}</text>
+          <view class="output-actions">
+            <view class="play-btn {{isPlaying ? 'playing' : ''}}" bindtap="playMorse">
+              <text>{{isPlaying ? i18n.btnStop : i18n.btnPlay}}</text>
+            </view>
+            <button class="copy-btn" bindtap="copyResult">{{i18n.copyBtn}}</button>
+          </view>
+        </view>
+        <textarea
+          class="content-output"
+          value="{{outputText}}"
+          readonly
+          auto-height
+          maxlength="-1"
+        ></textarea>
+        <view wx:if="{{isPlaying}}" class="play-progress">
+          <text class="progress-text">{{i18n.playing}}: {{playProgress}}</text>
+        </view>
+      </view>
+
+      <view class="stats-section" wx:if="{{hasResult}}">
+        <view class="stat-item">
+          <text class="stat-value">{{charCount}}</text>
+          <text class="stat-label">{{mode === 'encode' ? i18n.charCount : i18n.inputChars}}</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value">{{morseCount}}</text>
+          <text class="stat-label">{{mode === 'encode' ? i18n.morseCount : i18n.decodeSymbols}}</text>
+        </view>
+      </view>
+
+      <view class="speed-section">
+        <text class="speed-label">{{i18n.playSpeed}}</text>
+        <view class="speed-options">
+          <view class="speed-btn {{playSpeed === 0.5 ? 'active' : ''}}" data-speed="0.5" bindtap="onSpeedChange">
+            <text>0.5x</text>
+          </view>
+          <view class="speed-btn {{playSpeed === 1 ? 'active' : ''}}" data-speed="1" bindtap="onSpeedChange">
+            <text>1x</text>
+          </view>
+          <view class="speed-btn {{playSpeed === 1.5 ? 'active' : ''}}" data-speed="1.5" bindtap="onSpeedChange">
+            <text>1.5x</text>
+          </view>
+          <view class="speed-btn {{playSpeed === 2 ? 'active' : ''}}" data-speed="2" bindtap="onSpeedChange">
+            <text>2x</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="tool-actions-bar">
+        <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">{{i18n.resetBtn}}</button>
+      </view>
+
+      <view class="reference-section">
+        <text class="reference-title">{{i18n.refTable}}</text>
+        <view class="reference-grid">
+          <view class="reference-group">
+            <text class="group-label">{{i18n.lettersTapPlay}}</text>
+            <view class="reference-items">
+              <view class="ref-item" wx:for="{{letterRefData}}" wx:key="ch" data-code="{{item.code}}" bindtap="playCharMorse">
+                <text class="ref-char">{{item.ch}}</text>
+                <text class="ref-code">{{item.code}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="reference-group">
+            <text class="group-label">{{i18n.numbersTapPlay}}</text>
+            <view class="reference-items">
+              <view class="ref-item" wx:for="{{numberRefData}}" wx:key="ch" data-code="{{item.code}}" bindtap="playCharMorse">
+                <text class="ref-char">{{item.ch}}</text>
+                <text class="ref-code">{{item.code}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{activeTab === 'learn'}}">
+      <view class="practice-mode-selector">
+        <view class="practice-mode-btn {{practiceMode === 'char2code' ? 'active' : ''}}" data-mode="char2code" bindtap="onPracticeModeChange">
+          <text>{{i18n.practiceChar2Code}}</text>
+        </view>
+        <view class="practice-mode-btn {{practiceMode === 'code2char' ? 'active' : ''}}" data-mode="code2char" bindtap="onPracticeModeChange">
+          <text>{{i18n.practiceCode2Char}}</text>
+        </view>
+      </view>
+
+      <view class="practice-score-bar">
+        <view class="score-item">
+          <text class="score-value">{{practiceScore}}</text>
+          <text class="score-label">{{i18n.correct}}</text>
+        </view>
+        <view class="score-item">
+          <text class="score-value">{{practiceTotal}}</text>
+          <text class="score-label">{{i18n.totalQuestions}}</text>
+        </view>
+        <view class="score-item">
+          <text class="score-value">{{practiceAccuracy}}%</text>
+          <text class="score-label">{{i18n.accuracy}}</text>
+        </view>
+        <view class="score-item streak">
+          <text class="score-value">{{practiceStreak}}</text>
+          <text class="score-label">{{i18n.streak}}</text>
+        </view>
+      </view>
+
+      <view class="practice-card">
+        <view class="practice-question-section">
+          <text class="practice-question-label">{{practiceMode === 'char2code' ? i18n.selectMorse : i18n.selectChar}}</text>
+          <view class="practice-question-display">
+            <text class="practice-question-text">{{practiceQuestion}}</text>
+            <view class="practice-play-btn" bindtap="onPlayPracticeQuestion">
+              <text>{{isPlaying ? '⏹' : '🔊'}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="practice-options">
+          <view
+            class="practice-option {{practiceSelected === index ? (practiceCorrect === index ? 'correct' : 'wrong') : ''}} {{showPracticeAnswer && practiceCorrect === index ? 'correct' : ''}}"
+            wx:for="{{practiceOptions}}"
+            wx:key="index"
+            data-idx="{{index}}"
+            bindtap="onPracticeSelect"
+          >
+            <text class="option-text">{{item}}</text>
+            <text wx:if="{{showPracticeAnswer && practiceCorrect === index}}" class="option-icon">✓</text>
+            <text wx:if="{{showPracticeAnswer && practiceSelected === index && practiceCorrect !== index}}" class="option-icon">✗</text>
+          </view>
+        </view>
+
+        <view wx:if="{{practiceHint}}" class="practice-hint">
+          <text class="hint-text">{{practiceHint}}</text>
+        </view>
+
+        <view wx:if="{{!showPracticeAnswer}}" class="practice-hint-btn" bindtap="onPracticeHint">
+          <text>{{i18n.hintBtn}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{activeTab === 'abbr'}}">
+      <view class="abbr-section">
+        <text class="abbr-title">{{i18n.abbrTitle}}</text>
+        <text class="abbr-desc">{{i18n.abbrDesc}}</text>
+        <view class="abbr-list">
+          <view class="abbr-item" wx:for="{{abbreviations}}" wx:key="abbr" data-morse="{{item.morse}}" bindtap="playAbbrMorse">
+            <view class="abbr-left">
+              <text class="abbr-code">{{item.abbr}}</text>
+              <text class="abbr-meaning">{{item.meaning}}</text>
+            </view>
+            <view class="abbr-right">
+              <text class="abbr-morse">{{item.morse}}</text>
+              <text class="abbr-play-icon">{{isPlaying ? '⏹' : '🔊'}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="tips-section">
+      <text class="tips-title">{{i18n.usageTitle}}</text>
+      <view class="tips-list">
+        <view class="tip-item">
+          <text class="tip-dot">•</text>
+          <text class="tip-text">{{i18n.tip1}}</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-dot">•</text>
+          <text class="tip-text">{{i18n.tip2}}</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-dot">•</text>
+          <text class="tip-text">{{i18n.tip3}}</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-dot">•</text>
+          <text class="tip-text">{{i18n.tip4}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

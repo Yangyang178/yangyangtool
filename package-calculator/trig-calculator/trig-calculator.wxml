@@ -1,0 +1,177 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="tool-icon-large orange-gradient">
+        <view class="tool-icon-decoration"></view>
+        <text class="tool-icon-emoji">📐</text>
+      </view>
+      <view class="tool-info">
+        <text class="tool-title-main">{{i18n.toolTitle}}</text>
+        <text class="tool-desc-main">{{i18n.toolDesc}}</text>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <text class="section-title">{{i18n.inputAngle}}</text>
+      <view class="input-row">
+        <view class="input-group input-group-main">
+          <text class="input-label-text">{{i18n.angleValue}}</text>
+          <view class="input-wrapper">
+            <input class="input-field-common" type="digit" placeholder="{{angleUnit === 'deg' ? i18n.inputDegree : i18n.inputRadian}}" value="{{angleInput}}" bindinput="onAngleInput"/>
+            <text class="input-unit-tag">{{angleUnit === 'deg' ? '°' : 'rad'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="unit-toggle">
+        <view class="unit-option {{angleUnit === 'deg' ? 'active' : ''}}" data-unit="deg" bindtap="onUnitChange">{{i18n.degreeUnit}}</view>
+        <view class="unit-option {{angleUnit === 'rad' ? 'active' : ''}}" data-unit="rad" bindtap="onUnitChange">{{i18n.radianUnit}}</view>
+      </view>
+    </view>
+
+    <view class="action-btns">
+      <button class="btn-primary calc-btn" bindtap="calculate" hover-class="btn-hover">{{i18n.calculate}}</button>
+      <button class="btn-secondary reset-btn" bindtap="resetData" hover-class="btn-hover">{{i18n.reset}}</button>
+    </view>
+
+    <view class="result-section" wx:if="{{hasResult}}">
+      <view class="result-card conversion-card">
+        <text class="result-card-title">{{i18n.angleRadianConvert}}</text>
+        <view class="conversion-row">
+          <view class="conversion-item">
+            <text class="conversion-label">{{i18n.angle}}</text>
+            <text class="conversion-value">{{degreeValue}}°</text>
+          </view>
+          <view class="conversion-arrow">⇄</view>
+          <view class="conversion-item">
+            <text class="conversion-label">{{i18n.radian}}</text>
+            <text class="conversion-value">{{radianValue}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="result-card">
+        <text class="result-card-title">{{i18n.basicTrigFuncs}}</text>
+        <view class="func-grid">
+          <view class="func-item">
+            <text class="func-name">sin</text>
+            <text class="func-value">{{sinValue}}</text>
+          </view>
+          <view class="func-item">
+            <text class="func-name">cos</text>
+            <text class="func-value">{{cosValue}}</text>
+          </view>
+          <view class="func-item">
+            <text class="func-name">tan</text>
+            <text class="func-value {{tanValue === undefText ? 'undefined-val' : ''}}">{{tanValue}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="result-card">
+        <text class="result-card-title">{{i18n.reciprocalTrigFuncs}}</text>
+        <view class="func-grid">
+          <view class="func-item">
+            <text class="func-name">csc</text>
+            <text class="func-value {{cscValue === undefText ? 'undefined-val' : ''}}">{{cscValue}}</text>
+          </view>
+          <view class="func-item">
+            <text class="func-name">sec</text>
+            <text class="func-value {{secValue === undefText ? 'undefined-val' : ''}}">{{secValue}}</text>
+          </view>
+          <view class="func-item">
+            <text class="func-name">cot</text>
+            <text class="func-value {{cotValue === undefText ? 'undefined-val' : ''}}">{{cotValue}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="result-card">
+        <text class="result-card-title">{{i18n.inverseTrigFuncs}}</text>
+        <text class="result-card-subtitle">{{i18n.inverseTrigNote}}</text>
+        <view class="func-grid">
+          <view class="func-item">
+            <text class="func-name">asin</text>
+            <text class="func-value {{asinValue === i18n.outOfDomain ? 'undefined-val' : ''}}">{{asinValue}}</text>
+          </view>
+          <view class="func-item">
+            <text class="func-name">acos</text>
+            <text class="func-value {{acosValue === i18n.outOfDomain ? 'undefined-val' : ''}}">{{acosValue}}</text>
+          </view>
+          <view class="func-item">
+            <text class="func-name">atan</text>
+            <text class="func-value">{{atanValue}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="tool-actions-bar" wx:if="{{hasResult}}">
+      <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResult}}</button>
+      <button class="tool-action-btn tool-action-graph" bindtap="toggleGraph" hover-class="btn-hover">{{showGraph ? i18n.hideGraph : i18n.showGraph}}</button>
+    </view>
+
+    <view class="graph-section" wx:if="{{showGraph}}">
+      <view class="graph-card">
+        <view class="graph-header">
+          <text class="graph-title">{{i18n.graphTitle}}</text>
+          <view class="graph-func-tabs">
+            <view 
+              wx:for="{{graphFuncs}}" wx:key="id"
+              class="graph-func-tab {{graphFunc === item.id ? 'active' : ''}}"
+              style="{{graphFunc === item.id ? 'background:' + item.color + ';color:#FFFFFF;' : ''}}"
+              data-id="{{item.id}}"
+              bindtap="selectGraphFunc"
+            >{{item.name}}</view>
+          </view>
+        </view>
+
+        <view class="graph-canvas-wrap">
+          <canvas type="2d" id="trigCanvas" class="graph-canvas"></canvas>
+        </view>
+
+        <view class="graph-params">
+          <view class="param-row">
+            <text class="param-label">{{i18n.amplitude}}</text>
+            <view class="param-control">
+              <slider class="param-slider" min="0.1" max="5" step="0.1" value="{{graphAmplitude}}" activeColor="#F59E0B" block-size="16" bindchange="onAmplitudeChange" />
+              <text class="param-value">{{graphAmplitude}}</text>
+            </view>
+          </view>
+          <view class="param-row">
+            <text class="param-label">{{i18n.period}}</text>
+            <view class="param-control">
+              <slider class="param-slider" min="0.1" max="5" step="0.1" value="{{graphPeriod}}" activeColor="#F59E0B" block-size="16" bindchange="onPeriodChange" />
+              <text class="param-value">{{graphPeriod}}</text>
+            </view>
+          </view>
+          <view class="param-row">
+            <text class="param-label">{{i18n.phase}}</text>
+            <view class="param-control">
+              <slider class="param-slider" min="-3.14" max="3.14" step="0.01" value="{{graphPhase}}" activeColor="#F59E0B" block-size="16" bindchange="onPhaseChange" />
+              <text class="param-value">{{graphPhase}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="graph-formula">
+          <text class="formula-text">y = {{graphAmplitude}}·{{graphFunc}}({{graphPeriod}}x + {{graphPhase}})</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="tips-section">
+      <view class="tips-card-common">
+        <text class="tips-title-common">{{i18n.usageNote}}</text>
+        <text class="tips-content-common">{{i18n.tip1}}</text>
+        <text class="tips-content-common">{{i18n.tip2}}</text>
+        <text class="tips-content-common">{{i18n.tip3}}</text>
+        <text class="tips-content-common">{{i18n.tip4}}</text>
+        <text class="tips-content-common">{{i18n.tip5}}</text>
+      </view>
+    </view>
+  </view>
+</scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

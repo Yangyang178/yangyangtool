@@ -1,0 +1,243 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y enhanced show-scrollbar="{{false}}">
+
+  <view class="tool-header">
+    <view class="tool-icon-large" style="background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);">
+      <view class="tool-icon-decoration"></view>
+      🌐
+    </view>
+    <view class="tool-info">
+      <text class="tool-title-main">{{i18n.toolTitle}}</text>
+      <text class="tool-desc-main">{{i18n.toolDesc}}</text>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{!batchMode}}">
+    <text class="section-title">🔍 {{i18n.ipInput}}</text>
+    <view class="input-wrap">
+      <input
+        class="main-input"
+        value="{{ipAddress}}"
+        placeholder="{{i18n.ipPlaceholder}}"
+        bindinput="onIpInput"
+        type="text"
+        confirm-type="done"
+      />
+      <view class="clear-btn" wx:if="{{ipAddress}}" bindtap="resetData">✕</view>
+    </view>
+    <view class="btn-row">
+      <view class="btn-query" bindtap="queryIp">{{i18n.queryIp}}</view>
+      <view class="btn-myip" bindtap="useMyIp">{{i18n.myIpQuery}}</view>
+    </view>
+    <view class="mode-switch-row">
+      <view class="mode-switch-btn" bindtap="toggleBatchMode">
+        <text>📦 {{i18n.batchMode}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{batchMode}}">
+    <text class="section-title">📦 {{i18n.batchQuery}}</text>
+    <view class="batch-hint">
+      <text class="batch-hint-text">{{i18n.batchHint}}</text>
+    </view>
+    <view class="input-wrap batch-input-wrap">
+      <textarea
+        class="batch-textarea"
+        value="{{batchInput}}"
+        placeholder="{{i18n.batchInputPlaceholder}}"
+        bindinput="onBatchInput"
+        auto-height
+        maxlength="500"
+      />
+    </view>
+    <view class="btn-row">
+        <view class="btn-query" bindtap="queryBatch">{{i18n.batchQuery}}</view>
+        <view class="btn-back" bindtap="toggleBatchMode">{{i18n.backToSingle}}</view>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{isLoading}}">
+    <view class="loading-wrap">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">{{i18n.querying}}</text>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{hasResult && queryResult}}">
+    <text class="section-title">📍 {{i18n.queryResult}}</text>
+    <view class="result-card">
+      <view class="result-ip-row" bindtap="copyResult" data-value="{{queryResult.ip}}">
+        <text class="result-ip-label">{{i18n.ipAddress}}</text>
+        <view class="result-ip-value-wrap">
+          <text class="result-ip-value">{{queryResult.ip}}</text>
+          <text class="copy-icon">📋</text>
+        </view>
+      </view>
+      <view class="result-grid">
+        <view class="result-grid-item" bindtap="copyResult" data-value="{{queryResult.country}}">
+          <text class="result-grid-label">{{i18n.country}}</text>
+          <text class="result-grid-value">{{queryResult.country || '-'}}</text>
+        </view>
+        <view class="result-grid-item" bindtap="copyResult" data-value="{{queryResult.province}}">
+          <text class="result-grid-label">{{i18n.province}}</text>
+          <text class="result-grid-value">{{queryResult.province || '-'}}</text>
+        </view>
+        <view class="result-grid-item" bindtap="copyResult" data-value="{{queryResult.city}}">
+          <text class="result-grid-label">{{i18n.city}}</text>
+          <text class="result-grid-value">{{queryResult.city || '-'}}</text>
+        </view>
+        <view class="result-grid-item" bindtap="copyResult" data-value="{{queryResult.district}}">
+          <text class="result-grid-label">{{i18n.district}}</text>
+          <text class="result-grid-value">{{queryResult.district || '-'}}</text>
+        </view>
+        <view class="result-grid-item result-grid-item-full" bindtap="copyResult" data-value="{{queryResult.isp}}">
+          <text class="result-grid-label">{{i18n.isp}}</text>
+          <text class="result-grid-value">{{queryResult.isp || '-'}}</text>
+        </view>
+        <view class="result-grid-item result-grid-item-full" bindtap="copyResult" data-value="{{queryResult.org}}" wx:if="{{queryResult.org}}">
+          <text class="result-grid-label">{{i18n.org}}</text>
+          <text class="result-grid-value">{{queryResult.org}}</text>
+        </view>
+        <view class="result-grid-item" bindtap="copyResult" data-value="{{queryResult.asn}}" wx:if="{{queryResult.asn}}">
+          <text class="result-grid-label">ASN</text>
+          <text class="result-grid-value">{{queryResult.asn}}</text>
+        </view>
+        <view class="result-grid-item" bindtap="copyResult" data-value="{{queryResult.timezone}}" wx:if="{{queryResult.timezone}}">
+          <text class="result-grid-label">{{i18n.timezone}}</text>
+          <text class="result-grid-value">{{queryResult.timezone}}</text>
+        </view>
+        <view class="result-grid-item" bindtap="copyResult" data-value="{{queryResult.lat}}" wx:if="{{queryResult.lat}}">
+          <text class="result-grid-label">{{i18n.latitude}}</text>
+          <text class="result-grid-value">{{queryResult.lat}}</text>
+        </view>
+        <view class="result-grid-item" bindtap="copyResult" data-value="{{queryResult.lon}}" wx:if="{{queryResult.lon}}">
+          <text class="result-grid-label">{{i18n.longitude}}</text>
+          <text class="result-grid-value">{{queryResult.lon}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{myIpInfo && !hasResult && !isLoading && !batchMode}}">
+    <view class="section-title-row">
+      <text class="section-title">🖥️ {{i18n.myIpInfo}}</text>
+      <view class="myip-actions">
+        <view class="myip-refresh" bindtap="refreshMyIp">🔄</view>
+        <view class="myip-toggle {{showMyIpDetail ? 'active' : ''}}" bindtap="toggleMyIpDetail">{{showMyIpDetail ? i18n.collapse : i18n.detail}}</view>
+      </view>
+    </view>
+    <view class="myip-card">
+      <view class="myip-main-row">
+        <view class="myip-ip-wrap" bindtap="copyResult" data-value="{{myIpInfo.ip}}">
+          <text class="myip-ip-value">{{myIpInfo.ip}}</text>
+          <text class="copy-icon">📋</text>
+        </view>
+        <view class="myip-use-btn" bindtap="useMyIp">{{i18n.queryDetail}}</view>
+      </view>
+      <view class="myip-summary" wx:if="{{myIpInfo.province || myIpInfo.city}}">
+        <text class="myip-summary-text">{{myIpInfo.country}} {{myIpInfo.province}}{{myIpInfo.city}} {{myIpInfo.isp}}</text>
+      </view>
+      <view class="myip-detail-grid" wx:if="{{showMyIpDetail}}">
+        <view class="myip-detail-item">
+          <text class="myip-detail-label">{{i18n.country}}</text>
+          <text class="myip-detail-value">{{myIpInfo.country || '-'}}</text>
+        </view>
+        <view class="myip-detail-item">
+          <text class="myip-detail-label">{{i18n.province}}</text>
+          <text class="myip-detail-value">{{myIpInfo.province || '-'}}</text>
+        </view>
+        <view class="myip-detail-item">
+          <text class="myip-detail-label">{{i18n.city}}</text>
+          <text class="myip-detail-value">{{myIpInfo.city || '-'}}</text>
+        </view>
+        <view class="myip-detail-item">
+          <text class="myip-detail-label">{{i18n.isp}}</text>
+          <text class="myip-detail-value">{{myIpInfo.isp || '-'}}</text>
+        </view>
+        <view class="myip-detail-item" wx:if="{{myIpInfo.asn}}">
+          <text class="myip-detail-label">ASN</text>
+          <text class="myip-detail-value">{{myIpInfo.asn}}</text>
+        </view>
+        <view class="myip-detail-item" wx:if="{{myIpInfo.timezone}}">
+          <text class="myip-detail-label">{{i18n.timezone}}</text>
+          <text class="myip-detail-value">{{myIpInfo.timezone}}</text>
+        </view>
+        <view class="myip-detail-item" wx:if="{{myIpInfo.lat}}">
+          <text class="myip-detail-label">{{i18n.latitude}}</text>
+          <text class="myip-detail-value">{{myIpInfo.lat}}</text>
+        </view>
+        <view class="myip-detail-item" wx:if="{{myIpInfo.lon}}">
+          <text class="myip-detail-label">{{i18n.longitude}}</text>
+          <text class="myip-detail-value">{{myIpInfo.lon}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{batchMode && showBatchResult}}">
+    <view class="section-title-row">
+      <text class="section-title">📊 {{i18n.batchResult}} ({{batchResults.length}})</text>
+      <view class="batch-copy-btn" bindtap="copyBatchResult" wx:if="{{batchResults.length > 0 && !batchLoading}}">📋 {{i18n.copy}}</view>
+    </view>
+    <view class="batch-loading" wx:if="{{batchLoading}}">
+      <view class="loading-spinner small"></view>
+      <text class="loading-text">{{i18n.queryingProgress}} {{batchResults.length}}...</text>
+    </view>
+    <view class="batch-result-list">
+      <view class="batch-result-item {{item.error ? 'error' : ''}}" wx:for="{{batchResults}}" wx:key="ip" bindtap="onBatchResultTap" data-ip="{{item.ip}}">
+        <view class="batch-result-ip">{{item.ip}}</view>
+        <view class="batch-result-info" wx:if="{{!item.error}}">
+          <text class="batch-result-loc">{{item.province}}{{item.city}}</text>
+          <text class="batch-result-isp">{{item.isp}}</text>
+        </view>
+        <view class="batch-result-info" wx:if="{{item.error}}">
+          <text class="batch-result-err">{{i18n.queryFailed}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{historyList.length > 0 && !batchMode}}">
+    <view class="section-title-row">
+      <text class="section-title">🕐 {{i18n.queryHistory}} ({{historyList.length}})</text>
+      <view class="history-actions">
+        <view class="history-action-btn" bindtap="toggleHistorySearch">{{showHistorySearch ? i18n.cancel : '🔍'}}</view>
+        <view class="history-action-btn" bindtap="exportHistory">📤</view>
+        <view class="history-action-btn danger" bindtap="onClearHistory">🗑️</view>
+      </view>
+    </view>
+    <view class="history-search-wrap" wx:if="{{showHistorySearch}}">
+      <input class="history-search-input" placeholder="{{i18n.searchPlaceholder}}" value="{{historySearch}}" bindinput="onHistorySearch" />
+    </view>
+    <view class="history-list">
+      <view class="history-item" wx:for="{{historyList}}" wx:key="ip" wx:if="{{!historySearch || item.ip.indexOf(historySearch) >= 0 || item.location.indexOf(historySearch) >= 0 || item.isp.indexOf(historySearch) >= 0}}">
+        <view class="history-info" bindtap="onHistoryTap" data-ip="{{item.ip}}">
+          <view class="history-ip-row">
+            <text class="history-fav {{ipFavorites.indexOf(item.ip) >= 0 ? 'active' : ''}}" catchtap="toggleFavorite" data-ip="{{item.ip}}">{{ipFavorites.indexOf(item.ip) >= 0 ? '⭐' : '☆'}}</text>
+            <text class="history-ip">{{item.ip}}</text>
+          </view>
+          <text class="history-location">{{item.location}} {{item.isp}}</text>
+        </view>
+        <view class="history-right">
+          <text class="history-time">{{item.time}}</text>
+          <view class="history-del" catchtap="onDeleteHistory" data-ip="{{item.ip}}">✕</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card tips-section">
+    <text class="section-title">💡 {{i18n.usageTips}}</text>
+      <view class="tips-content">
+        <text class="tips-item">1. {{i18n.tip1}}</text>
+        <text class="tips-item">2. {{i18n.tip2}}</text>
+        <text class="tips-item">3. {{i18n.tip3}}</text>
+        <text class="tips-item">4. {{i18n.tip4}}</text>
+        <text class="tips-item">5. {{i18n.tip5}}</text>
+    </view>
+  </view>
+
+</scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

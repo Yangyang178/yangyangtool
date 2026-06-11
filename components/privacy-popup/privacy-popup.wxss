@@ -1,0 +1,86 @@
+.privacy-popup-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.privacy-popup {
+  width: 600rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 48rpx 40rpx 36rpx;
+  box-sizing: border-box;
+}
+
+.privacy-popup-title {
+  display: block;
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #1E293B;
+  text-align: center;
+  margin-bottom: 28rpx;
+}
+
+.privacy-popup-desc {
+  display: block;
+  font-size: 28rpx;
+  color: #64748B;
+  line-height: 1.7;
+  margin-bottom: 16rpx;
+}
+
+.privacy-popup-link {
+  font-size: 28rpx;
+  color: #3B82F6;
+  text-decoration: underline;
+  margin-bottom: 32rpx;
+}
+
+.privacy-popup-btns {
+  display: flex;
+  gap: 20rpx;
+}
+
+.privacy-popup-btn {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 40rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.privacy-popup-reject {
+  background: #F1F5F9;
+  color: #64748B;
+}
+
+.privacy-popup-agree {
+  background: linear-gradient(135deg, #3B82F6, #2563EB);
+  color: #FFFFFF;
+  padding: 0;
+  margin: 0;
+  border: none;
+  line-height: 80rpx;
+}
+
+.privacy-popup-agree::after {
+  border: none;
+}
+
+.privacy-popup-reject:active {
+  background: #E2E8F0;
+}
+
+.privacy-popup-agree:active {
+  opacity: 0.9;
+}

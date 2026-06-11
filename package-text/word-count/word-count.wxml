@@ -1,86 +1,142 @@
-<navigation-bar title="字数统计" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
 
-<scroll-view class="tool-page" scroll-y>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper" style="background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%);">
         <view class="icon-decoration"></view>
         <text class="tool-icon">#️⃣</text>
       </view>
-      <text class="tool-title">智能字数统计</text>
-      <text class="tool-desc">支持中英文混合，实时精准统计</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
-    <!-- 文本输入区 -->
     <view class="input-area">
-      <textarea 
+      <textarea
         class="text-input"
-        placeholder="在此输入或粘贴文本..."
+        placeholder="{{i18n.inputPlaceholder}}"
         value="{{textContent}}"
         bindinput="onTextInput"
         maxlength="-1"
         auto-height
       ></textarea>
       <view class="input-footer">
-        <text class="char-hint">已输入 {{inputLength}} 字符</text>
-        <button class="clear-btn" wx:if="{{textContent}}" bindtap="clearText">清空</button>
+        <text class="char-hint">{{i18n.inputted}} {{inputLength}} {{i18n.charUnit}}</text>
+        <button class="clear-btn" wx:if="{{textContent}}" bindtap="clearText">{{i18n.clearBtn}}</button>
       </view>
     </view>
 
-    <!-- 统计结果 -->
-    <view class="stats-section">
+    <view class="stats-section" wx:if="{{totalChars > 0}}">
       <view class="main-stat-card">
         <text class="big-number">{{totalChars}}</text>
-        <text class="stat-label">总字符数</text>
+        <text class="stat-label">{{i18n.totalChars}}</text>
       </view>
-      
+
       <view class="stats-grid">
         <view class="stat-item">
           <text class="stat-value purple">{{chineseChars}}</text>
-          <text class="stat-name">中文字</text>
+          <text class="stat-name">{{i18n.chineseWord}}</text>
         </view>
         <view class="stat-item">
           <text class="stat-value blue">{{englishWords}}</text>
-          <text class="stat-name">英文词</text>
+          <text class="stat-name">{{i18n.englishWord}}</text>
         </view>
         <view class="stat-item">
           <text class="stat-value green">{{numbers}}</text>
-          <text class="stat-name">数字</text>
+          <text class="stat-name">{{i18n.number}}</text>
         </view>
         <view class="stat-item">
           <text class="stat-value orange">{{punctuation}}</text>
-          <text class="stat-name">标点</text>
+          <text class="stat-name">{{i18n.punctuation}}</text>
         </view>
       </view>
 
       <view class="detail-list">
         <view class="detail-row">
-          <text class="detail-label">字符（含空格）</text>
+          <text class="detail-label">{{i18n.charsWithSpace}}</text>
           <text class="detail-value">{{charsWithSpace}}</text>
         </view>
         <view class="detail-row">
-          <text class="detail-label">字符（不含空格）</text>
+          <text class="detail-label">{{i18n.charsWithoutSpace}}</text>
           <text class="detail-value">{{charsWithoutSpace}}</text>
         </view>
         <view class="detail-row">
-          <text class="detail-label">段落数</text>
+          <text class="detail-label">{{i18n.paragraphCount}}</text>
           <text class="detail-value">{{paragraphs}}</text>
         </view>
         <view class="detail-row">
-          <text class="detail-label">行数</text>
+          <text class="detail-label">{{i18n.lineCount}}</text>
           <text class="detail-value">{{lines}}</text>
+        </view>
+      </view>
+
+      <view class="time-section">
+        <text class="section-title">{{i18n.readTimeTitle}}</text>
+        <view class="time-grid">
+          <view class="time-card read">
+            <text class="time-icon">📖</text>
+            <text class="time-value">{{readTimeText}}</text>
+            <text class="time-label">{{i18n.silentRead}}</text>
+          </view>
+          <view class="time-card speak">
+            <text class="time-icon">🎙️</text>
+            <text class="time-value">{{speakTimeText}}</text>
+            <text class="time-label">{{i18n.aloudRead}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="keyword-section">
+        <view class="keyword-header" bindtap="toggleKeywords">
+          <text class="section-title" style="margin-bottom:0;">{{i18n.keywordTitle}}</text>
+          <view class="keyword-toggle {{showKeywords ? 'active' : ''}}">
+            <text>{{showKeywords ? i18n.collapse : i18n.expand}} {{keywords.length > 0 ? '(' + keywords.length + ')' : ''}}</text>
+          </view>
+        </view>
+        <view class="keyword-body" wx:if="{{showKeywords}}">
+          <view class="keyword-list" wx:if="{{keywords.length > 0}}">
+            <view class="keyword-item" wx:for="{{keywords}}" wx:key="word">
+              <text class="keyword-word">{{item.word}}</text>
+              <text class="keyword-count">×{{item.count}}</text>
+            </view>
+          </view>
+          <view class="keyword-empty" wx:else>
+            <text class="keyword-empty-text">{{i18n.noKeywords}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="dedup-section">
+        <view class="dedup-header" bindtap="toggleDedup">
+          <text class="section-title" style="margin-bottom:0;">{{i18n.dedupTitle}}</text>
+          <view class="dedup-toggle {{showDedup ? 'active' : ''}}">
+            <text>{{showDedup ? i18n.collapse : i18n.expand}}</text>
+          </view>
+        </view>
+        <view class="dedup-body" wx:if="{{showDedup}}">
+          <view class="dedup-info" wx:if="{{dedupRemoved > 0}}">
+            <text class="dedup-info-text">{{i18n.foundDuplicate}} {{dedupRemoved}} {{i18n.duplicateLines}}</text>
+          </view>
+          <view class="dedup-info" wx:else>
+            <text class="dedup-info-text">{{i18n.noDuplicate}}</text>
+          </view>
+          <view class="dedup-actions" wx:if="{{dedupRemoved > 0}}">
+            <view class="dedup-btn use" bindtap="useDedupText">
+              <text>{{i18n.replaceOriginal}}</text>
+            </view>
+            <view class="dedup-btn copy" bindtap="copyDedupText">
+              <text>{{i18n.copyDedupResult}}</text>
+            </view>
+          </view>
         </view>
       </view>
     </view>
 
-    <!-- 操作按钮 -->
-    <view class="action-btns">
-      <button class="primary-btn" bindtap="copyStats">
-        <text>📋 复制统计</text>
-      </button>
-      <button class="secondary-btn" bindtap="copyText">
-        <text>📝 复制原文</text>
-      </button>
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-copy" bindtap="copyStats" hover-class="btn-hover">{{i18n.copyStatsBtn}}</button>
+      <button class="tool-action-btn tool-action-copy" bindtap="copyText" hover-class="btn-hover">{{i18n.copyOriginalBtn}}</button>
+      <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">{{i18n.resetBtn}}</button>
     </view>
   </view>
 </scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

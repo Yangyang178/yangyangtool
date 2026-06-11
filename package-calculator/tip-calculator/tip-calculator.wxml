@@ -1,106 +1,139 @@
-<navigation-bar title="小费计算器" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
 
-<scroll-view class="tool-page" scroll-y>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper yellow-gradient">
         <view class="icon-decoration"></view>
         <text class="tool-icon">💰</text>
       </view>
-      <text class="tool-title">小费快速计算</text>
-      <text class="tool-desc">输入账单金额，一键算出小费和总额</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
-    <!-- 账单输入 -->
     <view class="input-section">
-      <text class="section-label">账单金额</text>
+      <view class="section-label-row">
+        <text class="section-label">{{i18n.billAmount}}</text>
+        <picker mode="selector" range="{{countryList}}" range-key="country" value="{{selectedCountryIdx}}" bindchange="onCountryChange">
+          <view class="country-picker">
+            <text class="country-flag">{{countryList[selectedCountryIdx].flag}}</text>
+            <text class="country-name">{{countryList[selectedCountryIdx].country}}</text>
+            <text class="country-arrow">▼</text>
+          </view>
+        </picker>
+      </view>
       <view class="amount-input-wrapper">
-        <text class="currency-symbol">$</text>
-        <input
-          class="amount-input"
-          type="digit"
-          placeholder="0.00"
-          value="{{billAmount}}"
-          bindinput="onBillInput"
-        />
+        <text class="currency-symbol">{{currencySymbol}}</text>
+        <input class="amount-input" type="digit" placeholder="0.00" value="{{billAmount}}" bindinput="onBillInput"/>
       </view>
     </view>
 
-    <!-- 小费比例 -->
     <view class="tip-section">
-      <text class="section-label">选择小费比例</text>
+      <text class="section-label">{{i18n.tipPercent}}</text>
       <view class="tip-options">
-        <view
-          wx:for="{{tipOptions}}"
-          wx:key="value"
-          class="tip-option {{selectedTip === item.value ? 'active' : ''}}"
-          data-value="{{item.value}}"
-          bindtap="selectTip"
-        >
+        <view class="tip-option {{selectedTip === item.value && !isCustomTip ? 'active' : ''}}" wx:for="{{tipOptions}}" wx:key="value" data-value="{{item.value}}" bindtap="selectTip">
           <text class="tip-value">{{item.value}}%</text>
         </view>
         <view class="tip-option {{isCustomTip ? 'active' : ''}}" bindtap="showCustomTip">
-          <text class="tip-value">自定义</text>
+          <text class="tip-value">{{i18n.custom}}</text>
         </view>
       </view>
-
-      <!-- 自定义小费输入 -->
       <view class="custom-tip-input" wx:if="{{isCustomTip}}">
-        <input
-          type="digit"
-          placeholder="输入百分比"
-          value="{{customTipValue}}"
-          bindinput="onCustomTipInput"
-        />
+        <input class="custom-input" type="digit" placeholder="{{i18n.inputCustomPercent}}" value="{{customTipValue}}" bindinput="onCustomTipInput"/>
         <text class="percent-sign">%</text>
       </view>
-    </view>
-
-    <!-- 分割人数 -->
-    <view class="split-section">
-      <text class="section-label">分割人数（可选）</text>
-      <view class="people-selector">
-        <button class="minus-btn" bindtap="decreasePeople">−</button>
-        <text class="people-count">{{peopleCount}}</text>
-        <button class="plus-btn" bindtap="increasePeople">+</button>
+      <view class="country-tip-hint" wx:if="{{countryList[selectedCountryIdx].defaultTip > 0}}">
+        <text class="hint-text">{{countryList[selectedCountryIdx].flag}} {{countryList[selectedCountryIdx].country}}{{i18n.commonTipLabel}}: {{countryList[selectedCountryIdx].tipRange}}</text>
       </view>
     </view>
 
-    <!-- 计算结果 -->
-    <view class="result-section">
-      <view class="result-card main-result">
-        <text class="result-title">{{peopleCount > 1 ? '每人应付' : '总金额'}}</text>
-        <text class="result-amount">${{totalPerPerson}}</text>
+    <view class="round-section">
+      <text class="section-label">{{i18n.roundMode}}</text>
+      <view class="round-options">
+        <view class="round-option {{roundMode === item.value ? 'active' : ''}}" wx:for="{{roundOptions}}" wx:key="value" data-value="{{item.value}}" bindtap="onRoundChange">
+          <text class="round-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="split-section">
+      <text class="section-label">{{i18n.splitPeople}}</text>
+      <view class="people-selector">
+        <view class="minus-btn" bindtap="decreasePeople">−</view>
+        <text class="people-count">{{peopleCount}}</text>
+        <view class="plus-btn" bindtap="increasePeople">+</view>
+      </view>
+    </view>
+
+    <view class="result-section" wx:if="{{billAmount > 0}}">
+      <view class="result-card">
+        <text class="result-title">{{i18n.perPerson}}</text>
+        <text class="result-amount">{{currencySymbol}}{{totalPerPerson}}</text>
+        <text class="result-subtitle" wx:if="{{peopleCount > 1}}">{{peopleCount}}{{i18n.splitCount}}</text>
       </view>
 
       <view class="result-details">
         <view class="detail-item">
-          <text class="detail-label">账单金额</text>
-          <text class="detail-value">${{billAmount || '0.00'}}</text>
+          <text class="detail-label">{{i18n.billLabel}}</text>
+          <text class="detail-value">{{currencySymbol}}{{billAmount}}</text>
         </view>
         <view class="detail-item">
-          <text class="detail-label">小费 ({{currentTipPercent}}%)</text>
-          <text class="detail-value tip-color">${{tipAmount}}</text>
+          <text class="detail-label">{{i18n.tipLabel}} ({{currentTipPercent}}%)</text>
+          <text class="detail-value tip-color">{{currencySymbol}}{{tipAmount}}</text>
+        </view>
+        <view class="detail-item" wx:if="{{roundedTotal}}">
+          <text class="detail-label">{{i18n.roundedTotal}}</text>
+          <text class="detail-value round-color">{{currencySymbol}}{{roundedTotal}}</text>
+        </view>
+        <view class="detail-item" wx:if="{{roundedTip}}">
+          <text class="detail-label">{{i18n.roundedTip}}</text>
+          <text class="detail-value round-color">{{currencySymbol}}{{roundedTip}}</text>
         </view>
         <view class="detail-item total-row">
-          <text class="detail-label">总计</text>
-          <text class="detail-value total-color">${{totalAmount}}</text>
-        </view>
-        <view class="detail-item" wx:if="{{peopleCount > 1}}">
-          <text class="detail-label">× {{peopleCount}}人</text>
-          <text class="detail-value">${{totalPerPerson}}</text>
+          <text class="detail-label">{{i18n.total}}</text>
+          <text class="detail-value total-color">{{currencySymbol}}{{totalAmount}}</text>
         </view>
       </view>
     </view>
 
-    <!-- 快捷操作 -->
+    <view class="country-ref-section">
+      <view class="section-label-row">
+        <text class="section-label">{{i18n.countryRef}}</text>
+        <text class="ref-toggle" bindtap="toggleCountryRef">{{showCountryRef ? i18n.collapse : i18n.expand}}</text>
+      </view>
+
+      <view class="country-ref-card" wx:if="{{!showCountryRef}}">
+        <view class="country-ref-summary">
+          <text class="ref-summary-flag">{{countryList[selectedCountryIdx].flag}}</text>
+          <view class="ref-summary-info">
+            <text class="ref-summary-country">{{countryList[selectedCountryIdx].country}}</text>
+            <text class="ref-summary-range">{{i18n.commonTipLabel}}: {{countryList[selectedCountryIdx].tipRange}}</text>
+          </view>
+        </view>
+        <text class="ref-summary-note">{{countryList[selectedCountryIdx].note}}</text>
+      </view>
+
+      <view class="country-ref-list" wx:if="{{showCountryRef}}">
+        <view class="country-ref-item {{idx === selectedCountryIdx ? 'current' : ''}}" wx:for="{{countryList}}" wx:for-idx="idx" wx:for-item="c" wx:key="country" data-idx="{{idx}}" bindtap="useCountryTip">
+          <view class="ref-item-left">
+            <text class="ref-item-flag">{{c.flag}}</text>
+            <view class="ref-item-info">
+              <text class="ref-item-country">{{c.country}}</text>
+              <text class="ref-item-range">{{c.tipRange}} · {{c.currency}} {{c.code}}</text>
+            </view>
+          </view>
+          <view class="ref-item-right">
+            <text class="ref-item-default" wx:if="{{c.defaultTip > 0}}">{{c.defaultTip}}%</text>
+            <text class="ref-item-zero" wx:if="{{c.defaultTip === 0}}">{{i18n.noTip}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
     <view class="action-buttons">
-      <button class="btn-primary" bindtap="copyResult">
-        <text>📋 复制结果</text>
-      </button>
-      <button class="btn-secondary" bindtap="resetCalculator">
-        <text>🔄 重置</text>
-      </button>
+      <button class="btn-primary" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResult}}</button>
+      <button class="btn-secondary" bindtap="resetData" hover-class="btn-hover">{{i18n.resetData}}</button>
     </view>
   </view>
 </scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

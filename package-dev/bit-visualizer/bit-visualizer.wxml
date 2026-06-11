@@ -1,0 +1,200 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y enhanced show-scrollbar="{{false}}">
+
+  <view class="tool-header">
+    <view class="tool-icon-large" style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);">
+      <view class="tool-icon-decoration"></view>
+      🧮
+    </view>
+    <view class="tool-info">
+      <text class="tool-title-main">{{i18n.toolTitle}}</text>
+      <text class="tool-desc-main">{{i18n.toolDesc}}</text>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <text class="section-title">⚙️ {{i18n.inputParams}}</text>
+
+    <view class="input-group">
+      <text class="input-label">{{i18n.valueA}}</text>
+      <view class="input-wrap">
+        <input
+          class="main-input"
+          value="{{valueA}}"
+          placeholder="{{i18n.valueAPlaceholder}}"
+          bindinput="onValueAInput"
+          type="text"
+          confirm-type="done"
+        />
+      </view>
+    </view>
+
+    <text class="section-subtitle">{{i18n.operationType}}</text>
+    <view class="op-btn-group">
+      <view class="op-btn {{operation === 'AND' ? 'active' : ''}}" bindtap="onOperationChange" data-op="AND">AND</view>
+      <view class="op-btn {{operation === 'OR' ? 'active' : ''}}" bindtap="onOperationChange" data-op="OR">OR</view>
+      <view class="op-btn {{operation === 'XOR' ? 'active' : ''}}" bindtap="onOperationChange" data-op="XOR">XOR</view>
+      <view class="op-btn {{operation === 'NOT' ? 'active' : ''}}" bindtap="onOperationChange" data-op="NOT">NOT</view>
+      <view class="op-btn {{operation === 'LSHIFT' ? 'active' : ''}}" bindtap="onOperationChange" data-op="LSHIFT">{{i18n.leftShift}}</view>
+        <view class="op-btn {{operation === 'RSHIFT' ? 'active' : ''}}" bindtap="onOperationChange" data-op="RSHIFT">{{i18n.rightShift}}</view>
+        <view class="op-btn {{operation === 'LCIRC' ? 'active' : ''}}" bindtap="onOperationChange" data-op="LCIRC">{{i18n.leftCircular}}</view>
+        <view class="op-btn {{operation === 'RCIRC' ? 'active' : ''}}" bindtap="onOperationChange" data-op="RCIRC">{{i18n.rightCircular}}</view>
+    </view>
+
+    <view class="input-group" wx:if="{{!isUnaryOp}}">
+      <text class="input-label">{{i18n.valueB}}</text>
+      <view class="input-wrap">
+        <input
+          class="main-input"
+          value="{{valueB}}"
+          placeholder="{{i18n.valueBPlaceholder}}"
+          bindinput="onValueBInput"
+          type="text"
+          confirm-type="done"
+        />
+      </view>
+    </view>
+
+    <text class="section-subtitle">{{i18n.inputBase}}</text>
+    <view class="selector-group">
+      <view class="selector-btn {{activeBase === 10 ? 'active' : ''}}" bindtap="onBaseChange" data-base="10">DEC</view>
+      <view class="selector-btn {{activeBase === 16 ? 'active' : ''}}" bindtap="onBaseChange" data-base="16">HEX</view>
+      <view class="selector-btn {{activeBase === 2 ? 'active' : ''}}" bindtap="onBaseChange" data-base="2">BIN</view>
+      <view class="selector-btn {{activeBase === 8 ? 'active' : ''}}" bindtap="onBaseChange" data-base="8">OCT</view>
+    </view>
+
+    <text class="section-subtitle">{{i18n.bitWidth}}</text>
+    <view class="selector-group">
+      <view class="selector-btn {{bitWidth === 8 ? 'active' : ''}}" bindtap="onBitWidthChange" data-width="8">8 bit</view>
+      <view class="selector-btn {{bitWidth === 16 ? 'active' : ''}}" bindtap="onBitWidthChange" data-width="16">16 bit</view>
+      <view class="selector-btn {{bitWidth === 32 ? 'active' : ''}}" bindtap="onBitWidthChange" data-width="32">32 bit</view>
+    </view>
+
+    <view class="input-hint" wx:if="{{errorMessage}}">
+      <text class="error-text">{{errorMessage}}</text>
+    </view>
+  </view>
+
+  <view class="action-btns">
+    <view class="action-btn primary-btn" bindtap="calculate">{{i18n.calculate}}</view>
+    <view class="action-btn reset-btn" bindtap="resetData">{{i18n.reset}}</view>
+  </view>
+
+  <view class="section-card" wx:if="{{hasResult}}">
+    <text class="section-title">🧮 {{i18n.binaryVisual}}</text>
+
+    <view class="bit-visual-row">
+      <text class="bit-row-label">A</text>
+      <view class="bit-grid">
+        <view class="bit-cell {{item.value === 1 ? 'bit-one' : 'bit-zero'}}" wx:for="{{bitsA}}" wx:key="index">
+          {{item.value}}
+        </view>
+      </view>
+    </view>
+
+    <view class="bit-op-row" wx:if="{{!isUnaryOp}}">
+      <text class="bit-op-label">{{opLabels[operation]}}</text>
+    </view>
+
+    <view class="bit-visual-row" wx:if="{{!isUnaryOp}}">
+      <text class="bit-row-label">B</text>
+      <view class="bit-grid">
+        <view class="bit-cell {{item.value === 1 ? 'bit-one' : 'bit-zero'}}" wx:for="{{bitsB}}" wx:key="index">
+          {{item.value}}
+        </view>
+      </view>
+    </view>
+
+    <view class="bit-divider"></view>
+
+    <view class="bit-visual-row">
+      <text class="bit-row-label result-label-text">{{i18n.result}}</text>
+      <view class="bit-grid">
+        <view class="bit-cell {{item.highlight ? 'bit-highlight' : (item.value === 1 ? 'bit-one' : 'bit-zero')}}" wx:for="{{bitsResult}}" wx:key="index">
+          {{item.value}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{hasResult}}">
+    <text class="section-title">📋 {{i18n.operationResult}}</text>
+
+    <view class="result-item" bindtap="copyResult">
+      <view class="result-header">
+        <text class="result-label">{{i18n.decimalDec}}</text>
+      </view>
+      <view class="result-value-row">
+        <text class="result-value">{{decResult}}</text>
+        <text class="copy-icon">📋</text>
+      </view>
+    </view>
+
+    <view class="result-item" bindtap="copyResult">
+      <view class="result-header">
+        <text class="result-label">{{i18n.hexadecimalHex}}</text>
+      </view>
+      <view class="result-value-row">
+        <text class="result-value hex-value">0x{{hexResult}}</text>
+        <text class="copy-icon">📋</text>
+      </view>
+    </view>
+
+    <view class="result-item" bindtap="copyResult">
+      <view class="result-header">
+        <text class="result-label">{{i18n.valueASlashB}}</text>
+      </view>
+      <view class="result-value-row">
+        <text class="result-value small-value">{{decA}} (0x{{hexA}}) / {{decB}} (0x{{hexB}})</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tool-actions-bar" wx:if="{{hasResult}}">
+    <view class="tool-action-btn" bindtap="copyResult">
+      <text class="tool-action-icon">📋</text>
+      <text class="tool-action-text">{{i18n.copyResult}}</text>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <text class="section-title">💡 {{i18n.bitOperationDesc}}</text>
+    <view class="tips-list">
+        <view class="tip-item">
+          <text class="tip-op">AND</text>
+          <text class="tip-desc">{{i18n.andDesc}}</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-op">OR</text>
+          <text class="tip-desc">{{i18n.orDesc}}</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-op">XOR</text>
+          <text class="tip-desc">{{i18n.xorDesc}}</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-op">NOT</text>
+          <text class="tip-desc">{{i18n.notDesc}}</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-op">LSHIFT</text>
+          <text class="tip-desc">{{i18n.leftShiftDesc}}</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-op">RSHIFT</text>
+          <text class="tip-desc">{{i18n.rightShiftDesc}}</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-op">LCIRC</text>
+          <text class="tip-desc">{{i18n.leftCircularDesc}}</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-op">RCIRC</text>
+          <text class="tip-desc">{{i18n.rightCircularDesc}}</text>
+        </view>
+    </view>
+  </view>
+
+</scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

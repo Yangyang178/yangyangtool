@@ -1,142 +1,342 @@
-<navigation-bar title="垃圾分类查询" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
 
-<scroll-view class="tool-page" scroll-y>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper" style="background: linear-gradient(135deg, #10B98133 0%, #10B98166 100%);">
         <view class="icon-decoration"></view>
         <text class="tool-icon">♻️</text>
       </view>
-      <text class="tool-title">垃圾分类查询</text>
-      <text class="tool-desc">智能识别垃圾类型，轻松分类</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
-    <view class="search-box">
-      <text class="search-icon">🔍</text>
-      <input 
-        class="search-input" 
-        placeholder="输入垃圾名称搜索..." 
-        value="{{searchKeyword}}"
-        bindinput="onSearchInput"
-        confirm-type="search"
-        bindconfirm="onSearch"
-      />
-      <view class="search-btn" bindtap="onSearch">
-        <text>搜索</text>
+    <view class="tab-bar">
+      <view class="tab-item {{activeTab === 'search' ? 'tab-active' : ''}}" data-tab="search" bindtap="onTabChange">
+        <text class="tab-icon">🔍</text>
+        <text class="tab-text">{{i18n.tabSearch}}</text>
       </view>
-    </view>
-
-    <view class="category-tabs">
-      <view 
-        class="category-tab {{currentCategory === 'all' ? 'active' : ''}}" 
-        style="--cat-color: #64748B;"
-        data-category="all"
-        bindtap="switchCategory"
-      >
-        <text>全部</text>
+      <view class="tab-item {{activeTab === 'learn' ? 'tab-active' : ''}}" data-tab="learn" bindtap="onTabChange">
+        <text class="tab-icon">📖</text>
+        <text class="tab-text">{{i18n.tabLearn}}</text>
       </view>
-      <view 
-        class="category-tab {{currentCategory === 'recyclable' ? 'active' : ''}}" 
-        style="--cat-color: #3B82F6;"
-        data-category="recyclable"
-        bindtap="switchCategory"
-      >
-        <text>可回收</text>
-      </view>
-      <view 
-        class="category-tab {{currentCategory === 'hazardous' ? 'active' : ''}}" 
-        style="--cat-color: #EF4444;"
-        data-category="hazardous"
-        bindtap="switchCategory"
-      >
-        <text>有害</text>
-      </view>
-      <view 
-        class="category-tab {{currentCategory === 'kitchen' ? 'active' : ''}}" 
-        style="--cat-color: #10B981;"
-        data-category="kitchen"
-        bindtap="switchCategory"
-      >
-        <text>厨余</text>
-      </view>
-      <view 
-        class="category-tab {{currentCategory === 'other' ? 'active' : ''}}" 
-        style="--cat-color: #F97316;"
-        data-category="other"
-        bindtap="switchCategory"
-      >
-        <text>其他</text>
+      <view class="tab-item {{activeTab === 'quiz' ? 'tab-active' : ''}}" data-tab="quiz" bindtap="onTabChange">
+        <text class="tab-icon">🧪</text>
+        <text class="tab-text">{{i18n.tabQuiz}}</text>
       </view>
     </view>
 
-    <view wx:if="{{showResult}}" class="result-card">
-      <view class="result-header">
-        <text class="result-label">查询结果</text>
-      </view>
-      <view class="result-content">
-        <view class="result-item-name">
-          <text>{{resultItem.name}}</text>
-        </view>
-        <view class="result-category-badge {{resultItem.category}}">
-          <text>{{resultItem.categoryText}}</text>
-        </view>
-        <view class="result-desc">
-          <text>{{resultItem.desc}}</text>
-        </view>
-        <view class="result-tip">
-          <text class="tip-icon">💡</text>
-          <text class="tip-text">{{resultItem.tip}}</text>
+    <view wx:if="{{activeTab === 'search'}}">
+      <view class="search-box">
+        <text class="search-icon">🔍</text>
+        <input 
+          class="search-input" 
+          placeholder="{{i18n.searchPlaceholder}}" 
+          value="{{searchKeyword}}"
+          bindinput="onSearchInput"
+          confirm-type="search"
+          bindconfirm="onSearch"
+        />
+        <view class="search-btn" bindtap="onSearch">
+          <text>{{i18n.searchBtn}}</text>
         </view>
       </view>
-    </view>
 
-    <view class="items-section">
-      <view class="section-header">
-        <text class="section-title">{{currentCategory === 'all' ? '常见垃圾' : categoryTitle}}</text>
-        <text class="section-count">共{{filteredItems.length}}项</text>
+      <view class="search-extras">
+        <view class="extra-btn" bindtap="useVoiceInput">
+          <text class="extra-icon">🎤</text>
+          <text class="extra-text">{{i18n.voiceSearch}}</text>
+        </view>
+        <view class="extra-btn" bindtap="showPhotoGuideModal">
+          <text class="extra-icon">📷</text>
+          <text class="extra-text">{{i18n.photoRecognize}}</text>
+        </view>
       </view>
-      
-      <view class="items-grid">
+
+      <view class="category-tabs">
         <view 
-          class="item-card {{item.category}}" 
-          wx:for="{{filteredItems}}" 
-          wx:key="name"
-          bindtap="onItemClick"
-          data-item="{{item}}"
+          class="category-tab {{currentCategory === 'all' ? 'active' : ''}}" 
+          style="--cat-color: #64748B;"
+          data-category="all"
+          bindtap="switchCategory"
         >
-          <view class="item-emoji">{{item.emoji}}</view>
-          <text class="item-name">{{item.name}}</text>
-          <view class="item-tag {{item.category}}">
-            <text>{{item.categoryShort}}</text>
+          <text>{{i18n.catAll}}</text>
+        </view>
+        <view 
+          class="category-tab {{currentCategory === 'recyclable' ? 'active' : ''}}" 
+          style="--cat-color: #3B82F6;"
+          data-category="recyclable"
+          bindtap="switchCategory"
+        >
+          <text>{{i18n.catRecyclable}}</text>
+        </view>
+        <view 
+          class="category-tab {{currentCategory === 'hazardous' ? 'active' : ''}}" 
+          style="--cat-color: #EF4444;"
+          data-category="hazardous"
+          bindtap="switchCategory"
+        >
+          <text>{{i18n.catHazardous}}</text>
+        </view>
+        <view 
+          class="category-tab {{currentCategory === 'kitchen' ? 'active' : ''}}" 
+          style="--cat-color: #10B981;"
+          data-category="kitchen"
+          bindtap="switchCategory"
+        >
+          <text>{{i18n.catKitchen}}</text>
+        </view>
+        <view 
+          class="category-tab {{currentCategory === 'other' ? 'active' : ''}}" 
+          style="--cat-color: #F97316;"
+          data-category="other"
+          bindtap="switchCategory"
+        >
+          <text>{{i18n.catOther}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{showResult}}" class="result-card">
+        <view class="result-header">
+          <text class="result-label">{{i18n.queryResult}}</text>
+        </view>
+        <view class="result-content">
+          <view class="result-item-name">
+            <text>{{resultItem.name}}</text>
+          </view>
+          <view class="result-category-badge {{resultItem.category}}">
+            <text>{{resultItem.categoryText}}</text>
+          </view>
+          <view class="result-desc">
+            <text>{{resultItem.desc}}</text>
+          </view>
+          <view class="result-tip">
+            <text class="tip-icon">💡</text>
+            <text class="tip-text">{{resultItem.tip}}</text>
           </view>
         </view>
       </view>
 
-      <view wx:if="{{filteredItems.length === 0}}" class="empty-state">
-        <text class="empty-icon">🔍</text>
-        <text class="empty-text">未找到相关物品</text>
+      <view class="items-section">
+        <view class="section-header">
+          <text class="section-title">{{currentCategory === 'all' ? i18n.commonGarbage : categoryTitle}}</text>
+          <text class="section-count">{{i18n.totalUnit}}{{filteredItems.length}}{{i18n.itemsUnit}}</text>
+        </view>
+        
+        <view class="items-grid">
+          <view 
+            class="item-card {{item.category}}" 
+            wx:for="{{filteredItems}}" 
+            wx:key="name"
+            bindtap="onItemClick"
+            data-item="{{item}}"
+          >
+            <view class="item-emoji">{{item.emoji}}</view>
+            <text class="item-name">{{item.name}}</text>
+            <view class="item-tag {{item.category}}">
+              <text>{{item.categoryShort}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{filteredItems.length === 0}}" class="empty-state">
+          <text class="empty-icon">🔍</text>
+          <text class="empty-text">{{i18n.notFound}}</text>
+        </view>
+      </view>
+
+      <view class="tool-actions-bar">
+        <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResult}}</button>
+        <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">{{i18n.reset}}</button>
+      </view>
+
+      <view wx:if="{{historyList.length > 0}}" class="history-section">
+        <view class="section-header">
+          <text class="section-title">{{i18n.queryHistory}}</text>
+          <text class="clear-history" bindtap="clearHistory">{{i18n.clearBtn}}</text>
+        </view>
+        <view class="history-list">
+          <view 
+            class="history-item" 
+            wx:for="{{historyList}}" 
+            wx:key="time"
+            bindtap="onHistoryClick"
+            data-item="{{item}}"
+          >
+            <text class="history-name">{{item.name}}</text>
+            <view class="history-tag {{item.category}}">
+              <text>{{item.categoryText}}</text>
+            </view>
+          </view>
+        </view>
       </view>
     </view>
 
-    <view wx:if="{{historyList.length > 0}}" class="history-section">
-      <view class="section-header">
-        <text class="section-title">查询历史</text>
-        <text class="clear-history" bindtap="clearHistory">清空</text>
-      </view>
-      <view class="history-list">
-        <view 
-          class="history-item" 
-          wx:for="{{historyList}}" 
-          wx:key="time"
-          bindtap="onHistoryClick"
-          data-item="{{item}}"
-        >
-          <text class="history-name">{{item.name}}</text>
-          <view class="history-tag {{item.category}}">
-            <text>{{item.categoryText}}</text>
+    <view wx:if="{{activeTab === 'learn'}}">
+      <view class="learn-section">
+        <view class="learn-card learn-recyclable">
+          <view class="learn-header">
+            <text class="learn-emoji">🔵</text>
+            <text class="learn-title">{{i18n.learnRecyclable}}</text>
           </view>
+          <text class="learn-desc">{{i18n.learnRecyclableDesc}}</text>
+          <view class="learn-tags">
+            <text class="learn-tag">{{i18n.recyclable1}}</text>
+            <text class="learn-tag">{{i18n.recyclable2}}</text>
+            <text class="learn-tag">{{i18n.recyclable3}}</text>
+            <text class="learn-tag">{{i18n.recyclable4}}</text>
+            <text class="learn-tag">{{i18n.recyclable5}}</text>
+            <text class="learn-tag">{{i18n.recyclable6}}</text>
+            <text class="learn-tag">{{i18n.recyclable7}}</text>
+            <text class="learn-tag">{{i18n.recyclable8}}</text>
+          </view>
+          <view class="learn-tip-box">
+            <text class="learn-tip-icon">💡</text>
+            <text class="learn-tip-text">{{i18n.tipRecyclable}}</text>
+          </view>
+        </view>
+
+        <view class="learn-card learn-hazardous">
+          <view class="learn-header">
+            <text class="learn-emoji">🔴</text>
+            <text class="learn-title">{{i18n.learnHazardous}}</text>
+          </view>
+          <text class="learn-desc">{{i18n.learnHazardousDesc}}</text>
+          <view class="learn-tags">
+            <text class="learn-tag">{{i18n.hazardous1}}</text>
+            <text class="learn-tag">{{i18n.hazardous2}}</text>
+            <text class="learn-tag">{{i18n.hazardous3}}</text>
+            <text class="learn-tag">{{i18n.hazardous4}}</text>
+            <text class="learn-tag">{{i18n.hazardous5}}</text>
+            <text class="learn-tag">{{i18n.hazardous6}}</text>
+            <text class="learn-tag">{{i18n.hazardous7}}</text>
+            <text class="learn-tag">{{i18n.hazardous8}}</text>
+          </view>
+          <view class="learn-tip-box">
+            <text class="learn-tip-icon">💡</text>
+            <text class="learn-tip-text">{{i18n.tipHazardous}}</text>
+          </view>
+        </view>
+
+        <view class="learn-card learn-kitchen">
+          <view class="learn-header">
+            <text class="learn-emoji">🟢</text>
+            <text class="learn-title">{{i18n.learnKitchen}}</text>
+          </view>
+          <text class="learn-desc">{{i18n.learnKitchenDesc}}</text>
+          <view class="learn-tags">
+            <text class="learn-tag">{{i18n.kitchen1}}</text>
+            <text class="learn-tag">{{i18n.kitchen2}}</text>
+            <text class="learn-tag">{{i18n.kitchen3}}</text>
+            <text class="learn-tag">{{i18n.kitchen4}}</text>
+            <text class="learn-tag">{{i18n.kitchen5}}</text>
+            <text class="learn-tag">{{i18n.kitchen6}}</text>
+            <text class="learn-tag">{{i18n.kitchen7}}</text>
+            <text class="learn-tag">{{i18n.kitchen8}}</text>
+          </view>
+          <view class="learn-tip-box">
+            <text class="learn-tip-icon">💡</text>
+            <text class="learn-tip-text">{{i18n.tipKitchen}}</text>
+          </view>
+        </view>
+
+        <view class="learn-card learn-other">
+          <view class="learn-header">
+            <text class="learn-emoji">🟠</text>
+            <text class="learn-title">{{i18n.learnOther}}</text>
+          </view>
+          <text class="learn-desc">{{i18n.learnOtherDesc}}</text>
+          <view class="learn-tags">
+            <text class="learn-tag">{{i18n.other1}}</text>
+            <text class="learn-tag">{{i18n.other2}}</text>
+            <text class="learn-tag">{{i18n.other3}}</text>
+            <text class="learn-tag">{{i18n.other4}}</text>
+            <text class="learn-tag">{{i18n.other5}}</text>
+            <text class="learn-tag">{{i18n.other6}}</text>
+            <text class="learn-tag">{{i18n.other7}}</text>
+            <text class="learn-tag">{{i18n.other8}}</text>
+          </view>
+          <view class="learn-tip-box">
+            <text class="learn-tip-icon">💡</text>
+            <text class="learn-tip-text">{{i18n.tipOther}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{activeTab === 'quiz'}}">
+      <view class="quiz-section" wx:if="{{!quizFinished && quizQuestion}}">
+        <view class="quiz-progress">
+          <text class="quiz-progress-text">{{i18n.quizProgressPrefix}} {{quizTotal + 1}} / {{quizQuestions.length}} {{i18n.quizProgressSuffix}}</text>
+          <text class="quiz-score-text">{{i18n.quizScoreLabel}}: {{quizScore}}</text>
+        </view>
+        <view class="quiz-progress-bar">
+          <view class="quiz-progress-fill" style="width: {{quizTotal / quizQuestions.length * 100}}%;"></view>
+        </view>
+
+        <view class="quiz-card">
+          <view class="quiz-item-display">
+            <text class="quiz-item-emoji">{{quizQuestion.item.emoji}}</text>
+            <text class="quiz-item-name">{{quizQuestion.item.name}}</text>
+          </view>
+          <text class="quiz-question-text">{{i18n.quizWhichCategory}}</text>
+          <view class="quiz-options">
+            <view 
+              class="quiz-option {{quizSelectedIndex === index ? (quizCorrectIndex === index ? 'correct' : 'wrong') : ''}} {{quizAnswered && quizCorrectIndex === index ? 'correct' : ''}}"
+              wx:for="{{quizOptions}}"
+              wx:key="index"
+              data-index="{{index}}"
+              bindtap="onQuizAnswer"
+            >
+              <text class="quiz-option-icon">{{quizCorrectIndex === index ? '✅' : quizSelectedIndex === index ? '❌' : '⭕'}}</text>
+              <text class="quiz-option-text">{{item}}</text>
+            </view>
+          </view>
+          <view class="quiz-feedback" wx:if="{{quizAnswered}}">
+            <text class="quiz-feedback-text {{quizSelectedIndex === quizCorrectIndex ? 'feedback-correct' : 'feedback-wrong'}}">
+              {{quizSelectedIndex === quizCorrectIndex ? i18n.quizCorrect : i18n.quizWrongPrefix + quizOptions[quizCorrectIndex]}}
+            </text>
+          </view>
+        </view>
+      </view>
+
+      <view class="quiz-result" wx:if="{{quizFinished}}">
+        <text class="quiz-result-emoji">{{quizScore >= 8 ? '🏆' : quizScore >= 6 ? '👍' : quizScore >= 4 ? '💪' : '📚'}}</text>
+        <text class="quiz-result-title">{{i18n.quizComplete}}</text>
+        <text class="quiz-result-score">{{quizScore}} / {{quizQuestions.length}}</text>
+        <text class="quiz-result-desc">{{quizScore >= 8 ? i18n.quizResultExpert : quizScore >= 6 ? i18n.quizResultGood : quizScore >= 4 ? i18n.quizResultNeedLearn : i18n.quizResultStudy}}</text>
+          <view class="quiz-result-actions">
+          <view class="quiz-restart-btn" bindtap="restartQuiz">🔄 {{i18n.quizRetry}}</view>
+          <view class="quiz-exit-btn" bindtap="exitQuiz">🔍 {{i18n.quizBackSearch}}</view>
         </view>
       </view>
     </view>
   </view>
 </scroll-view>
+
+<view class="photo-guide-modal" wx:if="{{showPhotoGuide}}" catchtap="hidePhotoGuide">
+  <view class="photo-guide-box" catchtap="">
+    <text class="photo-guide-title">{{i18n.photoGuideTitle}}</text>
+    <text class="photo-guide-desc">{{i18n.photoGuideDesc}}</text>
+    <view class="photo-guide-steps">
+      <view class="photo-guide-step">
+        <text class="step-num">1</text>
+        <text class="step-text">{{i18n.photoStep1}}</text>
+      </view>
+      <view class="photo-guide-step">
+        <text class="step-num">2</text>
+        <text class="step-text">{{i18n.photoStep2}}</text>
+      </view>
+      <view class="photo-guide-step">
+        <text class="step-num">3</text>
+        <text class="step-text">{{i18n.photoStep3}}</text>
+      </view>
+    </view>
+    <view class="photo-guide-actions">
+      <view class="photo-guide-cancel" bindtap="hidePhotoGuide">{{i18n.gotIt}}</view>
+      <view class="photo-guide-go" bindtap="openImageTool">🖼️ {{i18n.openImageTool}}</view>
+    </view>
+  </view>
+</view>
+
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

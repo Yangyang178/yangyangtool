@@ -302,9 +302,273 @@ page { background-color: var(--pageBg,#F8FAFC); }
   margin-bottom: var(--spaceXL, 20px);
 }
 
-/* ===================================
-   🌙 夜间模式适配 (简化版)
-   =================================== */
+.life-progress-section {
+  background: var(--cardBg,#FFFFFF);
+  border-radius: var(--radiusLg, 16px);
+  padding: var(--spaceXL, 20px);
+  box-shadow: var(--shadowSm, 0 2px 8px rgba(0, 0, 0, 0.06));
+  margin-bottom: var(--spaceXL, 20px);
+}
+
+.life-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spaceLG, 16px);
+}
+
+.life-progress-title {
+  font-size: var(--fontSizeBase, 16px);
+  font-weight: var(--fontWeightBold, 700);
+  color: var(--textPrimary,#1E293B);
+}
+
+.life-expectancy-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.life-expectancy-label {
+  font-size: var(--fontSizeXs, 12px);
+  color: var(--textTertiary,#94A3B8);
+}
+
+.life-expectancy-value {
+  font-size: var(--fontSizeSm, 14px);
+  font-weight: var(--fontWeightBold, 700);
+  color: var(--accentPink,#EC4899);
+}
+
+.life-progress-bar {
+  margin-bottom: var(--spaceLG, 16px);
+}
+
+.life-progress-track {
+  height: 16px;
+  background: var(--pageBg,#F1F5F9);
+  border-radius: 8px;
+  position: relative;
+  overflow: visible;
+}
+
+.life-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10B981 0%, #F59E0B 50%, #EF4444 100%);
+  border-radius: 8px;
+  transition: width 0.8s ease;
+  position: relative;
+}
+
+.life-progress-marker {
+  position: absolute;
+  top: -4px;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.marker-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accentPink,#EC4899);
+  border: 3px solid #FFFFFF;
+  box-shadow: 0 2px 8px rgba(236, 72, 153, 0.4);
+}
+
+.life-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.progress-born {
+  font-size: var(--fontSizeXs, 11px);
+  color: var(--textTertiary,#94A3B8);
+}
+
+.progress-now {
+  font-size: var(--fontSizeXs, 11px);
+  color: var(--accentPink,#EC4899);
+  font-weight: var(--fontWeightSemibold, 600);
+}
+
+.progress-end {
+  font-size: var(--fontSizeXs, 11px);
+  color: var(--textTertiary,#94A3B8);
+}
+
+.life-progress-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: var(--spaceLG, 16px) 0;
+}
+
+.life-stat {
+  text-align: center;
+  flex: 1;
+}
+
+.life-stat-value {
+  font-size: var(--fontSizeLg, 20px);
+  font-weight: var(--fontWeightBlack, 800);
+  color: var(--accentPink,#EC4899);
+  display: block;
+}
+
+.life-stat-label {
+  font-size: var(--fontSizeXs, 11px);
+  color: var(--textTertiary,#94A3B8);
+  font-weight: var(--fontWeightMedium, 500);
+  margin-top: 4px;
+  display: block;
+}
+
+.life-stat-divider {
+  width: 1px;
+  height: 30px;
+  background: var(--borderLight,#E2E8F0);
+}
+
+.date-calc-section {
+  background: var(--cardBg,#FFFFFF);
+  border-radius: var(--radiusLg, 16px);
+  padding: var(--spaceXL, 20px);
+  box-shadow: var(--shadowSm, 0 2px 8px rgba(0, 0, 0, 0.06));
+  margin-bottom: var(--spaceXL, 20px);
+}
+
+.date-calc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date-calc-title {
+  font-size: var(--fontSizeBase, 16px);
+  font-weight: var(--fontWeightBold, 700);
+  color: var(--textPrimary,#1E293B);
+}
+
+.date-calc-toggle {
+  font-size: var(--fontSizeXs, 12px);
+  font-weight: var(--fontWeightSemibold, 600);
+  color: var(--textSecondary,#64748B);
+  padding: 4px 14px;
+  border-radius: 16px;
+  background: var(--pageBg,#F8FAFC);
+  border: 1.5px solid var(--borderLight,#E2E8F0);
+}
+
+.date-calc-toggle.active {
+  background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+  color: #FFFFFF;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+}
+
+.date-calc-body {
+  margin-top: var(--spaceLG, 16px);
+  animation: slideUp 0.3s ease;
+}
+
+.date-calc-inputs {
+  display: flex;
+  align-items: center;
+  gap: var(--spaceMD, 12px);
+  margin-bottom: var(--spaceLG, 16px);
+}
+
+.date-calc-input {
+  flex: 1;
+}
+
+.date-calc-label {
+  font-size: var(--fontSizeXs, 12px);
+  color: var(--textSecondary,#64748B);
+  font-weight: var(--fontWeightSemibold, 600);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.date-calc-picker {
+  height: 40px;
+  background: var(--pageBg,#F8FAFC);
+  border-radius: var(--radiusMd, 10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fontSizeSm, 13px);
+  color: var(--textPrimary,#1E293B);
+  font-weight: var(--fontWeightMedium, 500);
+}
+
+.date-calc-arrow {
+  font-size: 18px;
+  color: var(--accentPink,#EC4899);
+  font-weight: var(--fontWeightBold, 700);
+  margin-top: 16px;
+}
+
+.date-calc-btn {
+  width: 100%;
+  height: 44px;
+  background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+  border-radius: var(--radiusMd, 10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fontSizeBase, 15px);
+  font-weight: var(--fontWeightBold, 700);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+  margin-bottom: var(--spaceLG, 16px);
+}
+
+.date-calc-btn:active {
+  transform: scale(0.98);
+}
+
+.date-calc-result {
+  background: var(--pageBg,#F8FAFC);
+  border-radius: var(--radiusMd, 12px);
+  padding: var(--spaceLG, 16px);
+}
+
+.calc-result-main {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: var(--spaceMD, 12px);
+}
+
+.calc-result-value {
+  font-size: 36px;
+  font-weight: var(--fontWeightBlack, 800);
+  color: var(--accentPink,#EC4899);
+  line-height: 1;
+}
+
+.calc-result-unit {
+  font-size: var(--fontSizeLg, 18px);
+  font-weight: var(--fontWeightSemibold, 600);
+  color: var(--textSecondary,#64748B);
+}
+
+.calc-result-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.calc-detail-item {
+  font-size: var(--fontSizeSm, 13px);
+  color: var(--textSecondary,#64748B);
+  text-align: center;
+}
+
 .dark-mode page { background-color: var(--pageBgNight,#0f1419); }
 
 .dark-mode .icon-wrapper {
@@ -318,13 +582,63 @@ page { background-color: var(--pageBg,#F8FAFC); }
 .dark-mode .input-card,
 .dark-mode .stat-card,
 .dark-mode .milestone-section,
-.dark-mode .history-section {
+.dark-mode .history-section,
+.dark-mode .life-progress-section,
+.dark-mode .date-calc-section {
   background: var(--elevatedBg,#232d42);
 }
 
 .dark-mode .input-label,
-.dark-mode .milestone-title { color: var(--textPrimary,#F1F5F9); }
+.dark-mode .milestone-title,
+.dark-mode .life-progress-title,
+.dark-mode .date-calc-title { color: var(--textPrimary,#F1F5F9); }
 
 .dark-mode .date-picker-box { background: var(--cardBg,#1a2035); }
 
 .dark-mode .stat-value { color: var(--accentPink,#F472B6); }
+
+.dark-mode .life-progress-track {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .marker-dot {
+  border-color: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
+}
+
+.dark-mode .life-stat-value {
+  color: var(--accentPink,#F472B6);
+}
+
+.dark-mode .life-stat-divider {
+  background: var(--borderDark,rgba(71,85,105,0.25));
+}
+
+.dark-mode .date-calc-toggle {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+  border-color: var(--borderDark,rgba(71,85,105,0.25));
+}
+
+.dark-mode .date-calc-toggle.active {
+  background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+  color: #FFFFFF;
+  border-color: transparent;
+}
+
+.dark-mode .date-calc-picker {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .date-calc-result {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .calc-result-value {
+  color: var(--accentPink,#F472B6);
+}
+
+.dark-mode .calc-detail-item {
+  color: var(--textSecondary,#94A3B8);
+}

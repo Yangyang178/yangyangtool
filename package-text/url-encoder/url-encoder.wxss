@@ -296,6 +296,226 @@ page { background-color: var(--pageBg,#F8FAFC); }
   font-family: 'Courier New', monospace;
 }
 
+.param-table-section {
+  margin-top: 14px;
+}
+
+.param-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.param-table-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--textPrimary,#1E293B);
+}
+
+.param-add-btn {
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: rgba(6,182,212,0.12);
+  color: #06B6D4;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.param-table {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--borderLight,#E2E8F0);
+}
+
+.param-table-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--borderLight,#E2E8F0);
+  min-height: 40px;
+}
+
+.param-table-row:last-child {
+  border-bottom: none;
+}
+
+.param-table-head {
+  background: var(--pageBg,#F8FAFC);
+  font-weight: 700;
+}
+
+.pt-cell {
+  padding: 8px 6px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.pt-idx {
+  width: 30px;
+  justify-content: center;
+  color: var(--textTertiary,#94A3B8);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.pt-key {
+  flex: 1;
+  font-weight: 700;
+  color: #3B82F6;
+  font-family: 'Courier New', monospace;
+  word-break: break-all;
+  min-width: 0;
+}
+
+.pt-val {
+  flex: 1.5;
+  color: var(--textPrimary,#1E293B);
+  font-family: 'Courier New', monospace;
+  word-break: break-all;
+  min-width: 0;
+}
+
+.pt-act {
+  width: 60px;
+  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.pt-act-edit {
+  gap: 8px;
+}
+
+.pt-edit, .pt-del, .pt-save, .pt-cancel {
+  font-size: 14px;
+  padding: 2px;
+}
+
+.pt-save {
+  color: #10B981;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.pt-cancel {
+  color: #EF4444;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.pt-edit-cell {
+  flex: 1;
+  min-width: 0;
+}
+
+.pt-edit-input {
+  width: 100%;
+  height: 28px;
+  border: 1.5px solid #06B6D4;
+  border-radius: 6px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  color: var(--textPrimary,#1E293B);
+  background: #FFFFFF;
+  box-sizing: border-box;
+}
+
+.rebuilt-url-section {
+  margin-top: 14px;
+}
+
+.rebuilt-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--textSecondary,#64748B);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.rebuilt-url-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 8px;
+  border: 1px solid var(--borderLight,#E2E8F0);
+}
+
+.rebuilt-url-text {
+  flex: 1;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  color: var(--textPrimary,#1E293B);
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+.rebuilt-copy-btn {
+  font-size: 16px;
+  flex-shrink: 0;
+  padding: 4px;
+}
+
+.short-url-section {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.short-url-header {
+  margin-bottom: 10px;
+}
+
+.short-url-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.short-url-btn {
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFFFFF;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.short-url-btn:active {
+  background: rgba(255,255,255,0.3);
+}
+
+.short-url-result {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+}
+
+.short-url-text {
+  flex: 1;
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  color: #FFFFFF;
+  word-break: break-all;
+}
+
+.short-url-copy {
+  font-size: 16px;
+  flex-shrink: 0;
+  padding: 4px;
+}
+
 .reference-section {
   background: white;
   border-radius: 16px;
@@ -411,6 +631,46 @@ page { background-color: var(--pageBg,#F8FAFC); }
   background-color: var(--pageBgNight,#0f1419);
 }
 
+.dark-mode .mode-tabs {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode .input-section,
+.dark-mode .output-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode .section-label {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .action-tag.paste {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--accentBlue,#60A5FA);
+}
+
+.dark-mode .action-tag.sample {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .action-tag.clear {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .action-tag.copy-main {
+  background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%);
+  color: white;
+}
+
+.dark-mode .input-stats,
+.dark-mode .output-stats {
+  border-top-color: var(--borderLight,#374151);
+}
+
 .dark-mode .icon-wrapper {
   box-shadow: 0 8px 24px rgba(6, 182, 212, 0.25);
 }
@@ -431,11 +691,6 @@ page { background-color: var(--pageBg,#F8FAFC); }
 .dark-mode .mode-tab.active {
   background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%);
   box-shadow: 0 4px 12px rgba(6, 182, 212, 0.25);
-}
-
-.dark-mode .input-card {
-  background: var(--elevatedBg,#232d42);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .dark-mode .input-label {
@@ -491,6 +746,54 @@ page { background-color: var(--pageBg,#F8FAFC); }
 }
 
 .dark-mode .param-value {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .param-table-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .param-add-btn {
+  background: rgba(6,182,212,0.18);
+  color: #22D3EE;
+}
+
+.dark-mode .param-table {
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .param-table-row {
+  border-bottom-color: var(--borderLight,#374151);
+}
+
+.dark-mode .param-table-head {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .pt-key {
+  color: #60A5FA;
+}
+
+.dark-mode .pt-val {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .pt-edit-input {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+  border-color: #22D3EE;
+}
+
+.dark-mode .rebuilt-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .rebuilt-url-box {
+  background: rgba(26,32,53,0.6);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .rebuilt-url-text {
   color: var(--textPrimary,#F1F5F9);
 }
 

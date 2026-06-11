@@ -1,0 +1,103 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
+  <view class="container">
+
+    <!-- 开始界面 -->
+    <view class="start-screen" wx:if="{{gameState === 'idle'}}">
+      <view class="tool-header">
+        <view class="tool-icon-large blue-gradient">
+          <view class="icon-decoration"></view>
+          <text class="tool-icon-text">🔢</text>
+        </view>
+        <view class="tool-header-info">
+          <text class="tool-title">{{i18n.toolName}}</text>
+          <text class="tool-desc">{{i18n.toolDesc}}</text>
+        </view>
+      </view>
+
+      <view class="card">
+        <text class="card-title">{{i18n.difficulty}}</text>
+        <view class="diff-options">
+          <view class="diff-btn {{difficulty === 'easy' ? 'active' : ''}}" bindtap="setDifficulty" data-diff="easy">
+            <text class="diff-label">{{i18n.easy}}</text>
+            <text class="diff-count">{{i18n.easyDesc}}</text>
+          </view>
+          <view class="diff-btn {{difficulty === 'normal' ? 'active' : ''}}" bindtap="setDifficulty" data-diff="normal">
+            <text class="diff-label">{{i18n.normal}}</text>
+            <text class="diff-count">{{i18n.normalDesc}}</text>
+          </view>
+          <view class="diff-btn {{difficulty === 'hard' ? 'active' : ''}}" bindtap="setDifficulty" data-diff="hard">
+            <text class="diff-label">{{i18n.hard}}</text>
+            <text class="diff-count">{{i18n.hardDesc}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="primary-btn" bindtap="startGame" hover-class="btn-hover">
+        <text>{{i18n.startGame}}</text>
+      </view>
+
+      <view class="best-badge" wx:if="{{bestTime > 0}}">
+        <text>🏆 {{i18n.bestRecord}} {{bestTime}}{{i18n.secondUnit}}</text>
+      </view>
+    </view>
+
+    <!-- 游戏区域 -->
+    <view class="game-section" wx:if="{{gameState === 'playing'}}">
+      <view class="stats-bar">
+        <view class="stat">
+          <text class="stat-label">{{i18n.timer}}</text>
+          <text class="stat-val timer-val">{{formattedTime}}s</text>
+        </view>
+        <view class="stat">
+          <text class="stat-label">{{i18n.nextNumber}}</text>
+          <text class="stat-val next-val">{{nextNumber}}</text>
+        </view>
+      </view>
+
+      <view class="number-grid">
+        <view wx:for="{{gridNumbers}}" wx:key="num"
+          class="num-cell {{item.tapped ? 'tapped' : ''}} {{item.wrong ? 'wrong' : ''}}"
+          data-index="{{index}}" bindtap="onNumberTap"
+          style="left: {{item.x}}%; top: {{item.y}}%;">
+          <text>{{item.num}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 结果界面 -->
+    <view class="result-section" wx:if="{{gameState === 'finished'}}">
+      <view class="result-card">
+        <text class="result-emoji">🎉</text>
+        <text class="result-title">{{i18n.complete}}</text>
+        <view class="result-stats">
+          <view class="r-stat">
+            <text class="r-val">{{usedTime}}{{i18n.secondUnit}}</text>
+            <text class="r-label">{{i18n.usedTime}}</text>
+          </view>
+          <view class="r-stat">
+            <text class="r-val">{{numbers}}</text>
+            <text class="r-label">{{i18n.numbers}}</text>
+          </view>
+          <view class="r-stat">
+            <text class="r-val">{{wrongCount}}</text>
+            <text class="r-label">{{i18n.mistakes}}</text>
+          </view>
+        </view>
+        <view class="new-record-badge" wx:if="{{isNewRecord}}">
+          <text>🏆 {{i18n.newRecord}}</text>
+        </view>
+      </view>
+      <view class="result-actions">
+        <view class="primary-btn" bindtap="startGame" hover-class="btn-hover">
+          <text>{{i18n.playAgain}}</text>
+        </view>
+        <view class="secondary-btn" bindtap="goBack" hover-class="btn-hover">
+          <text>{{i18n.goBack}}</text>
+        </view>
+      </view>
+    </view>
+
+  </view>
+</scroll-view>

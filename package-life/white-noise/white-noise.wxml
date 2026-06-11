@@ -1,0 +1,136 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}">
+  <view class="container">
+
+    <view class="tool-header">
+      <view class="tool-icon-large" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <view class="tool-icon-decoration"></view>
+        <text class="header-icon">🎧</text>
+      </view>
+      <view class="tool-info">
+        <text class="tool-title-main">{{i18n.toolTitle}}</text>
+        <text class="tool-desc-main">{{i18n.toolDesc}}</text>
+      </view>
+    </view>
+
+    <view class="status-bar" wx:if="{{activeCount > 0 || isTimerRunning}}">
+      <view class="status-left">
+        <view class="status-dot"></view>
+        <text class="status-text">{{activeCount}} {{i18n.soundsPlaying}}</text>
+        <text class="fade-hint" wx:if="{{isFadingOut}}">{{i18n.fadingOut}}</text>
+      </view>
+      <view class="status-right" wx:if="{{isTimerRunning}}">
+        <text class="timer-badge {{isFadingOut ? 'fading' : ''}}">⏱ {{timerDisplay}}</text>
+      </view>
+    </view>
+
+    <view class="scene-section">
+      <view class="section-title">
+        <text>{{i18n.scenePresets}}</text>
+      </view>
+      <scroll-view class="scene-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="scene-card {{activeScene === item.id ? 'active' : ''}}" wx:for="{{scenePresets}}" wx:key="id" data-id="{{item.id}}" bindtap="applyScene">
+          <view class="scene-icon-wrap" style="background: {{item.gradient}};">
+            <text class="scene-icon">{{item.icon}}</text>
+          </view>
+          <text class="scene-name">{{item.name}}</text>
+          <text class="scene-desc">{{item.desc}}</text>
+        </view>
+      </scroll-view>
+    </view>
+
+    <view class="sound-grid">
+      <view class="sound-card {{item.active ? 'active' : ''}}" wx:for="{{sounds}}" wx:key="id" data-id="{{item.id}}" bindtap="toggleSound">
+        <view class="sound-icon-wrap" style="background: {{item.active ? item.activeBg : item.bgColor}};">
+          <text class="sound-icon">{{item.icon}}</text>
+        </view>
+        <text class="sound-name">{{item.name}}</text>
+        <view class="sound-toggle {{item.active ? 'on' : ''}}">
+          <view class="toggle-knob"></view>
+        </view>
+        <view class="sound-volume" catchtap="" wx:if="{{item.active}}">
+          <slider
+            class="volume-slider"
+            min="0"
+            max="100"
+            value="{{item.volume}}"
+            activeColor="{{item.color}}"
+            backgroundColor="{{item.bgColor}}"
+            block-size="14"
+            data-id="{{item.id}}"
+            bindchange="onSoundVolumeChange"
+          />
+        </view>
+      </view>
+    </view>
+
+    <view class="control-section">
+      <view class="section-title">
+        <text>{{i18n.timerOff}}</text>
+        <text class="fade-note" wx:if="{{isFadingOut}}">{{i18n.fadingOff}}</text>
+      </view>
+      <view class="timer-options">
+        <view class="timer-btn {{selectedTimerIndex === index ? 'active' : ''}}"
+          wx:for="{{timerOptions}}" wx:key="index"
+          data-index="{{index}}"
+          bindtap="selectTimer">
+          <text>{{item.label}}</text>
+        </view>
+      </view>
+      <text class="timer-hint">{{i18n.timerHint}}</text>
+    </view>
+
+    <view class="control-section">
+      <view class="section-title">
+        <text>{{i18n.globalVolume}}</text>
+        <text class="volume-value">{{globalVolume}}%</text>
+      </view>
+      <slider
+        class="global-volume-slider"
+        min="0"
+        max="100"
+        value="{{globalVolume}}"
+        activeColor="#667eea"
+        backgroundColor="#EEF2FF"
+        block-size="20"
+        bindchange="onGlobalVolumeChange"
+      />
+    </view>
+
+    <view class="fav-section">
+      <view class="section-title">
+        <text>{{i18n.favCombinations}} ({{favorites.length}})</text>
+        <view class="fav-actions">
+          <text class="fav-toggle" bindtap="toggleFavInput" wx:if="{{activeCount > 0}}">💾 {{i18n.saveCurrent}}</text>
+          <text class="fav-toggle" bindtap="toggleFavorites" wx:if="{{favorites.length > 0}}">{{showFavorites ? i18n.collapse : i18n.view}}</text>
+        </view>
+      </view>
+
+      <view class="fav-input-row" wx:if="{{showFavInput}}">
+        <input class="fav-input" placeholder="{{i18n.inputComboName}}" value="{{favInputName}}" bindinput="onFavNameInput"/>
+        <view class="fav-save-btn" bindtap="saveFavorite">{{i18n.save}}</view>
+      </view>
+
+      <view class="fav-list" wx:if="{{showFavorites && favorites.length > 0}}">
+        <view class="fav-item" wx:for="{{favorites}}" wx:key="id">
+          <view class="fav-info" data-id="{{item.id}}" bindtap="applyFavorite">
+            <text class="fav-name">{{item.name}}</text>
+            <text class="fav-meta">{{item.sounds.length}}{{i18n.soundTypes}} · {{item.timer > 0 ? item.timer + i18n.minutes : i18n.noTimer}} · {{item.time}}</text>
+          </view>
+          <view class="fav-del" catchtap="removeFavorite" data-id="{{item.id}}">✕</view>
+        </view>
+      </view>
+
+      <view class="fav-empty" wx:if="{{showFavorites && favorites.length === 0}}">
+        <text class="fav-empty-text">{{i18n.noFavHint}}</text>
+      </view>
+    </view>
+
+    <view class="stop-all-wrap" wx:if="{{activeCount > 0}}">
+      <button class="stop-all-btn" bindtap="stopAll">{{i18n.stopAll}}</button>
+    </view>
+
+  </view>
+</view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

@@ -1,0 +1,89 @@
+.privacy-page {
+  min-height: 100vh;
+  background: #F8FAFC;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.privacy-content {
+  padding: 20px;
+}
+
+.privacy-title {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1E293B;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.privacy-update {
+  display: block;
+  font-size: 13px;
+  color: #94A3B8;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.privacy-section-title {
+  display: block;
+  font-size: 17px;
+  font-weight: 600;
+  color: #1E293B;
+  margin-top: 24px;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  border-left: 4px solid #3B82F6;
+}
+
+.privacy-sub-title {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #334155;
+  margin-top: 16px;
+  margin-bottom: 6px;
+}
+
+.privacy-paragraph {
+  display: block;
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.8;
+  margin-bottom: 8px;
+}
+
+.privacy-list {
+  display: block;
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.8;
+  padding-left: 16px;
+  position: relative;
+}
+
+.privacy-bottom-space {
+  height: 40px;
+}
+
+.dark-mode .privacy-page {
+  background: #0F172A;
+}
+
+.dark-mode .privacy-title {
+  color: #E2E8F0;
+}
+
+.dark-mode .privacy-section-title {
+  color: #E2E8F0;
+  border-left-color: #60A5FA;
+}
+
+.dark-mode .privacy-sub-title {
+  color: #CBD5E1;
+}
+
+.dark-mode .privacy-paragraph,
+.dark-mode .privacy-list {
+  color: #94A3B8;
+}

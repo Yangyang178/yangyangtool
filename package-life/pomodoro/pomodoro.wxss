@@ -49,6 +49,27 @@ page { background-color: var(--pageBg,#F8FAFC); }
 .round-btn.active { background: linear-gradient(135deg, var(--accentRed,#EF4444) 0%, var(--accentRedDark,#DC2626) 100%); color: var(--textOnAccent,#FFFFFF); border-color: var(--accentRed,#EF4444); }
 
 .history-section { background: var(--cardBg,#FFFFFF); border-radius: 20px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+
+.today-stats-section { background: var(--cardBg,#FFFFFF); border-radius: 20px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-top: 16px; }
+.stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.stats-title { font-size: 15px; font-weight: 700; color: var(--textPrimary,#1E293B); }
+.stats-summary { font-size: 13px; font-weight: 600; color: var(--accentBlue,#3B82F6); }
+.goal-progress-bar { height: 10px; background: var(--surfaceBg,#F1F5F9); border-radius: 5px; overflow: hidden; margin-bottom: 12px; }
+.goal-progress-fill { height: 100%; background: linear-gradient(90deg, #EF4444 0%, #F59E0B 50%, #10B981 100%); border-radius: 5px; transition: width 0.5s ease; }
+.goal-row { display: flex; align-items: center; gap: 10px; }
+.goal-label { font-size: 12px; font-weight: 600; color: var(--textTertiary,#94A3B8); flex-shrink: 0; }
+.goal-selector { display: flex; gap: 6px; flex: 1; }
+.goal-btn { width: 32px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; background: var(--surfaceBg,#F1F5F9); color: var(--textSecondary,#64748B); }
+.goal-btn.active { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); color: #FFFFFF; }
+.goal-percent { font-size: 13px; font-weight: 800; color: #10B981; flex-shrink: 0; min-width: 36px; text-align: right; }
+
+.week-section { background: var(--cardBg,#FFFFFF); border-radius: 20px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-top: 16px; }
+.week-summary { display: flex; align-items: center; gap: 4px; }
+.week-stat { font-size: 12px; font-weight: 600; color: var(--accentBlue,#3B82F6); }
+.week-stat-divider { font-size: 12px; color: var(--textTertiary,#94A3B8); }
+.week-stat.streak { color: #F59E0B; }
+.week-canvas-wrap { width: 100%; height: 180px; border-radius: 12px; overflow: hidden; margin-top: 12px; background: var(--pageBg,#F8FAFC); }
+.week-canvas { width: 100%; height: 180px; }
 .history-title { font-size: 16px; font-weight: 700; color: var(--textPrimary,#1E293B); display: block; margin-bottom: 14px; }
 .record-list { max-height: 200px; overflow-y: auto; }
 .record-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--pageBg,#F8FAFC); }
@@ -60,6 +81,21 @@ page { background-color: var(--pageBg,#F8FAFC); }
 /* ===================================
    🌙 夜间模式完整适配 - 红色主题
    =================================== */
+
+/* 导出按钮样式 */
+.tool-actions-bar { display: flex; gap: 10px; margin-top: 16px; }
+.tool-action-btn { flex: 1; text-align: center; padding: 14px 0; border-radius: 16px; font-size: 14px; font-weight: 600; border: none; }
+.tool-action-copy { background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%); color: #EF4444; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1); }
+.tool-action-export { background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%); color: #059669; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1); }
+.tool-action-share { background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); color: #2563EB; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1); }
+.tool-action-copy:active,
+.tool-action-export:active,
+.tool-action-share:active { transform: scale(0.96); }
+
+.dark-mode .tool-action-copy { background: linear-gradient(135deg, #2d1a1a 0%, #1a2035 100%); color: #F87171; }
+.dark-mode .tool-action-export { background: linear-gradient(135deg, #1a2e28 0%, #1a2035 100%); color: #34D399; }
+.dark-mode .tool-action-share { background: linear-gradient(135deg, #1a2035 0%, #1e2a4a 100%); color: #60A5FA; }
+
 .dark-mode page {
   background-color: var(--pageBgNight,#0f1419);
 }
@@ -176,4 +212,18 @@ page { background-color: var(--pageBg,#F8FAFC); }
 
 .dark-mode .record-duration {
   color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .week-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .week-canvas-wrap {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .today-stats-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }

@@ -695,3 +695,33 @@
   background: linear-gradient(90deg, #232d42 25%, #1a2035 50%, #232d42 75%);
   background-size: 200% 100%;
 }
+
+/* ===================================
+   📱 大屏适配 - 平板/横屏响应式
+   =================================== */
+@media (min-width: 600px) {
+  .tool-page {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .tool-header {
+    padding: 32px 28px;
+  }
+
+  .tool-icon-large {
+    width: 96px;
+    height: 96px;
+    font-size: 48px;
+  }
+
+  .result-container {
+    padding: 32px;
+  }
+}
+
+@media (min-width: 820px) {
+  .tool-page {
+    max-width: 900px;
+  }
+}

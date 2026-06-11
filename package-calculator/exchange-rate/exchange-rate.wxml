@@ -1,32 +1,44 @@
-<navigation-bar title="汇率换算" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
 
-<scroll-view class="tool-page" scroll-y>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
   <view class="container">
-    <!-- 工具标题区 -->
     <view class="tool-header">
       <view class="icon-wrapper blue-gradient">
         <view class="icon-decoration"></view>
         <text class="tool-icon">💱</text>
       </view>
-      <text class="tool-title">实时汇率换算</text>
-      <text class="tool-desc">支持多国货币，快速精准换算</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
       <view class="rate-source-tag {{rateSource === 'demo' ? 'demo' : rateSource === 'cache' ? 'cache' : 'real'}}" bindtap="refreshRates">
         <text class="source-icon">{{rateSource === 'demo' ? '⚠️' : rateSource === 'cache' ? '💾' : '🌐'}}</text>
         <text class="source-text">{{lastUpdateText}}</text>
-        <text class="refresh-hint">{{isRefreshing ? '获取中...' : '点击刷新'}}</text>
+        <text class="refresh-hint">{{isRefreshing ? i18n.fetching : i18n.tapRefresh}}</text>
       </view>
     </view>
 
-    <!-- 金额输入 -->
+    <view wx:if="{{isOffline}}" class="offline-banner">
+      <text class="offline-icon">📡</text>
+      <text class="offline-text">{{i18n.offline}}</text>
+      <text class="offline-hint" wx:if="{{cacheAge}}">{{cacheAge}}{{i18n.updated}}</text>
+    </view>
+
+    <view wx:if="{{cacheExpired && !isOffline}}" class="cache-warn-banner">
+      <text class="warn-icon">⚠️</text>
+      <text class="warn-text">{{i18n.cacheMayNotLatest}}（{{cacheAge}}）</text>
+      <view class="warn-refresh" bindtap="refreshRates">
+        <text>{{i18n.refresh}}</text>
+      </view>
+    </view>
+
     <view class="input-section">
       <view class="input-group">
-        <text class="input-label">转换金额</text>
+        <text class="input-label">{{i18n.convertAmount}}</text>
         <view class="amount-input-wrapper">
           <text class="currency-symbol">{{fromSymbol}}</text>
           <input
             class="amount-input"
             type="digit"
-            placeholder="请输入金额"
+            placeholder="{{i18n.inputAmount}}"
             value="{{amount}}"
             bindinput="onAmountInput"
           />
@@ -34,7 +46,6 @@
       </view>
     </view>
 
-    <!-- 货币选择 -->
     <view class="currency-section">
       <view class="currency-selector">
         <view class="selector-box" bindtap="showFromCurrency">
@@ -53,25 +64,26 @@
       </view>
     </view>
 
-    <!-- 换算结果 -->
     <view class="result-section">
       <view class="result-card">
         <text class="result-amount">{{resultAmount}}</text>
         <text class="result-label">= {{toCurrency}} {{toCurrencyName}}</text>
-        <text class="rate-info">汇率: 1 {{fromCurrency}} = {{exchangeRate}} {{toCurrency}}</text>
+        <text class="rate-info">{{i18n.rateInfo}}: 1 {{fromCurrency}} = {{exchangeRate}} {{toCurrency}}</text>
       </view>
 
-      <!-- 常用货币快速查看 -->
       <view class="quick-rates">
-        <text class="section-title">常用汇率参考</text>
+        <text class="section-title">{{i18n.commonRates}}</text>
         <view class="rate-list">
           <view class="rate-item" wx:for="{{quickRates}}" wx:key="code" bindtap="selectQuickRate" data-currency="{{item.code}}">
-            <view class="rate-left">
-              <text class="rate-code">{{item.code}}</text>
+            <view class="rate-item-accent"></view>
+            <view class="rate-item-body">
+              <view class="rate-header">
+                <text class="rate-flag">{{item.flag}}</text>
+                <text class="rate-code">{{item.code}}</text>
+              </view>
               <text class="rate-name">{{item.name}}</text>
             </view>
-            <view class="rate-right">
-              <text class="rate-symbol">{{item.symbol}}</text>
+            <view class="rate-value-wrap">
               <text class="rate-value">{{item.rate}}</text>
             </view>
           </view>
@@ -79,42 +91,72 @@
       </view>
     </view>
 
-    <!-- 操作按钮 -->
     <view class="action-btns">
       <button class="btn-primary" bindtap="copyResult">
-        <text>复制结果</text>
+        <text>{{i18n.copyResult}}</text>
       </button>
       <button class="btn-secondary" bindtap="resetCalculator">
-        <text>重新计算</text>
+        <text>{{i18n.recalculate}}</text>
       </button>
     </view>
 
-    <!-- 自定义货币选择器弹窗 -->
+    <view class="trend-section">
+      <view class="trend-header" bindtap="toggleTrendChart">
+        <view class="trend-header-left">
+          <text class="trend-icon">📈</text>
+          <text class="trend-title">{{i18n.rateTrend}}</text>
+          <text class="trend-pair">{{fromCurrency}}/{{toCurrency}}</text>
+        </view>
+        <view class="trend-header-right">
+          <text class="trend-change {{trendChangeDir}}" wx:if="{{trendChange}}">{{trendChangeDir === 'up' ? '↑' : trendChangeDir === 'down' ? '↓' : '→'}} {{trendChange}}</text>
+          <text class="trend-arrow {{showTrendChart ? 'expanded' : ''}}">▾</text>
+        </view>
+      </view>
+
+      <view class="trend-body" wx:if="{{showTrendChart}}">
+        <view class="trend-period-tabs">
+          <view class="trend-period-tab {{trendPeriod === '7d' ? 'active' : ''}}" data-period="7d" bindtap="switchTrendPeriod">{{i18n.last7days}}</view>
+          <view class="trend-period-tab {{trendPeriod === '30d' ? 'active' : ''}}" data-period="30d" bindtap="switchTrendPeriod">{{i18n.last30days}}</view>
+        </view>
+        <view class="trend-canvas-wrapper">
+          <canvas type="2d" id="trendCanvas" class="trend-canvas"></canvas>
+        </view>
+        <view class="trend-hint" wx:if="{{trendData.length < 2}}">
+          <text>{{i18n.trendHint}}</text>
+        </view>
+      </view>
+    </view>
+
     <view class="currency-picker-mask" wx:if="{{showCurrencyPicker}}" bindtap="hideCurrencyPicker"></view>
     <view class="currency-picker-popup {{showCurrencyPicker ? 'show' : ''}}">
       <view class="picker-header">
-        <text class="picker-title">选择{{pickerType === 'from' ? '源' : '目标'}}货币</text>
+        <text class="picker-title">{{pickerTitleText}}</text>
         <view class="picker-close" bindtap="hideCurrencyPicker">
           <text>✕</text>
         </view>
       </view>
       <scroll-view scroll-y class="picker-list">
-        <view
-          class="picker-item {{item.code === (pickerType === 'from' ? fromCurrency : toCurrency) ? 'selected' : ''}}"
-          wx:for="{{currencies}}"
-          wx:key="code"
-          data-code="{{item.code}}"
-          bindtap="selectCurrency"
-        >
-          <text class="picker-flag">{{item.flag}}</text>
-          <view class="picker-info">
-            <text class="picker-name">{{item.name}}</text>
-            <text class="picker-code-text">{{item.code}}</text>
+        <view wx:for="{{currencyGroups}}" wx:key="name" class="picker-group">
+          <text class="picker-group-title">{{item.name}}</text>
+          <view
+            class="picker-item {{ci.code === (pickerType === 'from' ? fromCurrency : toCurrency) ? 'selected' : ''}}"
+            wx:for="{{item.list}}"
+            wx:for-item="ci"
+            wx:key="code"
+            data-code="{{ci.code}}"
+            bindtap="selectCurrency"
+          >
+            <text class="picker-flag">{{ci.flag}}</text>
+            <view class="picker-info">
+              <text class="picker-name">{{ci.name}}</text>
+              <text class="picker-code-text">{{ci.code}}</text>
+            </view>
+            <text class="picker-symbol-text">{{ci.symbol}}</text>
+            <text class="picker-check" wx:if="{{ci.code === (pickerType === 'from' ? fromCurrency : toCurrency)}}">✓</text>
           </view>
-          <text class="picker-symbol-text">{{item.symbol}}</text>
-          <text class="picker-check" wx:if="{{item.code === (pickerType === 'from' ? fromCurrency : toCurrency)}}">✓</text>
         </view>
       </scroll-view>
     </view>
   </view>
 </scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>
