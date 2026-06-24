@@ -417,7 +417,7 @@ Page({
     wx.vibrateShort({ type: 'medium' })
 
     points.recordFunToolUse('maze')
-    var currentWins = storageUtil.get('maze_wins_easy', 0) + storageUtil.get('maze_wins_medium', 0) + storageUtil.get('maze_wins_hard', 0)
+    var currentWins = storageUtil.get('maze_total_wins', 0)
     achievement.recordFunToolComplete('maze', { mazeWins: currentWins })
 
     poster.setupForResult(this, {

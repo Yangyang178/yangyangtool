@@ -1,9 +1,11 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
 Page({
   data: {
+    isLoading: true,
     loanAmount: '',
     yearIndex: 19,
     yearOptions: Array.from({length: 30}, function(_, i) { return i + 1 }),
@@ -26,6 +28,7 @@ Page({
     lastMonthPayment: '',
     monthlyDecrease: '',
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
     interestRatio: '0',
     showChart: false,
@@ -48,13 +51,15 @@ Page({
     var isDark = app.globalData.isDarkMode || false
     this.setData({ isDarkMode: isDark })
     poster.setupForPage(this, 3)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     this.setData({ i18n: i18n.getToolPageTexts('mortgage') })
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
   },
@@ -565,14 +570,14 @@ Page({
       }.bind(this),
       fail: function() {
         wx.showToast({ title: this.data.i18n.copyFail, icon: 'none' })
-      }
+      }.bind(this)
     })
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig(this.data.i18n.shareTitle, '/package-calculator/mortgage-calculator/mortgage-calculator')
+    return poster.getShareConfig('房贷计算器 - 百宝工具箱', '/package-calculator/mortgage-calculator/mortgage-calculator', '精准计算月供利息，等额本息本金对比')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig(this.data.i18n.shareTitle)
+    return poster.getTimelineConfig('房贷计算器 - 月供利息精准计算')
   }
 })

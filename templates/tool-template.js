@@ -41,6 +41,7 @@ var _toolActions = {
 Page({
   data: {
     i18n: {},
+    fontClass: '',
     toolTitle: '工具名称',
     toolDesc: '工具描述，一句话说明用途',
     toolIcon: '🔧',
@@ -71,6 +72,8 @@ Page({
 
   onShow: function() {
     this.applyDarkMode()
+    var fontClass = points.getFontClass()
+    this.setData({ fontClass: fontClass })
   },
 
   applyDarkMode: function() {
@@ -139,7 +142,8 @@ Page({
     } catch(e) {}
     return {
       title: this.data.toolTitle + ' - 百宝工具箱',
-      path: '/pages/index/index'
+      path: '/pages/index/index',
+      desc: this.data.toolDesc
     }
   },
   onShareTimeline: function() {
@@ -157,7 +161,7 @@ Page({
       }
     } catch(e) {}
     return {
-      title: this.data.toolTitle + ' - 百宝工具箱'
+      title: this.data.toolTitle + ' - ' + this.data.toolDesc
     }
   }
 })

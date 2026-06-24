@@ -155,7 +155,7 @@ var cloudSync = {
           for (var key in cloudData) {
             if (cloudData.hasOwnProperty(key)) {
               try {
-                wx.setStorageSync(key, cloudData[key])
+                storageUtil.safeSet(key, cloudData[key])
                 restoredCount++
               } catch(e) {}
             }

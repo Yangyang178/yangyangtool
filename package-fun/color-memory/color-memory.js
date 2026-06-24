@@ -133,7 +133,7 @@ Page({
       icon: '🎨', title: '色彩记忆',
       mainScore: '第' + this.data.level + '轮', mainScoreLabel: '最终轮数',
       rating: this.data.level >= 5 ? '记忆达人' : '继续加油',
-      details: [{ label: '最佳轮数', value: '第' + storageUtil.get('color_memory_best_round', 0) + '轮' }],
+      details: [{ label: '最佳轮数', value: '第' + storageUtil.get('color_memory_best', 0) + '轮' }],
       color1: '#8B5CF6', color2: '#7C3AED'
     })
   },

@@ -45,6 +45,13 @@ Page({
     })
   },
 
+  onUnload: function() {
+    if (this._timer) {
+      clearInterval(this._timer)
+      this._timer = null
+    }
+  },
+
   loadBestRecord: function() {
     var best = storage.get('ns_best_' + this.data.difficulty, 0)
     this.setData({ bestTime: best })

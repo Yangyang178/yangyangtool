@@ -105,6 +105,15 @@ var LANGUAGES = {
     addToDesktop: '添加小程序到手机桌面',
     addToDesktopDesc: '将小程序添加到桌面，方便快速打开使用',
 
+    // 推荐小程序
+    moreMiniApps: '更多实用小程序',
+    miniAppName1: '记账助手',
+    miniAppDesc1: '轻松记账理财',
+    miniAppName2: '养一下',
+    miniAppDesc2: '健康养生助手',
+    miniAppName3: '安小添',
+    miniAppDesc3: '便捷生活服务',
+
     // 系统设置
     systemSettings: '系统设置',
     settings: '设置',
@@ -384,6 +393,22 @@ var LANGUAGES = {
     shopThemeAmberDesc: '温暖琥珀金主题色',
     shopThemeViolet: '紫晶主题色',
     shopThemeVioletDesc: '神秘紫晶主题色',
+    shopThemeSunset: '落日余晖',
+    shopThemeSunsetDesc: '橙红渐变，如落日熔金',
+    shopThemeAurora: '极光幻彩',
+    shopThemeAuroraDesc: '青紫渐变，如极光流转',
+    shopThemeSakura: '樱花物语',
+    shopThemeSakuraDesc: '粉白渐变，如樱花飘落',
+    shopThemeOcean: '深海秘境',
+    shopThemeOceanDesc: '蓝青渐变，如深海幽光',
+    shopThemeForest: '翠林晨曦',
+    shopThemeForestDesc: '绿金渐变，如晨光穿林',
+    shopThemeLavender: '薰衣草田',
+    shopThemeLavenderDesc: '紫粉渐变，如普罗旺斯花海',
+    shopThemeFire: '烈焰赤金',
+    shopThemeFireDesc: '红金渐变，如烈火真金',
+    shopThemeNight: '星夜幻梦',
+    shopThemeNightDesc: '深蓝紫渐变，如梵高星夜',
     shopBadgePioneer: '先锋徽章',
     shopBadgePioneerDesc: '显示在昵称旁的专属徽章',
     shopBadgeMaster: '大师徽章',
@@ -585,6 +610,15 @@ var LANGUAGES = {
     shortcutEmpty: 'Add your favorite tools for quick access',
     addToDesktop: 'Add to Home Screen',
     addToDesktopDesc: 'Add this mini-program to your home screen for quick access',
+
+    // Recommended Mini Apps
+    moreMiniApps: 'More Useful Mini Programs',
+    miniAppName1: 'Accounting Helper',
+    miniAppDesc1: 'Easy bookkeeping',
+    miniAppName2: 'YangYiXia',
+    miniAppDesc2: 'Health & wellness helper',
+    miniAppName3: 'AnXiaoTian',
+    miniAppDesc3: 'Convenient life services',
 
     // Settings
     systemSettings: 'Settings',
@@ -864,6 +898,22 @@ var LANGUAGES = {
     shopThemeAmberDesc: 'Warm amber gold theme',
     shopThemeViolet: 'Violet Theme',
     shopThemeVioletDesc: 'Mysterious violet theme',
+    shopThemeSunset: 'Sunset Glow',
+    shopThemeSunsetDesc: 'Orange-red gradient, like molten gold',
+    shopThemeAurora: 'Aurora Fantasy',
+    shopThemeAuroraDesc: 'Cyan-purple gradient, like aurora lights',
+    shopThemeSakura: 'Sakura Tale',
+    shopThemeSakuraDesc: 'Pink-white gradient, like cherry blossoms',
+    shopThemeOcean: 'Deep Ocean',
+    shopThemeOceanDesc: 'Blue-cyan gradient, like deep sea glow',
+    shopThemeForest: 'Forest Dawn',
+    shopThemeForestDesc: 'Green-gold gradient, like morning light through trees',
+    shopThemeLavender: 'Lavender Field',
+    shopThemeLavenderDesc: 'Purple-pink gradient, like Provence fields',
+    shopThemeFire: 'Blazing Gold',
+    shopThemeFireDesc: 'Red-gold gradient, like fire and gold',
+    shopThemeNight: 'Starry Night',
+    shopThemeNightDesc: 'Deep blue-purple gradient, like Van Gogh\'s starry night',
     shopBadgePioneer: 'Pioneer Badge',
     shopBadgePioneerDesc: 'Exclusive badge next to your name',
     shopBadgeMaster: 'Master Badge',
@@ -979,7 +1029,7 @@ var TOOL_NAMES_ZH = {
   33: '表情包制作', 34: '进制转换', 35: '提前还款计算器', 36: 'IP地址查询',
   37: 'Morse电码转换', 38: '三角函数计算器', 39: '位运算可视化', 40: '记账本',
   41: '反应速度测试', 42: '色彩记忆', 43: '数字猜谜', 44: '记忆翻牌',
-  45: '疯狂点击', 46: '扫雷', 47: '数字华容道', 48: '打地鼠',
+  45: '疯狂点击', 46: '扫雷', 47: '数字华容道',
   49: '迷宫', 50: '视力测试', 51: '心理测试'
 }
 
@@ -995,7 +1045,7 @@ var TOOL_NAMES_ZH = {
   33: '表情包制作', 34: '进制转换', 35: '提前还款计算器', 36: 'IP地址查询',
   37: 'Morse电码转换', 38: '三角函数计算器', 39: '位运算可视化', 40: '记账本',
   41: '反应速度测试', 42: '色彩记忆', 43: '数字猜谜', 44: '记忆翻牌',
-  45: '疯狂点击', 46: '扫雷', 47: '数字华容道', 48: '打地鼠',
+  45: '疯狂点击', 46: '扫雷', 47: '数字华容道',
   49: '迷宫', 50: '视力测试', 51: '心理测试'
 }
 
@@ -1011,7 +1061,7 @@ var TOOL_DESCS_ZH = {
   33: '模板+文字，一键生成表情包', 34: '2/8/10/16/32进制互转+位运算', 35: '计算提前还款节省的利息和时间', 36: '查询IP归属地和运营商信息',
   37: '文本与摩尔斯电码互转', 38: '三角函数计算与角度弧度互转', 39: '直观展示二进制位运算过程', 40: '简易收支记录+月度统计图表',
   41: '测试你的反应速度，挑战极限', 42: '记住颜色序列，锻炼记忆力', 43: '猜4位数字，锻炼逻辑推理', 44: '翻牌配对，挑战最短步数',
-  45: '10秒疯狂点击，测手速', 46: '经典扫雷，考验推理能力', 47: '经典15数字滑块拼图', 48: '限时点击出现的地鼠',
+  45: '10秒疯狂点击，测手速', 46: '经典扫雷，考验推理能力', 47: '经典15数字滑块拼图',
   49: '随机迷宫+计时通关', 50: '色盲/散光/视力表三合一', 51: '趣味性格/心理小测试'
 }
 
@@ -1027,7 +1077,7 @@ var TOOL_NAMES_EN = {
   33: 'Meme Maker', 34: 'Base Converter', 35: 'Prepayment Calc', 36: 'IP Lookup',
   37: 'Morse Code', 38: 'Trig Calculator', 39: 'Bit Visualizer', 40: 'Account Book',
   41: 'Reaction Test', 42: 'Color Memory', 43: 'Number Guess', 44: 'Memory Card',
-  45: 'Crazy Click', 46: 'Minesweeper', 47: 'Puzzle 15', 48: 'Whack-a-Mole',
+  45: 'Crazy Click', 46: 'Minesweeper', 47: 'Puzzle 15',
   49: 'Maze', 50: 'Vision Test', 51: 'Psychology Test'
 }
 
@@ -1043,7 +1093,7 @@ var TOOL_DESCS_EN = {
   33: 'Template + text meme maker', 34: '2/8/10/16/32 base conversion', 35: 'Calculate prepayment savings', 36: 'IP location & ISP lookup',
   37: 'Text ↔ Morse code', 38: 'Trig functions & angle/radian', 39: 'Visualize binary operations', 40: 'Income/expense tracking',
   41: 'Test your reaction speed', 42: 'Remember color sequences', 43: 'Guess 4-digit number', 44: 'Card matching challenge',
-  45: '10-second tap speed test', 46: 'Classic minesweeper game', 47: 'Classic 15-puzzle slider', 48: 'Tap the moles in time',
+  45: '10-second tap speed test', 46: 'Classic minesweeper game', 47: 'Classic 15-puzzle slider',
   49: 'Random maze + timer', 50: 'Color blindness/astigmatism/vision', 51: 'Fun personality quizzes'
 }
 
@@ -1445,7 +1495,6 @@ var TOOL_PAGE_TEXTS = {
       toolCrazyClick: '疯狂点击', toolCrazyClickDesc: '10秒疯狂点击，测手速',
       toolMinesweeper: '扫雷', toolMinesweeperDesc: '经典扫雷，考验推理',
       toolPuzzle15: '数字华容道', toolPuzzle15Desc: '经典15数字滑块拼图',
-      toolWhackAMole: '打地鼠', toolWhackAMoleDesc: '限时点击出现的地鼠',
       toolMaze: '迷宫', toolMazeDesc: '随机迷宫+计时通关',
       toolVisionTest: '视力测试', toolVisionTestDesc: '色盲/散光/视力表',
       toolPsychologyTest: '心理测试', toolPsychologyTestDesc: '趣味性格/心理小测试',
@@ -1607,16 +1656,6 @@ var TOOL_PAGE_TEXTS = {
       yourTurn: '你的回合', correct: '正确！准备下一轮...',
       gameOver: '游戏结束！到达第 ', roundUnit: ' 关',
       resetDone: '已重置'
-    },
-    whackAMole: {
-      navTitle: '打地鼠', toolTitle: '打地鼠', toolDesc: '快速点击，测试你的反应力',
-      startGame: '开始游戏', newGame: '新游戏',
-      score: '得分', timeLeft: '剩余时间', finalScore: '最终得分',
-      historyRecords: '📊 历史记录', bestScore: '最高得分', totalGames: '总场次',
-      resetRecords: '重置记录',
-      tipText: '30秒内点击出现的地鼠得分，地鼠会越来越快，同时出现多只，考验你的反应速度！',
-      shareChallenge: '分享给好友挑战', close: '关闭',
-      whackMole: '快打地鼠！', gameOver: '游戏结束！', reset: '已重置'
     },
     favorites: {
       navTitle: '收藏夹', toolTitle: '我的收藏', toolCount: '个工具',
@@ -2873,7 +2912,6 @@ var TOOL_PAGE_TEXTS = {
       toolCrazyClick: 'Crazy Click', toolCrazyClickDesc: '10-second crazy clicking, test your speed',
       toolMinesweeper: 'Minesweeper', toolMinesweeperDesc: 'Classic minesweeper, test your logic',
       toolPuzzle15: '15 Puzzle', toolPuzzle15Desc: 'Classic 15-number sliding puzzle',
-      toolWhackAMole: 'Whack-a-Mole', toolWhackAMoleDesc: 'Tap the moles before time runs out',
       toolMaze: 'Maze', toolMazeDesc: 'Random maze + timed challenge',
       toolVisionTest: 'Vision Test', toolVisionTestDesc: 'Color blind/Astigmatism/Acuity',
       toolPsychologyTest: 'Psychology Test', toolPsychologyTestDesc: 'Fun personality & psychology quizzes',
@@ -3015,16 +3053,6 @@ var TOOL_PAGE_TEXTS = {
       rule3: '3. Each round adds one color, sequence gets longer', rule4: '4. Wrong tap ends the game. How far can you go?',
       shareChallenge: 'Share & Challenge', close: 'Close',
       tapToStart: 'Tap to start', observeSequence: 'Watch the sequence...', yourTurn: 'Your turn (', correct: 'Correct! Next round...', gameOver: 'Game over! Reached level ', roundUnit: '', resetDone: 'Reset'
-    },
-    whackAMole: {
-      navTitle: 'Whack-a-Mole', toolTitle: 'Whack-a-Mole', toolDesc: 'Quick taps, test your reflexes',
-      startGame: 'Start Game', newGame: 'New Game',
-      score: 'Score', timeLeft: 'Time Left', finalScore: 'Final Score',
-      historyRecords: '📊 Records', bestScore: 'Best Score', totalGames: 'Games',
-      resetRecords: 'Reset Records',
-      tipText: 'Tap the moles within 30 seconds to score. They get faster and multiple appear at once. Test your reflexes!',
-      shareChallenge: 'Share & Challenge', close: 'Close',
-      whackMole: 'Whack the moles!', gameOver: 'Game over!', reset: 'Reset'
     },
     favorites: {
       navTitle: 'Favorites', toolTitle: 'My Favorites', toolCount: 'tools',

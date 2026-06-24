@@ -38,7 +38,7 @@ var Poster = {
     })
   },
 
-  getShareConfig: function(title, path) {
+  getShareConfig: function(title, path, desc) {
     var taskInfo = points.getDailyTasks()
     var shareTaskCompleted = false
     for (var i = 0; i < taskInfo.tasks.length; i++) {
@@ -52,11 +52,15 @@ var Poster = {
     }
     var app = getApp()
     var imageUrl = app.globalData.toolPosterPath || ''
-    return {
+    var config = {
       title: title,
       path: path,
       imageUrl: imageUrl
     }
+    if (desc) {
+      config.desc = desc
+    }
+    return config
   },
 
   getTimelineConfig: function(title) {

@@ -1,7 +1,8 @@
 <navigation-bar title="{{i18n.navTitle}}" back="{{false}}" color="{{isDarkMode ? 'white' : 'black'}}" background="{{isDarkMode ? '#0F172A' : '#F8FAFC'}}"></navigation-bar>
+<skeleton show="{{isLoading}}" type="list" dark="{{isDarkMode}}"></skeleton>
 
 <scroll-view class="main-scroll {{isDarkMode ? 'dark-mode' : ''}} {{fontClass}}" scroll-y enhanced show-scrollbar="{{false}}" bounces="{{false}}">
-  <view class="page-container {{isDarkMode ? 'dark-mode' : ''}} {{fontClass}} font-size-{{fontSizeSetting}}" style="{{themeStyle}}">
+  <view class="page-container {{isDarkMode ? 'dark-mode' : ''}} {{fontClass}} font-size-{{fontSizeSetting}}">
     <view class="header-section">
       <view class="header-row">
         <view class="header-left">

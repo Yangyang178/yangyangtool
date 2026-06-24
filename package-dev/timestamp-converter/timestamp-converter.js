@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -6,6 +7,7 @@ var app = getApp()
 
 Page({
   data: {
+    isLoading: true,
     currentTimestamp: '',
     currentTimestampMs: '',
     activeTab: 0,
@@ -28,6 +30,7 @@ Page({
       { label: '2000-01-01', getTs: function() { return 946684800 } }
     ],
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -50,12 +53,15 @@ Page({
     }, 1000)
     this._loadHistory()
     poster.setupForPage(this, 28)
+    this.setData({ isLoading: false })
   },
+
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
-    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('timestampConverter') })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, fontClass: fontClass, i18n: i18n.getToolPageTexts('timestampConverter') })
   },
 
   onUnload: function () {
@@ -84,7 +90,7 @@ Page({
 
   _saveHistory: function () {
     try {
-      wx.setStorageSync('ts_converter_history', this.data.history)
+      storageUtil.safeSet('ts_converter_history', this.data.history)
     } catch (e) {}
   },
 
@@ -325,6 +331,7 @@ Page({
         text += r.input + ' → ' + r.error + '\n'
       }
     }
+    wx.vibrateShort({ type: 'light' })
     wx.setClipboardData({
       data: text.trim(),
       success: function() { wx.showToast({ title: that.data.i18n.copiedAllResults, icon: 'success' }) }
@@ -432,10 +439,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('⏱️ 时间戳转换 - 百宝工具箱', '/package-dev/timestamp-converter/timestamp-converter')
+    return poster.getShareConfig('时间戳转换 - 百宝工具箱', '/package-dev/timestamp-converter/timestamp-converter', 'Unix时间戳与日期互转')
   },
-
   onShareTimeline: function() {
-    return poster.getTimelineConfig('⏱️ 时间戳转换 - 百宝工具箱')
+    return poster.getTimelineConfig('时间戳转换 - Unix时间戳日期互转')
   }
 })

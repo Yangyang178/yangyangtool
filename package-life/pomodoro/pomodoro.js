@@ -1,11 +1,14 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var logger = require('../../utils/logger.js')
 var poster = require('../utils/poster.js')
 var csvExport = require('../utils/csv-export.js')
 var i18n = require('../../utils/i18n.js')
+var subscribe = require('../utils/subscribe.js')
 Page({
   data: {
+    isLoading: true,
     i18n: {},
     isRunning: false,
     isPaused: false,
@@ -41,6 +44,7 @@ Page({
     timerStartLeft: 0,
 
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
     weekData: [],
     weekTotalPomodoros: 0,
@@ -63,6 +67,7 @@ Page({
     this.loadWeekData()
     this.drawProgressRing(1)
     poster.setupForPage(this, 9)
+    this.setData({ isLoading: false })
   },
 
   onUnload: function() {
@@ -72,7 +77,8 @@ Page({
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('pomodoro') })
 
@@ -152,6 +158,17 @@ Page({
     var tracker = getApp().tracker
     if (tracker) tracker.toolUse(9, '番茄计时', false)
 
+    // 专注模式开始时请求订阅消息，以便后台时能收到完成提醒
+    if (this.data.currentMode === 'work' && subscribe.shouldRequestSubscribe('POMODORO_COMPLETE')) {
+      subscribe.requestPomodoroSubscribe(function(res) {
+        if (res.success && res.subscribed) {
+          // 注册云函数延迟发送提醒
+          var duration = that.data.workDurations[that.data.workDurationIndex]
+          subscribe.registerPomodoroReminder(duration, 'work')
+        }
+      })
+    }
+
     this.clearTimer()
 
     this.data.timerInterval = setInterval(function() {
@@ -167,6 +184,9 @@ Page({
 
     this.syncTimeFromTimestamp()
 
+    // 暂停时取消云函数提醒
+    subscribe.cancelPomodoroReminder()
+
     this.setData({
       isRunning: false,
       isPaused: true,
@@ -181,6 +201,9 @@ Page({
     wx.setKeepScreenOn({ keepScreenOn: false })
 
     this.clearTimer()
+
+    // 重置时取消云函数提醒
+    subscribe.cancelPomodoroReminder()
 
     var duration = this.getDurationForMode()
 
@@ -375,16 +398,12 @@ Page({
   },
 
   requestSubscribeMessage: function() {
-    try {
-      wx.requestSubscribeMessage({
-        tmplIds: [],
-        success: function() {},
-        fail: function() {}
-      })
-    } catch(e) {}
+    // 订阅消息已在startTimer中请求，此处不再重复请求
+    // 保留此方法以兼容原有调用
   },
 
   addRecord: function() {
+    var that = this
     var now = new Date()
     var timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0')
 
@@ -407,7 +426,9 @@ Page({
       var today = new Date().toDateString()
       var allRecords = storageUtil.get('pomodoro_records', {})
       allRecords[today] = records
-      wx.setStorageSync('pomodoro_records', allRecords)
+      // 清理30天前的旧数据
+      storageUtil.cleanDateKeyedData('pomodoro_records', 30)
+      storageUtil.safeSet('pomodoro_records', allRecords)
     } catch (e) {
       logger.error('Save record error:', e)
       wx.showToast({ title: that.data.i18n.recordSaveFailed, icon: 'none', duration: 2000 })
@@ -425,7 +446,7 @@ Page({
                 var existing = allRec[todayKey] || []
                 existing.push(record)
                 allRec[todayKey] = existing
-                wx.setStorageSync('pomodoro_records', allRec)
+                storageUtil.safeSet('pomodoro_records', allRec)
                 wx.showToast({ title: that.data.i18n.retrySuccess, icon: 'success' })
               } catch(e2) {
                 wx.showToast({ title: that.data.i18n.stillFailed, icon: 'none' })
@@ -487,7 +508,7 @@ Page({
     if (!goal) return
     wx.vibrateShort({ type: 'light' })
     this.setData({ dailyGoal: goal })
-    wx.setStorageSync('pomodoro_daily_goal', goal)
+    storageUtil.safeSet('pomodoro_daily_goal', goal)
     var progress = goal > 0 ? Math.min(100, Math.round((this.data.todayPomodoroCount / goal) * 100)) : 0
     this.setData({ goalProgress: progress })
   },
@@ -770,9 +791,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🍅 番茄计时 - 百宝工具箱', '/package-life/pomodoro/pomodoro')
+    return poster.getShareConfig('番茄计时器 - 百宝工具箱', '/package-life/pomodoro/pomodoro', '番茄工作法计时，专注效率提升')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🍅 番茄计时 - 百宝工具箱')
+    return poster.getTimelineConfig('番茄计时器 - 番茄工作法专注计时')
   }
 })

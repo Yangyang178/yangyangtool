@@ -18,7 +18,7 @@ var Tracker = {
 
   setOpenid: function(openid) {
     this._openid = openid
-    try { wx.setStorageSync('tracker_openid', openid) } catch(e) {}
+    try { storageUtil.safeSet('tracker_openid', openid) } catch(e) {}
   },
 
   track: function(eventName, params) {
@@ -192,7 +192,7 @@ var Tracker = {
       if (queue.length > MAX_QUEUE_SIZE) {
         queue = queue.slice(queue.length - MAX_QUEUE_SIZE)
       }
-      wx.setStorageSync(STORAGE_KEY, queue)
+      storageUtil.safeSet(STORAGE_KEY, queue)
       if (queue.length >= 10) {
         this.flush()
       }
@@ -237,7 +237,7 @@ var Tracker = {
       if (merged.length > MAX_QUEUE_SIZE) {
         merged = merged.slice(merged.length - MAX_QUEUE_SIZE)
       }
-      wx.setStorageSync(STORAGE_KEY, merged)
+      storageUtil.safeSet(STORAGE_KEY, merged)
     } catch(e) {}
   },
 

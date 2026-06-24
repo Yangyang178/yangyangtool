@@ -121,13 +121,13 @@ Page({
       })
       wx.vibrateShort({ type: 'heavy' })
       points.recordFunToolUse('number-guess')
-      var currentBest = storageUtil.get('number_guess_best_tries', 0)
+      var currentBest = storageUtil.get('number_guess_best', 0)
       achievement.recordFunToolComplete('number-guess', { numberGuessBestTries: currentBest })
       poster.setupForResult(this, {
         icon: '🔢', title: '数字猜谜',
         mainScore: guessCount + '次', mainScoreLabel: '猜中次数',
         rating: guessCount <= 5 ? '逻辑天才' : guessCount <= 10 ? '推理高手' : '继续努力',
-        details: [{ label: '最佳记录', value: storageUtil.get('number_guess_best_tries', 0) + '次' }],
+        details: [{ label: '最佳记录', value: storageUtil.get('number_guess_best', 0) + '次' }],
         color1: '#3B82F6', color2: '#2563EB'
       })
       wx.showModal({

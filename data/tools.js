@@ -48,8 +48,7 @@ var tools = [
   { id: 47, name: '视力测试', description: '色盲/散光/视力表三合一', icon: '👁', iconBg: 'linear-gradient(135deg, #059669 0%, #065F46 100%)', category: 'fun', route: '/package-fun/vision-test/vision-test', isHot: false },
   { id: 48, name: '心理测试', description: '趣味性格/心理小测试', icon: '🔮', iconBg: 'linear-gradient(135deg, #DB2777 0%, #9D174D 100%)', category: 'fun', route: '/package-fun/psychology-test/psychology-test', isHot: false },
   { id: 49, name: '数字顺序记忆', description: '按1-2-3依次点完，练习专注与顺序记忆', icon: '🔢', iconBg: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)', category: 'fun', route: '/package-fun/number-sequence/number-sequence', isHot: false },
-  { id: 50, name: '时间感知训练', description: '随机目标秒数，默数计时，累计绝对误差', icon: '⏱️', iconBg: 'linear-gradient(135deg, #F59E0B 0%, #B45309 100%)', category: 'fun', route: '/package-fun/time-perception/time-perception', isHot: false },
-  { id: 51, name: '字里寻字', description: '从大字中拆出常用字，填齐指定个数通关', icon: '🔍', iconBg: 'linear-gradient(135deg, #10B981 0%, #047857 100%)', category: 'fun', route: '/package-fun/char-finder/char-finder', isHot: false }
+  { id: 50, name: '时间感知训练', description: '随机目标秒数，默数计时，累计绝对误差', icon: '⏱️', iconBg: 'linear-gradient(135deg, #F59E0B 0%, #B45309 100%)', category: 'fun', route: '/package-fun/time-perception/time-perception', isHot: false }
 ]
 
 var _routeMap = null

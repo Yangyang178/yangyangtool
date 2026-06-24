@@ -54,7 +54,8 @@ Component({
     toolId: { type: Number, value: 0 },
     resultText: { type: String, value: '' },
     showCopyBtn: { type: Boolean, value: false },
-    showResetBtn: { type: Boolean, value: false }
+    showResetBtn: { type: Boolean, value: false },
+    loading: { type: Boolean, value: true }
   },
 
   data: {

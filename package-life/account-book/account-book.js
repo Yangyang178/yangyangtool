@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var i18n = require('../../utils/i18n.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
@@ -6,6 +7,7 @@ var csvExport = require('../utils/csv-export.js')
 
 var STORAGE_KEY = 'account_book_records'
 var BUDGET_KEY = 'account_book_budget'
+var MAX_RECORDS = 500
 var EXPENSE_CATEGORIES = [
   { key: 'food', name: '餐饮', enName: 'Food', icon: '🍜' },
   { key: 'transport', name: '交通', enName: 'Transport', icon: '🚌' },
@@ -60,7 +62,9 @@ function formatAmount(num) {
 
 Page({
   data: {
+    isLoading: true,
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
     currentTab: 'record',
     tabs: [
@@ -121,13 +125,15 @@ Page({
       }
     }).exec()
     poster.setupForPage(this, 40)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
+    var fontClass = points.getFontClass()
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
-    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('accountBook') })
+    this.setData({ isDarkMode: isDark, fontClass: fontClass, fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('accountBook') })
     this._updateI18nData()
   },
 
@@ -451,7 +457,15 @@ Page({
   },
 
   _saveRecords: function(records) {
-    storageUtil.set(STORAGE_KEY, records)
+    if (records.length > MAX_RECORDS) {
+      records = records.slice(0, MAX_RECORDS)
+      this.setData({ records: records })
+    }
+    try {
+      storageUtil.set(STORAGE_KEY, records)
+    } catch (e) {
+      wx.showToast({ title: this.data.i18n.storageFull || '存储空间不足，请清理旧数据', icon: 'none', duration: 3000 })
+    }
   },
 
   _calcMonthSummary: function() {
@@ -889,21 +903,21 @@ Page({
       }
 
       function drawLine(data, key, color, fillColor) {
-        var points = []
+        var chartPoints = []
         for (var pi = 0; pi < data.length; pi++) {
           var px = padLeft + (chartW / (data.length - 1)) * pi
           var py = padTop + chartH - ((data[pi][key] || 0) / maxVal) * chartH
-          points.push({ x: px, y: py })
+          chartPoints.push({ x: px, y: py })
         }
 
         ctx.beginPath()
-        ctx.moveTo(points[0].x, padTop + chartH)
-        ctx.lineTo(points[0].x, points[0].y)
-        for (var si = 1; si < points.length; si++) {
-          var cpx = (points[si - 1].x + points[si].x) / 2
-          ctx.bezierCurveTo(cpx, points[si - 1].y, cpx, points[si].y, points[si].x, points[si].y)
+        ctx.moveTo(chartPoints[0].x, padTop + chartH)
+        ctx.lineTo(chartPoints[0].x, chartPoints[0].y)
+        for (var si = 1; si < chartPoints.length; si++) {
+          var cpx = (chartPoints[si - 1].x + chartPoints[si].x) / 2
+          ctx.bezierCurveTo(cpx, chartPoints[si - 1].y, cpx, chartPoints[si].y, chartPoints[si].x, chartPoints[si].y)
         }
-        ctx.lineTo(points[points.length - 1].x, padTop + chartH)
+        ctx.lineTo(chartPoints[chartPoints.length - 1].x, padTop + chartH)
         ctx.closePath()
         var grad = ctx.createLinearGradient(0, padTop, 0, padTop + chartH)
         grad.addColorStop(0, fillColor)
@@ -912,10 +926,10 @@ Page({
         ctx.fill()
 
         ctx.beginPath()
-        ctx.moveTo(points[0].x, points[0].y)
-        for (var li = 1; li < points.length; li++) {
-          var cpxL = (points[li - 1].x + points[li].x) / 2
-          ctx.bezierCurveTo(cpxL, points[li - 1].y, cpxL, points[li].y, points[li].x, points[li].y)
+        ctx.moveTo(chartPoints[0].x, chartPoints[0].y)
+        for (var li = 1; li < chartPoints.length; li++) {
+          var cpxL = (chartPoints[li - 1].x + chartPoints[li].x) / 2
+          ctx.bezierCurveTo(cpxL, chartPoints[li - 1].y, cpxL, chartPoints[li].y, chartPoints[li].x, chartPoints[li].y)
         }
         ctx.strokeStyle = color
         ctx.lineWidth = 2
@@ -982,10 +996,10 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('📒 记账本 - 百宝工具箱', '/package-life/account-book/account-book')
+    return poster.getShareConfig('记账本 - 百宝工具箱', '/package-life/account-book/account-book', '日常收支记账，分类统计消费')
   },
 
   onShareTimeline: function() {
-    return poster.getTimelineConfig('📒 记账本 - 百宝工具箱')
+    return poster.getTimelineConfig('记账本 - 日常收支分类统计')
   }
 })

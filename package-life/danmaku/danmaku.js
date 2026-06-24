@@ -1,8 +1,10 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var logger = require('../../utils/logger.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
+var contentSecurity = require('../utils/content-security.js')
 var app = getApp()
 
 // 轨道占用时间记录（trackIndex -> 上次使用的时间戳）
@@ -90,6 +92,7 @@ var TEMPLATES = {
 
 Page({
   data: {
+    isLoading: true,
     i18n: {},
     inputText: '',
     colors: [
@@ -142,6 +145,7 @@ Page({
     multiLineMaxLines: 5,
 
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -167,12 +171,14 @@ Page({
     this._updateMultiLineOptions()
     this.loadHistory()
     poster.setupForPage(this, 32)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('danmaku') })
     this._updateI18nData()
@@ -483,6 +489,17 @@ Page({
       return
     }
 
+    var that = this
+    contentSecurity.checkText(text, function(pass, errMsg) {
+      if (!pass) {
+        wx.showToast({ title: errMsg, icon: 'none', duration: 2500 })
+        return
+      }
+      that._sendDanmakuInner(text)
+    })
+  },
+
+  _sendDanmakuInner: function(text) {
     wx.vibrateShort({ type: 'light' })
 
     if (this.data.multiLineMode && this.data.multiLineCount > 1) {
@@ -625,7 +642,13 @@ Page({
 
   saveHistory: function () {
     try {
-      wx.setStorageSync('danmaku_history', this.data.historyList)
+      // 最多保留50条历史
+      var history = this.data.historyList
+      if (history.length > 50) {
+        history = history.slice(0, 50)
+        this.setData({ historyList: history })
+      }
+      storageUtil.safeSet('danmaku_history', history)
     } catch (e) {
       logger.log('保存弹幕历史失败:', e)
     }
@@ -699,10 +722,10 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🎬 手持弹幕 - 百宝工具箱', '/package-life/danmaku/danmaku')
+    return poster.getShareConfig('手持弹幕 - 百宝工具箱', '/package-life/danmaku/danmaku', '手机弹幕滚动显示，演唱会应援神器')
   },
 
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🎬 手持弹幕 - 百宝工具箱')
+    return poster.getTimelineConfig('手持弹幕 - 弹幕滚动演唱会应援')
   }
 })

@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -11,11 +12,13 @@ var OP_LABELS = { AND: 'AND (&)', OR: 'OR (|)', XOR: 'XOR (^)', NOT: 'NOT (~)', 
 
 Page({
   data: {
+    isLoading: true,
     valueA: '',
     valueB: '',
     bitWidth: 8,
     activeBase: 10,
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
     hasResult: false,
     resultValue: '',
@@ -62,12 +65,15 @@ Page({
 
     this.setData(updateData)
     poster.setupForPage(this, 39)
+    this.setData({ isLoading: false })
   },
+
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
-    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('bitVisualizer') })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, fontClass: fontClass, i18n: i18n.getToolPageTexts('bitVisualizer') })
   },
 
   onValueAInput: function(e) {
@@ -337,10 +343,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🧮 位运算可视化 - 百宝工具箱', '/package-dev/bit-visualizer/bit-visualizer')
+    return poster.getShareConfig('位运算可视化 - 百宝工具箱', '/package-dev/bit-visualizer/bit-visualizer', '二进制位运算实时演示，AND/OR/XOR')
   },
-
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🧮 位运算可视化 - 百宝工具箱')
+    return poster.getTimelineConfig('位运算可视化 - 二进制AND/OR/XOR演示')
   }
 })

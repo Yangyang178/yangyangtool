@@ -1,5 +1,7 @@
 {
+  "navigationBarTitleText": "亲戚称呼计算器 - 亲戚关系查询",
   "usingComponents": {
-    "navigation-bar": "/components/navigation-bar/navigation-bar"
+    "navigation-bar": "/components/navigation-bar/navigation-bar",
+    "skeleton": "/components/skeleton/skeleton"
   }
 }

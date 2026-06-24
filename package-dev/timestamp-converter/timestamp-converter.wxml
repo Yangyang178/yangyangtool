@@ -1,6 +1,7 @@
 <navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
 
-<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
   <view class="container">
 
     <view class="tool-header">
@@ -86,11 +87,11 @@
               <text class="result-label">{{i18n.relativeTime}}</text>
             <text class="result-value">{{ts2dateResult.relative}}</text>
           </view>
-          <view class="result-row" bindtap="onCopyResult" data-text="{{ts2dateResult.seconds}}">
+          <view class="result-row" bindtap="onCopyResult" data-text="{{ts2dateResult.tsSeconds}}">
               <text class="result-label">{{i18n.secondTs}}</text>
             <text class="result-value mono">{{ts2dateResult.tsSeconds}}</text>
           </view>
-          <view class="result-row" bindtap="onCopyResult" data-text="{{ts2dateResult.milliseconds}}">
+          <view class="result-row" bindtap="onCopyResult" data-text="{{ts2dateResult.tsMillis}}">
               <text class="result-label">{{i18n.msTs}}</text>
             <text class="result-value mono">{{ts2dateResult.tsMillis}}</text>
           </view>

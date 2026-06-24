@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -15,6 +16,8 @@ Page({
     mergedText: '',
     showMergePanel: false,
     isDarkMode: false,
+    isLoading: true,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -31,12 +34,14 @@ Page({
     var toolTexts = i18n.getToolPageTexts('textDiff')
     this.setData({ i18n: toolTexts })
     poster.setupForPage(this, 24)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
     var toolTexts = i18n.getToolPageTexts('textDiff')
@@ -250,6 +255,7 @@ Page({
     lines.push('')
     lines.push('========== 导出时间：' + this._formatDateTime(new Date()) + ' ==========')
 
+    wx.vibrateShort({ type: 'light' })
     wx.setClipboardData({
       data: lines.join('\n'),
       success: function() { wx.showToast({ title: that.data.i18n.diffResultCopied, icon: 'success' }) }
@@ -297,9 +303,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🔄 文本对比 - 百宝工具箱', '/package-text/text-diff/text-diff')
+    return poster.getShareConfig('文本对比 - 百宝工具箱', '/package-text/text-diff/text-diff', '文本差异对比，查找两段文字不同')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🔄 文本对比 - 百宝工具箱')
+    return poster.getTimelineConfig('文本对比 - 文本差异对比查找不同')
   }
 })

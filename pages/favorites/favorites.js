@@ -13,7 +13,8 @@ Page({
     themeStyle: '',
     fontClass: '',
     sortBy: 'time',
-    i18n: {}
+    i18n: {},
+    isLoading: true
   },
 
   onLoad: function() {
@@ -27,9 +28,14 @@ Page({
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline']
     })
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      var app = getApp()
+      this.getTabBar().setData({ selected: 1, isDarkMode: app.globalData.isDarkMode || false })
+    }
     this.setData({ i18n: i18n.getToolPageTexts('favorites') })
     this.loadFavorites()
     this.loadPopularTools()
@@ -41,13 +47,22 @@ Page({
       this.setData({ isDarkMode: isDark, themeStyle: themeStyle, fontClass: fontClass })
       var fontSize = storageUtil.get('fontSizeSetting', 'medium')
       this.setData({ fontSizeSetting: fontSize })
+      if (isDark) {
+        wx.setBackgroundColor({ backgroundColor: '#0F172A', backgroundColorTop: '#0F172A', backgroundColorBottom: '#0F172A' })
+        wx.setNavigationBarColor({ frontColor: '#ffffff', backgroundColor: '#0F172A' })
+        wx.setTabBarStyle({ color: '#64748B', selectedColor: '#60A5FA', backgroundColor: '#1E293B', borderStyle: 'black' })
+      } else {
+        wx.setBackgroundColor({ backgroundColor: '#F8FAFC', backgroundColorTop: '#F8FAFC', backgroundColorBottom: '#F8FAFC' })
+        wx.setNavigationBarColor({ frontColor: '#000000', backgroundColor: '#F8FAFC' })
+        wx.setTabBarStyle({ color: '#94A3B8', selectedColor: '#3B82F6', backgroundColor: '#FFFFFF', borderStyle: 'white' })
+      }
     }
   },
 
   toggleSort: function() {
     var newSort = this.data.sortBy === 'time' ? 'name' : 'time'
     this.setData({ sortBy: newSort })
-    wx.setStorageSync('favSortBy', newSort)
+    storageUtil.safeSet('favSortBy', newSort)
     this.loadFavorites()
   },
 
@@ -133,7 +148,7 @@ Page({
       wx.showToast({ title: i18n.t('added') + ' ⭐', icon: 'success', duration: 1200 })
     }
 
-    wx.setStorageSync('favorites', favorites)
+    storageUtil.safeSet('favorites', favorites)
     this.loadFavorites()
     this.loadPopularTools()
   },
@@ -146,7 +161,7 @@ Page({
       if (favorites[fi] !== id) newFavorites.push(favorites[fi])
     }
     favorites = newFavorites
-    wx.setStorageSync('favorites', favorites)
+    storageUtil.safeSet('favorites', favorites)
 
     wx.vibrateShort({ type: 'light' })
     this.loadFavorites()
@@ -176,7 +191,7 @@ Page({
       }
     } catch(e) {}
     return {
-      title: '🧰 ' + i18n.t('brandTitle') + ' - ' + i18n.t('myFavorites'),
+      title: '百宝工具箱 - ' + i18n.t('myFavorites'),
       path: '/pages/favorites/favorites',
       imageUrl: poster
     }
@@ -199,7 +214,7 @@ Page({
       }
     } catch(e) {}
     return {
-      title: '🧰 ' + i18n.t('brandTitle') + ' - ' + i18n.t('slogan'),
+      title: '百宝工具箱 - ' + i18n.t('slogan'),
       query: '',
       imageUrl: poster
     }

@@ -33,7 +33,8 @@ Page({
     isDarkMode: false,
     fontSizeSetting: 'medium',
     themeStyle: '',
-    fontClass: ''
+    fontClass: '',
+    isLoading: true
   },
 
   onLoad: function() {
@@ -50,6 +51,7 @@ Page({
     this._loadFavorites()
     this._loadExpressions()
     poster.setupForPage(this, 26)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
@@ -203,7 +205,7 @@ Page({
 
   _saveHistory: function(history) {
     try {
-      wx.setStorageSync(HISTORY_KEY, history)
+      storageUtil.safeSet(HISTORY_KEY, history)
     } catch (e) {
       logger.error('save history error', e)
     }
@@ -323,7 +325,7 @@ Page({
 
   _saveFavorites: function(favs) {
     try {
-      wx.setStorageSync(FAVORITES_KEY, favs)
+      storageUtil.safeSet(FAVORITES_KEY, favs)
     } catch (e) {
       logger.error('save favorites error', e)
     }
@@ -383,7 +385,7 @@ Page({
 
   _saveExpressions: function(saved) {
     try {
-      wx.setStorageSync(EXPRESSIONS_KEY, saved)
+      storageUtil.safeSet(EXPRESSIONS_KEY, saved)
     } catch (e) {
       logger.error('save expressions error', e)
     }
@@ -411,9 +413,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🧮 科学计算器 - 百宝工具箱', '/package-calculator/calculator/calculator')
+    return poster.getShareConfig('科学计算器 - 百宝工具箱', '/package-calculator/calculator/calculator', '支持科学运算的计算器，函数计算一应俱全')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🧮 科学计算器 - 百宝工具箱')
+    return poster.getTimelineConfig('科学计算器 - 科学运算函数计算')
   }
 })

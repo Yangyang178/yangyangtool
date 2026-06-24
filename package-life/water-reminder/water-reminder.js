@@ -1,13 +1,15 @@
 var app = getApp()
+var points = require('../../utils/points.js')
 var storageUtil = require('../../utils/storage.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
+var subscribe = require('../utils/subscribe.js')
 
 Page({
   data: {
     i18n: {},
-    todayCups: 0,
+    todayCount: 0,
     targetCups: 8,
     progressPercent: 0,
     selectedInterval: 30,
@@ -30,6 +32,7 @@ Page({
     weekAvg: '0.0',
     weekHighest: 0,
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
     cupSize: 250,
     cupSizeOptions: [
@@ -45,7 +48,8 @@ Page({
     targetMl: 2000,
     streakDays: 0,
     monthData: [],
-    showMonthChart: false
+    showMonthChart: false,
+    isLoading: true
   },
 
   onLoad: function() {
@@ -79,6 +83,7 @@ Page({
     this.calcStreak()
     this.loadMonthData()
     poster.setupForPage(this, 10)
+    this.setData({ isLoading: false })
   },
 
   onUnload: function() {
@@ -88,7 +93,8 @@ Page({
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('waterReminder') })
 
@@ -111,7 +117,7 @@ Page({
   selectInterval: function(e) {
     var value = e.currentTarget.dataset.value
     this.setData({ selectedInterval: value })
-    wx.setStorageSync('water_reminder_interval', value)
+    storageUtil.safeSet('water_reminder_interval', value)
     wx.vibrateShort({ type: 'light' })
 
     if (this.data.isRunning) {
@@ -131,7 +137,7 @@ Page({
       targetMl: value * this.data.targetCups,
       isCustomCup: false
     })
-    wx.setStorageSync('water_cup_size', value)
+    storageUtil.safeSet('water_cup_size', value)
     this.updateProgress()
   },
 
@@ -163,7 +169,7 @@ Page({
       isCustomCup: true,
       showCupCustom: false
     })
-    wx.setStorageSync('water_cup_size', val)
+    storageUtil.safeSet('water_cup_size', val)
     this.updateProgress()
   },
 
@@ -289,21 +295,21 @@ Page({
       ctx.textAlign = 'right'
       ctx.fillText('目标', padLeft + chartW, targetY - 3)
 
-      var points = []
+      var chartPoints = []
       for (var pi = 0; pi < monthData.length; pi++) {
         var px = padLeft + (chartW / (monthData.length - 1)) * pi
         var py = padTop + chartH - ((monthData[pi].count || 0) / maxCount) * chartH
-        points.push({ x: px, y: py })
+        chartPoints.push({ x: px, y: py })
       }
 
       ctx.beginPath()
-      ctx.moveTo(points[0].x, padTop + chartH)
-      ctx.lineTo(points[0].x, points[0].y)
-      for (var si = 1; si < points.length; si++) {
-        var cpx = (points[si - 1].x + points[si].x) / 2
-        ctx.bezierCurveTo(cpx, points[si - 1].y, cpx, points[si].y, points[si].x, points[si].y)
+      ctx.moveTo(chartPoints[0].x, padTop + chartH)
+      ctx.lineTo(chartPoints[0].x, chartPoints[0].y)
+      for (var si = 1; si < chartPoints.length; si++) {
+        var cpx = (chartPoints[si - 1].x + chartPoints[si].x) / 2
+        ctx.bezierCurveTo(cpx, chartPoints[si - 1].y, cpx, chartPoints[si].y, chartPoints[si].x, chartPoints[si].y)
       }
-      ctx.lineTo(points[points.length - 1].x, padTop + chartH)
+      ctx.lineTo(chartPoints[chartPoints.length - 1].x, padTop + chartH)
       ctx.closePath()
       var grad = ctx.createLinearGradient(0, padTop, 0, padTop + chartH)
       grad.addColorStop(0, 'rgba(6,182,212,0.25)')
@@ -312,10 +318,10 @@ Page({
       ctx.fill()
 
       ctx.beginPath()
-      ctx.moveTo(points[0].x, points[0].y)
-      for (var li = 1; li < points.length; li++) {
-        var cpxL = (points[li - 1].x + points[li].x) / 2
-        ctx.bezierCurveTo(cpxL, points[li - 1].y, cpxL, points[li].y, points[li].x, points[li].y)
+      ctx.moveTo(chartPoints[0].x, chartPoints[0].y)
+      for (var li = 1; li < chartPoints.length; li++) {
+        var cpxL = (chartPoints[li - 1].x + chartPoints[li].x) / 2
+        ctx.bezierCurveTo(cpxL, chartPoints[li - 1].y, cpxL, chartPoints[li].y, chartPoints[li].x, chartPoints[li].y)
       }
       ctx.strokeStyle = '#06B6D4'
       ctx.lineWidth = 2
@@ -325,13 +331,13 @@ Page({
       for (var di = 0; di < monthData.length; di++) {
         if (monthData[di].reached) {
           ctx.beginPath()
-          ctx.arc(points[di].x, points[di].y, 2.5, 0, Math.PI * 2)
+          ctx.arc(chartPoints[di].x, chartPoints[di].y, 2.5, 0, Math.PI * 2)
           ctx.fillStyle = '#10B981'
           ctx.fill()
         }
       }
 
-      var lastPt = points[points.length - 1]
+      var lastPt = chartPoints[chartPoints.length - 1]
       ctx.beginPath()
       ctx.arc(lastPt.x, lastPt.y, 4, 0, Math.PI * 2)
       ctx.fillStyle = '#06B6D4'
@@ -349,7 +355,7 @@ Page({
       ctx.font = '9px sans-serif'
       ctx.textAlign = 'center'
       for (var xi = 0; xi < monthData.length; xi += labelStep) {
-        ctx.fillText(monthData[xi].dayLabel, points[xi].x, padTop + chartH + 16)
+        ctx.fillText(monthData[xi].dayLabel, chartPoints[xi].x, padTop + chartH + 16)
       }
     })
   },
@@ -370,9 +376,25 @@ Page({
       countdownSeconds: this.data.selectedInterval * 60
     })
 
-    wx.setStorageSync('water_reminder_last_time', Date.now())
+    storageUtil.safeSet('water_reminder_last_time', Date.now())
 
     this.startCountdown()
+
+    // 开启提醒时请求订阅消息，以便后台也能收到喝水提醒
+    var that = this
+    if (subscribe.shouldRequestSubscribe('WATER_REMIND')) {
+      subscribe.requestWaterSubscribe(function(res) {
+        if (res.success && res.subscribed) {
+          // 注册云函数定时提醒
+          subscribe.registerWaterReminder(
+            that.data.selectedInterval,
+            that.data.todayCount,
+            that.data.targetCups
+          )
+          wx.showToast({ title: that.data.i18n.pushReminderOn || '已开启推送提醒', icon: 'none', duration: 1500 })
+        }
+      })
+    }
 
     wx.showToast({
       title: this.data.i18n.reminderInterval + this.data.selectedInterval + this.data.i18n.reminderIntervalSuffix,
@@ -388,6 +410,9 @@ Page({
       clearInterval(this.data.timerInterval)
       this.data.timerInterval = null
     }
+
+    // 停止提醒时取消云函数推送
+    subscribe.cancelWaterReminder()
 
     this.setData({
       isRunning: false,
@@ -417,7 +442,7 @@ Page({
 
   resetCountdown: function() {
     this.setData({ countdownSeconds: this.data.selectedInterval * 60 })
-    wx.setStorageSync('water_reminder_last_time', Date.now())
+    storageUtil.safeSet('water_reminder_last_time', Date.now())
     this.updateCountdownDisplay()
   },
 
@@ -492,7 +517,7 @@ Page({
           that.addRecord()
         }
         that.setData({ countdownSeconds: that.data.selectedInterval * 60 })
-        wx.setStorageSync('water_reminder_last_time', Date.now())
+        storageUtil.safeSet('water_reminder_last_time', Date.now())
         that.updateCountdownDisplay()
       }
     })
@@ -527,6 +552,9 @@ Page({
     if (tracker) tracker.toolUse(10, '喝水提醒', false)
 
     wx.showToast({ title: this.data.i18n.cupNo + ' ' + newCount + this.data.i18n.cupWater, icon: 'none' })
+
+    // 每次喝水记录后请求订阅，累积喝水提醒配额
+    subscribe.requestOnWaterRecord()
   },
 
   manualAddWater: function() {
@@ -547,7 +575,9 @@ Page({
         count: this.data.todayCount,
         list: this.data.records
       }
-      wx.setStorageSync('water_records', allRecords)
+      // 清理30天前的旧数据
+      storageUtil.cleanDateKeyedData('water_records', 30)
+      storageUtil.safeSet('water_records', allRecords)
     } catch (e) {
       wx.showToast({ title: this.data.i18n.recordSaveFailed, icon: 'none', duration: 2000 })
     }
@@ -765,9 +795,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('💧 喝水提醒 - 百宝工具箱', '/package-life/water-reminder/water-reminder')
+    return poster.getShareConfig('喝水提醒 - 百宝工具箱', '/package-life/water-reminder/water-reminder', '每日饮水记录提醒，健康喝水计划')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('💧 喝水提醒 - 百宝工具箱')
+    return poster.getTimelineConfig('喝水提醒 - 每日饮水记录健康计划')
   }
 })

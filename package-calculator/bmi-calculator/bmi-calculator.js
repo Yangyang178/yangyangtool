@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -27,6 +28,7 @@ Page({
     unitType: 'metric',
     idealWeight: { min: '', max: '' },
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
 
     bodyFatRate: null,
@@ -51,7 +53,8 @@ Page({
       { label: 'normal', range: '18.5-23.9', class: 'status-normal' },
       { label: 'overweight', range: '24-27.9', class: 'status-overweight' },
       { label: 'obese', range: '≥28', class: 'status-obese' }
-    ]
+    ],
+    isLoading: true
   },
 
   onLoad: function() {
@@ -75,17 +78,20 @@ Page({
     if (tracker) tracker.pageView('BMI计算器')
     poster.setupForPage(this, 23)
     this._loadHistory()
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var i18nTexts = i18n.getToolPageTexts('bmi')
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
+    var fontClass = points.getFontClass()
     var unitType = this.data.unitType
     var gender = this.data.gender
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({
       isDarkMode: isDark,
+      fontClass: fontClass,
       i18n: i18nTexts,
       heightLabel: unitType === 'metric' ? i18nTexts.heightCm : i18nTexts.heightIn,
       weightLabel: unitType === 'metric' ? i18nTexts.weightKg : i18nTexts.weightLb,
@@ -412,22 +418,22 @@ Page({
         ctx.fillStyle = isDark ? 'rgba(16,185,129,0.06)' : 'rgba(16,185,129,0.06)'
         ctx.fillRect(padLeft, normalMaxY, chartW, normalMinY - normalMaxY)
 
-        var points = []
+        var chartPoints = []
         var gap = chartW / Math.max(data.length - 1, 1)
         for (var pi = 0; pi < data.length; pi++) {
           var px = padLeft + gap * pi
           var py = padTop + chartH * (1 - (data[pi].bmi - minBmi) / range)
-          points.push({ x: px, y: py, bmi: data[pi].bmi })
+          chartPoints.push({ x: px, y: py, bmi: data[pi].bmi })
         }
 
-        if (points.length > 1) {
+        if (chartPoints.length > 1) {
           ctx.strokeStyle = lineColor
           ctx.lineWidth = 2
           ctx.lineJoin = 'round'
           ctx.beginPath()
-          ctx.moveTo(points[0].x, points[0].y)
-          for (var li = 1; li < points.length; li++) {
-            ctx.lineTo(points[li].x, points[li].y)
+          ctx.moveTo(chartPoints[0].x, chartPoints[0].y)
+          for (var li = 1; li < chartPoints.length; li++) {
+            ctx.lineTo(chartPoints[li].x, chartPoints[li].y)
           }
           ctx.stroke()
 
@@ -436,23 +442,23 @@ Page({
           grad.addColorStop(1, 'rgba(20,184,166,0)')
           ctx.fillStyle = grad
           ctx.beginPath()
-          ctx.moveTo(points[0].x, padTop + chartH)
-          for (var fi = 0; fi < points.length; fi++) {
-            ctx.lineTo(points[fi].x, points[fi].y)
+          ctx.moveTo(chartPoints[0].x, padTop + chartH)
+          for (var fi = 0; fi < chartPoints.length; fi++) {
+            ctx.lineTo(chartPoints[fi].x, chartPoints[fi].y)
           }
-          ctx.lineTo(points[points.length - 1].x, padTop + chartH)
+          ctx.lineTo(chartPoints[chartPoints.length - 1].x, padTop + chartH)
           ctx.closePath()
           ctx.fill()
         }
 
-        for (var di = 0; di < points.length; di++) {
+        for (var di = 0; di < chartPoints.length; di++) {
           ctx.fillStyle = dotColor
           ctx.beginPath()
-          ctx.arc(points[di].x, points[di].y, 3, 0, Math.PI * 2)
+          ctx.arc(chartPoints[di].x, chartPoints[di].y, 3, 0, Math.PI * 2)
           ctx.fill()
           ctx.fillStyle = '#FFFFFF'
           ctx.beginPath()
-          ctx.arc(points[di].x, points[di].y, 1.5, 0, Math.PI * 2)
+          ctx.arc(chartPoints[di].x, chartPoints[di].y, 1.5, 0, Math.PI * 2)
           ctx.fill()
         }
 
@@ -462,7 +468,7 @@ Page({
         for (var xi = 0; xi < data.length; xi++) {
           if (data.length <= 8 || xi % 2 === 0) {
             var dateStr = data[xi].date.substring(5)
-            ctx.fillText(dateStr, points[xi].x, padTop + chartH + 14)
+            ctx.fillText(dateStr, chartPoints[xi].x, padTop + chartH + 14)
           }
         }
       })
@@ -514,9 +520,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('⚖️ BMI计算器 - 百宝工具箱', '/package-calculator/bmi-calculator/bmi-calculator')
+    return poster.getShareConfig('BMI计算器 - 百宝工具箱', '/package-calculator/bmi-calculator/bmi-calculator', '身体质量指数计算，体脂率估算')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('⚖️ BMI计算器 - 百宝工具箱')
+    return poster.getTimelineConfig('BMI计算器 - 身体质量指数体脂率估算')
   }
 })

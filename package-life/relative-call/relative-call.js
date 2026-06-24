@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -1340,6 +1341,7 @@ var dialectDataEn = {
 
 Page({
   data: {
+    isLoading: true,
     i18n: {},
     gender: '',
     chain: [],
@@ -1359,6 +1361,7 @@ Page({
     ],
 
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
     activeTab: 'query',
     quickRefCategory: 'zhichang',
@@ -1464,12 +1467,14 @@ Page({
     })
 
     this._updateI18nData()
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
     this._updateI18nData()
@@ -1551,7 +1556,7 @@ Page({
     wx.vibrateShort({ type: 'medium' })
     this.setData({ history: [] })
     try {
-      wx.setStorageSync('relative_call_history', [])
+      storageUtil.safeSet('relative_call_history', [])
     } catch (e) {}
   },
 
@@ -1670,7 +1675,7 @@ Page({
 
     this.setData({ history: history })
     try {
-      wx.setStorageSync('relative_call_history', history)
+      storageUtil.safeSet('relative_call_history', history)
     } catch (e) {}
   },
 
@@ -1736,10 +1741,10 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('👨‍👩‍👧‍👦 亲戚称谓 - 百宝工具箱', '/package-life/relative-call/relative-call')
+    return poster.getShareConfig('亲戚称谓计算器 - 百宝工具箱', '/package-life/relative-call/relative-call', '亲戚关系称呼查询，过年走亲戚必备')
   },
 
   onShareTimeline: function() {
-    return poster.getTimelineConfig('👨‍👩‍👧‍👦 亲戚称谓 - 百宝工具箱')
+    return poster.getTimelineConfig('亲戚称谓计算器 - 亲戚关系称呼查询')
   }
 })

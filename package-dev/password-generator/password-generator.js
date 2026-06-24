@@ -1,10 +1,12 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
 
 Page({
   data: {
+    isLoading: true,
     password: '',
     length: 16,
     strengthLevel: 'medium',
@@ -44,6 +46,7 @@ Page({
     checkScore: 0,
     checkDetails: [],
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -70,12 +73,15 @@ Page({
     var tracker = getApp().tracker
     if (tracker) tracker.pageView('密码生成器')
     poster.setupForPage(this, 22)
+    this.setData({ isLoading: false })
   },
+
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
-    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('passwordGenerator') })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, fontClass: fontClass, i18n: i18n.getToolPageTexts('passwordGenerator') })
     this._updateI18nData()
   },
 
@@ -98,7 +104,7 @@ Page({
   },
 
   onPinLengthChange: function(e) {
-    var index = e.detail.value
+    var index = parseInt(e.currentTarget.dataset.index)
     this.setData({ pinLengthIndex: index, pinLength: this.data.pinLengths[index] })
     this.generatePassword()
   },
@@ -449,9 +455,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🔐 密码生成器 - 百宝工具箱', '/package-dev/password-generator/password-generator')
+    return poster.getShareConfig('密码生成器 - 百宝工具箱', '/package-dev/password-generator/password-generator', '随机安全密码生成，自定义长度和字符')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🔐 密码生成器 - 百宝工具箱')
+    return poster.getTimelineConfig('密码生成器 - 随机安全密码自定义生成')
   }
 })

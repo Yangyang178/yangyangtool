@@ -1,0 +1,9 @@
+{
+  "name": "countdownReminder",
+  "version": "1.0.0",
+  "description": "倒计时提醒云函数 - 注册/取消/定时检查发送提醒",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

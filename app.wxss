@@ -23,9 +23,9 @@ page {
   --searchBg: #F1F5F9;
   --searchBorder: transparent;
 
-  --primaryColor: #3B82F6;
-  --primaryLight: rgba(59,130,246,0.1);
-  --primaryDark: #2563EB;
+  --primaryColor: #1E40AF;
+  --primaryLight: rgba(30,64,175,0.1);
+  --primaryDark: #1E3A8A;
   
   --dangerColor: #EF4444;
   --successColor: #10B981;
@@ -181,15 +181,58 @@ page {
   font-family: Hiragino Sans GB, YouYuan, sans-serif !important;
 }
 .font-family-hei {
-  --fontFamilyBase: SimHei, STHeiti, sans-serif;
-  font-family: SimHei, STHeiti, sans-serif !important;
+  --fontFamilyBase: 'ZCOOL QingKe HuangYou', sans-serif;
+  font-family: 'ZCOOL QingKe HuangYou', sans-serif !important;
 }
 .font-family-hei view,
 .font-family-hei text,
 .font-family-hei input,
 .font-family-hei textarea,
 .font-family-hei button {
-  font-family: SimHei, STHeiti, sans-serif !important;
+  font-family: 'ZCOOL QingKe HuangYou', sans-serif !important;
+}
+
+/* ==================== 主题色覆盖类（确保覆盖 page 级变量） ==================== */
+.theme-rose {
+  --primaryColor: #E11D48 !important;
+  --primaryDark: #BE123C !important;
+  --primaryLight: rgba(225,29,72,0.1) !important;
+}
+.theme-emerald {
+  --primaryColor: #059669 !important;
+  --primaryDark: #047857 !important;
+  --primaryLight: rgba(5,150,105,0.1) !important;
+}
+.theme-amber {
+  --primaryColor: #D97706 !important;
+  --primaryDark: #B45309 !important;
+  --primaryLight: rgba(217,119,6,0.1) !important;
+}
+.theme-violet {
+  --primaryColor: #7C3AED !important;
+  --primaryDark: #6328C4 !important;
+  --primaryLight: rgba(124,58,237,0.1) !important;
+}
+/* 暗黑模式下的主题色覆盖 */
+.dark-mode .theme-rose {
+  --primaryColor: #FB7185 !important;
+  --primaryDark: #E11D48 !important;
+  --primaryLight: rgba(251,113,133,0.15) !important;
+}
+.dark-mode .theme-emerald {
+  --primaryColor: #34D399 !important;
+  --primaryDark: #059669 !important;
+  --primaryLight: rgba(52,211,153,0.15) !important;
+}
+.dark-mode .theme-amber {
+  --primaryColor: #FBBF24 !important;
+  --primaryDark: #D97706 !important;
+  --primaryLight: rgba(251,191,36,0.15) !important;
+}
+.dark-mode .theme-violet {
+  --primaryColor: #A78BFA !important;
+  --primaryDark: #7C3AED !important;
+  --primaryLight: rgba(167,139,250,0.15) !important;
 }
 
 /* ==================== 暗黑模式：一键覆盖所有变量 ==================== */
@@ -214,9 +257,9 @@ page {
   --searchBg: #232d42;
   --searchBorder: rgba(148,163,184,0.2);
 
-  --primaryColor: #60A5FA;
-  --primaryLight: rgba(96,165,250,0.15);
-  --primaryDark: #3B82F6;
+  --primaryColor: #3B82F6;
+  --primaryLight: rgba(59,130,246,0.15);
+  --primaryDark: #1E40AF;
 
   --dangerColor: #F87171;
   --successColor: #34D399;
@@ -522,9 +565,135 @@ textarea {
 .dark-mode .empty-state,
 .dark-mode .bottom-info,
 .dark-mode .nav-placeholder,
-.dark-mode .bottom-safe-area {
+.dark-mode .bottom-safe-area,
+.dark-mode .tool-header,
+.dark-mode .start-screen,
+.dark-mode .game-section,
+.dark-mode .result-section,
+.dark-mode .stats-bar,
+.dark-mode .stat-card,
+.dark-mode .stats-card,
+.dark-mode .input-section,
+.dark-mode .output-section,
+.dark-mode .convert-section,
+.dark-mode .format-section,
+.dark-mode .preview-section,
+.dark-mode .generate-section,
+.dark-mode .lookup-section,
+.dark-mode .result-display,
+.dark-mode .history-card,
+.dark-mode .info-card,
+.dark-mode .detail-card,
+.dark-mode .option-card,
+.dark-mode .mode-card,
+.dark-mode .config-section,
+.dark-mode .display-section,
+.dark-mode .control-section,
+.dark-mode .chart-section,
+.dark-mode .list-section,
+.dark-mode .form-section,
+.dark-mode .main-content,
+.dark-mode .content-area,
+.dark-mode .tab-content,
+.dark-mode .panel-content,
+.dark-mode .card-section {
   background-color: var(--cardBg) !important;
   box-shadow: none !important;
+}
+
+/* 暗色模式下覆盖工具页面中硬编码的浅色背景 */
+.dark-mode .tool-page .input-wrapper,
+.dark-mode .tool-page .textarea-wrapper,
+.dark-mode .tool-page .result-container,
+.dark-mode .tool-page .history-item-common,
+.dark-mode .tool-page .category-chip,
+.dark-mode .tool-page .btn-secondary,
+.dark-mode .tool-page .card,
+.dark-mode .tool-page .section-card,
+.dark-mode .tool-page .form-card,
+.dark-mode .tool-page .input-group,
+.dark-mode .tool-page .output-group,
+.dark-mode .tool-page .result-group,
+.dark-mode .tool-page .option-group,
+.dark-mode .tool-page .info-row,
+.dark-mode .tool-page .detail-row,
+.dark-mode .tool-page .setting-row,
+.dark-mode .tool-page .mode-option,
+.dark-mode .tool-page .format-option,
+.dark-mode .tool-page .type-option,
+.dark-mode .tool-page .value-display,
+.dark-mode .tool-page .preview-area,
+.dark-mode .tool-page .display-area,
+.dark-mode .tool-page .code-area,
+.dark-mode .tool-page .text-area,
+.dark-mode .tool-page .input-area,
+.dark-mode .tool-page .output-area,
+.dark-mode .tool-page .history-item,
+.dark-mode .tool-page .result-item,
+.dark-mode .tool-page .list-item,
+.dark-mode .tool-page .tag-item,
+.dark-mode .tool-page .chip-item,
+.dark-mode .tool-page .field-group,
+.dark-mode .tool-page .control-group,
+.dark-mode .tool-page .action-group,
+.dark-mode .tool-page .button-group,
+.dark-mode .tool-page .tab-bar,
+.dark-mode .tool-page .picker-group,
+.dark-mode .tool-page .slider-group,
+.dark-mode .tool-page .switch-group {
+  background-color: var(--cardBg) !important;
+  border-color: var(--borderLight) !important;
+}
+
+/* 暗色模式下覆盖硬编码的深色文字 */
+.dark-mode .tool-page .section-title,
+.dark-mode .tool-page .card-title,
+.dark-mode .tool-page .form-label,
+.dark-mode .tool-page .input-label,
+.dark-mode .tool-page .field-label,
+.dark-mode .tool-page .result-label,
+.dark-mode .tool-page .detail-label,
+.dark-mode .tool-page .info-label,
+.dark-mode .tool-page .option-label,
+.dark-mode .tool-page .setting-label,
+.dark-mode .tool-page .mode-label,
+.dark-mode .tool-page .tab-label,
+.dark-mode .tool-page .history-title,
+.dark-mode .tool-page .result-title,
+.dark-mode .tool-page .item-title,
+.dark-mode .tool-page .value-text,
+.dark-mode .tool-page .detail-value,
+.dark-mode .tool-page .info-value,
+.dark-mode .tool-page .stat-value,
+.dark-mode .tool-page .main-text,
+.dark-mode .tool-page .primary-text,
+.dark-mode .tool-page .header-title,
+.dark-mode .tool-page .content-title {
+  color: var(--textPrimary) !important;
+}
+
+/* 暗色模式下覆盖硬编码的次要文字颜色 */
+.dark-mode .tool-page .section-desc,
+.dark-mode .tool-page .card-desc,
+.dark-mode .tool-page .form-hint,
+.dark-mode .tool-page .input-hint,
+.dark-mode .tool-page .field-hint,
+.dark-mode .tool-page .result-hint,
+.dark-mode .tool-page .detail-hint,
+.dark-mode .tool-page .info-hint,
+.dark-mode .tool-page .option-desc,
+.dark-mode .tool-page .setting-desc,
+.dark-mode .tool-page .mode-desc,
+.dark-mode .tool-page .tab-desc,
+.dark-mode .tool-page .history-desc,
+.dark-mode .tool-page .result-desc,
+.dark-mode .tool-page .item-desc,
+.dark-mode .tool-page .sub-text,
+.dark-mode .tool-page .secondary-text,
+.dark-mode .tool-page .helper-text,
+.dark-mode .tool-page .hint-text,
+.dark-mode .tool-page .placeholder-text {
+  color: var(--textSecondary) !important;
 }
 
 .dark-mode input,
@@ -576,7 +745,24 @@ textarea {
 
 .font-size-large .tool-desc,
 .font-size-large .setting-value,
-.font-size-large .item-desc {
+.font-size-large .item-desc,
+.font-size-large .desktop-entry-desc {
+  font-size: 16px !important;
+}
+
+.font-size-large .desktop-entry-title {
+  font-size: 18px !important;
+}
+
+.font-size-large .mini-app-name {
+  font-size: 15px !important;
+}
+
+.font-size-large .mini-app-desc {
+  font-size: 12px !important;
+}
+
+.font-size-large .mini-apps-title {
   font-size: 16px !important;
 }
 
@@ -611,7 +797,24 @@ textarea {
 
 .font-size-small .tool-desc,
 .font-size-small .setting-value,
-.font-size-small .item-desc {
+.font-size-small .item-desc,
+.font-size-small .desktop-entry-desc {
+  font-size: 11px !important;
+}
+
+.font-size-small .desktop-entry-title {
+  font-size: 13px !important;
+}
+
+.font-size-small .mini-app-name {
+  font-size: 11px !important;
+}
+
+.font-size-small .mini-app-desc {
+  font-size: 9px !important;
+}
+
+.font-size-small .mini-apps-title {
   font-size: 12px !important;
 }
 

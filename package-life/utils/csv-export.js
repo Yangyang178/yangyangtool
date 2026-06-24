@@ -64,6 +64,29 @@ function ensureDir(callback) {
 }
 
 /**
+ * 清理旧的CSV文件，只保留最新的几个
+ * @param {string} basePath - 用户数据目录
+ * @param {number} keepCount - 保留的文件数量
+ */
+function cleanOldCSVFiles(basePath, keepCount) {
+  if (!keepCount) keepCount = 3
+  try {
+    var fs = wx.getFileSystemManager()
+    var files = fs.readdirSync(basePath)
+    var csvFiles = []
+    for (var i = 0; i < files.length; i++) {
+      if (files[i].indexOf('.csv') > -1) {
+        csvFiles.push(files[i])
+      }
+    }
+    csvFiles.sort().reverse()
+    for (var j = keepCount; j < csvFiles.length; j++) {
+      try { fs.unlinkSync(basePath + '/' + csvFiles[j]) } catch (e) {}
+    }
+  } catch (e) {}
+}
+
+/**
  * 保存CSV到微信小程序用户文件目录
  * @param {string} csvContent - CSV内容
  * @param {string} fileName - 文件名（仅ASCII，不含路径）
@@ -83,6 +106,8 @@ function saveCSV(csvContent, fileName, options) {
 
     var fs = wx.getFileSystemManager()
     var filePath = basePath + '/' + fileName
+
+    cleanOldCSVFiles(basePath, 3)
 
     try {
       fs.writeFileSync(filePath, '\uFEFF' + csvContent, 'utf8')
@@ -166,6 +191,8 @@ function shareCSV(csvContent, fileName) {
 
     var fs = wx.getFileSystemManager()
     var filePath = basePath + '/' + fileName
+
+    cleanOldCSVFiles(basePath, 3)
 
     try {
       fs.writeFileSync(filePath, '\uFEFF' + csvContent, 'utf8')

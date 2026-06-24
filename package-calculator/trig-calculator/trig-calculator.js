@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -9,6 +10,7 @@ Page({
     angleInput: '',
     angleUnit: 'deg',
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
     hasResult: false,
     sinValue: '',
@@ -31,7 +33,8 @@ Page({
     graphAmplitude: 1,
     graphPeriod: 1,
     graphPhase: 0,
-    showGraph: false
+    showGraph: false,
+    isLoading: true
   },
 
   onLoad: function() {
@@ -47,6 +50,7 @@ Page({
     var tracker = getApp().tracker
     if (tracker) tracker.pageView('三角函数计算器')
     poster.setupForPage(this, 38)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
@@ -54,7 +58,8 @@ Page({
     this.setData({ i18n: toolTexts, undefText: toolTexts.undefVal || 'Undefined' })
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
   },
@@ -207,10 +212,10 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('📐 三角函数计算器 - 百宝工具箱', '/package-calculator/trig-calculator/trig-calculator')
+    return poster.getShareConfig('三角函数计算器 - 百宝工具箱', '/package-calculator/trig-calculator/trig-calculator', 'sin/cos/tan三角函数计算')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('📐 三角函数计算器 - 百宝工具箱')
+    return poster.getTimelineConfig('三角函数计算器 - sin/cos/tan计算')
   },
 
   _toFixed: function(num) {

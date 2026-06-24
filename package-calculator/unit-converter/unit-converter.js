@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var logger = require('../../utils/logger.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
@@ -267,6 +268,7 @@ Page({
     exchangeRate: null,
     exchangeLoading: false,
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
     categories: [
       { id: 'length', name: '长度', icon: '📏' },
@@ -283,7 +285,8 @@ Page({
       { id: 'fuel', name: '油耗', icon: '⛽' },
       { id: 'angle', name: '角度', icon: '📐' }
     ],
-    conversionList: []
+    conversionList: [],
+    isLoading: true
   },
 
   onLoad: function() {
@@ -321,6 +324,7 @@ Page({
     this._loadRecent()
     this._loadExchangeRate()
     poster.setupForPage(this, 2)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
@@ -345,7 +349,8 @@ Page({
     })
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
   },
@@ -487,6 +492,7 @@ Page({
 
   copyResult: function() {
     wx.vibrateShort({ type: 'light' })
+    var that = this
     var text = this.data.inputValue + ' ' + this.data.fromUnit + ' = ' + this.data.resultValue + ' ' + this.data.toUnit
     wx.setClipboardData({
       data: text,
@@ -553,7 +559,7 @@ Page({
   },
 
   _saveFavorites: function(favs) {
-    try { wx.setStorageSync(FAVORITES_KEY, favs) } catch (e) {}
+    try { storageUtil.safeSet(FAVORITES_KEY, favs) } catch (e) {}
   },
 
   toggleRecent: function() {
@@ -600,7 +606,7 @@ Page({
     recent.unshift(item)
     if (recent.length > 10) recent = recent.slice(0, 10)
     this.setData({ recentUsed: recent })
-    try { wx.setStorageSync(RECENT_KEY, recent) } catch (e) {}
+    try { storageUtil.safeSet(RECENT_KEY, recent) } catch (e) {}
   },
 
   _loadRecent: function() {
@@ -660,10 +666,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('📏 单位换算 - 百宝工具箱', '/package-calculator/unit-converter/unit-converter')
+    return poster.getShareConfig('单位换算 - 百宝工具箱', '/package-calculator/unit-converter/unit-converter', '长度重量温度等多单位互换')
   },
-
   onShareTimeline: function() {
-    return poster.getTimelineConfig('📏 单位换算 - 百宝工具箱')
+    return poster.getTimelineConfig('单位换算 - 长度重量温度多单位互换')
   }
 })

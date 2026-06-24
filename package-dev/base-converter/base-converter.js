@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -57,6 +58,7 @@ for (var ai = 0; ai < ASCII_TABLE.length; ai++) {
 
 Page({
   data: {
+    isLoading: true,
     activeBase: 10,
     inputValue: '',
     baseLabels: { 2: '二进制', 8: '八进制', 10: '十进制', 16: '十六进制', 32: '三十二进制' },
@@ -78,6 +80,7 @@ Page({
     showColorLink: false,
 
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -90,13 +93,15 @@ Page({
     var isDark = app.globalData.isDarkMode || false
     this.setData({ isDarkMode: isDark, i18n: i18nTexts })
     poster.setupForPage(this, 13)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
-    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('baseConverter') })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, fontClass: fontClass, i18n: i18n.getToolPageTexts('baseConverter') })
   },
 
   onBaseTap: function(e) {
@@ -302,9 +307,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🔢 进制转换 - 百宝工具箱', '/package-dev/base-converter/base-converter')
+    return poster.getShareConfig('进制转换 - 百宝工具箱', '/package-dev/base-converter/base-converter', '二进制八进制十进制十六进制互转')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🔢 进制转换 - 百宝工具箱')
+    return poster.getTimelineConfig('进制转换 - 二八十六进制互转')
   }
 })

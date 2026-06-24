@@ -1,10 +1,12 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
 
 Page({
   data: {
+    isLoading: true,
     i18n: {},
     activeTab: 0,
     calcMode: 'diff',
@@ -32,6 +34,7 @@ Page({
     today: '',
 
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -55,12 +58,14 @@ Page({
     })
     this.loadHistory()
     poster.setupForPage(this, 13)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('dateCalc') })
   },
@@ -280,6 +285,7 @@ Page({
       text = '📅 日期计算结果\n基准：' + this.data.baseDate + '\n' + action + '：' + this.data.addYears + '年 ' + this.data.addMonths + '月 ' + this.data.addDays + '日\n结果：' + this.data.resultDate + ' ' + this.data.resultWeekday
     }
 
+    wx.vibrateShort({ type: 'light' })
     wx.setClipboardData({
       data: text,
       success: function() {
@@ -298,7 +304,7 @@ Page({
 
     history.unshift(newRecord)
     var saved = history.slice(0, 20)
-    wx.setStorageSync('date_calc_history', saved)
+    storageUtil.safeSet('date_calc_history', saved)
     this.setData({ historyList: saved.slice(0, 10) })
   },
 
@@ -359,9 +365,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('📅 日期计算器 - 百宝工具箱', '/package-life/date-calculator/date-calculator')
+    return poster.getShareConfig('日期计算器 - 百宝工具箱', '/package-life/date-calculator/date-calculator', '日期间隔计算，工作日天数统计')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('📅 日期计算器 - 百宝工具箱')
+    return poster.getTimelineConfig('日期计算器 - 日期间隔工作日天数计算')
   }
 })

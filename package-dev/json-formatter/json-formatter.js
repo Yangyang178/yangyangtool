@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -28,6 +29,7 @@ var sampleJson = `{
 
 Page({
   data: {
+    isLoading: true,
     inputJson: '',
     outputJson: '',
     errorMsg: '',
@@ -39,6 +41,7 @@ Page({
     },
     historyList: [],
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -55,12 +58,15 @@ Page({
     this.setData({ isDarkMode: isDark, i18n: i18nTexts })
     this.loadHistory()
     poster.setupForPage(this, 17)
+    this.setData({ isLoading: false })
   },
+
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
-    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('jsonFormatter') })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, fontClass: fontClass, i18n: i18n.getToolPageTexts('jsonFormatter') })
   },
 
   onInputChange(e) {
@@ -225,7 +231,12 @@ Page({
   calculateStats(jsonStr) {
     var chars = jsonStr.length
     var lines = jsonStr.split('\n').length
-    var bytes = new Blob([jsonStr]).size
+    var bytes = 0
+    try {
+      bytes = new TextEncoder().encode(jsonStr).length
+    } catch (e) {
+      bytes = jsonStr.length
+    }
 
     var sizeStr = ''
     if (bytes < 1024) {
@@ -258,13 +269,13 @@ Page({
             that.setData({ jsonSize: res.data.length })
           }
 
-          wx.showToast({ title: this.data.i18n.pasted, icon: 'success' })
+          wx.showToast({ title: that.data.i18n.pasted, icon: 'success' })
         } else {
-          wx.showToast({ title: this.data.i18n.clipboardEmpty, icon: 'none' })
+          wx.showToast({ title: that.data.i18n.clipboardEmpty, icon: 'none' })
         }
       },
       fail: function() {
-        wx.showToast({ title: this.data.i18n.readFailed, icon: 'none' })
+        wx.showToast({ title: that.data.i18n.readFailed, icon: 'none' })
       }
     })
   },
@@ -290,6 +301,7 @@ Page({
   },
 
   copyOutput: function() {
+    var that = this
     wx.vibrateShort({ type: 'light' })
 
     if (!this.data.outputJson) {
@@ -300,7 +312,7 @@ Page({
     wx.setClipboardData({
       data: this.data.outputJson,
       success: function() {
-        wx.showToast({ title: this.data.i18n.copiedToClipboard, icon: 'success' })
+        wx.showToast({ title: that.data.i18n.copiedToClipboard, icon: 'success' })
       }
     })
   },
@@ -321,7 +333,7 @@ Page({
 
     history.unshift(newRecord)
     var saved = history.slice(0, 15)
-    wx.setStorageSync('json_formatter_history', saved)
+    storageUtil.safeSet('json_formatter_history', saved)
     this.setData({ historyList: saved.slice(0, 8) })
   },
 
@@ -357,18 +369,18 @@ Page({
         if (res.confirm) {
           wx.removeStorageSync('json_formatter_history')
           that.setData({ historyList: [] })
-          wx.showToast({ title: this.data.i18n.cleared, icon: 'success' })
+          wx.showToast({ title: that.data.i18n.cleared, icon: 'success' })
         }
       }
     })
   },
 
   copyResult: function() {
-    toolActions.copyText(this.data.outputText, this.data.i18n.copiedToClipboard, this.data.i18n)
+    toolActions.copyText(this.data.outputJson, this.data.i18n.copiedToClipboard, this.data.i18n)
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('{} JSON格式化 - 百宝工具箱', '/package-dev/json-formatter/json-formatter')
+    return poster.getShareConfig('JSON格式化 - 百宝工具箱', '/package-dev/json-formatter/json-formatter', 'JSON美化压缩校验，在线格式化工具')
   },
   resetData: function() {
     var that = this
@@ -382,6 +394,6 @@ Page({
     }, that.data.i18n)
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('{} JSON格式化 - 百宝工具箱')
+    return poster.getTimelineConfig('JSON格式化 - 美化压缩校验工具')
   }
 })

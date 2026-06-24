@@ -1,6 +1,8 @@
 {
+  "navigationBarTitleText": "手机尺子 - 屏幕测量工具",
   "usingComponents": {
     "navigation-bar": "/components/navigation-bar/navigation-bar",
-    "privacy-popup": "/components/privacy-popup/privacy-popup"
+    "privacy-popup": "/components/privacy-popup/privacy-popup",
+    "skeleton": "/components/skeleton/skeleton"
   }
 }

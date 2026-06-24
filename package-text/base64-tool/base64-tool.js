@@ -1,8 +1,10 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var logger = require('../../utils/logger.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
+var contentSecurity = require('../utils/content-security.js')
 
 Page({
   data: {
@@ -13,6 +15,8 @@ Page({
     errorMessage: '',
     expansionRate: '0',
     isDarkMode: false,
+    isLoading: true,
+    fontClass: '',
     fontSizeSetting: 'medium',
 
     imgBase64: '',
@@ -44,12 +48,14 @@ Page({
     var toolTexts = i18n.getToolPageTexts('base64Tool')
     this.setData({ i18n: toolTexts })
     poster.setupForPage(this, 7)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
     var toolTexts = i18n.getToolPageTexts('base64Tool')
@@ -227,7 +233,13 @@ Page({
       success: function(res) {
         var tempFilePath = res.tempFiles[0].tempFilePath
         var fileSize = res.tempFiles[0].size
-        that._convertImageToBase64(tempFilePath, fileSize)
+        contentSecurity.checkImage(tempFilePath, function(pass, errMsg) {
+          if (!pass) {
+            wx.showToast({ title: errMsg, icon: 'none', duration: 2500 })
+            return
+          }
+          that._convertImageToBase64(tempFilePath, fileSize)
+        })
       },
       fail: function() {}
     })
@@ -328,6 +340,17 @@ Page({
     }
 
     wx.vibrateShort({ type: 'medium' })
+
+    // 清理旧的解码文件
+    try {
+      var cleanFs = wx.getFileSystemManager()
+      var dirFiles = cleanFs.readdirSync(wx.env.USER_DATA_PATH)
+      for (var fi = 0; fi < dirFiles.length; fi++) {
+        if (dirFiles[fi].indexOf('b64decode_') === 0) {
+          try { cleanFs.unlinkSync(wx.env.USER_DATA_PATH + '/' + dirFiles[fi]) } catch (e) {}
+        }
+      }
+    } catch (e) {}
 
     try {
       var buffer = wx.base64ToArrayBuffer(base64Data)
@@ -460,9 +483,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🔐 Base64编解码 - 百宝工具箱', '/package-text/base64-tool/base64-tool')
+    return poster.getShareConfig('Base64编解码 - 百宝工具箱', '/package-text/base64-tool/base64-tool', 'Base64编码解码转换，文本图片互转')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🔐 Base64编解码 - 百宝工具箱')
+    return poster.getTimelineConfig('Base64编解码 - 编码解码文本图片互转')
   }
 })

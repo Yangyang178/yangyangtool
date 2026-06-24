@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -10,6 +11,7 @@ var MODE_LEVEL = 'level'
 
 Page({
   data: {
+    isLoading: true,
     i18n: {},
     currentMode: MODE_RULER,
 
@@ -45,6 +47,7 @@ Page({
     showRecords: false,
 
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -63,12 +66,14 @@ Page({
     this.generateTicks()
     this._loadRecords()
     poster.setupForPage(this, 27)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('ruler') })
     if (this.data.currentMode === MODE_LEVEL) {
@@ -119,8 +124,8 @@ Page({
     if (savedVersion === CAL_VERSION) {
       try { savedCalibration = parseFloat(storageUtil.get('ruler_calibration')) || 1 } catch (e) {}
     } else {
-      try { wx.setStorageSync('ruler_calibration', 1) } catch (e) {}
-      try { wx.setStorageSync('ruler_cal_version', CAL_VERSION) } catch (e) {}
+      try { storageUtil.safeSet('ruler_calibration', 1) } catch (e) {}
+      try { storageUtil.safeSet('ruler_cal_version', CAL_VERSION) } catch (e) {}
     }
     var physicalWidthMM
     if (platform === 'ios') {
@@ -311,7 +316,7 @@ Page({
     })
     this.generateTicks()
     this.generateLandscapeTicks()
-    try { wx.setStorageSync('ruler_calibration', calibration) } catch (e) {}
+    try { storageUtil.safeSet('ruler_calibration', calibration) } catch (e) {}
 
     var tracker = getApp().tracker
     if (tracker) tracker.toolUse(27, '尺子', false)
@@ -692,10 +697,10 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('\uD83D\uDCCF \u5C3A\u5B50 - \u767E\u5B9D\u5DE5\u5177\u7BB1', '/package-life/ruler/ruler')
+    return poster.getShareConfig('手机尺子 - 百宝工具箱', '/package-life/ruler/ruler', '屏幕尺子测量工具，厘米英寸刻度')
   },
 
   onShareTimeline: function() {
-    return poster.getTimelineConfig('\uD83D\uDCCF \u5C3A\u5B50 - \u767E\u5B9D\u5DE5\u5177\u7BB1')
+    return poster.getTimelineConfig('手机尺子 - 屏幕测量厘米英寸刻度')
   }
 })

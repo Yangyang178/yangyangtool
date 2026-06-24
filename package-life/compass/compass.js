@@ -1,3 +1,4 @@
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var storageUtil = require('../../utils/storage.js')
 var poster = require('../utils/poster.js')
@@ -5,6 +6,7 @@ var i18n = require('../../utils/i18n.js')
 
 Page({
   data: {
+    isLoading: true,
     i18n: {},
     direction: 0,
     directionName: '北',
@@ -23,6 +25,7 @@ Page({
     showTip: true,
     showCalibration: false,
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
 
     directionMarks: [],
@@ -52,6 +55,7 @@ Page({
     setTimeout(function() {
       that.getLocation()
     }, 1500)
+    this.setData({ isLoading: false })
   },
 
   onUnload: function() {
@@ -67,7 +71,8 @@ Page({
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('compass') })
     this.startCompass()
@@ -394,9 +399,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🧭 指南针 - 百宝工具箱', '/package-life/compass/compass')
+    return poster.getShareConfig('指南针 - 百宝工具箱', '/package-life/compass/compass', '手机指南针方向定位，经纬度显示')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🧭 指南针 - 百宝工具箱')
+    return poster.getTimelineConfig('指南针 - 方向定位经纬度显示')
   }
 })

@@ -31,6 +31,8 @@ App({
     tracker.init()
     remoteConfig.init()
     this.applyTheme()
+    this.cleanStorage()
+    this.loadCustomFonts()
 
     if (wx.onThemeChange) {
       wx.onThemeChange(function(result) {
@@ -98,6 +100,50 @@ App({
     this._migrateWrappedKeys()
   },
 
+  loadCustomFonts: function() {
+    var activeFont = points.getActiveFont()
+    if (activeFont && activeFont.fontUrl) {
+      var fontFamily = activeFont.fontFamily
+      var fontUrl = activeFont.fontUrl
+      // 云存储路径需要先下载到本地
+      if (fontUrl.indexOf('cloud://') === 0) {
+        wx.cloud.downloadFile({
+          fileID: fontUrl,
+          success: function(res) {
+            if (res.tempFilePath) {
+              wx.loadFontFace({
+                family: fontFamily,
+                source: 'url("' + res.tempFilePath + '")',
+                global: true,
+                success: function() {
+                  logger.log('云存储字体加载成功:', fontFamily)
+                },
+                fail: function(err) {
+                  logger.warn('云存储字体loadFontFace失败:', err)
+                }
+              })
+            }
+          },
+          fail: function(err) {
+            logger.warn('云存储字体下载失败:', err)
+          }
+        })
+      } else {
+        wx.loadFontFace({
+          family: fontFamily,
+          source: 'url("' + fontUrl + '")',
+          global: true,
+          success: function(res) {
+            logger.log('字体加载成功:', fontFamily)
+          },
+          fail: function(err) {
+            logger.warn('字体加载失败:', err)
+          }
+        })
+      }
+    }
+  },
+
   _migrateWrappedKeys: function() {
     try {
       var migrated = wx.getStorageSync('_storage_migrated_v2')
@@ -123,11 +169,11 @@ App({
           var raw = wx.getStorageSync(key)
           if (raw === '' || raw === undefined || raw === null) continue
           if (typeof raw === 'object' && raw !== null && !Array.isArray(raw) && 'v' in raw && 'd' in raw && typeof raw.v === 'number' && 't' in raw) {
-            wx.setStorageSync(key, raw.d)
+            storageUtil.safeSet(key, raw.d)
           }
         } catch(e) {}
       }
-      wx.setStorageSync('_storage_migrated_v2', true)
+      storageUtil.safeSet('_storage_migrated_v2', true)
     } catch(e) {}
   },
 
@@ -260,7 +306,7 @@ App({
     }
 
     this.globalData.isDarkMode = isDark
-    wx.setStorageSync('darkMode', isDark)
+    storageUtil.safeSet('darkMode', isDark)
 
     if (isDark) {
       wx.setBackgroundColor({ backgroundColor: '#0F172A', backgroundColorTop: '#0F172A', backgroundColorBottom: '#0F172A' })
@@ -309,7 +355,7 @@ App({
       }
     } catch(e) {}
     return {
-      title: '\uD83C\uDFE0 \u767E\u5B9D\u5DE5\u5177\u7BB1 - 40+\u5B9E\u7528\u5C0F\u5DE5\u5177\u5408\u96C6',
+      title: '\u767E\u5B9D\u5DE5\u5177\u7BB1 - 40+\u5B9E\u7528\u5C0F\u5DE5\u5177\u5408\u96C6',
       path: '/pages/index/index',
       imageUrl: poster
     };
@@ -331,7 +377,7 @@ App({
       }
     } catch(e) {}
     return {
-      title: '\uD83C\uDFE0 \u767E\u5B9D\u5DE5\u5177\u7BB1 - \u6C47\u7387\u6362\u7B97\u3001\u5355\u4F4D\u8F6C\u6362\u7B4940+\u5B9E\u7528\u5DE5\u5177',
+      title: '\u767E\u5B9D\u5DE5\u5177\u7BB1 - \u6C47\u7387\u6362\u7B97\u3001\u5355\u4F4D\u8F6C\u6362\u7B4940+\u5B9E\u7528\u5DE5\u5177',
       query: '',
       imageUrl: poster
     };
@@ -339,7 +385,7 @@ App({
 
   onError: function(err) {
     logger.error('=== Global App Error ===', err)
-    
+
     var errorMsg = '未知错误'
     if (typeof err === 'string') {
       errorMsg = err.length > 50 ? err.substring(0, 50) + '...' : err
@@ -361,7 +407,36 @@ App({
         page: getCurrentPages().length > 0 ? getCurrentPages()[getCurrentPages().length - 1].route : 'unknown'
       })
       if (errorLog.length > 20) errorLog = errorLog.slice(-20)
-      wx.setStorageSync('errorLog', errorLog)
+      storageUtil.safeSet('errorLog', errorLog)
+    } catch (e) {}
+  },
+
+  cleanStorage: function() {
+    // 清理按日期存储的过期数据
+    storageUtil.cleanDateKeyedData('pomodoro_records', 30)
+    storageUtil.cleanDateKeyedData('water_records', 30)
+
+    // 清理临时文件
+    try {
+      var fs = wx.getFileSystemManager()
+      var files = fs.readdirSync(wx.env.USER_DATA_PATH)
+      for (var i = 0; i < files.length; i++) {
+        // 清理base64解码临时文件
+        if (files[i].indexOf('b64decode_') === 0) {
+          try { fs.unlinkSync(wx.env.USER_DATA_PATH + '/' + files[i]) } catch (e) {}
+        }
+      }
+      // 只保留最新3个CSV文件
+      var csvFiles = []
+      for (var j = 0; j < files.length; j++) {
+        if (files[j].indexOf('.csv') > -1) {
+          csvFiles.push(files[j])
+        }
+      }
+      csvFiles.sort().reverse()
+      for (var k = 3; k < csvFiles.length; k++) {
+        try { fs.unlinkSync(wx.env.USER_DATA_PATH + '/' + csvFiles[k]) } catch (e) {}
+      }
     } catch (e) {}
   }
 })

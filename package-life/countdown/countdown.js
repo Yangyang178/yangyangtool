@@ -1,12 +1,15 @@
 var app = getApp()
+var points = require('../../utils/points.js')
 var storageUtil = require('../../utils/storage.js')
 var toolActions = require('../utils/tool-actions.js')
 var logger = require('../../utils/logger.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
+var subscribe = require('../utils/subscribe.js')
 
 Page({
   data: {
+    isLoading: true,
     i18n: {},
     hasEvent: false,
     eventName: '',
@@ -62,6 +65,7 @@ Page({
     ],
 
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -81,12 +85,14 @@ Page({
     this._updateI18nData()
     this.loadSavedEvents()
     poster.setupForPage(this, 14)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('countdown') })
     this._updateI18nData()
@@ -94,6 +100,9 @@ Page({
     if (this.data.hasEvent) {
       this.startCountdown()
     }
+
+    // 查看倒计时时补充订阅次数
+    subscribe.requestOnViewCountdown()
   },
 
   _updateI18nData: function() {
@@ -248,6 +257,13 @@ Page({
 
     this.startCountdown()
     wx.showToast({ title: this.data.i18n.createSuccess, icon: 'success' })
+
+    // 请求订阅消息 - 必须在用户点击事件中直接调用
+    subscribe.requestCountdownSubscribe(function(res) {
+      if (res.success && res.subscribed) {
+        subscribe.registerCountdownReminder(newEvent)
+      }
+    })
 
     var tracker = getApp().tracker
     if (tracker) tracker.toolUse(14, '倒计时', false)
@@ -457,6 +473,9 @@ Page({
           that.saveEvents(newEvents)
           that.stopCountdown()
 
+          // 取消云函数提醒
+          subscribe.cancelCountdownReminder(that.data.currentEvent.id)
+
           that.setData({
             hasEvent: false,
             currentEvent: null,
@@ -488,6 +507,7 @@ Page({
 
     var text = '⏰ ' + currentEvent.name + repeatText + '\n📅 ' + currentEvent.date + '\n⏳ ' + i18nTexts.shareTimeLeftPrefix + timeLeft.days + i18nTexts.shareDayUnit + timeLeft.hours + i18nTexts.shareHourUnit + timeLeft.minutes + i18nTexts.shareMinuteUnit
 
+    wx.vibrateShort({ type: 'light' })
     wx.setClipboardData({
       data: text,
       success: function() {
@@ -570,8 +590,12 @@ Page({
   },
 
   saveEvents: function(events) {
+    // 最多保留50个事件
+    if (events.length > 50) {
+      events = events.slice(0, 50)
+    }
     try {
-      wx.setStorageSync('countdown_events', events)
+      storageUtil.safeSet('countdown_events', events)
     } catch (e) {
       logger.log('保存失败:', e)
     }
@@ -593,10 +617,10 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('⏰ 倒计时 - 百宝工具箱', '/package-life/countdown/countdown')
+    return poster.getShareConfig('倒计时 - 百宝工具箱', '/package-life/countdown/countdown', '重要日期倒计时提醒，纪念日天数计算')
   },
 
   onShareTimeline: function() {
-    return poster.getTimelineConfig('⏰ 倒计时 - 百宝工具箱')
+    return poster.getTimelineConfig('倒计时 - 纪念日日期天数计算')
   }
 })

@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -77,6 +78,8 @@ Page({
     outputText: '',
     mode: 'encode',
     isDarkMode: false,
+    isLoading: true,
+    fontClass: '',
     fontSizeSetting: 'medium',
     hasResult: false,
     charCount: 0,
@@ -121,12 +124,14 @@ Page({
     var toolTexts = i18n.getToolPageTexts('morseCode')
     this.setData({ i18n: toolTexts })
     poster.setupForPage(this, 37)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
     var toolTexts = i18n.getToolPageTexts('morseCode')
@@ -457,7 +462,7 @@ Page({
 
   _stopAllPlayback: function() {
     for (var t = 0; t < this._playTimeouts.length; t++) {
-      clearTimeout(this._playTimeouts[t])
+      clearInterval(this._playTimeouts[t])
     }
     this._playTimeouts = []
     if (this._audioCtx) {
@@ -642,10 +647,10 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('📡 Morse电码转换 - 百宝工具箱', '/package-text/morse-code/morse-code')
+    return poster.getShareConfig('摩尔斯电码转换 - 百宝工具箱', '/package-text/morse-code/morse-code', '摩尔斯电码编码解码，中英文电码翻译')
   },
 
   onShareTimeline: function() {
-    return poster.getTimelineConfig('📡 Morse电码转换 - 百宝工具箱')
+    return poster.getTimelineConfig('摩尔斯电码转换 - 编码解码中英文翻译')
   }
 })

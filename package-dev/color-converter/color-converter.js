@@ -5,9 +5,11 @@ var presetColors = [
 ]
 
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
+var contentSecurity = require('../utils/content-security.js')
 
 var colorPalette = [
   { name: '红', hex: '#EF4444' },
@@ -29,6 +31,7 @@ var colorPalette = [
 
 Page({
   data: {
+    isLoading: true,
     currentColor: '#3B82F6',
 
     hexInput: '3B82F6',
@@ -83,6 +86,7 @@ Page({
     gradientAngle: 135,
     gradientCSS: '',
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -109,13 +113,15 @@ Page({
     this.generateHarmony()
     this.updateGradientCSS()
     poster.setupForPage(this, 18)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
-    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('colorConverter') })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, fontClass: fontClass, i18n: i18n.getToolPageTexts('colorConverter') })
   },
 
   initPicker: function() {
@@ -606,29 +612,40 @@ Page({
       sourceType: ['album', 'camera'],
       success: function(res) {
         var tempPath = res.tempFiles[0].tempFilePath
-        var query = wx.createSelectorQuery()
-        query.select('#pickCanvas').fields({ node: true, size: true }).exec(function(res2) {
-          if (!res2 || !res2[0]) {
-            that.pickFromImageSimple(tempPath)
+        contentSecurity.checkImage(tempPath, function(pass, errMsg) {
+          if (!pass) {
+            wx.showToast({ title: errMsg, icon: 'none', duration: 2500 })
             return
           }
-          var canvas = res2[0].node
-          var ctx = canvas.getContext('2d')
-          var img = canvas.createImage()
-          img.src = tempPath
-          img.onload = function() {
-            canvas.width = img.width
-            canvas.height = img.height
-            ctx.drawImage(img, 0, 0)
-            var cx = Math.floor(img.width / 2)
-            var cy = Math.floor(img.height / 2)
-            var pixel = ctx.getImageData(cx, cy, 1, 1).data
-            that.updateFromRGB(pixel[0], pixel[1], pixel[2])
-            wx.showToast({ title: that.data.i18n.pickedCenterColor, icon: 'success' })
-          }
+          that._pickFromImageProcess(tempPath)
         })
       },
       fail: function() {}
+    })
+  },
+
+  _pickFromImageProcess: function(tempPath) {
+    var that = this
+    var query = wx.createSelectorQuery()
+    query.select('#pickCanvas').fields({ node: true, size: true }).exec(function(res2) {
+      if (!res2 || !res2[0]) {
+        that.pickFromImageSimple(tempPath)
+        return
+      }
+      var canvas = res2[0].node
+      var ctx = canvas.getContext('2d')
+      var img = canvas.createImage()
+      img.src = tempPath
+      img.onload = function() {
+        canvas.width = img.width
+        canvas.height = img.height
+        ctx.drawImage(img, 0, 0)
+        var cx = Math.floor(img.width / 2)
+        var cy = Math.floor(img.height / 2)
+        var pixel = ctx.getImageData(cx, cy, 1, 1).data
+        that.updateFromRGB(pixel[0], pixel[1], pixel[2])
+        wx.showToast({ title: that.data.i18n.pickedCenterColor, icon: 'success' })
+      }
     })
   },
 
@@ -640,29 +657,40 @@ Page({
       sourceType: ['album', 'camera'],
       success: function(res) {
         var tempPath = res.tempFiles[0].tempFilePath
-        var query = wx.createSelectorQuery()
-        query.select('#pickCanvas').fields({ node: true, size: true }).exec(function(res2) {
-          if (!res2[0]) {
-            that.pickFromImageSimple(tempPath)
+        contentSecurity.checkImage(tempPath, function(pass, errMsg) {
+          if (!pass) {
+            wx.showToast({ title: errMsg, icon: 'none', duration: 2500 })
             return
           }
-          var canvas = res2[0].node
-          var ctx = canvas.getContext('2d')
-          var img = canvas.createImage()
-          img.src = tempPath
-          img.onload = function() {
-            canvas.width = img.width
-            canvas.height = img.height
-            ctx.drawImage(img, 0, 0)
-            var cx = Math.floor(img.width / 2)
-            var cy = Math.floor(img.height / 2)
-            var pixel = ctx.getImageData(cx, cy, 1, 1).data
-            that.updateFromRGB(pixel[0], pixel[1], pixel[2])
-            wx.showToast({ title: that.data.i18n.pickedCenterColor, icon: 'success' })
-          }
+          that._pickFromImageCanvasProcess(tempPath)
         })
       },
       fail: function() {}
+    })
+  },
+
+  _pickFromImageCanvasProcess: function(tempPath) {
+    var that = this
+    var query = wx.createSelectorQuery()
+    query.select('#pickCanvas').fields({ node: true, size: true }).exec(function(res2) {
+      if (!res2[0]) {
+        that.pickFromImageSimple(tempPath)
+        return
+      }
+      var canvas = res2[0].node
+      var ctx = canvas.getContext('2d')
+      var img = canvas.createImage()
+      img.src = tempPath
+      img.onload = function() {
+        canvas.width = img.width
+        canvas.height = img.height
+        ctx.drawImage(img, 0, 0)
+        var cx = Math.floor(img.width / 2)
+        var cy = Math.floor(img.height / 2)
+        var pixel = ctx.getImageData(cx, cy, 1, 1).data
+        that.updateFromRGB(pixel[0], pixel[1], pixel[2])
+        wx.showToast({ title: that.data.i18n.pickedCenterColor, icon: 'success' })
+      }
     })
   },
 
@@ -738,7 +766,7 @@ Page({
     }
     favs.push(hex)
     this.setData({ favoriteColors: favs })
-    wx.setStorageSync('color_favorites', favs)
+    storageUtil.safeSet('color_favorites', favs)
     wx.vibrateShort({ type: 'light' })
     wx.showToast({ title: this.data.i18n.favorited, icon: 'success' })
   },
@@ -748,7 +776,7 @@ Page({
     var favs = this.data.favoriteColors
     favs.splice(idx, 1)
     this.setData({ favoriteColors: favs })
-    wx.setStorageSync('color_favorites', favs)
+    storageUtil.safeSet('color_favorites', favs)
     wx.vibrateShort({ type: 'light' })
   },
 
@@ -824,6 +852,7 @@ Page({
   copyHarmonyAll: function() {
     if (!this.data.harmonyScheme) return
     wx.vibrateShort({ type: 'light' })
+    var that = this
     var text = ''
     for (var i = 0; i < this.data.harmonyScheme.length; i++) {
       text += this.data.harmonyScheme[i].label + ': ' + this.data.harmonyScheme[i].hex + '\n'
@@ -908,10 +937,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🎨 颜色转换 - 百宝工具箱', '/package-dev/color-converter/color-converter')
+    return poster.getShareConfig('颜色转换器 - 百宝工具箱', '/package-dev/color-converter/color-converter', 'HEX/RGB/HSL颜色格式互转')
   },
-
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🎨 颜色转换 - 百宝工具箱')
+    return poster.getTimelineConfig('颜色转换器 - HEX/RGB/HSL颜色互转')
   }
 })

@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -70,9 +71,11 @@ Page({
     dateCalcResult: null,
 
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
     milestones: [],
-    historyList: []
+    historyList: [],
+    isLoading: true
   },
 
   onLoad: function() {
@@ -90,14 +93,16 @@ Page({
     this.setData({ today: today, dateCalcStart: today, dateCalcEnd: today })
     this.loadHistory()
     poster.setupForPage(this, 16)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var i18nTexts = i18n.getToolPageTexts('age')
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
+    var fontClass = points.getFontClass()
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
-    this.setData({ isDarkMode: isDark, i18n: i18nTexts, fontSizeSetting: fontSize })
+    this.setData({ isDarkMode: isDark, fontClass: fontClass, i18n: i18nTexts, fontSizeSetting: fontSize })
   },
 
   formatDate: function(date) {
@@ -397,7 +402,7 @@ Page({
     }
     history.unshift(newRecord)
     var saved = history.slice(0, 20)
-    wx.setStorageSync('age_calc_history', saved)
+    storageUtil.safeSet('age_calc_history', saved)
     this.setData({ historyList: saved.slice(0, 10) })
   },
 
@@ -439,6 +444,7 @@ Page({
                i18nTexts.totalDays + '：' + this.data.totalDays + i18nTexts.days + '\n' +
                i18nTexts.lifeProgressLabel + '：' + this.data.livedPercent + '%\n' +
                i18nTexts.nextBirthday.replace('🎉 ', '') + '：' + this.data.nextBirthdayDays + i18nTexts.days
+    wx.vibrateShort({ type: 'light' })
     wx.setClipboardData({
       data: text,
       success: function() {
@@ -498,9 +504,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🧓 年龄计算器 - 百宝工具箱', '/package-calculator/age-calculator/age-calculator')
+    return poster.getShareConfig('年龄计算器 - 百宝工具箱', '/package-calculator/age-calculator/age-calculator', '精确计算年龄，生日倒计时提醒')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🧓 年龄计算器 - 百宝工具箱')
+    return poster.getTimelineConfig('年龄计算器 - 精确计算年龄生日倒计时')
   }
 })

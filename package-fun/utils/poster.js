@@ -188,7 +188,6 @@ var Poster = {
       { icon: '👆', name: '疯狂点击', color1: '#EF4444', color2: '#DC2626' },
       { icon: '💣', name: '扫雷', color1: '#6B7280', color2: '#374151' },
       { icon: '🧩', name: '数字华容道', color1: '#10B981', color2: '#047857' },
-      { icon: '🐹', name: '打地鼠', color1: '#D97706', color2: '#92400E' },
       { icon: '🏰', name: '迷宫', color1: '#7C3AED', color2: '#5B21B6' },
       { icon: '👁', name: '视力测试', color1: '#059669', color2: '#065F46' },
       { icon: '🔮', name: '心理测试', color1: '#DB2777', color2: '#9D174D' }

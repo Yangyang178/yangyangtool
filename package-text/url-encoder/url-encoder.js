@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var i18n = require('../../utils/i18n.js')
 var commonEncodings = [
   { char: '空格', encoded: '%20', desc: '空格字符' },
@@ -62,6 +63,8 @@ Page({
     shortUrlLoading: false,
     commonEncodings: commonEncodings,
     isDarkMode: false,
+    isLoading: true,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -79,12 +82,14 @@ Page({
     this.setData({ i18n: toolTexts })
     this._updateI18nData()
     poster.setupForPage(this, 19)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
     var toolTexts = i18n.getToolPageTexts('urlEncoder')
@@ -483,6 +488,7 @@ Page({
       confirmText: that.data.i18n.copyUrl,
       success: function(res) {
         if (res.confirm) {
+          wx.vibrateShort({ type: 'light' })
           wx.setClipboardData({
             data: url,
             success: function() { wx.showToast({ title: that.data.i18n.copied, icon: 'success' }) }
@@ -569,6 +575,7 @@ Page({
       return
     }
 
+    wx.vibrateShort({ type: 'light' })
     wx.setClipboardData({
       data: this.data.outputText,
       success: function() {
@@ -636,9 +643,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🔗 URL编解码 - 百宝工具箱', '/package-text/url-encoder/url-encoder')
+    return poster.getShareConfig('URL编解码 - 百宝工具箱', '/package-text/url-encoder/url-encoder', 'URL编码解码转换，网址特殊字符处理')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🔗 URL编解码 - 百宝工具箱')
+    return poster.getTimelineConfig('URL编解码 - 网址编码解码特殊字符处理')
   }
 })

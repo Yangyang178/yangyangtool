@@ -1,6 +1,6 @@
 <navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
 
-<view class="privacy-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}">
+<view class="privacy-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}">
   <view class="privacy-content">
     <text class="privacy-title">{{i18n.mainTitle}}</text>
     <text class="privacy-update">{{i18n.updateDate}}</text>

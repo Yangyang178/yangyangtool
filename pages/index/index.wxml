@@ -63,7 +63,7 @@
             data-tool="{{item}}"
             bindtap="onRecommendToolClick"
           >
-            <view class="recommend-icon-wrap" style="background: {{item.iconBg}}">
+            <view class="recommend-icon-wrap recommend-icon-in-header">
               <text class="recommend-emoji">{{item.icon}}</text>
             </view>
             <text class="recommend-name recommend-name-light">{{item.name}}</text>

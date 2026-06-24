@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var logger = require('../../utils/logger.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -241,6 +242,7 @@ var FADE_DURATION = 30
 
 Page({
   data: {
+    isLoading: true,
     sounds: SOUND_LIST,
     timerOptions: TIMER_OPTIONS,
     activeCount: 0,
@@ -261,6 +263,7 @@ Page({
 
     i18n: {},
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -286,6 +289,7 @@ Page({
     this._loadFavorites()
     this.initAudio()
     poster.setupForPage(this, 30)
+    this.setData({ isLoading: false })
   },
 
   onUnload: function() {
@@ -306,7 +310,8 @@ Page({
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('whiteNoise') })
     this._updateI18nData()
@@ -831,7 +836,7 @@ Page({
           volume: sounds[i].volume || 50
         })
       }
-      wx.setStorageSync('white_noise_state', state)
+      storageUtil.safeSet('white_noise_state', state)
     } catch (e) {
       logger.warn('Save state error:', e)
     }
@@ -863,9 +868,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🎧 白噪音 - 百宝工具箱', '/package-life/white-noise/white-noise')
+    return poster.getShareConfig('白噪音 - 百宝工具箱', '/package-life/white-noise/white-noise', '助眠白噪音，自然音效放松专注')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🎧 白噪音 - 百宝工具箱')
+    return poster.getTimelineConfig('白噪音 - 助眠自然音效放松专注')
   }
 })

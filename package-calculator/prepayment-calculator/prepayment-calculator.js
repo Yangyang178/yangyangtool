@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -19,6 +20,7 @@ Page({
     prepayMethod: 'shorten',
     hasResult: false,
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
 
     prepayPlans: [],
@@ -44,7 +46,8 @@ Page({
       { label: '4.2%', rate: '4.2' },
       { label: '4.65%', rate: '4.65' },
       { label: '5.0%', rate: '5.0' }
-    ]
+    ],
+    isLoading: true
   },
 
   onLoad: function() {
@@ -59,13 +62,15 @@ Page({
     var isDark = app.globalData.isDarkMode || false
     this.setData({ isDarkMode: isDark })
     poster.setupForPage(this, 35)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     this.setData({ i18n: i18n.getToolPageTexts('prepayment') })
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
   },
@@ -647,7 +652,7 @@ Page({
         ctx.fillStyle = textColor
         ctx.font = '10px sans-serif'
         ctx.textAlign = 'center'
-        ctx.fillText(this.data.i18n.totalInterestCompare, w / 2, h - 2)
+        ctx.fillText(that.data.i18n.totalInterestCompare, w / 2, h - 2)
       })
   },
 
@@ -719,9 +724,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🏦 提前还款计算器 - 百宝工具箱', '/package-calculator/prepayment-calculator/prepayment-calculator')
+    return poster.getShareConfig('提前还款计算器 - 百宝工具箱', '/package-calculator/prepayment-calculator/prepayment-calculator', '房贷提前还款计算，省息方案对比')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🏦 提前还款计算器 - 百宝工具箱')
+    return poster.getTimelineConfig('提前还款计算器 - 房贷省息方案对比')
   }
 })

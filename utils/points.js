@@ -90,6 +90,86 @@ var SHOP_ITEMS = [
     color: '#7C3AED'
   },
   {
+    id: 'theme_sunset',
+    name: '落日余晖',
+    icon: '🌅',
+    desc: '橙红渐变，如落日熔金',
+    price: 500,
+    type: 'theme',
+    color: '#EA580C',
+    color2: '#DC2626'
+  },
+  {
+    id: 'theme_aurora',
+    name: '极光幻彩',
+    icon: '🌌',
+    desc: '青紫渐变，如极光流转',
+    price: 500,
+    type: 'theme',
+    color: '#06B6D4',
+    color2: '#8B5CF6'
+  },
+  {
+    id: 'theme_sakura',
+    name: '樱花物语',
+    icon: '🌸',
+    desc: '粉白渐变，如樱花飘落',
+    price: 500,
+    type: 'theme',
+    color: '#EC4899',
+    color2: '#F9A8D4'
+  },
+  {
+    id: 'theme_ocean',
+    name: '深海秘境',
+    icon: '🌊',
+    desc: '蓝青渐变，如深海幽光',
+    price: 500,
+    type: 'theme',
+    color: '#1D4ED8',
+    color2: '#0891B2'
+  },
+  {
+    id: 'theme_forest',
+    name: '翠林晨曦',
+    icon: '🌲',
+    desc: '绿金渐变，如晨光穿林',
+    price: 500,
+    type: 'theme',
+    color: '#15803D',
+    color2: '#CA8A04'
+  },
+  {
+    id: 'theme_lavender',
+    name: '薰衣草田',
+    icon: '💜',
+    desc: '紫粉渐变，如普罗旺斯花海',
+    price: 600,
+    type: 'theme',
+    color: '#7C3AED',
+    color2: '#DB2777'
+  },
+  {
+    id: 'theme_fire',
+    name: '烈焰赤金',
+    icon: '🔥',
+    desc: '红金渐变，如烈火真金',
+    price: 600,
+    type: 'theme',
+    color: '#B91C1C',
+    color2: '#F59E0B'
+  },
+  {
+    id: 'theme_night',
+    name: '星夜幻梦',
+    icon: '✨',
+    desc: '深蓝紫渐变，如梵高星夜',
+    price: 600,
+    type: 'theme',
+    color: '#1E1B4B',
+    color2: '#4338CA'
+  },
+  {
     id: 'badge_pioneer',
     name: '先锋徽章',
     icon: '🏅',
@@ -445,6 +525,7 @@ var Points = {
         style: item.style || '',
         frameClass: item.frameClass || '',
         color: item.color || '',
+        color2: item.color2 || '',
         badge: item.badge || '',
         fontFamily: item.fontFamily || '',
         fontClass: item.fontClass || '',
@@ -554,6 +635,53 @@ var Points = {
     return frames
   },
 
+  getOwnedThemes: function() {
+    var owned = storageUtil.safeGetArray(SHOP_ITEMS_KEY)
+    var themes = []
+    for (var i = 0; i < SHOP_ITEMS.length; i++) {
+      if (SHOP_ITEMS[i].type === 'theme') {
+        var isOwned = false
+        for (var j = 0; j < owned.length; j++) {
+          if (owned[j] === SHOP_ITEMS[i].id) { isOwned = true; break }
+        }
+        if (isOwned) {
+          themes.push({
+            id: SHOP_ITEMS[i].id,
+            name: SHOP_ITEMS[i].name,
+            icon: SHOP_ITEMS[i].icon,
+            desc: SHOP_ITEMS[i].desc,
+            color: SHOP_ITEMS[i].color || '',
+            color2: SHOP_ITEMS[i].color2 || ''
+          })
+        }
+      }
+    }
+    return themes
+  },
+
+  getOwnedBadges: function() {
+    var owned = storageUtil.safeGetArray(SHOP_ITEMS_KEY)
+    var badges = []
+    for (var i = 0; i < SHOP_ITEMS.length; i++) {
+      if (SHOP_ITEMS[i].type === 'badge') {
+        var isOwned = false
+        for (var j = 0; j < owned.length; j++) {
+          if (owned[j] === SHOP_ITEMS[i].id) { isOwned = true; break }
+        }
+        if (isOwned) {
+          badges.push({
+            id: SHOP_ITEMS[i].id,
+            name: SHOP_ITEMS[i].name,
+            icon: SHOP_ITEMS[i].icon,
+            desc: SHOP_ITEMS[i].desc,
+            badge: SHOP_ITEMS[i].badge || ''
+          })
+        }
+      }
+    }
+    return badges
+  },
+
   getActiveTheme: function() {
     var activeId = storageUtil.get(ACTIVE_THEME_KEY, '')
     if (!activeId) return null
@@ -594,7 +722,14 @@ var Points = {
     var color = theme.color
     var darkColor = this._darkenColor(color, 20)
     var lightColor = this._hexToRgba(color, 0.1)
-    return '--primaryColor:' + color + ';--primaryDark:' + darkColor + ';--primaryLight:' + lightColor + ';'
+    var result = '--primaryColor:' + color + ';--primaryDark:' + darkColor + ';--primaryLight:' + lightColor + ';'
+    if (theme.color2) {
+      var darkColor2 = this._darkenColor(theme.color2, 20)
+      result += '--primaryColor2:' + theme.color2 + ';--primaryDark2:' + darkColor2 + ';'
+    } else {
+      result += '--primaryColor2:' + darkColor + ';--primaryDark2:' + this._darkenColor(darkColor, 15) + ';'
+    }
+    return result
   },
 
   /**

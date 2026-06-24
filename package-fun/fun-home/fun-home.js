@@ -20,8 +20,7 @@ var BEST_RECORD_MAP = {
   'crazy-click': { key: 'crazy_click_best_cps', unit: '', label: '', format: function(v) { var t = i18n.getToolPageTexts('funHome'); return v > 0 ? v.toFixed(1) + t.cpsUnit : '' } },
   'maze': { key: 'maze_best_easy', unit: '', label: '', format: function(v) { var t = i18n.getToolPageTexts('funHome'); return v > 0 ? v + t.secondsUnit : '' } },
   'number-sequence': { key: 'ns_best_normal', unit: '', label: '', format: function(v) { var t = i18n.getToolPageTexts('funHome'); return v > 0 ? v + t.secondsUnit : '' } },
-  'time-perception': { key: 'tp_best_avg', unit: '', label: '', format: function(v) { return v > 0 ? v.toFixed(1) + 's' : '' } },
-  'char-finder': { key: 'cf_best_level', unit: '', label: '', format: function(v) { return v > 0 ? 'Lv.' + v : '' } }
+  'time-perception': { key: 'tp_best_avg', unit: '', label: '', format: function(v) { v = Number(v); return v > 0 ? v.toFixed(1) + 's' : '' } }
 }
 
 Page({
@@ -41,8 +40,7 @@ Page({
       { id: 'vision-test', name: '', icon: '👁', desc: '', gradient: 'linear-gradient(135deg, #059669 0%, #065F46 100%)', route: '/package-fun/vision-test/vision-test', locked: true, unlockDays: 14 },
       { id: 'psychology-test', name: '', icon: '🔮', desc: '', gradient: 'linear-gradient(135deg, #DB2777 0%, #9D174D 100%)', route: '/package-fun/psychology-test/psychology-test', locked: true, unlockDays: 21 },
       { id: 'number-sequence', name: '', icon: '🔢', desc: '', gradient: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)', route: '/package-fun/number-sequence/number-sequence', locked: false },
-      { id: 'time-perception', name: '', icon: '⏱️', desc: '', gradient: 'linear-gradient(135deg, #F59E0B 0%, #B45309 100%)', route: '/package-fun/time-perception/time-perception', locked: false },
-      { id: 'char-finder', name: '', icon: '🔍', desc: '', gradient: 'linear-gradient(135deg, #10B981 0%, #047857 100%)', route: '/package-fun/char-finder/char-finder', locked: false }
+      { id: 'time-perception', name: '', icon: '⏱️', desc: '', gradient: 'linear-gradient(135deg, #F59E0B 0%, #B45309 100%)', route: '/package-fun/time-perception/time-perception', locked: false }
     ],
     continuousDays: 0
   },
@@ -75,8 +73,7 @@ Page({
         { id: 'vision-test', name: t.toolVisionTest, icon: '👁', desc: t.toolVisionTestDesc, gradient: 'linear-gradient(135deg, #059669 0%, #065F46 100%)', route: '/package-fun/vision-test/vision-test', locked: true, unlockDays: 14 },
         { id: 'psychology-test', name: t.toolPsychologyTest, icon: '🔮', desc: t.toolPsychologyTestDesc, gradient: 'linear-gradient(135deg, #DB2777 0%, #9D174D 100%)', route: '/package-fun/psychology-test/psychology-test', locked: true, unlockDays: 21 },
         { id: 'number-sequence', name: t.toolNumberSequence, icon: '🔢', desc: t.toolNumberSequenceDesc, gradient: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)', route: '/package-fun/number-sequence/number-sequence', locked: false },
-        { id: 'time-perception', name: t.toolTimePerception, icon: '⏱️', desc: t.toolTimePerceptionDesc, gradient: 'linear-gradient(135deg, #F59E0B 0%, #B45309 100%)', route: '/package-fun/time-perception/time-perception', locked: false },
-        { id: 'char-finder', name: t.toolCharFinder, icon: '🔍', desc: t.toolCharFinderDesc, gradient: 'linear-gradient(135deg, #10B981 0%, #047857 100%)', route: '/package-fun/char-finder/char-finder', locked: false }
+        { id: 'time-perception', name: t.toolTimePerception, icon: '⏱️', desc: t.toolTimePerceptionDesc, gradient: 'linear-gradient(135deg, #F59E0B 0%, #B45309 100%)', route: '/package-fun/time-perception/time-perception', locked: false }
       ]
     })
   },

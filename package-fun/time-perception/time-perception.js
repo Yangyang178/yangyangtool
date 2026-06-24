@@ -40,6 +40,13 @@ Page({
     })
   },
 
+  onUnload: function() {
+    if (this._timer) {
+      clearInterval(this._timer)
+      this._timer = null
+    }
+  },
+
   loadBestRecord: function() {
     var best = storage.get('tp_best_avg', -1)
     this.setData({ bestAvgError: best >= 0 ? best.toFixed(1) : -1 })

@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var i18n = require('../../utils/i18n.js')
 
 var commonRegexes = [
@@ -117,6 +118,8 @@ Page({
     activeCheatCategory: '',
 
     isDarkMode: false,
+    isLoading: true,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -134,12 +137,14 @@ Page({
     var toolTexts = i18n.getToolPageTexts('regexTester')
     this.setData({ i18n: toolTexts })
     poster.setupForPage(this, 20)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
     var toolTexts = i18n.getToolPageTexts('regexTester')
@@ -504,9 +509,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('✨ 正则表达式测试 - 百宝工具箱', '/package-text/regex-tester/regex-tester')
+    return poster.getShareConfig('正则表达式测试 - 百宝工具箱', '/package-text/regex-tester/regex-tester', '正则在线测试匹配，Regex调试工具')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('✨ 正则表达式测试 - 百宝工具箱')
+    return poster.getTimelineConfig('正则表达式测试 - Regex在线调试匹配')
   }
 })

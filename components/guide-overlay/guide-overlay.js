@@ -35,14 +35,14 @@ Component({
     },
 
     onSkip: function() {
-      wx.setStorageSync('hasSeenGuide', true)
-      wx.setStorageSync('guideVersion', 3)
+      try { wx.setStorageSync('hasSeenGuide', true) } catch(e) {}
+      try { wx.setStorageSync('guideVersion', 3) } catch(e) {}
       this.triggerEvent('close')
     },
 
     onStart: function() {
-      wx.setStorageSync('hasSeenGuide', true)
-      wx.setStorageSync('guideVersion', 3)
+      try { wx.setStorageSync('hasSeenGuide', true) } catch(e) {}
+      try { wx.setStorageSync('guideVersion', 3) } catch(e) {}
       this.triggerEvent('close')
     }
   }

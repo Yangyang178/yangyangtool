@@ -152,6 +152,13 @@ Page({
     ownedFrames: [],
     previewFrame: null,
 
+    showThemeSelector: false,
+    ownedThemes: [],
+
+    showBadgeSelector: false,
+    ownedBadges: [],
+    activeBadgeId: '',
+
     showInvitePanel: false,
     inviteInfo: { totalInvites: 0, totalPoints: 0, records: [] },
     myInviteCode: '',
@@ -1562,6 +1569,33 @@ Page({
     this.setData({ showDesktopGuideModal: false })
   },
 
+  openMiniApp: function(e) {
+    var appid = e.currentTarget.dataset.appid
+    var name = e.currentTarget.dataset.name
+    if (!appid) return
+    wx.navigateToMiniProgram({
+      appId: appid,
+      fail: function() {
+        wx.showToast({ title: '无法打开该小程序', icon: 'none' })
+      }
+    })
+  },
+
+  showMiniAppActions: function(e) {
+    var appid = e.currentTarget.dataset.appid
+    var name = e.currentTarget.dataset.name
+    if (!appid) return
+    var that = this
+    wx.showActionSheet({
+      itemList: ['打开「' + name + '」'],
+      success: function(res) {
+        if (res.tapIndex === 0) {
+          that.openMiniApp(e)
+        }
+      }
+    })
+  },
+
   calPrevMonth: function() {
     var y = this.data.calYear
     var m = this.data.calMonth - 1
@@ -2350,6 +2384,117 @@ Page({
     this.setData({ showPointsShop: true, shopItems: shopItems })
   },
 
+  goToShopFromThemeSelector: function() {
+    this.setData({ showThemeSelector: false })
+    var shopItems = points.getShopItems()
+    this._translateShopItems(shopItems)
+    this.setData({ showPointsShop: true, shopItems: shopItems })
+  },
+
+  goToShopFromBadgeSelector: function() {
+    this.setData({ showBadgeSelector: false })
+    var shopItems = points.getShopItems()
+    this._translateShopItems(shopItems)
+    this.setData({ showPointsShop: true, shopItems: shopItems })
+  },
+
+  openThemeSelector: function() {
+    wx.vibrateShort({ type: 'light' })
+    var owned = points.getOwnedThemes()
+    this._translateShopItems(owned)
+    var activeTheme = points.getActiveTheme()
+    if (activeTheme) {
+      var tmpArr = [activeTheme]
+      this._translateShopItems(tmpArr)
+      activeTheme = tmpArr[0]
+    }
+    this.setData({
+      showThemeSelector: true,
+      ownedThemes: owned,
+      activeTheme: activeTheme
+    })
+  },
+
+  closeThemeSelector: function() {
+    this.setData({ showThemeSelector: false })
+  },
+
+  selectTheme: function(e) {
+    var itemId = e.currentTarget.dataset.id
+    wx.vibrateShort({ type: 'light' })
+    if (itemId === '') {
+      points.deactivateItem('theme')
+      this.setData({
+        activeTheme: null,
+        themeStyle: ''
+      })
+      wx.showToast({ title: '已恢复默认', icon: 'none' })
+    } else {
+      var result = points.activateItem(itemId)
+      if (result.success) {
+        var activeTheme = points.getActiveTheme()
+        var themeStyle = points.getThemeStyle()
+        if (activeTheme) {
+          var tmpArr2 = [activeTheme]
+          this._translateShopItems(tmpArr2)
+          activeTheme = tmpArr2[0]
+        }
+        this.setData({
+          activeTheme: activeTheme,
+          themeStyle: themeStyle
+        })
+        wx.showToast({ title: '已切换主题色', icon: 'success' })
+      } else {
+        wx.showToast({ title: result.message, icon: 'none' })
+      }
+    }
+  },
+
+  openBadgeSelector: function() {
+    wx.vibrateShort({ type: 'light' })
+    var owned = points.getOwnedBadges()
+    this._translateShopItems(owned)
+    var activeFrame = points.getActiveFrame()
+    var activeBadgeId = ''
+    if (activeFrame && activeFrame.type === 'badge') {
+      activeBadgeId = activeFrame.id
+    }
+    this.setData({
+      showBadgeSelector: true,
+      ownedBadges: owned,
+      activeBadgeId: activeBadgeId
+    })
+  },
+
+  closeBadgeSelector: function() {
+    this.setData({ showBadgeSelector: false })
+  },
+
+  selectBadge: function(e) {
+    var itemId = e.currentTarget.dataset.id
+    wx.vibrateShort({ type: 'light' })
+    if (itemId === '') {
+      points.deactivateItem('badge')
+      this.setData({
+        activeBadge: '',
+        activeBadgeId: ''
+      })
+      wx.showToast({ title: '已取消佩戴', icon: 'none' })
+    } else {
+      var result = points.activateItem(itemId)
+      if (result.success) {
+        var activeBadge = points.getActiveBadge()
+        this.setData({
+          activeBadge: activeBadge,
+          activeBadgeId: itemId
+        })
+        wx.showToast({ title: '已佩戴徽章', icon: 'success' })
+      } else {
+        wx.showToast({ title: result.message, icon: 'none' })
+      }
+    }
+  },
+
   chooseAvatarFromSelector: function() {
     var that = this
     wx.chooseMedia({
@@ -2494,6 +2639,14 @@ Page({
       theme_emerald: 'shopThemeEmerald',
       theme_amber: 'shopThemeAmber',
       theme_violet: 'shopThemeViolet',
+      theme_sunset: 'shopThemeSunset',
+      theme_aurora: 'shopThemeAurora',
+      theme_sakura: 'shopThemeSakura',
+      theme_ocean: 'shopThemeOcean',
+      theme_forest: 'shopThemeForest',
+      theme_lavender: 'shopThemeLavender',
+      theme_fire: 'shopThemeFire',
+      theme_night: 'shopThemeNight',
       badge_pioneer: 'shopBadgePioneer',
       badge_master: 'shopBadgeMaster',
       font_kai: 'shopFontKai',
@@ -2510,6 +2663,14 @@ Page({
       theme_emerald: 'shopThemeEmeraldDesc',
       theme_amber: 'shopThemeAmberDesc',
       theme_violet: 'shopThemeVioletDesc',
+      theme_sunset: 'shopThemeSunsetDesc',
+      theme_aurora: 'shopThemeAuroraDesc',
+      theme_sakura: 'shopThemeSakuraDesc',
+      theme_ocean: 'shopThemeOceanDesc',
+      theme_forest: 'shopThemeForestDesc',
+      theme_lavender: 'shopThemeLavenderDesc',
+      theme_fire: 'shopThemeFireDesc',
+      theme_night: 'shopThemeNightDesc',
       badge_pioneer: 'shopBadgePioneerDesc',
       badge_master: 'shopBadgeMasterDesc',
       font_kai: 'shopFontKaiDesc',

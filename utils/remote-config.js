@@ -92,8 +92,8 @@ var RemoteConfig = {
 
   _saveCache: function(config) {
     try {
-      wx.setStorageSync(CACHE_KEY, config)
-      wx.setStorageSync(CACHE_TIME_KEY, Date.now())
+      storageUtil.safeSet(CACHE_KEY, config)
+      storageUtil.safeSet(CACHE_TIME_KEY, Date.now())
     } catch(e) {}
   }
 }

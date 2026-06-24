@@ -85,13 +85,13 @@ Page({
     })
     wx.vibrateShort({ type: 'heavy' })
     points.recordFunToolUse('reaction')
-    var currentBest = storageUtil.get('reaction_best_time', 0)
+    var currentBest = storageUtil.get('reaction_best', 0)
     achievement.recordFunToolComplete('reaction', { reactionBestTime: currentBest })
     poster.setupForResult(this, {
       icon: '⚡', title: '反应速度测试',
       mainScore: this.data.lastTime + 'ms', mainScoreLabel: '反应时间',
       rating: this.data.rating,
-      details: [{ label: '最佳成绩', value: storageUtil.get('reaction_best_time', 0) + 'ms' }],
+      details: [{ label: '最佳成绩', value: storageUtil.get('reaction_best', 0) + 'ms' }],
       color1: '#F59E0B', color2: '#D97706'
     })
   },

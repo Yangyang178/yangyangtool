@@ -1,6 +1,7 @@
 <navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
 
-<view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}">
+<view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}">
   <view class="container">
     <view class="tool-header">
       <view class="tool-icon-large" style="background: linear-gradient(135deg, rgba(255,107,107,0.2) 0%, rgba(255,202,40,0.15) 100%);">

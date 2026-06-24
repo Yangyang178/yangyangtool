@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -24,6 +25,8 @@ Page({
     ],
     showCodeModes: false,
     isDarkMode: false,
+    isLoading: true,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -66,12 +69,14 @@ Page({
     this.setData({ isDarkMode: isDark })
     poster.setupForPage(this, 6)
     this._updateI18nData()
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
     this._updateI18nData()
@@ -221,9 +226,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🔤 大小写转换 - 百宝工具箱', '/package-text/case-converter/case-converter')
+    return poster.getShareConfig('大小写转换 - 百宝工具箱', '/package-text/case-converter/case-converter', '英文字母大小写转换，驼峰下划线命名')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🔤 大小写转换 - 百宝工具箱')
+    return poster.getTimelineConfig('大小写转换 - 英文驼峰下划线命名转换')
   }
 })

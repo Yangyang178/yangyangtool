@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -54,6 +55,8 @@ Page({
     showDedup: false,
 
     isDarkMode: false,
+    isLoading: true,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -70,12 +73,14 @@ Page({
     var toolTexts = i18n.getToolPageTexts('wordCount')
     this.setData({ i18n: toolTexts })
     poster.setupForPage(this, 5)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
     var toolTexts = i18n.getToolPageTexts('wordCount')
@@ -281,6 +286,7 @@ Page({
       '阅读时长：' + this.data.readTimeText + '\n' +
       '朗读时长：' + this.data.speakTimeText
 
+    wx.vibrateShort({ type: 'light' })
     wx.setClipboardData({
       data: stats,
       success: function() { return wx.showToast({ title: that.data.i18n.copied, icon: 'success' }) }
@@ -293,6 +299,7 @@ Page({
       wx.showToast({ title: this.data.i18n.noTextToCopy, icon: 'none' })
       return
     }
+    wx.vibrateShort({ type: 'light' })
     wx.setClipboardData({
       data: this.data.textContent,
       success: function() { return wx.showToast({ title: that.data.i18n.copiedText, icon: 'success' }) }
@@ -340,9 +347,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('#️⃣ 字数统计 - 百宝工具箱', '/package-text/word-count/word-count')
+    return poster.getShareConfig('字数统计 - 百宝工具箱', '/package-text/word-count/word-count', '中英文字数统计，字符段落分析')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('#️⃣ 字数统计 - 百宝工具箱')
+    return poster.getTimelineConfig('字数统计 - 中英文字数字符段落分析')
   }
 })

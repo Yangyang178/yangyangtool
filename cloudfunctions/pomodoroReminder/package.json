@@ -1,0 +1,9 @@
+{
+  "name": "pomodoroReminder",
+  "version": "1.0.0",
+  "description": "番茄钟完成提醒云函数",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

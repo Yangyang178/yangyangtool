@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var logger = require('../../utils/logger.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
@@ -29,7 +30,9 @@ Page({
     totalDeduction: '3500',
     socialTotal: '0',
     isDarkMode: false,
-    fontSizeSetting: 'medium'
+    fontClass: '',
+    fontSizeSetting: 'medium',
+    isLoading: true
   },
 
   onLoad: function() {
@@ -46,13 +49,15 @@ Page({
     this.updateTotalDeduction()
     this.updateSocialTotal()
     poster.setupForPage(this, 25)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     this.setData({ i18n: i18n.getToolPageTexts('tax') })
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
   },
@@ -290,6 +295,7 @@ Page({
       text += '\n' + t.recommend + ': ' + (br.better === 'separate' ? t.separateTaxLabel : t.combinedTaxLabel)
     }
     var that = this
+    wx.vibrateShort({ type: 'light' })
     wx.setClipboardData({
       data: text,
       success: function() { wx.showToast({ title: that.data.i18n.copied, icon: 'success' }) }
@@ -328,10 +334,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('💰 个税计算器 - 百宝工具箱', '/package-calculator/tax-calculator/tax-calculator')
+    return poster.getShareConfig('个税计算器 - 百宝工具箱', '/package-calculator/tax-calculator/tax-calculator', '工资个税计算，五险一金扣除')
   },
-
   onShareTimeline: function() {
-    return poster.getTimelineConfig('💰 个税计算器 - 百宝工具箱')
+    return poster.getTimelineConfig('个税计算器 - 工资个税五险一金计算')
   }
 })

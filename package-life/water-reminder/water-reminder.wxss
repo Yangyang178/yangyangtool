@@ -16,12 +16,12 @@ page { background-color: var(--pageBg,#F8FAFC); }
 .water-emoji { font-size: 42px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 .water-count { position: absolute; bottom: -4px; right: -4px; background: var(--cardBg,#FFFFFF); border-radius: 12px; padding: 2px 8px; font-size: 18px; font-weight: 700; color: var(--accentTeal,#14B8A6); z-index: 10; }
 .water-unit { position: absolute; bottom: -2px; right: -18px; font-size: 11px; color: var(--cardBg,#FFFFFF); font-weight: 600; }
-.stats-info { flex: 1; color: var(--cardBg,#FFFFFF); min-width: 0; }
-.stats-title { font-size: 20px; font-weight: 700; display: block; margin-bottom: 4px; }
-.stats-target { font-size: 13px; opacity: 0.9; display: block; margin-bottom: 10px; }
+.stats-info { flex: 1; color: #FFFFFF; min-width: 0; }
+.stats-title { font-size: 20px; font-weight: 700; display: block; margin-bottom: 4px; text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.stats-target { font-size: 13px; opacity: 1; display: block; margin-bottom: 10px; text-shadow: 0 1px 2px rgba(0,0,0,0.15); }
 .progress-bar-wrapper { width: 100%; height: 8px; background: rgba(255,255,255,0.3); border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
 .progress-bar { height: 100%; background: var(--cardBg,#FFFFFF); border-radius: 4px; transition: width 0.5s ease; }
-.progress-text { font-size: 14px; opacity: 1; font-weight: 600; }
+.progress-text { font-size: 14px; opacity: 1; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.15); }
 
 .add-water-btn { width: 56px; height: 56px; background: rgba(255,255,255,0.2); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.3); }
 .add-water-btn:active { transform: scale(0.92); background: rgba(255,255,255,0.3); }

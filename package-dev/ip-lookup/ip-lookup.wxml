@@ -1,6 +1,7 @@
 <navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
 
-<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y enhanced show-scrollbar="{{false}}">
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y enhanced show-scrollbar="{{false}}">
 
   <view class="tool-header">
     <view class="tool-icon-large" style="background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);">
@@ -209,7 +210,7 @@
       </view>
     </view>
     <view class="history-search-wrap" wx:if="{{showHistorySearch}}">
-      <input class="history-search-input" placeholder="{{i18n.searchPlaceholder}}" value="{{historySearch}}" bindinput="onHistorySearch" />
+      <input class="history-search-input" placeholder="{{i18n.searchPlaceholder}}" value="{{historySearch}}" bindinput="onHistorySearchInput" />
     </view>
     <view class="history-list">
       <view class="history-item" wx:for="{{historyList}}" wx:key="ip" wx:if="{{!historySearch || item.ip.indexOf(historySearch) >= 0 || item.location.indexOf(historySearch) >= 0 || item.isp.indexOf(historySearch) >= 0}}">

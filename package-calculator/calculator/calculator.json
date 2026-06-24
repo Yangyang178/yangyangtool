@@ -1,5 +1,7 @@
 {
+  "navigationBarTitleText": "科学计算器 - 数学表达式计算",
   "usingComponents": {
-    "navigation-bar": "/components/navigation-bar/navigation-bar"
+    "navigation-bar": "/components/navigation-bar/navigation-bar",
+    "skeleton": "/components/skeleton/skeleton"
   }
 }

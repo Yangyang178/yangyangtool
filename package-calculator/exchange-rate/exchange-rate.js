@@ -1,9 +1,11 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
 Page({
   data: {
+    isLoading: true,
     amount: '',
     fromCurrency: 'CNY',
     fromCurrencyName: '人民币',
@@ -38,6 +40,7 @@ Page({
     ],
 
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
     showTrendChart: false,
     trendPeriod: '7d',
@@ -146,12 +149,14 @@ Page({
 
     var toolTexts = i18n.getToolPageTexts('exchange')
     this.setData({ i18n: toolTexts })
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
 
@@ -393,7 +398,7 @@ Page({
     that.calculateResult()
 
     try {
-      wx.setStorageSync('cachedRates', {
+      storageUtil.safeSet('cachedRates', {
         currencies: newCurrencies,
         quickRates: newQuickRates,
         currencyGroups: newGroups,
@@ -611,6 +616,7 @@ Page({
 
     var text = this.data.amount + ' ' + this.data.fromCurrency + ' = ' + this.data.resultAmount + ' ' + this.data.toCurrency + sourceTag
 
+    wx.vibrateShort({ type: 'light' })
     wx.setClipboardData({
       data: text,
       success: function() {
@@ -685,7 +691,7 @@ Page({
       if (history.length > 60) {
         history = history.slice(history.length - 60)
       }
-      wx.setStorageSync(key, history)
+      storageUtil.safeSet(key, history)
     } catch(e) {}
   },
 
@@ -831,23 +837,23 @@ Page({
         var fillColorTop = isUp ? 'rgba(16,185,129,0.25)' : 'rgba(239,68,68,0.25)'
         var fillColorBot = isUp ? 'rgba(16,185,129,0.02)' : 'rgba(239,68,68,0.02)'
 
-        var points = []
+        var chartPoints = []
         for (var pi = 0; pi < data.length; pi++) {
           var px = padLeft + (chartW / (data.length - 1)) * pi
           var py = padTop + chartH - ((data[pi].rate - minRate) / rateRange) * chartH
-          points.push({ x: px, y: py })
+          chartPoints.push({ x: px, y: py })
         }
 
         ctx.beginPath()
-        ctx.moveTo(points[0].x, padTop + chartH)
-        ctx.lineTo(points[0].x, points[0].y)
-        for (var si = 1; si < points.length; si++) {
-          var prev = points[si - 1]
-          var curr = points[si]
+        ctx.moveTo(chartPoints[0].x, padTop + chartH)
+        ctx.lineTo(chartPoints[0].x, chartPoints[0].y)
+        for (var si = 1; si < chartPoints.length; si++) {
+          var prev = chartPoints[si - 1]
+          var curr = chartPoints[si]
           var cpx = (prev.x + curr.x) / 2
           ctx.bezierCurveTo(cpx, prev.y, cpx, curr.y, curr.x, curr.y)
         }
-        ctx.lineTo(points[points.length - 1].x, padTop + chartH)
+        ctx.lineTo(chartPoints[chartPoints.length - 1].x, padTop + chartH)
         ctx.closePath()
         var grad = ctx.createLinearGradient(0, padTop, 0, padTop + chartH)
         grad.addColorStop(0, fillColorTop)
@@ -856,10 +862,10 @@ Page({
         ctx.fill()
 
         ctx.beginPath()
-        ctx.moveTo(points[0].x, points[0].y)
-        for (var li = 1; li < points.length; li++) {
-          var prevL = points[li - 1]
-          var currL = points[li]
+        ctx.moveTo(chartPoints[0].x, chartPoints[0].y)
+        for (var li = 1; li < chartPoints.length; li++) {
+          var prevL = chartPoints[li - 1]
+          var currL = chartPoints[li]
           var cpxL = (prevL.x + currL.x) / 2
           ctx.bezierCurveTo(cpxL, prevL.y, cpxL, currL.y, currL.x, currL.y)
         }
@@ -869,7 +875,7 @@ Page({
         ctx.lineCap = 'round'
         ctx.stroke()
 
-        var lastPt = points[points.length - 1]
+        var lastPt = chartPoints[chartPoints.length - 1]
         ctx.beginPath()
         ctx.arc(lastPt.x, lastPt.y, 4, 0, Math.PI * 2)
         ctx.fillStyle = lineColor
@@ -888,19 +894,19 @@ Page({
         ctx.textAlign = 'center'
         for (var di = 0; di < data.length; di += labelStep) {
           var dateStr = data[di].date.substring(5)
-          ctx.fillText(dateStr, points[di].x, padTop + chartH + 18)
+          ctx.fillText(dateStr, chartPoints[di].x, padTop + chartH + 18)
         }
         if ((data.length - 1) % labelStep !== 0) {
           var lastDateStr = data[data.length - 1].date.substring(5)
-          ctx.fillText(lastDateStr, points[points.length - 1].x, padTop + chartH + 18)
+          ctx.fillText(lastDateStr, chartPoints[chartPoints.length - 1].x, padTop + chartH + 18)
         }
       })
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('💱 汇率换算 - 百宝工具箱', '/package-calculator/exchange-rate/exchange-rate')
+    return poster.getShareConfig('汇率换算 - 百宝工具箱', '/package-calculator/exchange-rate/exchange-rate', '实时汇率计算，支持全球货币换算')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('💱 汇率换算 - 百宝工具箱')
+    return poster.getTimelineConfig('汇率换算 - 实时汇率计算，全球货币换算')
   }
 })

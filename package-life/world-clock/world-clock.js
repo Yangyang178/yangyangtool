@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var logger = require('../../utils/logger.js')
 var poster = require('../utils/poster.js')
@@ -81,7 +82,9 @@ Page({
     dstAlerts: [],
 
     isDarkMode: false,
-    fontSizeSetting: 'medium'
+    fontClass: '',
+    fontSizeSetting: 'medium',
+    isLoading: true
   },
 
   _updateI18nData: function() {
@@ -147,12 +150,14 @@ Page({
     this.startTimer()
     this._checkDST()
     poster.setupForPage(this, 15)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('worldClock') })
     this._updateI18nData()
@@ -704,7 +709,7 @@ Page({
       for (var si = 0; si < cities.length; si++) {
         ids.push(cities[si].id)
       }
-      wx.setStorageSync('world_clock_cities', ids)
+      storageUtil.safeSet('world_clock_cities', ids)
     } catch (e) {
       logger.log('保存失败:', e)
     }
@@ -727,9 +732,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🌍 世界时钟 - 百宝工具箱', '/package-life/world-clock/world-clock')
+    return poster.getShareConfig('世界时钟 - 百宝工具箱', '/package-life/world-clock/world-clock', '全球时区时间对照，异地时间查询')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🌍 世界时钟 - 百宝工具箱')
+    return poster.getTimelineConfig('世界时钟 - 全球时区异地时间查询')
   }
 })

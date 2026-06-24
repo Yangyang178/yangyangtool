@@ -1,7 +1,9 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
+var contentSecurity = require('../utils/content-security.js')
 Page({
   data: {
     inputText: '',
@@ -28,6 +30,8 @@ Page({
     colorIndex: 0,
     history: [],
     isDarkMode: false,
+    isLoading: true,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -48,12 +52,14 @@ Page({
     this.setData({ i18n: toolTexts })
     this._updateI18nData()
     poster.setupForPage(this, 8)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
     var toolTexts = i18n.getToolPageTexts('qrCode')
@@ -114,6 +120,17 @@ Page({
       return
     }
 
+    var that = this
+    contentSecurity.checkText(text, function(pass, errMsg) {
+      if (!pass) {
+        wx.showToast({ title: errMsg, icon: 'none', duration: 2500 })
+        return
+      }
+      that._generateQRInner(text)
+    })
+  },
+
+  _generateQRInner: function(text) {
     this.setData({ isGenerating: true })
 
     var that = this
@@ -197,7 +214,7 @@ Page({
       }
       newHistory.unshift(text)
       if (newHistory.length > 10) newHistory = newHistory.slice(0, 10)
-      wx.setStorageSync('qr_history', newHistory)
+      storageUtil.safeSet('qr_history', newHistory)
       this.setData({ history: newHistory.slice(0, 5) })
     } catch(e) {}
   },
@@ -243,6 +260,7 @@ Page({
   copyResult: function() {
     var that = this
     if (!this.data.inputText) return
+    wx.vibrateShort({ type: 'light' })
     wx.setClipboardData({
       data: this.data.inputText,
       success: function() { wx.showToast({ title: that.data.i18n.copiedContent, icon: 'success' }) }
@@ -285,6 +303,7 @@ Page({
             if (modalRes.confirm) {
               if (isUrl) {
                 wx.copyClipboardData && wx.copyClipboardData({ data: result })
+                wx.vibrateShort({ type: 'light' })
                 wx.setClipboardData({
                   data: result,
                   success: function() {
@@ -292,6 +311,7 @@ Page({
                   }
                 })
               } else {
+                wx.vibrateShort({ type: 'light' })
                 wx.setClipboardData({
                   data: result,
                   success: function() { wx.showToast({ title: that.data.i18n.copied, icon: 'success' }) }
@@ -469,10 +489,10 @@ Page({
   })(),
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('📱 二维码生成 - 百宝工具箱', '/package-text/qr-code/qr-code')
+    return poster.getShareConfig('二维码生成器 - 百宝工具箱', '/package-text/qr-code/qr-code', '在线生成二维码，文本网址一键转码')
   },
 
   onShareTimeline: function() {
-    return poster.getTimelineConfig('📱 二维码生成 - 百宝工具箱')
+    return poster.getTimelineConfig('二维码生成器 - 文本网址在线转码')
   }
 })

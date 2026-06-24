@@ -1,5 +1,6 @@
-<scroll-view scroll-y class="tool-page container {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}">
+<scroll-view scroll-y class="tool-page container {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}">
   <navigation-bar title="{{i18n.navTitle}}" />
+  <skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
 
   <view class="tool-content">
     <!-- 工具头部 -->
@@ -938,7 +939,7 @@
           </view>
           <view class="info-card">
             <text class="card-label">{{i18n.formatType}}</text>
-            <text class="card-value">{{images[currentImageIndex].info.type}}</text>
+            <text class="card-value">{{imageDetailInfo.type}}</text>
           </view>
           <view class="info-card" wx:if="{{imageDetailInfo}}">
             <text class="card-label">DPI</text>

@@ -10,8 +10,7 @@ var GAMES = [
   { id: 'crazy-click', name: '疯狂点击', icon: '👆', key: 'crazy_click_best_cps', lowerBetter: false, unit: '/s', historyKey: '', formatScore: function(v) { return v > 0 ? v.toFixed(1) + '/s' : '-' } },
   { id: 'maze', name: '迷宫', icon: '🏰', key: 'maze_best_easy', lowerBetter: true, unit: '秒', historyKey: '', formatScore: function(v) { return v > 0 ? v + '秒' : '-' } },
   { id: 'number-sequence', name: '数字顺序记忆', icon: '🔢', key: 'ns_best_normal', lowerBetter: true, unit: '秒', historyKey: '', formatScore: function(v) { return v > 0 ? v + '秒' : '-' } },
-  { id: 'time-perception', name: '时间感知训练', icon: '⏱️', key: 'tp_best_avg', lowerBetter: true, unit: '秒', historyKey: '', formatScore: function(v) { return v >= 0 && v > 0 ? v.toFixed(1) + '秒' : '-' } },
-  { id: 'char-finder', name: '字里寻字', icon: '🔍', key: 'cf_best_level', lowerBetter: false, unit: '关', historyKey: '', formatScore: function(v) { return v > 0 ? '第' + v + '关' : '-' } }
+  { id: 'time-perception', name: '时间感知训练', icon: '⏱️', key: 'tp_best_avg', lowerBetter: true, unit: '秒', historyKey: '', formatScore: function(v) { return v >= 0 && v > 0 ? v.toFixed(1) + '秒' : '-' } }
 ]
 
 Page({
@@ -82,9 +81,9 @@ Page({
     var totalGames = 0
     if (game.id === 'reaction') totalGames = storageUtil.safeGetArray('reaction_results').length
     else if (game.id === 'crazy-click') totalGames = storageUtil.get('crazy_click_total', 0)
-    else if (game.id === 'memory-card') totalGames = storageUtil.get('memory_card_total_wins', 0)
+    else if (game.id === 'memory-card') totalGames = storageUtil.get('memory_card_wins', 0)
     else if (game.id === 'color-memory') totalGames = storageUtil.get('color_memory_total', 0)
-    else if (game.id === 'number-guess') totalGames = storageUtil.get('number_guess_total_wins', 0)
+    else if (game.id === 'number-guess') totalGames = storageUtil.get('number_guess_wins', 0)
 
     // Load history records
     var historyRecords = []

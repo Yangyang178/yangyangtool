@@ -43,14 +43,14 @@ page {
   padding: 32px 0 28px;
   position: relative;
   z-index: 1;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, var(--primaryColor, #667eea) 0%, var(--primaryColor2, var(--primaryDark, #764ba2)) 100%);
   margin: 0 -16px;
   padding-left: 20px;
   padding-right: 20px;
   border-radius: 0 0 36px 36px;
-  box-shadow: 
-    0 10px 40px rgba(102, 126, 234, 0.35),
-    0 4px 16px rgba(118, 75, 162, 0.25),
+  box-shadow:
+    0 10px 40px var(--primaryLight, rgba(102, 126, 234, 0.35)),
+    0 4px 16px var(--primaryLight, rgba(118, 75, 162, 0.25)),
     inset 0 1px 0 rgba(255,255,255,0.2);
   overflow: hidden;
 }
@@ -1353,7 +1353,7 @@ page {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, var(--primaryColor, #667eea) 0%, var(--primaryColor2, var(--primaryDark, #764ba2)) 100%);
   opacity: 0;
   transition: opacity 0.35s ease;
   z-index: 0;
@@ -1460,17 +1460,26 @@ page {
   text-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
 
-.recommend-item-glass {
-  background: rgba(255,255,255,0.18);
+.recommend-item.recommend-item-glass {
+  background:
+    linear-gradient(rgba(255,255,255,0.28), rgba(255,255,255,0.28)),
+    linear-gradient(135deg, var(--primaryColor, #667eea) 0%, var(--primaryColor2, var(--primaryDark, #764ba2)) 100%);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1.5px solid rgba(255,255,255,0.28);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-.recommend-item-glass:active {
-  background: rgba(255,255,255,0.28);
-  border-color: rgba(255,255,255,0.35);
+.recommend-item.recommend-item-glass:active {
+  background:
+    linear-gradient(rgba(255,255,255,0.38), rgba(255,255,255,0.38)),
+    linear-gradient(135deg, var(--primaryColor, #667eea) 0%, var(--primaryColor2, var(--primaryDark, #764ba2)) 100%);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.recommend-item.recommend-item-glass .recommend-icon-in-header {
+  background: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .recommend-name-light {
@@ -2408,7 +2417,7 @@ page.dark-mode {
 }
 
 .dark-mode .header-section {
-  background: linear-gradient(135deg, #1e2847 0%, #2d1b69 100%);
+  background: linear-gradient(135deg, var(--primaryDark, #1e2847) 0%, var(--primaryColor2, var(--primaryColor, #2d1b69)) 100%);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
@@ -2822,14 +2831,24 @@ page.dark-mode {
   color: #F1F5F9;
 }
 
-.dark-mode .recommend-item-glass {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.1);
+.dark-mode .recommend-item.recommend-item-glass {
+  background:
+    linear-gradient(rgba(255,255,255,0.12), rgba(255,255,255,0.12)),
+    linear-gradient(135deg, var(--primaryColor, #667eea) 0%, var(--primaryColor2, var(--primaryDark, #764ba2)) 100%);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-.dark-mode .recommend-item-glass:active {
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.15);
+.dark-mode .recommend-item.recommend-item-glass:active {
+  background:
+    linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.2)),
+    linear-gradient(135deg, var(--primaryColor, #667eea) 0%, var(--primaryColor2, var(--primaryDark, #764ba2)) 100%);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.dark-mode .recommend-item.recommend-item-glass .recommend-icon-in-header {
+  background: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .dark-mode .recommend-name-light {

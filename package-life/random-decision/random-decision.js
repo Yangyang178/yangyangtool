@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -62,6 +63,7 @@ Page({
     lotteryRolling: false,
 
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium'
   },
 
@@ -85,12 +87,14 @@ Page({
     this.loadHistory()
     this.loadStats()
     poster.setupForPage(this, 11)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('randomDecision') })
     this._updateI18nData()
@@ -151,6 +155,12 @@ Page({
       var that = this
       setTimeout(function() { that._drawWheel() }, 100)
     }
+  },
+
+  selectOption: function(e) {
+    var index = e.currentTarget.dataset.index
+    wx.vibrateShort({ type: 'light' })
+    this.setData({ selectedIndex: index })
   },
 
   deleteOption: function(e) {
@@ -652,7 +662,7 @@ Page({
     var record = { time: timeStr, result: result }
     var history = [record].concat(this.data.historyList).slice(0, 20)
     this.setData({ historyList: history })
-    try { wx.setStorageSync('random_decision_history', history) } catch (e) {}
+    try { storageUtil.safeSet('random_decision_history', history) } catch (e) {}
   },
 
   clearHistory: function() {
@@ -694,7 +704,7 @@ Page({
       stats.push({ name: answer, count: 1 })
     }
     stats.sort(function(a, b) { return b.count - a.count })
-    try { wx.setStorageSync('random_decision_stats', stats) } catch (e) {}
+    try { storageUtil.safeSet('random_decision_stats', stats) } catch (e) {}
     this._buildStatsList(stats)
   },
 
@@ -794,9 +804,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🎲 随机决定 - 百宝工具箱', '/package-life/random-decision/random-decision')
+    return poster.getShareConfig('随机决定 - 百宝工具箱', '/package-life/random-decision/random-decision', '选择困难症神器，随机抽签做决定')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🎲 随机决定 - 百宝工具箱')
+    return poster.getTimelineConfig('随机决定 - 随机抽签选择困难神器')
   }
 })

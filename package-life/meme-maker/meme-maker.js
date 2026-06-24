@@ -1,8 +1,10 @@
 var app = getApp()
+var points = require('../../utils/points.js')
 var storageUtil = require('../../utils/storage.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
+var contentSecurity = require('../utils/content-security.js')
 
 var CANVAS_SIZE = 600
 
@@ -114,7 +116,9 @@ Page({
     selectedStickerIndex: -1,
 
     isDarkMode: false,
-    fontSizeSetting: 'medium'
+    fontClass: '',
+    fontSizeSetting: 'medium',
+    isLoading: true
   },
 
   onLoad: function () {
@@ -129,12 +133,14 @@ Page({
     this.setData({ isDarkMode: isDark, i18n: i18n.getToolPageTexts('memeMaker') })
     this._updateI18nData()
     poster.setupForPage(this, 33)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('memeMaker') })
     this._updateI18nData()
@@ -437,8 +443,14 @@ Page({
       sourceType: ['album'],
       success: function (res) {
         var tempFilePath = res.tempFiles[0].tempFilePath
-        that.setData({ customImagePath: tempFilePath })
-        that.drawPreview()
+        contentSecurity.checkImage(tempFilePath, function(pass, errMsg) {
+          if (!pass) {
+            wx.showToast({ title: errMsg, icon: 'none', duration: 2500 })
+            return
+          }
+          that.setData({ customImagePath: tempFilePath })
+          that.drawPreview()
+        })
       }
     })
   },
@@ -639,6 +651,23 @@ Page({
       return
     }
 
+    // 文本内容安全检测
+    var textToCheck = (that.data.topText || '') + ' ' + (that.data.bottomText || '')
+    if (textToCheck.trim()) {
+      contentSecurity.checkText(textToCheck, function(pass, errMsg) {
+        if (!pass) {
+          wx.showToast({ title: errMsg, icon: 'none', duration: 2500 })
+          return
+        }
+        that._generateAndSaveInner()
+      })
+    } else {
+      that._generateAndSaveInner()
+    }
+  },
+
+  _generateAndSaveInner: function () {
+    var that = this
     that.setData({ isGenerating: true })
 
     var query = wx.createSelectorQuery()
@@ -747,10 +776,10 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🎭 表情包制作 - 百宝工具箱', '/package-life/meme-maker/meme-maker')
+    return poster.getShareConfig('表情包制作 - 百宝工具箱', '/package-life/meme-maker/meme-maker', '在线制作表情包，文字配图一键生成')
   },
 
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🎭 表情包制作 - 百宝工具箱')
+    return poster.getTimelineConfig('表情包制作 - 文字配图一键生成')
   }
 })

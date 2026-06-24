@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -49,6 +50,7 @@ Page({
     totalAmount: '0.00',
     totalPerPerson: '0.00',
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
 
     selectedCountryIdx: 0,
@@ -60,7 +62,8 @@ Page({
     roundMode: 'none',
     roundOptions: ROUND_OPTIONS,
     roundedTotal: '',
-    roundedTip: ''
+    roundedTip: '',
+    isLoading: true
   },
 
   onLoad: function() {
@@ -99,6 +102,7 @@ Page({
     var isDark = app.globalData.isDarkMode || false
     this.setData({ isDarkMode: isDark })
     poster.setupForPage(this, 4)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
@@ -129,7 +133,8 @@ Page({
     })
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
   },
@@ -276,6 +281,7 @@ Page({
       text += '\n' + t.roundedAfter + ': ' + sym + this.data.roundedTotal + ' (' + t.tipLabel + sym + this.data.roundedTip + ')'
     }
 
+    wx.vibrateShort({ type: 'light' })
     wx.setClipboardData({
       data: text,
       success: function() {
@@ -310,9 +316,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('💰 小费计算器 - 百宝工具箱', '/package-calculator/tip-calculator/tip-calculator')
+    return poster.getShareConfig('小费计算器 - 百宝工具箱', '/package-calculator/tip-calculator/tip-calculator', '快速计算小费金额，支持多人AA分摊')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('💰 小费计算器 - 百宝工具箱')
+    return poster.getTimelineConfig('小费计算器 - 小费AA分摊计算')
   }
 })

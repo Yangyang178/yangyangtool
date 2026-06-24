@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
@@ -149,6 +150,7 @@ Page({
     categoryTitle: '',
 
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
 
     activeTab: 'search',
@@ -163,7 +165,8 @@ Page({
     quizScore: 0,
     quizTotal: 0,
     quizFinished: false,
-    quizQuestions: []
+    quizQuestions: [],
+    isLoading: true
   },
 
   onLoad: function() {
@@ -181,12 +184,14 @@ Page({
     this.filterItems()
     this._updateI18nData()
     poster.setupForPage(this, 12)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
-    this.setData({ isDarkMode: isDark })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('garbageSorting') })
     this._updateI18nData()
@@ -306,7 +311,7 @@ Page({
     }
     filtered.unshift(newRecord)
     var saved = filtered.slice(0, 20)
-    wx.setStorageSync('garbage_history', saved)
+    storageUtil.safeSet('garbage_history', saved)
     this.setData({ historyList: saved.slice(0, 10) })
   },
 
@@ -550,9 +555,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('♻️ 垃圾分类查询 - 百宝工具箱', '/package-life/garbage-sorting/garbage-sorting')
+    return poster.getShareConfig('垃圾分类查询 - 百宝工具箱', '/package-life/garbage-sorting/garbage-sorting', '垃圾分类识别，干湿有害可回收分类')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig('♻️ 垃圾分类查询 - 百宝工具箱')
+    return poster.getTimelineConfig('垃圾分类查询 - 干湿有害可回收分类')
   }
 })

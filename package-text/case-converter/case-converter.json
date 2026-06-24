@@ -1,6 +1,7 @@
 {
   "usingComponents": {
-    "navigation-bar": "/components/navigation-bar/navigation-bar"
+    "navigation-bar": "/components/navigation-bar/navigation-bar",
+    "skeleton": "/components/skeleton/skeleton"
   },
-  "navigationBarTitleText": "大小写转换"
+  "navigationBarTitleText": "大小写转换 - 英文字母转换工具"
 }

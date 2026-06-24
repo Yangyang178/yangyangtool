@@ -1,15 +1,17 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var toolActions = require('../utils/tool-actions.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
 
 Page({
   data: {
+    isLoading: true,
     ipAddress: '',
     queryResult: null,
-    isLoading: false,
     hasResult: false,
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
 
     myIpInfo: null,
@@ -44,13 +46,15 @@ Page({
     this._loadFavorites()
     this.queryMyIp()
     poster.setupForPage(this, 36)
+    this.setData({ isLoading: false })
   },
 
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
-    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('ipLookup') })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, fontClass: fontClass, i18n: i18n.getToolPageTexts('ipLookup') })
   },
 
   onIpInput: function(e) {
@@ -110,7 +114,7 @@ Page({
       },
       fail: function() {
         that.setData({ isLoading: false })
-        wx.showToast({ title: this.data.i18n.networkError, icon: 'none' })
+        wx.showToast({ title: that.data.i18n.networkError, icon: 'none' })
       }
     })
   },
@@ -229,7 +233,7 @@ Page({
         if (res.confirm) {
           that.setData({ historyList: [] })
           storageUtil.set('ipLookupHistory', [])
-          wx.showToast({ title: this.data.i18n.cleared, icon: 'success' })
+          wx.showToast({ title: that.data.i18n.cleared, icon: 'success' })
         }
       }
     })
@@ -278,10 +282,12 @@ Page({
       var item = list[i]
       text += item.ip + ' | ' + item.location + ' | ' + item.isp + ' | ' + item.time + '\n'
     }
+    wx.vibrateShort({ type: 'light' })
+    var that = this
     wx.setClipboardData({
       data: text,
       success: function() {
-        wx.showToast({ title: this.data.i18n.copiedToClipboard, icon: 'success' })
+        wx.showToast({ title: that.data.i18n.copiedToClipboard, icon: 'success' })
       }
     })
   },
@@ -419,10 +425,12 @@ Page({
         text += r.ip + ' | ' + (r.province || '') + (r.city || '') + ' | ' + (r.isp || '') + '\n'
       }
     }
+    wx.vibrateShort({ type: 'light' })
+    var that = this
     wx.setClipboardData({
       data: text,
       success: function() {
-        wx.showToast({ title: this.data.i18n.copiedToClipboard, icon: 'success' })
+        wx.showToast({ title: that.data.i18n.copiedToClipboard, icon: 'success' })
       }
     })
   },
@@ -464,10 +472,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig('🌐 IP地址查询 - 百宝工具箱', '/package-dev/ip-lookup/ip-lookup')
+    return poster.getShareConfig('IP地址查询 - 百宝工具箱', '/package-dev/ip-lookup/ip-lookup', '查询IP归属地运营商信息')
   },
-
   onShareTimeline: function() {
-    return poster.getTimelineConfig('🌐 IP地址查询 - 百宝工具箱')
+    return poster.getTimelineConfig('IP地址查询 - 归属地运营商查询')
   }
 })

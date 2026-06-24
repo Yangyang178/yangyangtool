@@ -1,7 +1,8 @@
 <navigation-bar title="{{i18n.myPage}}" back="{{false}}" color="{{isDarkMode ? 'white' : 'black'}}" background="{{isDarkMode ? '#0F172A' : '#F8FAFC'}}"></navigation-bar>
+<skeleton show="{{isLoading}}" type="detail" dark="{{isDarkMode}}"></skeleton>
 
 <scroll-view class="main-scroll {{isDarkMode ? 'dark-mode' : ''}} {{fontClass}}" scroll-y enhanced show-scrollbar="{{false}}" bounces="{{false}}">
-  <view class="page-container {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" style="{{themeStyle}}">
+  <view class="page-container {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}">
 
     <!-- 用户信息区 -->
     <view class="user-section">
@@ -30,7 +31,7 @@
     </view>
 
     <!-- 趣味化统计卡片 -->
-    <view class="fun-stats-card">
+    <view class="fun-stats-card {{themeClass}}" style="{{themeStyle}}">
       <view class="stats-header">
         <text class="stats-title">⚡ {{i18n.efficiencyStats}}</text>
         <text class="stats-subtitle">{{i18n.cumulativeData}}</text>
@@ -76,7 +77,7 @@
     </view>
 
     <!-- 每日签到 -->
-    <view class="checkin-card">
+    <view class="checkin-card {{themeClass}}" style="{{themeStyle}}">
       <view class="checkin-header">
         <view class="checkin-title-row">
           <text class="checkin-icon">📅</text>
@@ -370,6 +371,30 @@
           <view class="frame-guide-text">
             <text class="frame-guide-title">{{i18n.frameSettings}}</text>
             <text class="frame-guide-desc">{{i18n.frameGuideDesc}}</text>
+          </view>
+        </view>
+        <text class="frame-guide-arrow">›</text>
+      </view>
+
+      <!-- 主题色切换 -->
+      <view class="profile-frame-guide" bindtap="openThemeSelector">
+        <view class="frame-guide-left">
+          <text class="frame-guide-icon">🎨</text>
+          <view class="frame-guide-text">
+            <text class="frame-guide-title">主题色</text>
+            <text class="frame-guide-desc">{{activeTheme ? activeTheme.name : '默认深蓝'}}</text>
+          </view>
+        </view>
+        <text class="frame-guide-arrow">›</text>
+      </view>
+
+      <!-- 徽章切换 -->
+      <view class="profile-frame-guide" bindtap="openBadgeSelector">
+        <view class="frame-guide-left">
+          <text class="frame-guide-icon">🏅</text>
+          <view class="frame-guide-text">
+            <text class="frame-guide-title">佩戴徽章</text>
+            <text class="frame-guide-desc">{{activeBadge ? '佩戴中' : '未佩戴'}}</text>
           </view>
         </view>
         <text class="frame-guide-arrow">›</text>
@@ -705,6 +730,60 @@
         </view>
       </view>
       <text class="desktop-entry-arrow">›</text>
+    </view>
+
+    <!-- 推荐小程序 -->
+    <view class="mini-apps-section">
+      <view class="mini-apps-title">{{i18n.moreMiniApps}}</view>
+      <view class="mini-apps-grid">
+        <view class="mini-app-card" bindtap="openMiniApp" bindlongpress="showMiniAppActions" data-appid="wxce11fd4934c75169" data-name="{{i18n.miniAppName1}}" hover-class="mini-app-hover">
+          <view class="mini-app-icon-wrap" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <text class="mini-app-icon-text">💰</text>
+          </view>
+          <text class="mini-app-name">{{i18n.miniAppName1}}</text>
+          <text class="mini-app-desc">{{i18n.miniAppDesc1}}</text>
+        </view>
+        <view class="mini-app-card" bindtap="openMiniApp" bindlongpress="showMiniAppActions" data-appid="wxf1f8b8990b5b4ba3" data-name="{{i18n.miniAppName2}}" hover-class="mini-app-hover">
+          <view class="mini-app-icon-wrap" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+            <text class="mini-app-icon-text">🌿</text>
+          </view>
+          <text class="mini-app-name">{{i18n.miniAppName2}}</text>
+          <text class="mini-app-desc">{{i18n.miniAppDesc2}}</text>
+        </view>
+        <view class="mini-app-card" bindtap="openMiniApp" bindlongpress="showMiniAppActions" data-appid="wx5a9042fd5b6c1e66" data-name="{{i18n.miniAppName3}}" hover-class="mini-app-hover">
+          <view class="mini-app-icon-wrap" style="background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);">
+            <text class="mini-app-icon-text">🏠</text>
+          </view>
+          <text class="mini-app-name">{{i18n.miniAppName3}}</text>
+          <text class="mini-app-desc">{{i18n.miniAppDesc3}}</text>
+        </view>
+      </view>
+      <text class="mini-apps-tip">{{i18n.miniAppLongPressTip}}</text>
+    </view>
+
+    <!-- 小程序操作面板 -->
+    <view class="mini-app-mask {{showMiniAppPanel ? 'show' : ''}}" bindtap="hideMiniAppActions"></view>
+    <view class="mini-app-panel {{showMiniAppPanel ? 'show' : ''}} {{isDarkMode ? 'dark-mode' : ''}}">
+      <view class="mini-app-panel-header">
+        <text class="mini-app-panel-title">{{miniAppActionName}}</text>
+        <view class="mini-app-panel-close" bindtap="hideMiniAppActions">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="mini-app-panel-body">
+        <view class="mini-app-panel-info">
+          <text class="mini-app-panel-label">{{i18n.miniAppIdLabel}}</text>
+          <text class="mini-app-panel-appid">{{miniAppActionAppId}}</text>
+        </view>
+        <button class="mini-app-panel-btn mini-app-panel-open" bindtap="openMiniAppFromPanel" hover-class="mini-app-panel-btn-hover">
+          <text class="mini-app-panel-btn-icon">🔗</text>
+          <text class="mini-app-panel-btn-text">{{i18n.miniAppOpenBtn}}</text>
+        </button>
+        <button class="mini-app-panel-btn mini-app-panel-copy" bindtap="copyMiniAppId" hover-class="mini-app-panel-btn-hover">
+          <text class="mini-app-panel-btn-icon">📋</text>
+          <text class="mini-app-panel-btn-text">{{i18n.miniAppCopyIdBtn}}</text>
+        </button>
+      </view>
     </view>
 
     <!-- 系统设置 -->
@@ -1144,7 +1223,7 @@
           <view class="shop-item-icon-wrap {{item.frameClass ? item.frameClass + '-preview' : ''}}" wx:if="{{item.type !== 'theme'}}">
             <text class="shop-item-icon">{{item.icon}}</text>
           </view>
-          <view class="shop-item-color-preview" wx:if="{{item.type === 'theme'}}" style="background: {{item.color}};">
+          <view class="shop-item-color-preview" wx:if="{{item.type === 'theme'}}" style="background: {{item.color2 ? 'linear-gradient(135deg, ' + item.color + ' 0%, ' + item.color2 + ' 100%)' : item.color}};">
             <text class="shop-item-color-icon">{{item.icon}}</text>
           </view>
           <view class="shop-item-info">
@@ -1153,10 +1232,7 @@
           </view>
           <view class="shop-item-action">
             <text class="shop-item-price" wx:if="{{!item.isOwned}}">💎 {{item.price}}</text>
-            <text class="shop-item-owned" wx:elif="{{item.isActive}}" data-type="{{item.type}}" catchtap="deactivateItem">{{i18n.itemInUse}}</text>
-            <text class="shop-item-activate" wx:elif="{{item.isOwned && item.type === 'theme'}}" data-id="{{item.id}}" catchtap="activateItem">{{i18n.itemUse}}</text>
-            <text class="shop-item-activate" wx:elif="{{item.type === 'frame'}}">{{i18n.itemSelect}}</text>
-            <text class="shop-item-activate" wx:else>{{i18n.itemOwned}}</text>
+            <text class="shop-item-owned" wx:else>{{i18n.itemOwned}}</text>
           </view>
         </view>
       </scroll-view>
@@ -1212,6 +1288,72 @@
       <view class="frame-selector-tip" wx:if="{{ownedFrames.length === 0}}">
         <text class="frame-tip-text">{{i18n.noFrameTip}}</text>
         <view class="frame-tip-btn" bindtap="goToShopFromSelector">{{i18n.goToRedeem}}</view>
+      </view>
+    </view>
+
+    <!-- 主题色选择弹窗 -->
+    <view class="ptmask" wx:if="{{showThemeSelector}}" bindtap="closeThemeSelector"></view>
+    <view class="ptpanel {{showThemeSelector ? 'show' : ''}}">
+      <view class="ptpanel-header">
+        <text class="ptpanel-title">🎨 选择主题色</text>
+        <text class="ptpanel-close" bindtap="closeThemeSelector">✕</text>
+      </view>
+
+      <scroll-view class="frame-selector-list" scroll-y>
+        <view class="theme-option {{!activeTheme ? 'theme-option-active' : ''}}" bindtap="selectTheme" data-id="">
+          <view class="theme-option-preview" style="background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);"></view>
+          <view class="theme-option-info">
+            <text class="theme-option-name">默认深蓝</text>
+          </view>
+          <view class="frame-option-check" wx:if="{{!activeTheme}}">✓</view>
+        </view>
+        <view wx:for="{{ownedThemes}}" wx:key="id" class="theme-option {{activeTheme && activeTheme.id === item.id ? 'theme-option-active' : ''}}" bindtap="selectTheme" data-id="{{item.id}}">
+          <view class="theme-option-preview" style="background: {{item.color2 ? 'linear-gradient(135deg, ' + item.color + ' 0%, ' + item.color2 + ' 100%)' : item.color}};"></view>
+          <view class="theme-option-info">
+            <text class="theme-option-name">{{item.name}}</text>
+          </view>
+          <view class="frame-option-check" wx:if="{{activeTheme && activeTheme.id === item.id}}">✓</view>
+        </view>
+      </scroll-view>
+
+      <view class="frame-selector-tip" wx:if="{{ownedThemes.length === 0}}">
+        <text class="frame-tip-text">还没有主题色，去商城兑换吧</text>
+        <view class="frame-tip-btn" bindtap="goToShopFromThemeSelector">去兑换</view>
+      </view>
+    </view>
+
+    <!-- 徽章选择弹窗 -->
+    <view class="ptmask" wx:if="{{showBadgeSelector}}" bindtap="closeBadgeSelector"></view>
+    <view class="ptpanel {{showBadgeSelector ? 'show' : ''}}">
+      <view class="ptpanel-header">
+        <text class="ptpanel-title">🏅 选择徽章</text>
+        <text class="ptpanel-close" bindtap="closeBadgeSelector">✕</text>
+      </view>
+
+      <scroll-view class="frame-selector-list" scroll-y>
+        <view class="badge-option {{!activeBadge ? 'badge-option-active' : ''}}" bindtap="selectBadge" data-id="">
+          <view class="badge-option-icon-wrap">
+            <text class="badge-option-icon">—</text>
+          </view>
+          <view class="badge-option-info">
+            <text class="badge-option-name">不佩戴</text>
+          </view>
+          <view class="frame-option-check" wx:if="{{!activeBadge}}">✓</view>
+        </view>
+        <view wx:for="{{ownedBadges}}" wx:key="id" class="badge-option {{activeBadgeId === item.id ? 'badge-option-active' : ''}}" bindtap="selectBadge" data-id="{{item.id}}">
+          <view class="badge-option-icon-wrap">
+            <text class="badge-option-icon">{{item.icon}}</text>
+          </view>
+          <view class="badge-option-info">
+            <text class="badge-option-name">{{item.name}}</text>
+          </view>
+          <view class="frame-option-check" wx:if="{{activeBadgeId === item.id}}">✓</view>
+        </view>
+      </scroll-view>
+
+      <view class="frame-selector-tip" wx:if="{{ownedBadges.length === 0}}">
+        <text class="frame-tip-text">还没有徽章，去商城兑换吧</text>
+        <view class="frame-tip-btn" bindtap="goToShopFromBadgeSelector">去兑换</view>
       </view>
     </view>
 

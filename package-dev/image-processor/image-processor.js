@@ -1,9 +1,12 @@
 var storageUtil = require('../../utils/storage.js')
+var points = require('../../utils/points.js')
 var poster = require('../utils/poster.js')
 var i18n = require('../../utils/i18n.js')
+var contentSecurity = require('../utils/content-security.js')
 
 Page({
   data: {
+    isLoading: true,
     currentFunction: 'compress',
     images: [],
     currentImageIndex: 0,
@@ -41,6 +44,7 @@ Page({
     
     isProcessing: false,
     isDarkMode: false,
+    fontClass: '',
     fontSizeSetting: 'medium',
 
     functions: [
@@ -201,13 +205,16 @@ Page({
     this._updateI18nData(i18nTexts)
     this.updateFormatInfo()
     poster.setupForPage(this, 21)
+    this.setData({ isLoading: false })
   },
+
   onShow: function() {
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     var i18nTexts = i18n.getToolPageTexts('imageProcessor')
-    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, i18n: i18nTexts })
+    var fontClass = points.getFontClass()
+    this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, fontClass: fontClass, i18n: i18nTexts })
     this._updateI18nData(i18nTexts)
   },
 
@@ -422,6 +429,22 @@ Page({
   },
 
   handleSelectedImages: function(newImages) {
+    var self = this
+    // 内容安全检测：对第一张图片进行检测
+    if (newImages.length > 0 && newImages[0].path) {
+      contentSecurity.checkImage(newImages[0].path, function(pass, errMsg) {
+        if (!pass) {
+          wx.showToast({ title: errMsg, icon: 'none', duration: 2500 })
+          return
+        }
+        self._handleSelectedImagesInner(newImages)
+      })
+    } else {
+      self._handleSelectedImagesInner(newImages)
+    }
+  },
+
+  _handleSelectedImagesInner: function(newImages) {
     if (this.data.currentFunction === 'stitch') {
       var currentStitchImages = []
       for (var si = 0; si < this.data.stitchImages.length; si++) {
@@ -641,6 +664,21 @@ Page({
       return
     }
 
+    var that = this
+    if (this.data.batchMode === 'watermark' && this.data.batchWatermarkText) {
+      contentSecurity.checkText(this.data.batchWatermarkText, function(pass, errMsg) {
+        if (!pass) {
+          wx.showToast({ title: errMsg, icon: 'none', duration: 2500 })
+          return
+        }
+        that._startBatchProcessInner()
+      })
+      return
+    }
+    that._startBatchProcessInner()
+  },
+
+  _startBatchProcessInner: function() {
     var unloadedCount = 0
     for (var ui = 0; ui < this.data.batchImages.length; ui++) {
       if (!this.data.batchImages[ui].width || !this.data.batchImages[ui].height) {
@@ -650,7 +688,7 @@ Page({
     if (unloadedCount > 0) {
       wx.showToast({ title: this.data.i18n.imageLoading, icon: 'none' })
       var that = this
-      setTimeout(function() { that.startBatchProcess() }, 500)
+      setTimeout(function() { that._startBatchProcessInner() }, 500)
       return
     }
 
@@ -2444,6 +2482,18 @@ Page({
       return
     }
 
+    var that = this
+    contentSecurity.checkText(this.data.wmText, function(pass, errMsg) {
+      if (!pass) {
+        wx.showToast({ title: errMsg, icon: 'none', duration: 2500 })
+        return
+      }
+      that._applyWatermarkInner()
+    })
+  },
+
+  _applyWatermarkInner: function() {
+    var image = this.getCurrentImage()
     this.setData({ isProcessing: true })
     var that = this
     var w = image.width
@@ -2526,9 +2576,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return poster.getShareConfig(this.data.i18n.shareTitle, '/package-dev/image-processor/image-processor')
+    return poster.getShareConfig('图片处理 - 百宝工具箱', '/package-dev/image-processor/image-processor', '图片压缩裁剪水印，EXIF信息查看')
   },
   onShareTimeline: function() {
-    return poster.getTimelineConfig(this.data.i18n.shareTitle)
+    return poster.getTimelineConfig('图片处理 - 压缩裁剪水印EXIF查看')
   }
 })

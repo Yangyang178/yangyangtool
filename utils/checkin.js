@@ -38,12 +38,12 @@ var Checkin = {
 
     records.unshift({ date: today, points: totalPoints, continuousDays: continuousDays + 1 })
     if (records.length > 90) records = records.slice(0, 90)
-    wx.setStorageSync(CHECKIN_KEY, records)
+    storageUtil.safeSet(CHECKIN_KEY, records)
 
     var currentPoints = (storageUtil.get(POINTS_KEY, 0) || 0) + totalPoints
     var totalEarned = (storageUtil.get(TOTAL_POINTS_KEY, 0) || 0) + totalPoints
-    wx.setStorageSync(POINTS_KEY, currentPoints)
-    wx.setStorageSync(TOTAL_POINTS_KEY, totalEarned)
+    storageUtil.safeSet(POINTS_KEY, currentPoints)
+    storageUtil.safeSet(TOTAL_POINTS_KEY, totalEarned)
 
     return {
       success: true,
@@ -81,7 +81,7 @@ var Checkin = {
   spendPoints: function(amount) {
     var current = this.getCurrentPoints()
     if (current < amount) return { success: false, message: '积分不足' }
-    wx.setStorageSync(POINTS_KEY, current - amount)
+    storageUtil.safeSet(POINTS_KEY, current - amount)
     return { success: true, remaining: current - amount }
   },
 
