@@ -19,7 +19,8 @@
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
-    }
+    },
+    "minifyWXML": true
   },
   "condition": {},
   "editorSetting": {
@@ -27,6 +28,5 @@
     "tabSize": 2
   },
   "cloudfunctionRoot": "cloudfunctions/",
-  "cloudbaseRoot": "cloudbaserc.json",
-  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/"
+  "cloudbaseRoot": "cloudbaserc.json"
 }

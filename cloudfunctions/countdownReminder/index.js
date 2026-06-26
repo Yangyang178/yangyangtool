@@ -34,7 +34,8 @@ async function registerEvent(event) {
   var templateId = event.templateId
 
   // 获取当前用户openid
-  var openid = event.userInfo ? event.userInfo.openId : ''
+  var wxContext = cloud.getWXContext()
+  var openid = wxContext.OPENID || ''
 
   if (!eventId || !eventName || !targetDate) {
     return { success: false, error: 'missing required fields' }

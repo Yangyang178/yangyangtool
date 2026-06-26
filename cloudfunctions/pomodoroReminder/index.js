@@ -29,7 +29,8 @@ async function registerReminder(event) {
   var duration = event.duration || 25
   var mode = event.mode || 'work'
   var templateId = event.templateId
-  var openid = event.userInfo ? event.userInfo.openId : ''
+  var wxContext = cloud.getWXContext()
+  var openid = wxContext.OPENID || ''
 
   if (!templateId || templateId.indexOf('TEMPL_ID') !== -1) {
     return { success: false, error: 'template not configured' }
@@ -61,7 +62,8 @@ async function registerReminder(event) {
 
 // 取消提醒
 async function cancelReminder(event) {
-  var openid = event.userInfo ? event.userInfo.openId : ''
+  var wxContext = cloud.getWXContext()
+  var openid = wxContext.OPENID || ''
 
   try {
     var result = await db.collection('pomodoro_reminders')

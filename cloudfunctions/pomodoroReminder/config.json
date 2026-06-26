@@ -2,6 +2,6 @@
   "triggers": [{
     "name": "minuteCheck",
     "type": "timer",
-    "config": "0 0 */1 * * * *"
+    "config": "*/1 * * * *"
   }]
 }

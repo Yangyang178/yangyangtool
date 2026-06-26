@@ -30,7 +30,8 @@ async function registerReminder(event) {
   var todayCups = event.todayCups || 0
   var targetCups = event.targetCups || 8
   var templateId = event.templateId
-  var openid = event.userInfo ? event.userInfo.openId : ''
+  var wxContext = cloud.getWXContext()
+  var openid = wxContext.OPENID || ''
 
   if (!templateId || templateId.indexOf('TEMPL_ID') !== -1) {
     return { success: false, error: 'template not configured' }
@@ -83,7 +84,8 @@ async function registerReminder(event) {
 
 // 取消喝水提醒
 async function cancelReminder(event) {
-  var openid = event.userInfo ? event.userInfo.openId : ''
+  var wxContext = cloud.getWXContext()
+  var openid = wxContext.OPENID || ''
 
   try {
     var result = await db.collection('water_reminders')
