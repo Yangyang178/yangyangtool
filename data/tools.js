@@ -7,7 +7,7 @@ var tools = [
   { id: 26, name: '科学计算器', description: '四则运算+科学函数，历史记录', icon: '🧮', iconBg: 'linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%)', category: 'calculator', route: '/package-calculator/calculator/calculator', isHot: true },
   { id: 25, name: '个税计算器', description: '2024最新个税专项扣除，月薪→税后工资', icon: '💰', iconBg: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)', category: 'calculator', route: '/package-calculator/tax-calculator/tax-calculator', isHot: true },
   { id: 17, name: 'JSON格式化', description: 'JSON美化压缩工具', icon: '{}', iconBg: 'linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)', category: 'dev', route: '/package-dev/json-formatter/json-formatter', isHot: true },
-  { id: 21, name: '图片处理', description: '压缩/转换/裁剪/信息查看', icon: '📹', iconBg: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)', category: 'office', route: '/package-dev/image-processor/image-processor', isHot: true },
+  { id: 21, name: '图片处理', description: '压缩/转换/裁剪/拼接/水印/信息', icon: '📹', iconBg: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)', category: 'office', route: '/package-dev/image-processor/image-processor', isHot: true },
   { id: 13, name: '日期计算器', description: '间隔天数精确计算', icon: '📅', iconBg: 'linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)', category: 'datetime', route: '/package-life/date-calculator/date-calculator', isHot: true },
   { id: 23, name: 'BMI 计算器', description: '身高体重→BMI指数+健康建议', icon: '⚖️', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', category: 'life', route: '/package-calculator/bmi-calculator/bmi-calculator', isHot: true },
   { id: 28, name: '时间戳转换', description: 'Unix时间戳↔日期互转，实时显示', icon: '⏱️', iconBg: 'linear-gradient(135deg, #CCFBF1 0%, #99F6E4 100%)', category: 'dev', route: '/package-dev/timestamp-converter/timestamp-converter', isHot: true },
@@ -48,7 +48,9 @@ var tools = [
   { id: 47, name: '视力测试', description: '色盲/散光/视力表三合一', icon: '👁', iconBg: 'linear-gradient(135deg, #059669 0%, #065F46 100%)', category: 'fun', route: '/package-fun/vision-test/vision-test', isHot: false },
   { id: 48, name: '心理测试', description: '趣味性格/心理小测试', icon: '🔮', iconBg: 'linear-gradient(135deg, #DB2777 0%, #9D174D 100%)', category: 'fun', route: '/package-fun/psychology-test/psychology-test', isHot: false },
   { id: 49, name: '数字顺序记忆', description: '按1-2-3依次点完，练习专注与顺序记忆', icon: '🔢', iconBg: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)', category: 'fun', route: '/package-fun/number-sequence/number-sequence', isHot: false },
-  { id: 50, name: '时间感知训练', description: '随机目标秒数，默数计时，累计绝对误差', icon: '⏱️', iconBg: 'linear-gradient(135deg, #F59E0B 0%, #B45309 100%)', category: 'fun', route: '/package-fun/time-perception/time-perception', isHot: false }
+  { id: 50, name: '时间感知训练', description: '随机目标秒数，默数计时，累计绝对误差', icon: '⏱️', iconBg: 'linear-gradient(135deg, #F59E0B 0%, #B45309 100%)', category: 'fun', route: '/package-fun/time-perception/time-perception', isHot: false },
+  { id: 51, name: '九宫格切图', description: '一键切图发朋友圈，支持2×2/3×3/4×4', icon: '🔲', iconBg: 'linear-gradient(135deg, #F472B6 0%, #EC4899 100%)', category: 'office', route: '/package-office/grid-image/grid-image', isHot: true },
+  { id: 53, name: '油耗计算器', description: '百公里油耗/费用计算，历史记录', icon: '⛽', iconBg: 'linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)', category: 'calculator', route: '/package-calculator/fuel-calculator/fuel-calculator', isHot: true }
 ]
 
 var _routeMap = null

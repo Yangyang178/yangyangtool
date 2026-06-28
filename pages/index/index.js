@@ -33,6 +33,8 @@ Page({
     searchKeyword: '',
     searchHistory: [],
     showSearchPanel: false,
+    searchSuggestions: [],
+    searchNoResult: false,
     isEditMode: false,
     isDragging: false,
     dragIndex: -1,
@@ -47,7 +49,9 @@ Page({
     todayTip: null,
     moreRecordsText: '',
     hiddenToolsText: '',
-    allRecentUseText: ''
+    allRecentUseText: '',
+    categorySections: [],
+    collapsedCategories: {}
   },
 
   onLoad: function(options) {
@@ -83,7 +87,7 @@ Page({
     var history = storageUtil.safeGetArray('searchHistory')
     var hasSeenGuide = storageUtil.get('hasSeenGuide')
     var guideVersion = storageUtil.get('guideVersion')
-    var currentGuideVersion = 3
+    var currentGuideVersion = 4
     var shouldShowGuide = !hasSeenGuide || guideVersion < currentGuideVersion
 
     var recentTools = storageUtil.safeGetArray('recentTools')
@@ -107,6 +111,7 @@ Page({
 
     this.loadCustomLayout()
     this.filterTools()
+    this.buildCategorySections(tools)
     this.applyCurrentTheme()
     this.computeTopTools(tools)
     this.computeRecommendations(tools)
@@ -150,6 +155,79 @@ Page({
       this.setData({ recentTools: recentTools, displayRecentTools: recentTools.slice(0, 2), moreRecordsText: moreRecordsText, allRecentUseText: allRecentUseText })
     } catch(e) {}
     wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] })
+    this.checkBackupReminder()
+  },
+
+  onCloudRestored: function() {
+    logger.log('[首页] 云端数据已恢复，刷新页面')
+    var favorites = storageUtil.safeGetArray('favorites')
+    var allTools = toolsData.getToolsWithFavorites(favorites)
+    var tools = []
+    for (var fi = 0; fi < allTools.length; fi++) {
+      if (allTools[fi].category !== 'fun') tools.push(allTools[fi])
+    }
+    tools = i18n.translateTools(tools)
+
+    var recentTools = storageUtil.safeGetArray('recentTools')
+    recentTools = i18n.translateTools(recentTools)
+    var moreRecordsText = ''
+    if (recentTools.length > 2) {
+      moreRecordsText = i18n.t('moreRecords', { count: recentTools.length - 2 })
+    }
+    var allRecentUseText = i18n.t('allRecentUse', { count: recentTools.length })
+
+    this.setData({
+      tools: tools,
+      filteredTools: tools,
+      recentTools: recentTools,
+      displayRecentTools: recentTools.slice(0, 2),
+      moreRecordsText: moreRecordsText,
+      allRecentUseText: allRecentUseText,
+      searchHistory: storageUtil.safeGetArray('searchHistory')
+    })
+
+    this.loadCustomLayout()
+    this.filterTools()
+    this.buildCategorySections(tools)
+    this.applyCurrentTheme()
+    this.computeTopTools(tools)
+    this.computeRecommendations(tools)
+    this.computeTodayTip(tools)
+
+    wx.showToast({ title: '已从云端恢复数据', icon: 'success', duration: 2000 })
+  },
+
+  checkBackupReminder: function() {
+    try {
+      var lastBackupTime = storageUtil.get('lastBackupTime', '')
+      if (lastBackupTime) return
+      var reminded = storageUtil.get('backupRemindDismissed', '')
+      if (reminded) return
+      var totalUsage = storageUtil.get('totalUsageCount', 0)
+      if (!totalUsage || totalUsage < 10) return
+    } catch(e) { return }
+
+    var that = this
+    setTimeout(function() {
+      wx.showModal({
+        title: i18n.t('backupRemindTitle'),
+        content: i18n.t('backupRemindContent'),
+        confirmText: i18n.t('backupRemindNow'),
+        cancelText: i18n.t('backupRemindLater'),
+        confirmColor: '#3B82F6',
+        success: function(res) {
+          if (res.confirm) {
+            var appInst = getApp()
+            if (appInst && typeof appInst.autoBackup === 'function') {
+              appInst.autoBackup()
+              wx.showToast({ title: i18n.t('backupRemindDoing'), icon: 'none', duration: 2000 })
+            }
+          } else {
+            try { storageUtil.set('backupRemindDismissed', '1') } catch(e) {}
+          }
+        }
+      })
+    }, 2000)
   },
 
   applyLanguage: function() {
@@ -199,6 +277,7 @@ Page({
       hiddenToolsText: hiddenToolsText,
       allRecentUseText: allRecentUseText
     })
+    this.buildCategorySections(tools)
     this.computeTodayTip(tools)
   },
 
@@ -338,6 +417,13 @@ Page({
         this.setData({ fontSizeSetting: fontSize })
         var bgColor = isDark ? '#0F172A' : '#F8FAFC'
         wx.setBackgroundColor({ backgroundColor: bgColor, backgroundColorTop: bgColor, backgroundColorBottom: bgColor })
+        if (isDark) {
+          wx.setNavigationBarColor({ frontColor: '#ffffff', backgroundColor: '#0F172A' })
+          wx.setTabBarStyle({ color: '#64748B', selectedColor: '#60A5FA', backgroundColor: '#1E293B', borderStyle: 'black' })
+        } else {
+          wx.setNavigationBarColor({ frontColor: '#000000', backgroundColor: '#F8FAFC' })
+          wx.setTabBarStyle({ color: '#94A3B8', selectedColor: '#3B82F6', backgroundColor: '#FFFFFF', borderStyle: 'white' })
+        }
         var activeTheme = points.getActiveTheme()
         var themeStyle = points.getThemeStyle()
         var fontClass = points.getFontClass()
@@ -368,7 +454,7 @@ Page({
     }
   },
 
-  onGuideClose: function() { this.setData({ showGuide: false }) },
+  onGuideClose: function() { this.setData({ showGuide: false }); this.applyCurrentTheme() },
 
   onPullDownRefresh: function() {
     this.setData({ isRefreshing: true })
@@ -568,11 +654,18 @@ Page({
   },
 
   onSearchInput: function(e) {
-    this.setData({ searchKeyword: e.detail.value.trim() })
+    var keyword = e.detail.value.trim()
+    this.setData({ searchKeyword: keyword })
+    if (keyword.length > 0) {
+      this.updateSearchSuggestions(keyword)
+      this.setData({ showSearchPanel: true })
+    } else {
+      this.setData({ searchSuggestions: [], searchNoResult: false })
+    }
     this.filterTools()
   },
 
-  clearSearch: function() { this.setData({ searchKeyword: '', showSearchPanel: false }); this.filterTools() },
+  clearSearch: function() { this.setData({ searchKeyword: '', showSearchPanel: false, searchSuggestions: [], searchNoResult: false }); this.filterTools() },
 
   onSearchFocus: function() { this.setData({ showSearchPanel: true }) },
 
@@ -581,19 +674,15 @@ Page({
   filterTools: function() {
     try {
       var filtered = [].concat(this.data.tools || [])
-      if (this.data.currentCategory !== 'all') {
-        var catFiltered = []
-        for (var i = 0; i < filtered.length; i++) { if (filtered[i].category === this.data.currentCategory) catFiltered.push(filtered[i]) }
-        filtered = catFiltered
-      }
+
       if (this.data.searchKeyword) {
+        // 搜索时全局匹配，不受分类限制
         var keyword = this.data.searchKeyword.toLowerCase()
         var result = []
         for (var j = 0; j < filtered.length; j++) {
           var tool = filtered[j]
           var nameMatch = helpers.fuzzyMatch(tool.name, keyword)
           var descMatch = helpers.fuzzyMatch(tool.description, keyword)
-          // Also match against Chinese original name for pinyin search
           var zhName = i18n.getToolName(tool.id, '')
           var zhDesc = i18n.getToolDesc(tool.id, '')
           var zhNameMatch = zhName && zhName !== tool.name ? helpers.fuzzyMatch(zhName, keyword) : false
@@ -607,14 +696,116 @@ Page({
           }
         }
         filtered = result
-        this.addToSearchHistory(this.data.searchKeyword)
+        if (result.length > 0) {
+          this.addToSearchHistory(this.data.searchKeyword)
+        }
+        this.setData({ searchNoResult: result.length === 0 })
       } else {
+        // 非搜索时按分类筛选
+        if (this.data.currentCategory !== 'all') {
+          var catFiltered = []
+          for (var i = 0; i < filtered.length; i++) { if (filtered[i].category === this.data.currentCategory) catFiltered.push(filtered[i]) }
+          filtered = catFiltered
+        }
         for (var k = 0; k < filtered.length; k++) {
           filtered[k]._highlighted = { name: filtered[k].name, description: filtered[k].description }
         }
+        this.setData({ searchNoResult: false })
       }
       this.setData({ filteredTools: filtered })
     } catch(e) {}
+  },
+
+  updateSearchSuggestions: function(keyword) {
+    var kw = keyword.toLowerCase()
+    var allTools = this.data.tools || []
+    var suggestions = []
+    for (var i = 0; i < allTools.length; i++) {
+      var tool = allTools[i]
+      var nameMatch = helpers.fuzzyMatch(tool.name, kw)
+      var descMatch = helpers.fuzzyMatch(tool.description, kw)
+      var zhName = i18n.getToolName(tool.id, '')
+      var zhNameMatch = zhName && zhName !== tool.name ? helpers.fuzzyMatch(zhName, kw) : false
+      if (nameMatch || descMatch || zhNameMatch) {
+        suggestions.push({
+          id: tool.id,
+          name: tool.name,
+          description: tool.description,
+          icon: tool.icon,
+          iconBg: tool.iconBg,
+          route: tool.route
+        })
+        if (suggestions.length >= 5) break
+      }
+    }
+    this.setData({ searchSuggestions: suggestions })
+  },
+
+  onSuggestionClick: function(e) {
+    var route = e.currentTarget.dataset.route
+    if (route) {
+      wx.navigateTo({ url: route })
+    }
+  },
+
+  buildCategorySections: function(tools) {
+    // 分类图标和排序配置
+    var categoryConfig = {
+      calculator: { icon: '🧮', sort: 1 },
+      text: { icon: '📝', sort: 2 },
+      datetime: { icon: '📅', sort: 3 },
+      life: { icon: '🏡', sort: 4 },
+      office: { icon: '💼', sort: 5 },
+      dev: { icon: '💻', sort: 6 }
+    }
+    // 按分类分组
+    var groups = {}
+    for (var i = 0; i < tools.length; i++) {
+      var cat = tools[i].category
+      if (!groups[cat]) groups[cat] = []
+      groups[cat].push(tools[i])
+    }
+    // 构建分类区段
+    var sections = []
+    for (var key in groups) {
+      if (!categoryConfig[key]) continue
+      var catNames = {
+        calculator: i18n.t('catCalculator') || '计算转换',
+        text: i18n.t('catText') || '文本处理',
+        datetime: i18n.t('catDatetime') || '日期时间',
+        life: i18n.t('catLife') || '生活助手',
+        office: i18n.t('catOffice') || '效率/办公',
+        dev: i18n.t('catDev') || '开发调试'
+      }
+      sections.push({
+        id: key,
+        name: catNames[key],
+        icon: categoryConfig[key].icon,
+        sort: categoryConfig[key].sort,
+        tools: groups[key],
+        count: groups[key].length,
+        countText: i18n.t('catToolCount', { count: groups[key].length })
+      })
+    }
+    // 按sort排序
+    sections.sort(function(a, b) { return a.sort - b.sort })
+    // 保留已有的折叠状态，新增的分类默认折叠
+    var collapsed = this.data.collapsedCategories || {}
+    var defaultCollapsedIds = ['fun', 'dev']
+    for (var j = 0; j < sections.length; j++) {
+      if (collapsed[sections[j].id] === undefined) {
+        collapsed[sections[j].id] = defaultCollapsedIds.indexOf(sections[j].id) > -1
+      }
+    }
+    this.setData({ categorySections: sections, collapsedCategories: collapsed })
+  },
+
+  toggleCategoryCollapse: function(e) {
+    var catId = e.currentTarget.dataset.id
+    var collapsed = this.data.collapsedCategories || {}
+    collapsed[catId] = !collapsed[catId]
+    wx.vibrateShort({ type: 'light' })
+    this.setData({ collapsedCategories: collapsed })
   },
 
   loadCustomLayout: function() {

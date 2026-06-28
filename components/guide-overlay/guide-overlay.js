@@ -36,13 +36,13 @@ Component({
 
     onSkip: function() {
       try { wx.setStorageSync('hasSeenGuide', true) } catch(e) {}
-      try { wx.setStorageSync('guideVersion', 3) } catch(e) {}
+      try { wx.setStorageSync('guideVersion', 4) } catch(e) {}
       this.triggerEvent('close')
     },
 
     onStart: function() {
       try { wx.setStorageSync('hasSeenGuide', true) } catch(e) {}
-      try { wx.setStorageSync('guideVersion', 3) } catch(e) {}
+      try { wx.setStorageSync('guideVersion', 4) } catch(e) {}
       this.triggerEvent('close')
     }
   }

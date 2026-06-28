@@ -47,44 +47,49 @@
       </view>
     </swiper-item>
 
-    <!-- Page 3: Categories -->
+    <!-- Page 3: Category Folders -->
     <swiper-item class="guide-item">
       <view class="guide-content">
         <view class="guide-highlight-box">
-          <view class="highlight-tabs">
-            <view class="highlight-tab active"><text>{{i18n.tabAll}}</text></view>
-            <view class="highlight-tab"><text>{{i18n.tabCalc}}</text></view>
-            <view class="highlight-tab"><text>{{i18n.tabText}}</text></view>
-            <view class="highlight-tab"><text>{{i18n.tabLife}}</text></view>
-            <view class="highlight-tab"><text>{{i18n.tabDev}}</text></view>
+          <view class="highlight-section-folder">
+            <view class="highlight-section-header">
+              <view class="highlight-section-left">
+                <text class="highlight-section-icon">🧮</text>
+                <text class="highlight-section-name">{{i18n.guideSectionCalc}}</text>
+                <view class="highlight-section-count">
+                  <text>{{i18n.guideSectionCountSample}}</text>
+                </view>
+              </view>
+              <text class="highlight-section-arrow expanded">›</text>
+            </view>
+            <view class="highlight-section-tools">
+              <view class="highlight-tool">
+                <view class="highlight-tool-icon" style="background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)">
+                  <text>💱</text>
+                </view>
+                <text class="highlight-tool-name">{{i18n.toolExchange}}</text>
+              </view>
+              <view class="highlight-tool">
+                <view class="highlight-tool-icon" style="background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)">
+                  <text>🏠</text>
+                </view>
+                <text class="highlight-tool-name">{{i18n.toolMortgage}}</text>
+              </view>
+            </view>
           </view>
           <view class="highlight-arrow-down"></view>
         </view>
         <view class="guide-highlight-box" style="margin-top: 16rpx;">
-          <view class="highlight-tools-grid">
-            <view class="highlight-tool">
-              <view class="highlight-tool-icon" style="background: linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%)">
-                <text>🍅</text>
+          <view class="highlight-section-folder collapsed-folder">
+            <view class="highlight-section-header">
+              <view class="highlight-section-left">
+                <text class="highlight-section-icon">💻</text>
+                <text class="highlight-section-name">{{i18n.guideSectionDev}}</text>
+                <view class="highlight-section-count">
+                  <text>{{i18n.guideSectionCountSample2}}</text>
+                </view>
               </view>
-              <text class="highlight-tool-name">{{i18n.toolPomodoro}}</text>
-            </view>
-            <view class="highlight-tool">
-              <view class="highlight-tool-icon" style="background: linear-gradient(135deg, #DBEAFE 0%, #93C5FD 100%)">
-                <text>📱</text>
-              </view>
-              <text class="highlight-tool-name">{{i18n.toolQRCode}}</text>
-            </view>
-            <view class="highlight-tool">
-              <view class="highlight-tool-icon" style="background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)">
-                <text>📹</text>
-              </view>
-              <text class="highlight-tool-name">{{i18n.toolImage}}</text>
-            </view>
-            <view class="highlight-tool">
-              <view class="highlight-tool-icon" style="background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%)">
-                <text>🎧</text>
-              </view>
-              <text class="highlight-tool-name">{{i18n.toolWhiteNoise}}</text>
+              <text class="highlight-section-arrow">›</text>
             </view>
           </view>
           <view class="highlight-arrow-down"></view>
@@ -161,6 +166,10 @@
       <view class="guide-content">
         <view class="guide-highlight-box">
           <view class="highlight-settings-card">
+            <view class="highlight-setting-item">
+              <text class="highlight-setting-icon">🎨</text>
+              <text class="highlight-setting-name">{{i18n.guideThemeColor}}</text>
+            </view>
             <view class="highlight-setting-item">
               <text class="highlight-setting-icon">🌙</text>
               <text class="highlight-setting-name">{{i18n.guideDarkMode}}</text>

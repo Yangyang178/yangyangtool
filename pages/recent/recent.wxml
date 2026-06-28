@@ -120,6 +120,18 @@
         </button>
       </view>
 
+      <!-- 社交化：排行榜 + 分享 -->
+      <view class="checkin-social-row">
+        <view class="social-btn" bindtap="toggleRankPanel">
+          <text class="social-btn-icon">🏆</text>
+          <text class="social-btn-text">{{i18n.rankTitle}}</text>
+        </view>
+        <view class="social-btn" bindtap="shareCheckinCard">
+          <text class="social-btn-icon">🎖️</text>
+          <text class="social-btn-text">{{i18n.shareCheckinCard}}</text>
+        </view>
+      </view>
+
       <!-- 签到日历 -->
       <view class="cal-toggle" bindtap="toggleCalendar">
         <text class="cal-toggle-text">📅 {{i18n.checkinCalendar}}</text>
@@ -154,6 +166,93 @@
             <text class="cal-legend-text">{{i18n.today}}</text>
           </view>
         </view>
+      </view>
+    </view>
+
+    <!-- 排行榜弹窗 -->
+    <view class="rank-overlay" wx:if="{{showRankPanel}}" bindtap="toggleRankPanel"></view>
+    <view class="rank-panel {{showRankPanel ? 'rank-show' : ''}}">
+      <view class="rank-header">
+        <text class="rank-title">🏆 {{i18n.rankTitle}}</text>
+        <view class="rank-close" bindtap="toggleRankPanel">✕</view>
+      </view>
+      <view class="rank-tabs">
+        <view class="rank-tab {{rankType === 'streak' ? 'active' : ''}}" data-type="streak" bindtap="switchRankType">{{i18n.rankStreak}}</view>
+        <view class="rank-tab {{rankType === 'total' ? 'active' : ''}}" data-type="total" bindtap="switchRankType">{{i18n.rankTotal}}</view>
+      </view>
+      <!-- 我的排名 -->
+      <view class="rank-my" wx:if="{{myRank > 0}}">
+        <text class="rank-my-label">{{i18n.rankMy}}</text>
+        <text class="rank-my-value">第{{myRank}}名</text>
+        <text class="rank-my-detail" wx:if="{{myRankData}}">{{rankType === 'streak' ? (myRankData.continuousDays + i18n.rankDays) : (myRankData.totalDays + i18n.rankDays)}}</text>
+      </view>
+      <!-- 排行列表 -->
+      <view class="rank-loading" wx:if="{{rankLoading}}">
+        <text class="rank-loading-text">{{i18n.rankLoading}}</text>
+      </view>
+      <view class="rank-list" wx:if="{{!rankLoading && rankList.length > 0}}">
+        <view class="rank-item {{item.isMe ? 'rank-me' : ''}}" wx:for="{{rankList}}" wx:key="rank">
+          <view class="rank-pos {{item.rank <= 3 ? 'rank-top' : ''}}">
+            <text wx:if="{{item.rank === 1}}">🥇</text>
+            <text wx:elif="{{item.rank === 2}}">🥈</text>
+            <text wx:elif="{{item.rank === 3}}">🥉</text>
+            <text wx:else>{{item.rank}}</text>
+          </view>
+          <view class="rank-avatar" style="background: linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)">
+            <text wx:if="{{!item.avatarUrl}}">{{item.nickName[0] || '👤'}}</text>
+            <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}" class="rank-avatar-img" mode="aspectFill"></image>
+          </view>
+          <view class="rank-info">
+            <text class="rank-name">{{item.nickName}}{{item.isMe ? ' (' + i18n.rankMeTag + ')' : ''}}</text>
+            <text class="rank-days">{{rankType === 'streak' ? i18n.rankStreak : i18n.rankTotal}} {{rankType === 'streak' ? item.continuousDays : item.totalDays}}{{i18n.rankDays}}</text>
+          </view>
+          <text class="rank-points">💎 {{item.totalPoints}}</text>
+        </view>
+      </view>
+      <view class="rank-empty" wx:if="{{!rankLoading && rankList.length === 0}}">
+        <text class="rank-empty-text">{{i18n.rankEmpty}}</text>
+      </view>
+    </view>
+
+    <!-- 签到分享卡片弹窗 -->
+    <view class="share-card-overlay" wx:if="{{showCheckinShareCard}}" bindtap="closeCheckinShareCard"></view>
+    <view class="share-card-popup {{showCheckinShareCard ? 'share-card-show' : ''}}" wx:if="{{showCheckinShareCard}}">
+      <view class="share-card-content">
+        <view class="share-card-bg"></view>
+        <canvas type="2d" id="checkinShareCanvas" class="checkin-share-canvas"></canvas>
+        <view class="share-card-body">
+          <view class="checkin-share-preview">
+            <text class="share-card-app">🧰 百宝工具箱</text>
+            <text class="share-card-title">{{i18n.shareCardTitle}}</text>
+            <text class="share-card-days">{{checkinInfo.continuousDays}}</text>
+            <text class="share-card-days-label">{{i18n.shareCardDaysLabel}}</text>
+            <view class="share-card-stats">
+              <view class="share-stat">
+                <text class="share-stat-value">{{checkinInfo.totalEarned}}</text>
+                <text class="share-stat-label">{{i18n.shareCardPoints}}</text>
+              </view>
+              <view class="share-stat-divider"></view>
+              <view class="share-stat">
+                <text class="share-stat-value">{{checkinInfo.isChecked ? i18n.shareCardDone : i18n.shareCardTodo}}</text>
+                <text class="share-stat-label">{{i18n.shareCardToday}}</text>
+              </view>
+            </view>
+            <text class="share-card-slogan">{{i18n.shareCardSlogan}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="share-card-actions">
+        <view class="share-card-actions-row">
+          <button class="share-card-action-btn share-card-share-btn" open-type="share" data-shareType="checkin">
+            <text class="share-card-action-icon">🚀</text>
+            <text class="share-card-action-text">{{i18n.shareCardBtn}}</text>
+          </button>
+          <view class="share-card-action-btn share-card-save-action" bindtap="saveCheckinShareCard">
+            <text class="share-card-action-icon">💾</text>
+            <text class="share-card-action-text">{{i18n.saveImage}}</text>
+          </view>
+        </view>
+        <view class="share-card-close-btn" bindtap="closeCheckinShareCard">{{i18n.shareCardClose}}</view>
       </view>
     </view>
 

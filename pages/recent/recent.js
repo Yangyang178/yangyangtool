@@ -125,6 +125,15 @@ Page({
 
     showShareCard: false,
     shareCardData: null,
+    showCheckinShareCard: false,
+    checkinShareImagePath: '',
+
+    showRankPanel: false,
+    rankType: 'streak',
+    rankList: [],
+    myRank: -1,
+    myRankData: null,
+    rankLoading: false,
 
     showToolRequest: false,
     toolRequestContent: '',
@@ -232,10 +241,17 @@ Page({
     if (appInstance) {
       var isDark = appInstance.globalData.isDarkMode || storageUtil.get('darkMode') === true
       var setting = storageUtil.get('darkModeSetting', 'system')
-      this.setData({ 
+      this.setData({
         isDarkMode: isDark,
         darkModeSetting: setting
       })
+      if (isDark) {
+        wx.setNavigationBarColor({ frontColor: '#ffffff', backgroundColor: '#0F172A' })
+        wx.setTabBarStyle({ color: '#64748B', selectedColor: '#60A5FA', backgroundColor: '#1E293B', borderStyle: 'black' })
+      } else {
+        wx.setNavigationBarColor({ frontColor: '#000000', backgroundColor: '#F8FAFC' })
+        wx.setTabBarStyle({ color: '#94A3B8', selectedColor: '#3B82F6', backgroundColor: '#FFFFFF', borderStyle: 'white' })
+      }
     }
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
@@ -1626,6 +1642,8 @@ Page({
       this.loadPointsData()
       this.checkNewAchievements()
       this.generateWeeklyReport()
+      this.reportCheckinToCloud(result)
+      try { var appInst = getApp(); if (appInst && typeof appInst.autoBackup === 'function') appInst.autoBackup() } catch(e) {}
       var unlockHint = ''
       var UNLOCK_MAP = { 7: '💣 ' + i18n.t('toolMinesweeper'), 14: '🏰 ' + i18n.t('toolMaze'), 21: '👁 ' + i18n.t('toolVisionTest'), 28: '🔮 ' + i18n.t('toolPsychologyTest') }
       var nextUnlock = 0
@@ -1740,12 +1758,21 @@ Page({
 
         var cardData = that.data.shareCardData
 
+        function drawRoundRect(cx, x, y, rw, rh, r) {
+          cx.beginPath()
+          cx.moveTo(x + r, y)
+          cx.arcTo(x + rw, y, x + rw, y + rh, r)
+          cx.arcTo(x + rw, y + rh, x, y + rh, r)
+          cx.arcTo(x, y + rh, x, y, r)
+          cx.arcTo(x, y, x + rw, y, r)
+          cx.closePath()
+        }
+
         var grad = ctx.createLinearGradient(0, 0, 600, 400)
         grad.addColorStop(0, '#667eea')
         grad.addColorStop(1, '#764ba2')
         ctx.fillStyle = grad
-        ctx.beginPath()
-        ctx.roundRect(0, 0, 600, 400, 20)
+        drawRoundRect(ctx, 0, 0, 600, 400, 20)
         ctx.fill()
 
         ctx.fillStyle = 'rgba(255,255,255,0.1)'
@@ -1773,8 +1800,7 @@ Page({
         ctx.fillText(i18n.t('brandTitle'), 300, 340)
 
         ctx.fillStyle = 'rgba(255,255,255,0.15)'
-        ctx.beginPath()
-        ctx.roundRect(200, 360, 200, 28, 14)
+        drawRoundRect(ctx, 200, 360, 200, 28, 14)
         ctx.fill()
         ctx.fillStyle = 'rgba(255,255,255,0.6)'
         ctx.font = '11px sans-serif'
@@ -2690,10 +2716,274 @@ Page({
     }
   },
 
+  // 上报签到数据到云数据库
+  reportCheckinToCloud: function(result) {
+    try {
+      var continuousDays = result ? result.continuousDays : checkin.getContinuousDays()
+      var totalEarned = checkin.getTotalEarnedPoints()
+      var records = checkin._getRecords()
+      var today = checkin.getToday()
+      var nickName = storageUtil.get('userNickName') || ''
+      var avatarUrl = storageUtil.get('userAvatarUrl') || ''
+      wx.cloud.callFunction({
+        name: 'checkinRank',
+        data: {
+          action: 'report',
+          continuousDays: continuousDays,
+          totalDays: records.length,
+          totalPoints: totalEarned,
+          lastCheckinDate: today,
+          nickName: nickName,
+          avatarUrl: avatarUrl
+        }
+      })
+    } catch(e) {}
+  },
+
+  // 加载排行榜
+  loadCheckinRank: function() {
+    var that = this
+    this.setData({ rankLoading: true })
+    try {
+      wx.cloud.callFunction({
+        name: 'checkinRank',
+        data: {
+          action: 'getRank',
+          type: that.data.rankType || 'streak',
+          limit: 20
+        },
+        success: function(res) {
+          if (res.result && res.result.success) {
+            that.setData({
+              rankList: res.result.rankList || [],
+              myRank: res.result.myRank || -1,
+              myRankData: res.result.myData || null,
+              rankLoading: false
+            })
+          } else {
+            that.setData({ rankLoading: false, rankList: [] })
+          }
+        },
+        fail: function() {
+          that.setData({ rankLoading: false, rankList: [] })
+        }
+      })
+    } catch(e) {
+      this.setData({ rankLoading: false })
+    }
+  },
+
+  toggleRankPanel: function() {
+    wx.vibrateShort({ type: 'light' })
+    var show = !this.data.showRankPanel
+    this.setData({ showRankPanel: show })
+    if (show && this.data.rankList.length === 0) {
+      this.loadCheckinRank()
+    }
+  },
+
+  switchRankType: function(e) {
+    var type = e.currentTarget.dataset.type
+    this.setData({ rankType: type })
+    this.loadCheckinRank()
+  },
+
+  // 分享签到成就卡片
+  shareCheckinCard: function() {
+    var continuousDays = checkin.getContinuousDays()
+    var totalEarned = checkin.getTotalEarnedPoints()
+    var isChecked = checkin.isCheckedToday()
+    if (!isChecked && continuousDays === 0) {
+      wx.showToast({ title: i18n.t('checkinFirst'), icon: 'none' })
+      return
+    }
+    this.setData({ showCheckinShareCard: true, checkinShareImagePath: '' })
+    var that = this
+    // 弹窗渲染后绘制canvas并导出图片路径供分享使用
+    setTimeout(function() {
+      that._drawCheckinShareCanvas(function(imagePath) {
+        if (imagePath) {
+          that.setData({ checkinShareImagePath: imagePath })
+        }
+      })
+    }, 300)
+  },
+
+  closeCheckinShareCard: function() {
+    this.setData({ showCheckinShareCard: false })
+  },
+
+  saveCheckinShareCard: function() {
+    var that = this
+    // 如果已有缓存的图片路径，直接保存
+    if (that.data.checkinShareImagePath) {
+      wx.showLoading({ title: '保存中...' })
+      wx.saveImageToPhotosAlbum({
+        filePath: that.data.checkinShareImagePath,
+        success: function() {
+          wx.hideLoading()
+          wx.showToast({ title: '已保存到相册', icon: 'success' })
+        },
+        fail: function() {
+          wx.hideLoading()
+          wx.showModal({
+            title: '提示',
+            content: '需要相册权限才能保存图片',
+            confirmText: '去设置',
+            success: function(modalRes) {
+              if (modalRes.confirm) wx.openSetting()
+            }
+          })
+        }
+      })
+      return
+    }
+    wx.showLoading({ title: '生成中...' })
+    that._drawCheckinShareCanvas(function(imagePath) {
+      if (imagePath) {
+        that.setData({ checkinShareImagePath: imagePath })
+        wx.hideLoading()
+        wx.saveImageToPhotosAlbum({
+          filePath: imagePath,
+          success: function() {
+            wx.showToast({ title: '已保存到相册', icon: 'success' })
+          },
+          fail: function() {
+            wx.showModal({
+              title: '提示',
+              content: '需要相册权限才能保存图片',
+              confirmText: '去设置',
+              success: function(modalRes) {
+                if (modalRes.confirm) wx.openSetting()
+              }
+            })
+          }
+        })
+      } else {
+        wx.hideLoading()
+        wx.showToast({ title: '生成失败', icon: 'none' })
+      }
+    })
+  },
+
+  _drawCheckinShareCanvas: function(callback) {
+    var that = this
+    var query = wx.createSelectorQuery()
+    query.select('#checkinShareCanvas')
+      .fields({ node: true, size: true })
+      .exec(function(res) {
+        if (!res || !res[0]) {
+          callback && callback('')
+          return
+        }
+        var canvas = res[0].node
+        var ctx = canvas.getContext('2d')
+        var w = 600
+        var h = 420
+        canvas.width = w
+        canvas.height = h
+
+        var info = that.data.checkinInfo
+        var continuousDays = info ? info.continuousDays : 0
+        var totalEarned = info ? info.totalEarned : 0
+        var isChecked = info ? info.isChecked : false
+
+        function drawRoundRect(cx, x, y, rw, rh, r) {
+          cx.beginPath()
+          cx.moveTo(x + r, y)
+          cx.arcTo(x + rw, y, x + rw, y + rh, r)
+          cx.arcTo(x + rw, y + rh, x, y + rh, r)
+          cx.arcTo(x, y + rh, x, y, r)
+          cx.arcTo(x, y, x + rw, y, r)
+          cx.closePath()
+        }
+
+        var grad = ctx.createLinearGradient(0, 0, w, h)
+        grad.addColorStop(0, '#f59e0b')
+        grad.addColorStop(1, '#d97706')
+        ctx.fillStyle = grad
+        drawRoundRect(ctx, 0, 0, w, h, 20)
+        ctx.fill()
+
+        ctx.fillStyle = 'rgba(255,255,255,0.08)'
+        ctx.beginPath()
+        ctx.arc(520, 60, 100, 0, 2 * Math.PI)
+        ctx.fill()
+        ctx.beginPath()
+        ctx.arc(80, 360, 80, 0, 2 * Math.PI)
+        ctx.fill()
+
+        ctx.fillStyle = '#FFFFFF'
+        ctx.font = 'bold 20px sans-serif'
+        ctx.textAlign = 'center'
+        ctx.fillText('🧰 百宝工具箱', w / 2, 50)
+
+        ctx.font = '16px sans-serif'
+        ctx.fillStyle = 'rgba(255,255,255,0.85)'
+        ctx.fillText(i18n.t('shareCardTitle'), w / 2, 80)
+
+        ctx.font = 'bold 72px sans-serif'
+        ctx.fillStyle = '#FFFFFF'
+        ctx.fillText(String(continuousDays), w / 2, 175)
+
+        ctx.font = '16px sans-serif'
+        ctx.fillStyle = 'rgba(255,255,255,0.8)'
+        ctx.fillText(i18n.t('shareCardDaysLabel'), w / 2, 205)
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)'
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        ctx.moveTo(100, 230)
+        ctx.lineTo(500, 230)
+        ctx.stroke()
+
+        var todayText = isChecked ? i18n.t('shareCardDone') : i18n.t('shareCardTodo')
+        ctx.font = 'bold 24px sans-serif'
+        ctx.fillStyle = '#FFFFFF'
+        ctx.fillText(String(totalEarned), w / 2 - 100, 275)
+        ctx.fillText(todayText, w / 2 + 100, 275)
+
+        ctx.font = '13px sans-serif'
+        ctx.fillStyle = 'rgba(255,255,255,0.7)'
+        ctx.fillText(i18n.t('shareCardPoints'), w / 2 - 100, 300)
+        ctx.fillText(i18n.t('shareCardToday'), w / 2 + 100, 300)
+
+        ctx.font = '14px sans-serif'
+        ctx.fillStyle = 'rgba(255,255,255,0.6)'
+        ctx.fillText(i18n.t('shareCardSlogan'), w / 2, 345)
+
+        ctx.fillStyle = 'rgba(255,255,255,0.15)'
+        drawRoundRect(ctx, 200, 370, 200, 28, 14)
+        ctx.fill()
+        ctx.fillStyle = 'rgba(255,255,255,0.6)'
+        ctx.font = '11px sans-serif'
+        ctx.fillText(i18n.t('longPressToOpen') || '长按识别小程序', w / 2, 389)
+
+        setTimeout(function() {
+          wx.canvasToTempFilePath({
+            canvas: canvas,
+            width: w,
+            height: h,
+            destWidth: w * 2,
+            destHeight: h * 2,
+            fileType: 'png',
+            quality: 1,
+            success: function(exportRes) {
+              callback && callback(exportRes.tempFilePath)
+            },
+            fail: function() {
+              callback && callback('')
+            }
+          })
+        }, 150)
+      })
+  },
+
   onShareAppMessage: function() {
     var appInstance = getApp()
     var poster = (appInstance.globalData && appInstance.globalData.sharePosterPath) || ''
     var myCode = points.getMyInviteCode()
+    var isCheckinShare = this.data.showCheckinShareCard && this.data.checkinShareImagePath
     try {
       var taskInfo = points.getDailyTasks()
       var shareTaskCompleted = false
@@ -2710,6 +3000,13 @@ Page({
         this.loadCheckinInfo()
       }
     } catch(e) {}
+    if (isCheckinShare) {
+      return {
+        title: '🧰 我在百宝工具箱连续签到' + (this.data.checkinInfo ? this.data.checkinInfo.continuousDays : 0) + '天！',
+        path: '/pages/index/index?inviteCode=' + myCode,
+        imageUrl: this.data.checkinShareImagePath
+      }
+    }
     return {
       title: '🧰 百宝工具箱 - 40+实用小工具合集',
       path: '/pages/index/index?inviteCode=' + myCode,

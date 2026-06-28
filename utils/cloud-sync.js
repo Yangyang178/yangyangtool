@@ -4,6 +4,8 @@ var logger = require('./logger.js')
 var BACKUP_KEYS = [
   'favorites', 'recentTools', 'totalUsageCount', 'weeklyUsage', 'toolUsageLog',
   'checkin_records', 'user_points', 'total_earned_points',
+  'daily_tasks', 'invite_records', 'invited_by', 'my_invite_code',
+  'owned_shop_items', 'active_avatar_frame', 'active_theme_color', 'active_font_family',
   'unlocked_achievements', 'achievement_progress',
   'searchHistory', 'customToolOrder', 'hiddenTools',
   'userProfile', 'darkModeSetting', 'hasSeenGuide', 'guideVersion',
@@ -14,7 +16,9 @@ var BACKUP_KEYS = [
   'ruler_cal_version', 'ruler_calibration', 'white_noise_state',
   'danmaku_history', 'relative_call_history', 'ts_converter_history',
   'garbage_history', 'calc_history', 'random_decision_history',
-  'pomodoro_records', 'pomodoro_daily_goal', 'qr_history'
+  'pomodoro_records', 'pomodoro_daily_goal', 'qr_history',
+  'fontSizeSetting', 'app_language', 'darkMode', 'backupRemindDismissed',
+  'lastBackupTime', '_storage_migrated_v2'
 ]
 
 var cloudSync = {

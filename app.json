@@ -19,7 +19,8 @@
         "age-calculator/age-calculator",
         "calculator/calculator",
         "prepayment-calculator/prepayment-calculator",
-        "trig-calculator/trig-calculator"
+        "trig-calculator/trig-calculator",
+        "fuel-calculator/fuel-calculator"
       ]
     },
     {
@@ -86,6 +87,13 @@
         "number-sequence/number-sequence",
         "time-perception/time-perception",
         "leaderboard/leaderboard"
+      ]
+    },
+    {
+      "root": "package-office",
+      "name": "office",
+      "pages": [
+        "grid-image/grid-image"
       ]
     }
   ],

@@ -1,0 +1,186 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
+  <view class="container">
+
+    <!-- 工具头部 -->
+    <view class="tool-header">
+      <view class="icon-wrapper amber-gradient">
+        <view class="icon-decoration"></view>
+        <text class="tool-icon">⛽</text>
+      </view>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
+    </view>
+
+    <!-- 计算模式 -->
+    <view class="form-section">
+      <view class="input-group">
+        <text class="label">{{i18n.calcMode}}</text>
+        <view class="type-selector">
+          <view class="type-btn {{calcMode === 'per100' ? 'active' : ''}}" data-mode="per100" bindtap="switchMode">
+            <text>{{i18n.modePer100}}</text>
+            <text class="type-desc">L/100km</text>
+          </view>
+          <view class="type-btn {{calcMode === 'cost' ? 'active' : ''}}" data-mode="cost" bindtap="switchMode">
+            <text>{{i18n.modeCost}}</text>
+            <text class="type-desc">{{i18n.yuan}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 行驶里程 -->
+      <view class="input-group">
+        <view class="label-row">
+          <text class="label">{{i18n.mileage}}</text>
+          <text class="unit-hint">km</text>
+        </view>
+        <input class="input" type="digit" placeholder="0" value="{{mileage}}" bindinput="onMileageInput"/>
+      </view>
+
+      <!-- 加油量 -->
+      <view class="input-group">
+        <view class="label-row">
+          <text class="label">{{i18n.fuelAmount}}</text>
+          <text class="unit-hint">L</text>
+        </view>
+        <input class="input" type="digit" placeholder="0" value="{{fuelAmount}}" bindinput="onFuelAmountInput"/>
+      </view>
+
+      <!-- 油价（百公里油耗模式） -->
+      <view class="input-group" wx:if="{{calcMode === 'per100'}}">
+        <view class="label-row">
+          <text class="label">{{i18n.fuelPrice}}</text>
+          <text class="unit-hint">{{i18n.yuanPerL}}</text>
+        </view>
+        <input class="input" type="digit" placeholder="0" value="{{fuelPrice}}" bindinput="onFuelPriceInput"/>
+        <view class="price-tips">
+          <text class="tip-chip" data-price="7.5" bindtap="usePricePreset">#92 7.5</text>
+          <text class="tip-chip" data-price="8.0" bindtap="usePricePreset">#95 8.0</text>
+          <text class="tip-chip" data-price="8.5" bindtap="usePricePreset">#98 8.5</text>
+        </view>
+      </view>
+
+      <!-- 单价（费用模式） -->
+      <view class="input-group" wx:if="{{calcMode === 'cost'}}">
+        <view class="label-row">
+          <text class="label">{{i18n.unitPrice}}</text>
+          <text class="unit-hint">{{i18n.yuanPerL}}</text>
+        </view>
+        <input class="input" type="digit" placeholder="0" value="{{unitPrice}}" bindinput="onUnitPriceInput"/>
+        <view class="price-tips">
+          <text class="tip-chip" data-price="7.5" bindtap="usePricePresetCost">#92 7.5</text>
+          <text class="tip-chip" data-price="8.0" bindtap="usePricePresetCost">#95 8.0</text>
+          <text class="tip-chip" data-price="8.5" bindtap="usePricePresetCost">#98 8.5</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-btns">
+      <button class="btn-primary" bindtap="calculate">{{i18n.calculate}}</button>
+      <button class="btn-secondary" bindtap="reset">{{i18n.reset}}</button>
+    </view>
+
+    <!-- 计算结果 -->
+    <view class="result-section" wx:if="{{result !== null}}">
+      <!-- 主结果卡片 -->
+      <view class="result-card main-result">
+        <text class="result-label">{{calcMode === 'per100' ? i18n.consumption : i18n.totalCost}}</text>
+        <text class="result-value">{{result}}</text>
+        <text class="result-unit">{{calcMode === 'per100' ? 'L/100km' : i18n.yuan}}</text>
+      </view>
+
+      <!-- 详细数据网格 -->
+      <view class="result-grid">
+        <view class="result-item" wx:if="{{costPerKm}}">
+          <text class="item-label">{{i18n.costPerKm}}</text>
+          <text class="item-value amber">{{costPerKm}}</text>
+          <text class="item-unit">{{i18n.yuan}}</text>
+        </view>
+        <view class="result-item" wx:if="{{totalCost}}">
+          <text class="item-label">{{i18n.totalCost}}</text>
+          <text class="item-value">{{totalCost}}</text>
+          <text class="item-unit">{{i18n.yuan}}</text>
+        </view>
+        <view class="result-item" wx:if="{{rangeEstimate}}">
+          <text class="item-label">{{i18n.consumption}}</text>
+          <text class="item-value amber">{{rangeEstimate}}</text>
+          <text class="item-unit">L/100km</text>
+        </view>
+        <view class="result-item">
+          <text class="item-label">{{i18n.fuelAmount}}</text>
+          <text class="item-value">{{fuelAmount}}</text>
+          <text class="item-unit">L</text>
+        </view>
+      </view>
+
+      <!-- 油耗参考（仅百公里模式） -->
+      <view class="ref-section" wx:if="{{calcMode === 'per100'}}">
+        <view class="ref-bar">
+          <view class="ref-segment good {{result < 7 ? 'active' : ''}}"></view>
+          <view class="ref-segment normal {{result >= 7 && result < 9 ? 'active' : ''}}"></view>
+          <view class="ref-segment high {{result >= 9 && result < 12 ? 'active' : ''}}"></view>
+          <view class="ref-segment bad {{result >= 12 ? 'active' : ''}}"></view>
+        </view>
+        <view class="ref-labels">
+          <view class="ref-label-item {{result < 7 ? 'active' : ''}}">
+            <text class="ref-dot good"></text>
+            <text class="ref-text">&lt;7 {{i18n.levelEconomic}}</text>
+          </view>
+          <view class="ref-label-item {{result >= 7 && result < 9 ? 'active' : ''}}">
+            <text class="ref-dot normal"></text>
+            <text class="ref-text">7-9 {{i18n.levelNormal}}</text>
+          </view>
+          <view class="ref-label-item {{result >= 9 && result < 12 ? 'active' : ''}}">
+            <text class="ref-dot high"></text>
+            <text class="ref-text">9-12 {{i18n.levelHigh}}</text>
+          </view>
+          <view class="ref-label-item {{result >= 12 ? 'active' : ''}}">
+            <text class="ref-dot bad"></text>
+            <text class="ref-text">&ge;12 {{i18n.levelVeryHigh}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 历史记录 -->
+    <view class="history-section" wx:if="{{history.length > 0}}">
+      <view class="history-header" bindtap="toggleHistory">
+        <view class="history-header-left">
+          <text class="history-icon">📋</text>
+          <text class="history-title">{{i18n.history}}</text>
+          <text class="history-count">{{history.length}}</text>
+        </view>
+        <view class="history-header-right">
+          <text class="history-arrow {{showHistory ? 'expanded' : ''}}">▾</text>
+        </view>
+      </view>
+      <view class="history-body" wx:if="{{showHistory}}">
+        <view class="history-item" wx:for="{{history}}" wx:key="index">
+          <view class="history-main">
+            <text class="history-result">{{item.result}}</text>
+            <text class="history-unit">{{item.mode === 'per100' ? 'L/100km' : i18n.yuan}}</text>
+          </view>
+          <view class="history-meta">
+            <text class="history-detail">{{item.mileage}}km · {{item.fuel}}L · {{item.price}}{{i18n.yuanPerL}}</text>
+            <text class="history-time">{{item.time}}</text>
+          </view>
+        </view>
+        <view class="history-clear" bindtap="clearHistory">{{i18n.clear}}</view>
+      </view>
+    </view>
+
+    <!-- 使用说明 -->
+    <view class="tips-section">
+      <text class="tips-title">{{i18n.tipsTitle}}</text>
+      <view class="tips-list">
+        <text class="tip-item">• {{i18n.tip1}}</text>
+        <text class="tip-item">• {{i18n.tip2}}</text>
+        <text class="tip-item">• {{i18n.tip3}}</text>
+      </view>
+    </view>
+
+  </view>
+</scroll-view>

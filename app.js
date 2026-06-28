@@ -5,6 +5,7 @@ var remoteConfig = require('./utils/remote-config.js')
 var logger = require('./utils/logger.js')
 var perf = require('./utils/perf.js')
 var points = require('./utils/points.js')
+var cloudSync = require('./utils/cloud-sync.js')
 
 App({
   storage: storageUtil,
@@ -79,6 +80,7 @@ App({
             success: function(res) {
               logger.log('[云数据库] 连接成功! tool_records记录数:', res.total)
               that.syncLocalToCloud()
+              that.autoRestoreIfNeeded()
             },
             fail: function(err) {
               logger.log('[云数据库] 连接失败，使用纯本地模式')
@@ -151,10 +153,13 @@ App({
       var keysToMigrate = [
         'favorites', 'recentTools', 'totalUsageCount', 'weeklyUsage', 'toolUsageLog',
         'checkin_records', 'user_points', 'total_earned_points',
+        'daily_tasks', 'invite_records',
+        'owned_shop_items', 'active_avatar_frame', 'active_theme_color', 'active_font_family',
         'searchHistory', 'customToolOrder', 'hiddenTools',
         'unlocked_achievements', 'achievement_progress',
         'feedbackHistory', 'userProfile', 'toolRequests',
         'darkMode', 'darkModeSetting', 'hasSeenGuide', 'guideVersion',
+        'fontSizeSetting', 'app_language', 'backupRemindDismissed', 'lastBackupTime',
         'age_calc_history', 'date_calc_history', 'json_formatter_history',
         'cachedRates', 'world_clock_cities', 'water_reminder_interval',
         'water_reminder_last_time', 'water_records', 'countdown_events',
@@ -208,6 +213,68 @@ App({
         })
       } catch(e) {}
     }, 1000)
+  },
+
+  autoRestoreIfNeeded: function() {
+    var that = this
+    if (!that.globalData.cloudReady) return
+
+    var checkKeys = ['favorites', 'recentTools', 'totalUsageCount', 'user_points', 'checkin_records', 'unlocked_achievements']
+    var hasAnyLocalData = false
+    for (var i = 0; i < checkKeys.length; i++) {
+      var val = storageUtil.get(checkKeys[i])
+      if (val !== null && val !== undefined && val !== '' && !(Array.isArray(val) && val.length === 0)) {
+        hasAnyLocalData = true
+        break
+      }
+    }
+
+    if (hasAnyLocalData) {
+      logger.log('[自动恢复] 本地数据存在，跳过自动恢复')
+      return
+    }
+
+    logger.log('[自动恢复] 检测到本地数据为空，尝试从云端恢复...')
+    cloudSync.restore(function(result) {
+      if (result.success) {
+        logger.log('[自动恢复] 恢复成功, 恢复项数:', result.keyCount)
+        that.globalData.justRestored = true
+        var pages = getCurrentPages()
+        if (pages.length > 0) {
+          var currentPage = pages[pages.length - 1]
+          if (currentPage && typeof currentPage.onCloudRestored === 'function') {
+            currentPage.onCloudRestored()
+          } else if (currentPage && typeof currentPage.onShow === 'function') {
+            currentPage.onShow()
+          }
+        }
+      } else {
+        logger.log('[自动恢复] 无云端备份或恢复失败:', result.message)
+      }
+    })
+  },
+
+  autoBackup: function() {
+    if (!this.globalData.cloudReady) return
+    var lastBackupTime = storageUtil.get('lastBackupTime', '')
+    if (lastBackupTime) {
+      try {
+        var lastDate = new Date(lastBackupTime).toDateString()
+        var today = new Date().toDateString()
+        if (lastDate === today) {
+          logger.log('[自动备份] 今日已备份，跳过')
+          return
+        }
+      } catch(e) {}
+    }
+    logger.log('[自动备份] 开始静默备份...')
+    cloudSync.backup(function(result) {
+      if (result.success) {
+        logger.log('[自动备份] 成功, 备份项数:', result.keyCount)
+      } else {
+        logger.log('[自动备份] 失败:', result.message)
+      }
+    })
   },
 
   cloudSyncUsage: function(toolId, toolName) {

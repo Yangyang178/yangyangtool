@@ -1,0 +1,113 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
+
+<view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}">
+  <view class="container">
+
+    <!-- 工具头部 -->
+    <view class="tool-header">
+      <view class="tool-icon-large" style="background: linear-gradient(135deg, rgba(139,92,246,0.2) 0%, rgba(124,58,237,0.15) 100%);">
+        <view class="tool-icon-decoration"></view>
+        <text>🖇️</text>
+      </view>
+      <view class="tool-info">
+        <text class="tool-title-main">{{i18n.toolTitle}}</text>
+        <text class="tool-desc-main">{{i18n.toolDesc}}</text>
+      </view>
+    </view>
+
+    <!-- 选择图片区域 -->
+    <view class="section-card">
+      <view class="section-header">
+        <text class="section-title">{{i18n.selectImages}}</text>
+        <text class="section-count" wx:if="{{imageList.length > 0}}">{{imageList.length}}/9</text>
+      </view>
+
+      <view class="image-list">
+        <view class="image-item" wx:for="{{imageList}}" wx:key="index">
+          <image class="image-thumb" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-src="{{item}}" data-index="{{index}}"></image>
+          <view class="image-remove" catchtap="removeImage" data-index="{{index}}">
+            <text>✕</text>
+          </view>
+          <view class="image-order">{{index + 1}}</view>
+        </view>
+        <view class="image-add" bindtap="chooseImages" wx:if="{{imageList.length < 9}}" hover-class="image-add-hover">
+          <text class="add-icon">+</text>
+          <text class="add-text">{{i18n.addImage}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 拼接选项 -->
+    <view class="section-card" wx:if="{{imageList.length >= 2}}">
+      <text class="section-title">{{i18n.options}}</text>
+
+      <!-- 拼接方向 -->
+      <view class="option-row">
+        <text class="option-label">{{i18n.direction}}</text>
+        <view class="option-btns">
+          <view class="opt-btn {{direction === 'vertical' ? 'active' : ''}}" bindtap="setDirection" data-dir="vertical">
+            <text>{{i18n.vertical}}</text>
+          </view>
+          <view class="opt-btn {{direction === 'horizontal' ? 'active' : ''}}" bindtap="setDirection" data-dir="horizontal">
+            <text>{{i18n.horizontal}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 间距 -->
+      <view class="option-row">
+        <text class="option-label">{{i18n.gap}}</text>
+        <view class="option-btns">
+          <view class="opt-btn {{gap === 0 ? 'active' : ''}}" bindtap="setGap" data-gap="0">
+            <text>{{i18n.noGap}}</text>
+          </view>
+          <view class="opt-btn {{gap === 4 ? 'active' : ''}}" bindtap="setGap" data-gap="4">
+            <text>4px</text>
+          </view>
+          <view class="opt-btn {{gap === 8 ? 'active' : ''}}" bindtap="setGap" data-gap="8">
+            <text>8px</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 背景色 -->
+      <view class="option-row" wx:if="{{gap > 0}}">
+        <text class="option-label">{{i18n.bgColor}}</text>
+        <view class="color-options">
+          <view class="color-dot {{bgColor === '#FFFFFF' ? 'active' : ''}}" style="background:#FFFFFF" bindtap="setBgColor" data-color="#FFFFFF"></view>
+          <view class="color-dot {{bgColor === '#000000' ? 'active' : ''}}" style="background:#000000" bindtap="setBgColor" data-color="#000000"></view>
+          <view class="color-dot {{bgColor === '#F5F5F5' ? 'active' : ''}}" style="background:#F5F5F5" bindtap="setBgColor" data-color="#F5F5F5"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 预览 -->
+    <view class="section-card" wx:if="{{resultImage}}">
+      <text class="section-title">{{i18n.result}}</text>
+      <image class="result-image" src="{{resultImage}}" mode="widthFix" bindtap="previewResult"></image>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="btn-group" wx:if="{{imageList.length >= 2}}">
+      <button class="btn-primary" bindtap="doStitch" loading="{{isStitching}}">
+        🔗 {{i18n.doStitch}}
+      </button>
+      <button class="btn-secondary" bindtap="saveResult" wx:if="{{resultImage}}">
+        💾 {{i18n.saveImage}}
+      </button>
+    </view>
+
+    <!-- 提示 -->
+    <view class="tip-card" wx:if="{{imageList.length < 2}}">
+      <text class="tip-title">💡 {{i18n.tipsTitle}}</text>
+      <text class="tip-item">• {{i18n.tip1}}</text>
+      <text class="tip-item">• {{i18n.tip2}}</text>
+      <text class="tip-item">• {{i18n.tip3}}</text>
+    </view>
+
+  </view>
+</view>
+
+<!-- 离屏Canvas -->
+<canvas type="2d" id="stitchCanvas" style="position:fixed;left:-9999px;top:-9999px;width:900px;height:2700px;"></canvas>

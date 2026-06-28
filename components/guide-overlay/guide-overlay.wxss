@@ -503,6 +503,76 @@
   min-width: 480rpx;
 }
 
+/* 分类折叠区样式 */
+.highlight-section-folder {
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 0 0 6rpx rgba(102, 126, 234, 0.3), 0 12rpx 40rpx rgba(102, 126, 234, 0.2);
+  animation: pulse-highlight 2s ease-in-out infinite;
+  min-width: 520rpx;
+}
+
+.collapsed-folder {
+  box-shadow: 0 0 0 6rpx rgba(148, 163, 184, 0.2), 0 8rpx 24rpx rgba(148, 163, 184, 0.1);
+}
+
+.highlight-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 28rpx;
+}
+
+.highlight-section-left {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.highlight-section-icon {
+  font-size: 32rpx;
+}
+
+.highlight-section-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.highlight-section-count {
+  padding: 4rpx 14rpx;
+  border-radius: 16rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-size: 20rpx;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.highlight-section-count text {
+  font-size: 20rpx;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.highlight-section-arrow {
+  font-size: 32rpx;
+  color: #94A3B8;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.highlight-section-arrow.expanded {
+  transform: rotate(90deg);
+  color: #667eea;
+}
+
+.highlight-section-tools {
+  display: flex;
+  gap: 16rpx;
+  padding: 0 28rpx 24rpx;
+}
+
 .highlight-setting-item {
   display: flex;
   align-items: center;
