@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "数字猜谜",
+  "navigationBarTitleText": "数字猜谜 - 逻辑推理猜数字",
   "usingComponents": {
     "navigation-bar": "/components/navigation-bar/navigation-bar"
   }

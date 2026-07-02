@@ -22,7 +22,8 @@ Page({
     rangeEstimate: null,
 
     history: [],
-    showHistory: false
+    showHistory: false,
+    showGuideTip: false
   },
 
   onLoad: function() {
@@ -33,8 +34,15 @@ Page({
       fontClass: points.getFontClass(),
       isLoading: false
     })
+    var guideClosed = storageUtil.get('guide_tip_closed_53', false)
+    this.setData({ showGuideTip: !guideClosed })
     wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] })
     this.loadHistory()
+  },
+
+  closeGuideTip: function() {
+    storageUtil.set('guide_tip_closed_53', true)
+    this.setData({ showGuideTip: false })
   },
 
   onShow: function() {

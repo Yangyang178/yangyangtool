@@ -13,15 +13,15 @@ page {
 
 .page-container {
   padding: 0 20px;
-  padding-bottom: calc(100px + 50px + env(safe-area-inset-bottom));
-  min-height: calc(100vh - 100px);
+  padding-bottom: calc(60px + env(safe-area-inset-bottom));
+  min-height: calc(100vh - 60px);
 }
 
 .section-group-title {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 20px 0 12px;
+  margin: 14px 0 8px;
 }
 
 .group-line {
@@ -755,7 +755,7 @@ page {
 .checkin-card {
   background: linear-gradient(135deg, var(--primaryColor) 0%, var(--primaryColor2, var(--primaryDark)) 100%);
   border-radius: 20px;
-  padding: 20px;
+  padding: 16px 20px;
   margin-bottom: 16px;
   box-shadow: 0 8px 24px var(--primaryLight);
 }
@@ -803,7 +803,7 @@ page {
 }
 
 .checkin-streak {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .streak-days {
@@ -884,34 +884,34 @@ page {
 
 .checkin-action {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .checkin-info-row {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 4px;
-  flex: 1;
 }
 
 .checkin-continuous {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   color: #FFFFFF;
+  white-space: nowrap;
 }
 
 .checkin-today-points {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.75);
+  white-space: nowrap;
 }
 
 .checkin-btn {
-  width: 110px;
-  height: 44px;
-  border-radius: 22px;
-  font-size: 15px;
+  flex: 1;
+  height: 38px;
+  border-radius: 19px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--primaryDark);
   background: #FFFFFF;
@@ -922,7 +922,7 @@ page {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
   padding: 0;
   margin: 0;
-  line-height: 44px;
+  line-height: 38px;
 }
 
 .checkin-btn.checked {
@@ -933,6 +933,182 @@ page {
 
 .checkin-btn::after {
   display: none;
+}
+
+/* 签到按钮行 */
+.checkin-btn-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* 补签按钮 */
+.makeup-btn {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 19px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
+}
+
+.makeup-btn.makeup-disabled {
+  opacity: 0.5;
+}
+
+.makeup-hover {
+  background: rgba(255, 255, 255, 0.35) !important;
+}
+
+.makeup-icon {
+  font-size: 12px;
+}
+
+.makeup-text {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
+/* 里程碑区域 */
+.milestone-section {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.milestone-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.milestone-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.milestone-total {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.milestone-scroll {
+  white-space: nowrap;
+  width: 100%;
+}
+
+.milestone-list {
+  display: flex;
+  gap: 10px;
+  padding-bottom: 4px;
+}
+
+.milestone-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 70px;
+  padding: 10px 6px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.milestone-item.claimable {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 215, 0, 0.6);
+  animation: milestoneGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes milestoneGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.3); }
+  50% { box-shadow: 0 0 12px 2px rgba(255, 215, 0, 0.3); }
+}
+
+.milestone-item.claimed {
+  opacity: 0.6;
+}
+
+.milestone-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.milestone-icon-wrap.milestone-done {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.milestone-icon-wrap.milestone-ready {
+  background: rgba(255, 215, 0, 0.3);
+  animation: milestoneIconBounce 1s ease-in-out infinite;
+}
+
+@keyframes milestoneIconBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.milestone-icon {
+  font-size: 16px;
+}
+
+.milestone-name {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
+.milestone-days {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.milestone-points {
+  font-size: 10px;
+  color: #FFD700;
+  font-weight: 700;
+}
+
+.milestone-claim-btn {
+  font-size: 9px;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.milestone-claimed-mark {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 700;
+}
+
+.milestone-progress-bar {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+
+.milestone-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* 签到社交化按钮 */
@@ -1319,8 +1495,12 @@ page {
 }
 
 .share-card-action-text {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .share-card-close-btn {
@@ -2882,11 +3062,11 @@ page {
 .ugc-entry {
   background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
   border-radius: 16px;
-  padding: 18px 20px;
-  margin-bottom: 16px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
   border: 2px solid rgba(251, 191, 36, 0.3);
   transition: all 0.2s ease;
@@ -2898,10 +3078,10 @@ page {
 }
 
 .ugc-icon-wrapper {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
-  border-radius: 14px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2910,7 +3090,7 @@ page {
 }
 
 .ugc-icon {
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .ugc-content {
@@ -2950,7 +3130,7 @@ page {
   left: 0; right: 0; bottom: 0;
   background: white;
   border-radius: 24px 24px 0 0;
-  padding: 20px 20px calc(60px + env(safe-area-inset-bottom));
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
   z-index: 1099;
   transform: translateY(100%);
   transition: transform 0.3s ease;
@@ -3753,7 +3933,7 @@ page {
   left: 0; right: 0; bottom: 0;
   background: white;
   border-radius: 24px 24px 0 0;
-  padding: 24px 20px calc(60px + env(safe-area-inset-bottom));
+  padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
   z-index: 1099;
   transform: translateY(100%);
   transition: transform 0.3s ease;
@@ -3957,11 +4137,12 @@ page {
   left: 0; right: 0; bottom: 0;
   background: white;
   border-radius: 24px 24px 0 0;
-  padding: 24px 20px calc(60px + env(safe-area-inset-bottom));
+  padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
   z-index: 1099;
   transform: translateY(100%);
   transition: transform 0.3s ease;
   max-height: 85vh;
+  overflow-y: auto;
 }
 
 .feedback-panel.show {
@@ -4102,11 +4283,12 @@ page {
   left: 0; right: 0; bottom: 0;
   background: white;
   border-radius: 24px 24px 0 0;
-  padding: 24px 20px calc(60px + env(safe-area-inset-bottom));
+  padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
   z-index: 1099;
   transform: translateY(100%);
   transition: transform 0.3s ease;
   max-height: 85vh;
+  overflow-y: auto;
 }
 
 .cache-panel.show {
@@ -4281,7 +4463,7 @@ page {
   left: 0; right: 0; bottom: 0;
   background: white;
   border-radius: 24px 24px 0 0;
-  padding: 24px 20px calc(60px + env(safe-area-inset-bottom));
+  padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
   z-index: 1099;
   transform: translateY(100%);
   transition: transform 0.3s ease;
@@ -4710,7 +4892,7 @@ page {
   left: 0; right: 0; bottom: 0;
   background: white;
   border-radius: 24px 24px 0 0;
-  padding: 24px 20px calc(60px + env(safe-area-inset-bottom));
+  padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
   z-index: 1099;
   transform: translateY(100%);
   transition: transform 0.3s ease;
@@ -4859,7 +5041,7 @@ page {
   left: 0; right: 0; bottom: 0;
   background: white;
   border-radius: 24px 24px 0 0;
-  padding: 24px 20px calc(60px + env(safe-area-inset-bottom));
+  padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
   z-index: 1099;
   transform: translateY(100%);
   transition: transform 0.3s ease;
@@ -5048,7 +5230,7 @@ page {
   left: 0; right: 0; bottom: 0;
   background: white;
   border-radius: 24px 24px 0 0;
-  padding: 24px 20px calc(60px + env(safe-area-inset-bottom));
+  padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
   z-index: 1099;
   transform: translateY(100%);
   transition: transform 0.3s ease;
@@ -5397,7 +5579,7 @@ page {
   left: 0; right: 0; bottom: 0;
   background: white;
   border-radius: 24px 24px 0 0;
-  padding: 24px 20px calc(60px + env(safe-area-inset-bottom));
+  padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
   z-index: 1099;
   transform: translateY(100%);
   transition: transform 0.3s ease;

@@ -1,4 +1,5 @@
 {
+  "navigationBarTitleText": "时间感知训练 - 默数计时挑战",
   "navigationStyle": "custom",
   "usingComponents": {
     "navigation-bar": "/components/navigation-bar/navigation-bar"

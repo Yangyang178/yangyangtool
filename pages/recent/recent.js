@@ -144,7 +144,7 @@ Page({
     isBackingUp: false,
     isRestoring: false,
     cloudBackupInfo: { hasBackup: false, backupTime: '', keyCount: 0 },
-    lastBackupTimeText: '从未备份',
+    lastBackupTimeText: '',
 
     showDailyTasks: false,
     dailyTaskInfo: { tasks: [], allDone: false, bonusClaimed: false, bonusPoints: 20 },
@@ -263,7 +263,7 @@ Page({
     var calWeekDays = weekDayLabelsStr.split(',')
     this.setData({
       fontClass: fontClass,
-      fontName: activeFont ? activeFont.name : allTexts.defaultFont,
+      fontName: activeFont ? i18n.t(activeFont.nameKey) : allTexts.defaultFont,
       langSetting: langSetting,
       langName: i18n.t('name'),
       i18n: allTexts,
@@ -313,7 +313,8 @@ Page({
     this.setData({
       feedbackTypes: updatedFeedbackTypes,
       toolCategories: updatedToolCategories,
-      priorityLevels: updatedPriorityLevels
+      priorityLevels: updatedPriorityLevels,
+      lastBackupTimeText: cloudSync.formatBackupTime(cloudSync.getLastBackupTime())
     })
   },
 
@@ -940,10 +941,10 @@ Page({
       points.deactivateItem('font')
       this.setData({
         fontClass: '',
-        fontName: '默认',
+        fontName: i18n.t('defaultFont'),
         showFontPicker: false
       })
-      wx.showToast({ title: '已切换为默认字体', icon: 'none' })
+      wx.showToast({ title: i18n.t('switchDefaultFont'), icon: 'none' })
       return
     }
 
@@ -953,7 +954,7 @@ Page({
       if (owned[k] === fontId) { isOwned = true; break }
     }
     if (!isOwned) {
-      wx.showToast({ title: '请先在商城购买该字体', icon: 'none' })
+      wx.showToast({ title: i18n.t('buyFontFirst'), icon: 'none' })
       return
     }
 
@@ -963,10 +964,10 @@ Page({
       var activeFont = points.getActiveFont()
       this.setData({
         fontClass: fontClass,
-        fontName: activeFont ? activeFont.name : '默认',
+        fontName: activeFont ? i18n.t(activeFont.nameKey) : i18n.t('defaultFont'),
         showFontPicker: false
       })
-      wx.showToast({ title: '已切换字体', icon: 'success' })
+      wx.showToast({ title: i18n.t('switchFont'), icon: 'success' })
     }
   },
 
@@ -1464,10 +1465,11 @@ Page({
     var continuousDays = checkin.getContinuousDays()
     var currentPoints = checkin.getCurrentPoints()
     var totalEarned = checkin.getTotalEarnedPoints()
+    var totalDays = checkin.getTotalDays()
     // 当前周期天数：7天一循环
     var cycleDay = continuousDays % 7
     if (cycleDay === 0 && continuousDays > 0) cycleDay = 7
-    // 今日可获积分
+    // 今日可获积分（含宝箱预估）
     var todayPoints = 10
     if (!isChecked) {
       var nextCycleDay = cycleDay + 1
@@ -1478,6 +1480,10 @@ Page({
       }
       todayPoints = 10 + bonus
     }
+    // 补签卡和里程碑
+    var makeupCards = checkin.getMakeupCards()
+    var canMakeup = checkin.canMakeupYesterday()
+    var milestones = checkin.getMilestones()
     this.setData({
       checkinInfo: {
         isChecked: isChecked,
@@ -1485,10 +1491,14 @@ Page({
         cycleDay: cycleDay,
         currentPoints: currentPoints,
         totalEarned: totalEarned,
+        totalDays: totalDays,
         todayPoints: isChecked ? 0 : todayPoints
       },
       consecutiveDaysText: i18n.t('consecutiveDays', { days: continuousDays }),
-      todayPointsText: '+' + todayPoints + i18n.t('pointsShort')
+      todayPointsText: '+' + todayPoints + i18n.t('pointsShort'),
+      makeupCards: makeupCards,
+      canMakeup: canMakeup,
+      milestones: milestones
     })
     this._loadCheckinCalendar()
   },
@@ -1644,25 +1654,26 @@ Page({
       this.generateWeeklyReport()
       this.reportCheckinToCloud(result)
       try { var appInst = getApp(); if (appInst && typeof appInst.autoBackup === 'function') appInst.autoBackup() } catch(e) {}
-      var unlockHint = ''
-      var UNLOCK_MAP = { 7: '💣 ' + i18n.t('toolMinesweeper'), 14: '🏰 ' + i18n.t('toolMaze'), 21: '👁 ' + i18n.t('toolVisionTest'), 28: '🔮 ' + i18n.t('toolPsychologyTest') }
-      var nextUnlock = 0
-      var nextName = ''
-      for (var ud in UNLOCK_MAP) {
-        var udNum = parseInt(ud, 10)
-        if (result.continuousDays < udNum) {
-          if (nextUnlock === 0 || udNum < nextUnlock) {
-            nextUnlock = udNum
-            nextName = UNLOCK_MAP[ud]
-          }
-        }
+      // 构建签到结果内容
+      var content = i18n.t('checkinBase') + result.basePoints
+      if (result.bonus > 0) content += i18n.t('checkinBonus') + result.bonus
+      content += '\n' + result.chest.icon + ' ' + result.chest.name + ' +' + result.chest.points
+      content += '\n' + i18n.t('checkinTotal') + result.points + i18n.t('checkinPointsUnit')
+      content += '\n' + i18n.t('checkinStreak') + result.continuousDays + i18n.t('checkinStreakUnit')
+      // 宝箱掉落补签卡
+      if (result.chest.makeupDrop) {
+        content += '\n🎫 ' + i18n.t('makeupCardDrop')
       }
-      if (nextUnlock > 0) {
-        unlockHint = i18n.t('checkinUnlockHint') + (nextUnlock - result.continuousDays) + i18n.t('checkinUnlockDays') + nextName
+      // 里程碑提示
+      if (result.newMilestones && result.newMilestones.length > 0) {
+        for (var mi = 0; mi < result.newMilestones.length; mi++) {
+          var ms = result.newMilestones[mi]
+          content += '\n' + ms.icon + ' ' + i18n.t('milestoneUnlock') + ms.name + '！+' + ms.points + i18n.t('checkinPointsUnit')
+        }
       }
       wx.showModal({
         title: i18n.t('checkinSuccessTitle'),
-        content: i18n.t('checkinBase') + result.basePoints + (result.bonus > 0 ? i18n.t('checkinBonus') + result.bonus : '') + i18n.t('checkinTotal') + result.points + i18n.t('checkinPointsUnit') + i18n.t('checkinStreak') + result.continuousDays + i18n.t('checkinStreakUnit') + unlockHint,
+        content: content,
         showCancel: false,
         confirmText: i18n.t('checkinGreat'),
         confirmColor: '#3B82F6'
@@ -1693,6 +1704,42 @@ Page({
 
   closeAchievementDetail() {
     this.setData({ showAchievementDetail: false })
+  },
+
+  doMakeupCheckin() {
+    if (!this.data.canMakeup) {
+      wx.showToast({ title: i18n.t('makeupNoCard'), icon: 'none' })
+      return
+    }
+    var self = this
+    wx.showModal({
+      title: i18n.t('makeupTitle'),
+      content: i18n.t('makeupConfirm'),
+      success: function(res) {
+        if (!res.confirm) return
+        var result = checkin.makeupCheckin()
+        if (result.success) {
+          wx.showToast({ title: i18n.t('makeupSuccess') + '+' + result.points, icon: 'none' })
+          self.loadCheckinInfo()
+          self.loadPointsData()
+        } else {
+          wx.showToast({ title: result.message, icon: 'none' })
+        }
+      }
+    })
+  },
+
+  claimMilestone(e) {
+    var days = e.currentTarget.dataset.days
+    var result = checkin.claimMilestone(days)
+    if (result.success) {
+      wx.vibrateShort({ type: 'heavy' })
+      wx.showToast({ title: result.milestone.icon + ' +' + result.points, icon: 'none', duration: 2000 })
+      this.loadCheckinInfo()
+      this.loadPointsData()
+    } else {
+      wx.showToast({ title: result.message, icon: 'none' })
+    }
   },
 
   filterAchievements(e) {
@@ -2133,10 +2180,10 @@ Page({
           'cloudBackupInfo.keyCount': result.keyCount
         })
         wx.showModal({
-          title: '✅ 备份成功',
-          content: '已备份 ' + result.keyCount + ' 项数据到云端\n备份时间: ' + cloudSync.formatBackupTime(result.time),
+          title: '✅ ' + i18n.t('backupSuccessTitle'),
+          content: i18n.t('backupSuccessContent', { count: result.keyCount, time: cloudSync.formatBackupTime(result.time) }),
           showCancel: false,
-          confirmText: '好的',
+          confirmText: i18n.t('okay'),
           confirmColor: '#3B82F6'
         })
       } else {
@@ -2148,9 +2195,9 @@ Page({
   doRestore: function() {
     var that = this
     wx.showModal({
-      title: '⚠️ 恢复数据',
-      content: '从云端恢复数据将覆盖当前本地数据，是否继续？',
-      confirmText: '恢复',
+      title: '⚠️ ' + i18n.t('restoreDataTitle'),
+      content: i18n.t('restoreDataContent'),
+      confirmText: i18n.t('restore'),
       confirmColor: '#F59E0B',
       success: function(res) {
         if (res.confirm) {
@@ -2159,10 +2206,10 @@ Page({
             that.setData({ isRestoring: false })
             if (result.success) {
               wx.showModal({
-                title: '✅ 恢复成功',
-                content: '已恢复 ' + result.keyCount + ' 项数据\n备份时间: ' + cloudSync.formatBackupTime(result.backupTime) + '\n\n页面将刷新以加载数据',
+                title: '✅ ' + i18n.t('restoreSuccessTitle'),
+                content: i18n.t('restoreSuccessContent', { count: result.keyCount, time: cloudSync.formatBackupTime(result.backupTime) }),
                 showCancel: false,
-                confirmText: '刷新页面',
+                confirmText: i18n.t('refreshPage'),
                 confirmColor: '#3B82F6',
                 success: function() {
                   that.loadAllData()
@@ -2182,10 +2229,10 @@ Page({
     if (inviteResult.count > 0) {
       this.loadCheckinInfo()
       wx.showModal({
-        title: '🎁 邀请奖励',
-        content: '有 ' + inviteResult.count + ' 位好友使用了你的邀请码！\n奖励 +' + inviteResult.points + '积分',
+        title: i18n.t('inviteRewardTitle'),
+        content: i18n.t('inviteRewardContent', { count: inviteResult.count, points: inviteResult.points }),
         showCancel: false,
-        confirmText: '太棒了',
+        confirmText: i18n.t('great'),
         confirmColor: '#3B82F6'
       })
     }
@@ -2251,10 +2298,10 @@ Page({
       this.loadPointsData()
       this.loadCheckinInfo()
       wx.showModal({
-        title: '🎉 全部完成',
-        content: '今日所有任务已完成！\n额外奖励 +' + result.points + '积分',
+        title: i18n.t('dailyBonusTitle'),
+        content: i18n.t('dailyBonusContent', { points: result.points }),
         showCancel: false,
-        confirmText: '太棒了',
+        confirmText: i18n.t('great'),
         confirmColor: '#3B82F6'
       })
     } else {
@@ -2291,15 +2338,15 @@ Page({
       if (actResult.success) {
         wx.vibrateShort({ type: 'light' })
         this.loadPointsData()
-        wx.showToast({ title: '已激活', icon: 'success' })
+        wx.showToast({ title: i18n.t('activated'), icon: 'success' })
       }
       return
     }
     var that = this
     wx.showModal({
-      title: '🛒 确认购买',
-      content: item.icon + ' ' + item.name + '\n价格: ' + item.price + ' 积分\n当前余额: ' + checkin.getCurrentPoints() + ' 积分',
-      confirmText: '购买',
+      title: i18n.t('purchaseConfirmTitle'),
+      content: i18n.t('purchaseConfirmContent', { icon: item.icon, name: item.name, price: item.price, balance: checkin.getCurrentPoints() }),
+      confirmText: i18n.t('buy'),
       confirmColor: '#3B82F6',
       success: function(res) {
         if (res.confirm) {
@@ -2311,10 +2358,10 @@ Page({
             var newThemeStyle = points.getThemeStyle()
             that.setData({ themeStyle: newThemeStyle })
             wx.showModal({
-              title: '🎉 购买成功',
-              content: item.icon + ' ' + item.name + ' 已到账！\n已自动激活使用',
+              title: i18n.t('purchaseSuccessTitle'),
+              content: i18n.t('purchaseSuccessContent', { icon: item.icon, name: item.name }),
               showCancel: false,
-              confirmText: '好的',
+              confirmText: i18n.t('okay'),
               confirmColor: '#3B82F6'
             })
           } else {
@@ -2333,7 +2380,7 @@ Page({
     this.loadCheckinInfo()
     var themeStyle = points.getThemeStyle()
     this.setData({ themeStyle: themeStyle })
-    wx.showToast({ title: '已取消激活', icon: 'none' })
+    wx.showToast({ title: i18n.t('deactivated'), icon: 'none' })
   },
 
   activateItem: function(e) {
@@ -2346,9 +2393,9 @@ Page({
       this.loadCheckinInfo()
       var themeStyle = points.getThemeStyle()
       this.setData({ themeStyle: themeStyle })
-      wx.showToast({ title: '已激活', icon: 'success' })
+      wx.showToast({ title: i18n.t('activated'), icon: 'success' })
     } else {
-      wx.showToast({ title: result.message || '激活失败', icon: 'none' })
+      wx.showToast({ title: result.message || i18n.t('activateFailed'), icon: 'none' })
     }
   },
 
@@ -2454,7 +2501,7 @@ Page({
         activeTheme: null,
         themeStyle: ''
       })
-      wx.showToast({ title: '已恢复默认', icon: 'none' })
+      wx.showToast({ title: i18n.t('resetDefault'), icon: 'none' })
     } else {
       var result = points.activateItem(itemId)
       if (result.success) {
@@ -2564,7 +2611,7 @@ Page({
   useInviteCode: function() {
     var code = this.data.inviteCodeInput
     if (!code) {
-      wx.showToast({ title: '请输入邀请码', icon: 'none' })
+      wx.showToast({ title: i18n.t('enterInviteCode'), icon: 'none' })
       return
     }
     wx.vibrateShort({ type: 'medium' })
@@ -2573,10 +2620,10 @@ Page({
       this.loadPointsData()
       this.loadCheckinInfo()
       wx.showModal({
-        title: '🎉 邀请码使用成功',
-        content: '奖励 +' + result.points + '积分',
+        title: i18n.t('inviteCodeSuccessTitle'),
+        content: i18n.t('inviteCodeRewardContent', { points: result.points }),
         showCancel: false,
-        confirmText: '太棒了',
+        confirmText: i18n.t('great'),
         confirmColor: '#3B82F6'
       })
     } else {
@@ -2590,7 +2637,7 @@ Page({
     wx.setClipboardData({
       data: code,
       success: function() {
-        wx.showToast({ title: '邀请码已复制', icon: 'success' })
+        wx.showToast({ title: i18n.t('inviteCodeCopied'), icon: 'success' })
       }
     })
   },

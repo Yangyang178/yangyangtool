@@ -13,6 +13,21 @@
       <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
+    <!-- 操作引导 -->
+    <view class="guide-tip" wx:if="{{showGuideTip}}">
+      <view class="guide-tip-header">
+        <text class="guide-tip-icon">💡</text>
+        <text class="guide-tip-title">{{i18n.guideTipTitle}}</text>
+        <view class="guide-tip-close" bindtap="closeGuideTip">✕</view>
+      </view>
+      <view class="guide-tip-steps">
+        <view class="guide-step" wx:for="{{i18n.guideSteps}}" wx:key="index">
+          <text class="guide-step-num">{{index + 1}}</text>
+          <text class="guide-step-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
     <!-- 计时器显示区 -->
     <view class="timer-section">
       <!-- 圆形进度条 -->

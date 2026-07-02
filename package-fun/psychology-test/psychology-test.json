@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "心理测试",
+  "navigationBarTitleText": "心理测试 - 趣味性格心理小测试",
   "usingComponents": {
     "navigation-bar": "/components/navigation-bar/navigation-bar"
   }

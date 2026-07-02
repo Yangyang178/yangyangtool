@@ -32,11 +32,14 @@ Page({
     isDarkMode: false,
     fontClass: '',
     fontSizeSetting: 'medium',
+    showGuideTip: false,
     isLoading: true
   },
 
   onLoad: function() {
     this.setData({ i18n: i18n.getToolPageTexts('tax') })
+    var guideClosed = storageUtil.get('guide_tip_closed_25', false)
+    this.setData({ showGuideTip: !guideClosed })
     wx.showShareMenu({
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline']
@@ -60,6 +63,11 @@ Page({
     this.setData({ isDarkMode: isDark, fontClass: fontClass })
     var fontSize = storageUtil.get('fontSizeSetting', 'medium')
     this.setData({ fontSizeSetting: fontSize })
+  },
+
+  closeGuideTip: function() {
+    storageUtil.set('guide_tip_closed_25', true)
+    this.setData({ showGuideTip: false })
   },
 
   onSalaryInput: function(e) {

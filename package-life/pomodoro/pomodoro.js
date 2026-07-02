@@ -49,7 +49,8 @@ Page({
     weekData: [],
     weekTotalPomodoros: 0,
     weekTotalMinutes: 0,
-    streakDays: 0
+    streakDays: 0,
+    showGuideTip: false
   },
 
   onLoad: function() {
@@ -62,6 +63,8 @@ Page({
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
     this.setData({ isDarkMode: isDark, i18n: i18n.getToolPageTexts('pomodoro') })
+    var guideClosed = storageUtil.get('guide_tip_closed_9', false)
+    this.setData({ showGuideTip: !guideClosed })
 
     this.loadTodayRecords()
     this.loadWeekData()
@@ -91,6 +94,11 @@ Page({
     if (this.data.isRunning) {
       this.syncTimeFromTimestamp()
     }
+  },
+
+  closeGuideTip: function() {
+    storageUtil.set('guide_tip_closed_9', true)
+    this.setData({ showGuideTip: false })
   },
 
   clearTimer: function() {

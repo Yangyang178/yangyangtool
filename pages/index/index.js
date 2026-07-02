@@ -27,8 +27,8 @@ Page({
     filteredTools: [],
     topTools: [],
     recentTools: [],
-    displayRecentTools: [],
     showRecentModal: false,
+    showStarGuide: false,
     totalUsageDisplay: '1.2万',
     searchKeyword: '',
     searchHistory: [],
@@ -39,15 +39,18 @@ Page({
     isDragging: false,
     dragIndex: -1,
     selectedToolIndex: -1,
+    selectedCategoryIndex: -1,
     canUndo: false,
     editHistory: [],
     customOrder: [],
     hiddenTools: [],
     hiddenToolsList: [],
+    customCategoryOrder: [],
     sharePosterPath: '',
     recommendedTools: [],
+    newTools: [],
+    appVersion: '',
     todayTip: null,
-    moreRecordsText: '',
     hiddenToolsText: '',
     allRecentUseText: '',
     categorySections: [],
@@ -56,7 +59,9 @@ Page({
 
   onLoad: function(options) {
     perf.markPageStart('index')
-    var tracker = getApp().tracker; tracker.pageView('home')
+    var app = getApp()
+    var tracker = app.tracker; tracker.pageView('home')
+    this.setData({ appVersion: app.globalData.appVersion })
     this.updateGreeting()
 
     if (options && options.inviteCode) {
@@ -76,18 +81,13 @@ Page({
 
     var favorites = storageUtil.safeGetArray('favorites')
     var allTools = toolsData.getToolsWithFavorites(favorites)
-    // 趣味测试工具不在首页卡片列表显示，通过专属横幅入口进入
-    var tools = []
-    for (var fi = 0; fi < allTools.length; fi++) {
-      if (allTools[fi].category !== 'fun') tools.push(allTools[fi])
-    }
     // 立即翻译工具数据
-    tools = i18n.translateTools(tools)
+    var tools = i18n.translateTools(allTools)
 
     var history = storageUtil.safeGetArray('searchHistory')
     var hasSeenGuide = storageUtil.get('hasSeenGuide')
     var guideVersion = storageUtil.get('guideVersion')
-    var currentGuideVersion = 4
+    var currentGuideVersion = 5
     var shouldShowGuide = !hasSeenGuide || guideVersion < currentGuideVersion
 
     var recentTools = storageUtil.safeGetArray('recentTools')
@@ -103,7 +103,6 @@ Page({
       searchHistory: history,
       showGuide: shouldShowGuide,
       recentTools: recentTools,
-      displayRecentTools: recentTools.slice(0, 2),
       categories: categories,
       hotSearchWords: hotSearchWords,
       i18n: i18n.getAllTexts()
@@ -115,6 +114,7 @@ Page({
     this.applyCurrentTheme()
     this.computeTopTools(tools)
     this.computeRecommendations(tools)
+    this.computeNewTools(tools)
     this.computeTodayTip(tools)
 
     var totalUsage = 0
@@ -147,12 +147,11 @@ Page({
     try {
       var recentTools = storageUtil.safeGetArray('recentTools')
       recentTools = i18n.translateTools(recentTools)
-      var moreRecordsText = ''
-      if (recentTools.length > 2) {
-        moreRecordsText = i18n.t('moreRecords', { count: recentTools.length - 2 })
-      }
       var allRecentUseText = i18n.t('allRecentUse', { count: recentTools.length })
-      this.setData({ recentTools: recentTools, displayRecentTools: recentTools.slice(0, 2), moreRecordsText: moreRecordsText, allRecentUseText: allRecentUseText })
+      // 收藏引导：使用过工具且未看过引导
+      var hasSeenStarGuide = storageUtil.get('hasSeenStarGuide')
+      var shouldShowStarGuide = !hasSeenStarGuide && recentTools.length > 0
+      this.setData({ recentTools: recentTools, allRecentUseText: allRecentUseText, showStarGuide: shouldShowStarGuide })
     } catch(e) {}
     wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] })
     this.checkBackupReminder()
@@ -162,26 +161,16 @@ Page({
     logger.log('[首页] 云端数据已恢复，刷新页面')
     var favorites = storageUtil.safeGetArray('favorites')
     var allTools = toolsData.getToolsWithFavorites(favorites)
-    var tools = []
-    for (var fi = 0; fi < allTools.length; fi++) {
-      if (allTools[fi].category !== 'fun') tools.push(allTools[fi])
-    }
-    tools = i18n.translateTools(tools)
+    var tools = i18n.translateTools(allTools)
 
     var recentTools = storageUtil.safeGetArray('recentTools')
     recentTools = i18n.translateTools(recentTools)
-    var moreRecordsText = ''
-    if (recentTools.length > 2) {
-      moreRecordsText = i18n.t('moreRecords', { count: recentTools.length - 2 })
-    }
     var allRecentUseText = i18n.t('allRecentUse', { count: recentTools.length })
 
     this.setData({
       tools: tools,
       filteredTools: tools,
       recentTools: recentTools,
-      displayRecentTools: recentTools.slice(0, 2),
-      moreRecordsText: moreRecordsText,
       allRecentUseText: allRecentUseText,
       searchHistory: storageUtil.safeGetArray('searchHistory')
     })
@@ -192,6 +181,7 @@ Page({
     this.applyCurrentTheme()
     this.computeTopTools(tools)
     this.computeRecommendations(tools)
+    this.computeNewTools(tools)
     this.computeTodayTip(tools)
 
     wx.showToast({ title: '已从云端恢复数据', icon: 'success', duration: 2000 })
@@ -238,8 +228,8 @@ Page({
     var filteredTools = i18n.translateTools(this.data.filteredTools)
     var topTools = i18n.translateTools(this.data.topTools)
     var recentTools = i18n.translateTools(this.data.recentTools)
-    var displayRecentTools = i18n.translateTools(this.data.displayRecentTools)
     var recommendedTools = i18n.translateTools(this.data.recommendedTools)
+    var newTools = i18n.translateTools(this.data.newTools)
     var hiddenToolsList = i18n.translateTools(this.data.hiddenToolsList)
     // Clear _highlighted to prevent stale cached Chinese names from overriding translated names
     var clearHighlighted = function(list) {
@@ -253,13 +243,9 @@ Page({
     clearHighlighted(filteredTools)
     clearHighlighted(topTools)
     clearHighlighted(recentTools)
-    clearHighlighted(displayRecentTools)
     clearHighlighted(recommendedTools)
+    clearHighlighted(newTools)
     clearHighlighted(hiddenToolsList)
-    var moreRecordsText = ''
-    if (this.data.recentTools.length > 2) {
-      moreRecordsText = i18n.t('moreRecords', { count: this.data.recentTools.length - 2 })
-    }
     var hiddenToolsText = i18n.t('hiddenTools', { count: this.data.hiddenToolsList.length })
     var allRecentUseText = i18n.t('allRecentUse', { count: this.data.recentTools.length })
     this.setData({
@@ -270,10 +256,9 @@ Page({
       filteredTools: filteredTools,
       topTools: topTools,
       recentTools: recentTools,
-      displayRecentTools: displayRecentTools,
       recommendedTools: recommendedTools,
+      newTools: newTools,
       hiddenToolsList: hiddenToolsList,
-      moreRecordsText: moreRecordsText,
       hiddenToolsText: hiddenToolsText,
       allRecentUseText: allRecentUseText
     })
@@ -328,6 +313,35 @@ Page({
       }
       this.setData({ recommendedTools: i18n.translateTools(fallback) })
     }
+  },
+
+  computeNewTools: function(tools) {
+    try {
+      var newTools = []
+      for (var i = 0; i < tools.length; i++) {
+        if (tools[i].isNew) newTools.push(tools[i])
+      }
+      // 按 id 倒序，最新的在前
+      newTools.sort(function(a, b) { return b.id - a.id })
+      // 最多展示 6 个
+      if (newTools.length > 6) newTools = newTools.slice(0, 6)
+      this.setData({ newTools: i18n.translateTools(newTools) })
+    } catch(e) {
+      this.setData({ newTools: [] })
+    }
+  },
+
+  onNewToolClick: function(e) {
+    var tool = e.currentTarget.dataset.tool
+    if (!tool || !tool.route) return
+    var tracker = getApp().tracker
+    if (tracker) tracker.track('new_tool_click', { id: tool.id, name: tool.name })
+    wx.navigateTo({
+      url: tool.route,
+      fail: function() {
+        wx.showToast({ title: i18n.t('openFail'), icon: 'none' })
+      }
+    })
   },
 
   computeTodayTip: function(tools) {
@@ -456,6 +470,11 @@ Page({
 
   onGuideClose: function() { this.setData({ showGuide: false }); this.applyCurrentTheme() },
 
+  closeStarGuide: function() {
+    this.setData({ showStarGuide: false })
+    wx.setStorageSync('hasSeenStarGuide', true)
+  },
+
   onPullDownRefresh: function() {
     this.setData({ isRefreshing: true })
     var that = this
@@ -487,16 +506,49 @@ Page({
       var recentTools = storageUtil.safeGetArray('recentTools')
       recentTools = i18n.translateTools(recentTools)
       var allRecentUseText = i18n.t('allRecentUse', { count: recentTools.length })
-      this.setData({ showRecentModal: true, recentTools: recentTools, displayRecentTools: recentTools.slice(0, 2), allRecentUseText: allRecentUseText })
+      this.setData({ showRecentModal: true, recentTools: recentTools, allRecentUseText: allRecentUseText })
     } catch(e) {}
   },
 
-  openFunZone: function() {
-    wx.vibrateShort({ type: 'light' })
-    wx.navigateTo({ url: '/package-fun/fun-home/fun-home' })
+  hideRecentModal: function() { this.setData({ showRecentModal: false }) },
+
+  deleteRecentTool: function(e) {
+    var index = e.currentTarget.dataset.index
+    var recentTools = this.data.recentTools || []
+    if (index == null || index < 0 || index >= recentTools.length) return
+    var self = this
+    wx.showModal({
+      title: i18n.t('tipTitle'),
+      content: i18n.t('deleteRecentConfirm'),
+      confirmText: i18n.t('confirm'),
+      cancelText: i18n.t('cancel'),
+      success: function(res) {
+        if (!res.confirm) return
+        recentTools.splice(index, 1)
+        wx.setStorageSync('recentTools', recentTools)
+        var allRecentUseText = i18n.t('allRecentUse', { count: recentTools.length })
+        self.setData({ recentTools: recentTools, allRecentUseText: allRecentUseText })
+        wx.showToast({ title: i18n.t('recentDeleted'), icon: 'success', duration: 1200 })
+      }
+    })
   },
 
-  hideRecentModal: function() { this.setData({ showRecentModal: false }) },
+  clearAllRecentTools: function() {
+    var self = this
+    wx.showModal({
+      title: i18n.t('tipTitle'),
+      content: i18n.t('clearAllRecentConfirm'),
+      confirmText: i18n.t('confirm'),
+      cancelText: i18n.t('cancel'),
+      success: function(res) {
+        if (!res.confirm) return
+        wx.setStorageSync('recentTools', [])
+        var allRecentUseText = i18n.t('allRecentUse', { count: 0 })
+        self.setData({ recentTools: [], allRecentUseText: allRecentUseText })
+        wx.showToast({ title: i18n.t('recentCleared'), icon: 'success', duration: 1200 })
+      }
+    })
+  },
 
   onRecentToolClick: function(e) {
     try {
@@ -531,17 +583,65 @@ Page({
       var id = e.currentTarget.dataset.id
       var toolsList = this.data.tools || []
       var tools = []
+      // 找到该工具当前的收藏状态并切换
+      var newFavState = null
       for (var i = 0; i < toolsList.length; i++) {
         var t = {}; var src = toolsList[i]
         for (var key in src) t[key] = src[key]
-        if (t.id === id) t.isFavorite = !t.isFavorite
+        if (t.id === id) {
+          t.isFavorite = !t.isFavorite
+          newFavState = t.isFavorite
+        }
         tools.push(t)
       }
       var favorites = []
       for (var j = 0; j < tools.length; j++) { if (tools[j].isFavorite) favorites.push(tools[j].id) }
       wx.setStorageSync('favorites', favorites)
       wx.vibrateShort({ type: 'light' })
-      this.setData({ tools: tools })
+
+      // 同步更新 categorySections 中对应工具的收藏状态
+      var patch = { tools: tools }
+      if (newFavState !== null) {
+        var sections = this.data.categorySections || []
+        for (var si = 0; si < sections.length; si++) {
+          var sectionTools = sections[si].tools || []
+          for (var ti = 0; ti < sectionTools.length; ti++) {
+            if (sectionTools[ti].id === id) {
+              sectionTools[ti].isFavorite = newFavState
+            }
+          }
+        }
+        // 同步更新 newTools
+        var newTools = this.data.newTools || []
+        for (var ni = 0; ni < newTools.length; ni++) {
+          if (newTools[ni].id === id) newTools[ni].isFavorite = newFavState
+        }
+        // 同步更新 topTools
+        var topTools = this.data.topTools || []
+        for (var tpi = 0; tpi < topTools.length; tpi++) {
+          if (topTools[tpi].id === id) topTools[tpi].isFavorite = newFavState
+        }
+        // 同步更新 recentTools
+        var recentTools = this.data.recentTools || []
+        for (var ri = 0; ri < recentTools.length; ri++) {
+          if (recentTools[ri].id === id) recentTools[ri].isFavorite = newFavState
+        }
+        // 同步更新 _allToolsCache
+        if (this._allToolsCache) {
+          for (var catKey in this._allToolsCache) {
+            var cachedTools = this._allToolsCache[catKey]
+            for (var ci = 0; ci < cachedTools.length; ci++) {
+              if (cachedTools[ci].id === id) cachedTools[ci].isFavorite = newFavState
+            }
+          }
+        }
+        patch.categorySections = sections
+        patch.newTools = newTools
+        patch.topTools = topTools
+        patch.recentTools = recentTools
+      }
+
+      this.setData(patch)
       this.filterTools()
       var hasId = false
       for (var k = 0; k < favorites.length; k++) { if (favorites[k] === id) { hasId = true; break } }
@@ -749,22 +849,24 @@ Page({
   },
 
   buildCategorySections: function(tools) {
-    // 分类图标和排序配置
+    // 分类图标和默认排序配置
     var categoryConfig = {
       calculator: { icon: '🧮', sort: 1 },
       text: { icon: '📝', sort: 2 },
       datetime: { icon: '📅', sort: 3 },
       life: { icon: '🏡', sort: 4 },
       office: { icon: '💼', sort: 5 },
-      dev: { icon: '💻', sort: 6 }
+      dev: { icon: '💻', sort: 6 },
+      fun: { icon: '🧠', sort: 7 }
     }
-    // 按分类分组
+    // 按分类分组（缓存全量数据，供展开时懒加载）
     var groups = {}
     for (var i = 0; i < tools.length; i++) {
       var cat = tools[i].category
       if (!groups[cat]) groups[cat] = []
       groups[cat].push(tools[i])
     }
+    this._allToolsCache = groups
     // 构建分类区段
     var sections = []
     for (var key in groups) {
@@ -775,26 +877,51 @@ Page({
         datetime: i18n.t('catDatetime') || '日期时间',
         life: i18n.t('catLife') || '生活助手',
         office: i18n.t('catOffice') || '效率/办公',
-        dev: i18n.t('catDev') || '开发调试'
+        dev: i18n.t('catDev') || '开发调试',
+        fun: i18n.t('catFun') || '益智趣味'
       }
       sections.push({
         id: key,
         name: catNames[key],
         icon: categoryConfig[key].icon,
         sort: categoryConfig[key].sort,
-        tools: groups[key],
+        tools: [],  // 懒加载：折叠状态下不填充工具数据
         count: groups[key].length,
         countText: i18n.t('catToolCount', { count: groups[key].length })
       })
     }
-    // 按sort排序
-    sections.sort(function(a, b) { return a.sort - b.sort })
+    // 优先按自定义顺序排序，否则按默认 sort
+    var customOrder = this.data.customCategoryOrder || []
+    if (customOrder.length > 0) {
+      var orderedSections = []
+      var usedIds = {}
+      for (var co = 0; co < customOrder.length; co++) {
+        for (var si = 0; si < sections.length; si++) {
+          if (sections[si].id === customOrder[co] && !usedIds[sections[si].id]) {
+            orderedSections.push(sections[si])
+            usedIds[sections[si].id] = true
+            break
+          }
+        }
+      }
+      // 追加自定义顺序中未包含的分类（防止数据丢失）
+      for (var ri = 0; ri < sections.length; ri++) {
+        if (!usedIds[sections[ri].id]) orderedSections.push(sections[ri])
+      }
+      sections = orderedSections
+    } else {
+      sections.sort(function(a, b) { return a.sort - b.sort })
+    }
     // 保留已有的折叠状态，新增的分类默认折叠
     var collapsed = this.data.collapsedCategories || {}
-    var defaultCollapsedIds = ['fun', 'dev']
+    var defaultCollapsedIds = ['calculator', 'text', 'datetime', 'life', 'office', 'dev', 'fun']
     for (var j = 0; j < sections.length; j++) {
       if (collapsed[sections[j].id] === undefined) {
         collapsed[sections[j].id] = defaultCollapsedIds.indexOf(sections[j].id) > -1
+      }
+      // 已展开的分类需要填充工具数据
+      if (!collapsed[sections[j].id]) {
+        sections[j].tools = i18n.translateTools(this._allToolsCache[sections[j].id] || [])
       }
     }
     this.setData({ categorySections: sections, collapsedCategories: collapsed })
@@ -803,16 +930,33 @@ Page({
   toggleCategoryCollapse: function(e) {
     var catId = e.currentTarget.dataset.id
     var collapsed = this.data.collapsedCategories || {}
-    collapsed[catId] = !collapsed[catId]
+    var willCollapse = !collapsed[catId]
+    collapsed[catId] = willCollapse
     wx.vibrateShort({ type: 'light' })
-    this.setData({ collapsedCategories: collapsed })
+
+    // 懒加载：展开时填充工具数据，折叠时清空释放内存
+    var sections = this.data.categorySections
+    var patch = { collapsedCategories: collapsed }
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].id === catId) {
+        var path = 'categorySections[' + i + '].tools'
+        if (willCollapse) {
+          patch[path] = []
+        } else {
+          patch[path] = i18n.translateTools(this._allToolsCache[catId] || [])
+        }
+        break
+      }
+    }
+    this.setData(patch)
   },
 
   loadCustomLayout: function() {
     try {
       var customOrder = storageUtil.safeGetArray('customToolOrder')
       var hiddenTools = storageUtil.safeGetArray('hiddenTools')
-      this.setData({ customOrder: customOrder, hiddenTools: hiddenTools })
+      var customCategoryOrder = storageUtil.safeGetArray('customCategoryOrder')
+      this.setData({ customOrder: customOrder, hiddenTools: hiddenTools, customCategoryOrder: customCategoryOrder })
       var tools = this.data.tools || []
       if (!Array.isArray(tools) || tools.length === 0) return
       if (customOrder.length > 0) {
@@ -850,9 +994,62 @@ Page({
       wx.vibrateShort({ type: 'light' })
       if (!this.data.isEditMode) {
         wx.showModal({ title: i18n.t('editModeTitle'), content: i18n.t('editModeContent'), showCancel: false, confirmText: i18n.t('iKnow'), confirmColor: '#3B82F6' })
+        this.setData({ isEditMode: true, selectedCategoryIndex: -1, canUndo: false, editHistory: [] })
+      } else {
+        this.setData({ isEditMode: false, selectedCategoryIndex: -1, canUndo: false, editHistory: [] })
+        this.saveCategoryOrder()
+        wx.showToast({ title: i18n.t('layoutSaved'), icon: 'success', duration: 1500 })
       }
-      this.setData({ isEditMode: !this.data.isEditMode, selectedToolIndex: -1, canUndo: false, editHistory: [] })
-      if (!this.data.isEditMode) { this.saveCustomLayout(); wx.showToast({ title: i18n.t('layoutSaved'), icon: 'success', duration: 1500 }) }
+    } catch(e) {}
+  },
+
+  onEditCategoryClick: function(e) {
+    try {
+      if (!this.data.isEditMode) return
+      var index = e.currentTarget.dataset.index
+      var currentSelected = this.data.selectedCategoryIndex
+      if (currentSelected === -1) {
+        wx.vibrateShort({ type: 'light' })
+        this.setData({ selectedCategoryIndex: index })
+        return
+      }
+      if (currentSelected === index) {
+        wx.vibrateShort({ type: 'light' })
+        this.setData({ selectedCategoryIndex: -1 })
+        return
+      }
+      wx.vibrateShort({ type: 'medium' })
+      var sections = this.data.categorySections || []
+      if (!sections[currentSelected] || !sections[index]) return
+      this.pushCategoryEditHistory()
+      var temp = sections[currentSelected]
+      sections[currentSelected] = sections[index]
+      sections[index] = temp
+      this.setData({ categorySections: sections, selectedCategoryIndex: -1, canUndo: true })
+      wx.showToast({ title: i18n.t('swappedPosition'), icon: 'success', duration: 800 })
+    } catch(e) {}
+  },
+
+  pushCategoryEditHistory: function() {
+    try {
+      var sections = this.data.categorySections || []
+      var snapshot = []
+      for (var i = 0; i < sections.length; i++) snapshot.push(sections[i].id)
+      var history = this.data.editHistory || []
+      history = history.slice()
+      history.push({ categoryOrder: snapshot, timestamp: Date.now() })
+      if (history.length > 20) history = history.slice(history.length - 20)
+      this.setData({ editHistory: history })
+    } catch(e) {}
+  },
+
+  saveCategoryOrder: function() {
+    try {
+      var sections = this.data.categorySections || []
+      var order = []
+      for (var i = 0; i < sections.length; i++) order.push(sections[i].id)
+      wx.setStorageSync('customCategoryOrder', order)
+      this.setData({ customCategoryOrder: order })
     } catch(e) {}
   },
 
@@ -899,6 +1096,29 @@ Page({
       wx.vibrateShort({ type: 'light' })
       var newHistory = history.slice()
       var prevState = newHistory.pop()
+      // 分类排序撤销
+      if (prevState.categoryOrder && Array.isArray(prevState.categoryOrder)) {
+        var sections = this.data.categorySections || []
+        var restoredSections = []
+        var usedIds = {}
+        for (var co = 0; co < prevState.categoryOrder.length; co++) {
+          for (var si = 0; si < sections.length; si++) {
+            if (sections[si].id === prevState.categoryOrder[co] && !usedIds[sections[si].id]) {
+              restoredSections.push(sections[si])
+              usedIds[sections[si].id] = true
+              break
+            }
+          }
+        }
+        for (var ri = 0; ri < sections.length; ri++) {
+          if (!usedIds[sections[ri].id]) restoredSections.push(sections[ri])
+        }
+        this.setData({ categorySections: restoredSections, editHistory: newHistory, canUndo: newHistory.length > 0, selectedCategoryIndex: -1 })
+        this.saveCategoryOrder()
+        wx.showToast({ title: i18n.t('undoLastStep'), icon: 'none', duration: 800 })
+        return
+      }
+      // 兼容旧工具排序撤销
       var allTools = this.data.tools || []
       var restoredOrder = []
       if (prevState.order && Array.isArray(prevState.order)) {
@@ -989,14 +1209,16 @@ Page({
         confirmText: i18n.t('resetLayout'), cancelText: i18n.t('cancel'), confirmColor: '#EF4444',
         success: function(res) {
           if (res.confirm) {
-            that.pushEditHistory()
+            that.pushCategoryEditHistory()
             wx.removeStorageSync('customToolOrder')
             wx.removeStorageSync('hiddenTools')
-            that.setData({ customOrder: [], hiddenTools: [], isEditMode: false, canUndo: true, selectedToolIndex: -1 })
+            wx.removeStorageSync('customCategoryOrder')
+            that.setData({ customOrder: [], hiddenTools: [], customCategoryOrder: [], isEditMode: false, canUndo: true, selectedCategoryIndex: -1, selectedToolIndex: -1 })
             var favs = storageUtil.safeGetArray('favorites')
             var defaultToolsCopy = toolsData.getToolsWithFavorites(favs)
             defaultToolsCopy = i18n.translateTools(defaultToolsCopy)
             that.setData({ tools: defaultToolsCopy, filteredTools: defaultToolsCopy })
+            that.buildCategorySections(defaultToolsCopy)
             wx.showToast({ title: i18n.t('defaultLayoutRestored'), icon: 'success' })
           }
         }
@@ -1019,7 +1241,7 @@ Page({
         points.recordShare()
       }
     } catch(e) {}
-    return { title: '🧰 百宝工具箱 - 40+实用小工具合集', path: '/pages/index/index', imageUrl: this.data.sharePosterPath || '' }
+    return { title: '🧰 百宝工具箱 - 汇率换算、房贷计算、二维码等50+实用工具', path: '/pages/index/index', imageUrl: this.data.sharePosterPath || '' }
   },
 
   onShareTimeline: function() {
@@ -1036,7 +1258,7 @@ Page({
         points.recordShare()
       }
     } catch(e) {}
-    return { title: '🧰 百宝工具箱 - 汇率换算、单位转换等40+实用工具', query: '', imageUrl: this.data.sharePosterPath || '' }
+    return { title: '🧰 百宝工具箱 - 汇率换算、房贷计算、二维码等50+实用工具', query: '', imageUrl: this.data.sharePosterPath || '' }
   },
 
   drawSharePoster: function() {

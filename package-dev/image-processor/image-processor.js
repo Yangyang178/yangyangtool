@@ -44,6 +44,7 @@ Page({
     
     isProcessing: false,
     isDarkMode: false,
+    showGuideTip: false,
     fontClass: '',
     fontSizeSetting: 'medium',
 
@@ -202,6 +203,8 @@ Page({
     var app = getApp()
     var isDark = app.globalData.isDarkMode || false
     this.setData({ isDarkMode: isDark, i18n: i18nTexts })
+    var guideClosed = storageUtil.get('guide_tip_closed_21', false)
+    this.setData({ showGuideTip: !guideClosed })
     this._updateI18nData(i18nTexts)
     this.updateFormatInfo()
     poster.setupForPage(this, 21)
@@ -216,6 +219,11 @@ Page({
     var fontClass = points.getFontClass()
     this.setData({ isDarkMode: isDark, fontSizeSetting: fontSize, fontClass: fontClass, i18n: i18nTexts })
     this._updateI18nData(i18nTexts)
+  },
+
+  closeGuideTip: function() {
+    storageUtil.set('guide_tip_closed_21', true)
+    this.setData({ showGuideTip: false })
   },
 
   onPrivacyAgreed: function() {

@@ -1,5 +1,6 @@
 var storageUtil = require('./storage.js')
 var checkin = require('./checkin.js')
+var i18n = require('./i18n.js')
 
 var POINTS_KEY = 'user_points'
 var TOTAL_POINTS_KEY = 'total_earned_points'
@@ -15,19 +16,19 @@ var DAILY_TASK_BONUS = 20
 var INVITE_POINTS = 50
 
 var DAILY_TASKS = [
-  { id: 'checkin', name: '每日签到', icon: '📅', desc: '完成今日签到', points: 10, target: 1 },
-  { id: 'use_tools', name: '使用3个不同工具', icon: '🔧', desc: '使用3个不同的工具', points: 10, target: 3 },
-  { id: 'use_tools_5', name: '使用5个工具', icon: '⚡', desc: '使用5个不同的工具', points: 15, target: 5 },
-  { id: 'share_once', name: '分享一次', icon: '📢', desc: '分享小程序给好友', points: 10, target: 1 },
-  { id: 'fun_challenge', name: '益智挑战', icon: '🧠', desc: '挑战3个益智工具', points: 15, target: 3 }
+  { id: 'checkin', nameKey: 'taskCheckin', icon: '📅', descKey: 'taskCheckinDesc', points: 10, target: 1 },
+  { id: 'use_tools', nameKey: 'taskUseTools3', icon: '🔧', descKey: 'taskUseTools3Desc', points: 10, target: 3 },
+  { id: 'use_tools_5', nameKey: 'taskUseTools5', icon: '⚡', descKey: 'taskUseTools5Desc', points: 15, target: 5 },
+  { id: 'share_once', nameKey: 'taskShareOnce', icon: '📢', descKey: 'taskShareOnceDesc', points: 10, target: 1 },
+  { id: 'fun_challenge', nameKey: 'taskFunChallenge', icon: '🧠', descKey: 'taskFunChallengeDesc', points: 15, target: 3 }
 ]
 
 var SHOP_ITEMS = [
   {
     id: 'frame_gold',
-    name: '流金溢彩头像框',
+    nameKey: 'shopFrameGold',
     icon: '🥇',
-    desc: '流动的金色光芒，闪耀夺目',
+    descKey: 'shopFrameGoldDesc',
     price: 200,
     type: 'frame',
     frameClass: 'frame-gold',
@@ -35,9 +36,9 @@ var SHOP_ITEMS = [
   },
   {
     id: 'frame_diamond',
-    name: '璀璨星钻头像框',
+    nameKey: 'shopFrameDiamond',
     icon: '💎',
-    desc: '冰蓝星钻光芒，高贵典雅',
+    descKey: 'shopFrameDiamondDesc',
     price: 500,
     type: 'frame',
     frameClass: 'frame-diamond',
@@ -45,9 +46,9 @@ var SHOP_ITEMS = [
   },
   {
     id: 'frame_rainbow',
-    name: '梦幻极光头像框',
+    nameKey: 'shopFrameRainbow',
     icon: '🌈',
-    desc: '七彩极光流转，如梦似幻',
+    descKey: 'shopFrameRainbowDesc',
     price: 800,
     type: 'frame',
     frameClass: 'frame-rainbow',
@@ -55,45 +56,45 @@ var SHOP_ITEMS = [
   },
   {
     id: 'theme_rose',
-    name: '玫瑰主题色',
+    nameKey: 'shopThemeRose',
     icon: '🌹',
-    desc: '浪漫玫瑰粉主题色',
+    descKey: 'shopThemeRoseDesc',
     price: 300,
     type: 'theme',
     color: '#E11D48'
   },
   {
     id: 'theme_emerald',
-    name: '翡翠主题色',
+    nameKey: 'shopThemeEmerald',
     icon: '💚',
-    desc: '清新翡翠绿主题色',
+    descKey: 'shopThemeEmeraldDesc',
     price: 300,
     type: 'theme',
     color: '#059669'
   },
   {
     id: 'theme_amber',
-    name: '琥珀主题色',
+    nameKey: 'shopThemeAmber',
     icon: '🟡',
-    desc: '温暖琥珀金主题色',
+    descKey: 'shopThemeAmberDesc',
     price: 300,
     type: 'theme',
     color: '#D97706'
   },
   {
     id: 'theme_violet',
-    name: '紫晶主题色',
+    nameKey: 'shopThemeViolet',
     icon: '💜',
-    desc: '神秘紫晶主题色',
+    descKey: 'shopThemeVioletDesc',
     price: 400,
     type: 'theme',
     color: '#7C3AED'
   },
   {
     id: 'theme_sunset',
-    name: '落日余晖',
+    nameKey: 'shopThemeSunset',
     icon: '🌅',
-    desc: '橙红渐变，如落日熔金',
+    descKey: 'shopThemeSunsetDesc',
     price: 500,
     type: 'theme',
     color: '#EA580C',
@@ -101,9 +102,9 @@ var SHOP_ITEMS = [
   },
   {
     id: 'theme_aurora',
-    name: '极光幻彩',
+    nameKey: 'shopThemeAurora',
     icon: '🌌',
-    desc: '青紫渐变，如极光流转',
+    descKey: 'shopThemeAuroraDesc',
     price: 500,
     type: 'theme',
     color: '#06B6D4',
@@ -111,9 +112,9 @@ var SHOP_ITEMS = [
   },
   {
     id: 'theme_sakura',
-    name: '樱花物语',
+    nameKey: 'shopThemeSakura',
     icon: '🌸',
-    desc: '粉白渐变，如樱花飘落',
+    descKey: 'shopThemeSakuraDesc',
     price: 500,
     type: 'theme',
     color: '#EC4899',
@@ -121,9 +122,9 @@ var SHOP_ITEMS = [
   },
   {
     id: 'theme_ocean',
-    name: '深海秘境',
+    nameKey: 'shopThemeOcean',
     icon: '🌊',
-    desc: '蓝青渐变，如深海幽光',
+    descKey: 'shopThemeOceanDesc',
     price: 500,
     type: 'theme',
     color: '#1D4ED8',
@@ -131,9 +132,9 @@ var SHOP_ITEMS = [
   },
   {
     id: 'theme_forest',
-    name: '翠林晨曦',
+    nameKey: 'shopThemeForest',
     icon: '🌲',
-    desc: '绿金渐变，如晨光穿林',
+    descKey: 'shopThemeForestDesc',
     price: 500,
     type: 'theme',
     color: '#15803D',
@@ -141,9 +142,9 @@ var SHOP_ITEMS = [
   },
   {
     id: 'theme_lavender',
-    name: '薰衣草田',
+    nameKey: 'shopThemeLavender',
     icon: '💜',
-    desc: '紫粉渐变，如普罗旺斯花海',
+    descKey: 'shopThemeLavenderDesc',
     price: 600,
     type: 'theme',
     color: '#7C3AED',
@@ -151,9 +152,9 @@ var SHOP_ITEMS = [
   },
   {
     id: 'theme_fire',
-    name: '烈焰赤金',
+    nameKey: 'shopThemeFire',
     icon: '🔥',
-    desc: '红金渐变，如烈火真金',
+    descKey: 'shopThemeFireDesc',
     price: 600,
     type: 'theme',
     color: '#B91C1C',
@@ -161,9 +162,9 @@ var SHOP_ITEMS = [
   },
   {
     id: 'theme_night',
-    name: '星夜幻梦',
+    nameKey: 'shopThemeNight',
     icon: '✨',
-    desc: '深蓝紫渐变，如梵高星夜',
+    descKey: 'shopThemeNightDesc',
     price: 600,
     type: 'theme',
     color: '#1E1B4B',
@@ -171,27 +172,27 @@ var SHOP_ITEMS = [
   },
   {
     id: 'badge_pioneer',
-    name: '先锋徽章',
+    nameKey: 'shopBadgePioneer',
     icon: '🏅',
-    desc: '显示在昵称旁的专属徽章',
+    descKey: 'shopBadgePioneerDesc',
     price: 600,
     type: 'badge',
     badge: '🏅'
   },
   {
     id: 'badge_master',
-    name: '大师徽章',
+    nameKey: 'shopBadgeMaster',
     icon: '👑',
-    desc: '显示在昵称旁的大师徽章',
+    descKey: 'shopBadgeMasterDesc',
     price: 1000,
     type: 'badge',
     badge: '👑'
   },
   {
     id: 'font_kai',
-    name: '楷体字',
+    nameKey: 'shopFontKai',
     icon: '📝',
-    desc: '经典楷体，古韵悠长',
+    descKey: 'shopFontKaiDesc',
     price: 200,
     type: 'font',
     fontFamily: 'KaiTi, STKaiti, serif',
@@ -199,9 +200,9 @@ var SHOP_ITEMS = [
   },
   {
     id: 'font_song',
-    name: '宋体字',
+    nameKey: 'shopFontSong',
     icon: '📜',
-    desc: '传统宋体，端庄大方',
+    descKey: 'shopFontSongDesc',
     price: 200,
     type: 'font',
     fontFamily: 'SimSun, STSong, serif',
@@ -209,9 +210,9 @@ var SHOP_ITEMS = [
   },
   {
     id: 'font_fang',
-    name: '仿宋字',
+    nameKey: 'shopFontFang',
     icon: '✒️',
-    desc: '仿宋体，清秀雅致',
+    descKey: 'shopFontFangDesc',
     price: 250,
     type: 'font',
     fontFamily: 'FangSong, STFangsong, serif',
@@ -219,9 +220,9 @@ var SHOP_ITEMS = [
   },
   {
     id: 'font_round',
-    name: '圆体字',
+    nameKey: 'shopFontRound',
     icon: '💫',
-    desc: '圆润可爱，活泼灵动',
+    descKey: 'shopFontRoundDesc',
     price: 350,
     type: 'font',
     fontFamily: 'Hiragino Sans GB, YouYuan, sans-serif',
@@ -229,9 +230,9 @@ var SHOP_ITEMS = [
   },
   {
     id: 'font_hei',
-    name: '黑体字',
+    nameKey: 'shopFontHei',
     icon: '🔲',
-    desc: '简洁黑体，现代有力',
+    descKey: 'shopFontHeiDesc',
     price: 150,
     type: 'font',
     fontFamily: 'SimHei, STHeiti, sans-serif',
@@ -254,9 +255,9 @@ var Points = {
       var completed = progress >= task.target
       tasks.push({
         id: task.id,
-        name: task.name,
+        name: i18n.t(task.nameKey),
         icon: task.icon,
-        desc: task.desc,
+        desc: i18n.t(task.descKey),
         points: task.points,
         target: task.target,
         progress: Math.min(progress, task.target),
@@ -293,7 +294,7 @@ var Points = {
       var prevProgress = saved[taskId] - increment
       if (prevProgress < taskDef.target) {
         if (taskId !== 'checkin') {
-          this._addPoints(taskDef.points, '完成任务: ' + taskDef.name)
+          this._addPoints(taskDef.points, i18n.t('reasonCompleteTask') + ': ' + i18n.t(taskDef.nameKey))
         }
       }
     }
@@ -320,7 +321,7 @@ var Points = {
       saved.use_tools_5 = saved.use_tools
       wx.setStorageSync(DAILY_TASKS_KEY, saved)
 
-      this._addPoints(TOOL_USE_POINTS, '使用工具')
+      this._addPoints(TOOL_USE_POINTS, i18n.t('reasonUseTool'))
 
       var taskDef3 = null
       var taskDef5 = null
@@ -329,10 +330,10 @@ var Points = {
         if (DAILY_TASKS[j].id === 'use_tools_5') taskDef5 = DAILY_TASKS[j]
       }
       if (taskDef3 && saved.use_tools >= taskDef3.target && saved.use_tools - 1 < taskDef3.target) {
-        this._addPoints(taskDef3.points, '完成任务: ' + taskDef3.name)
+        this._addPoints(taskDef3.points, i18n.t('reasonCompleteTask') + ': ' + i18n.t(taskDef3.nameKey))
       }
       if (taskDef5 && saved.use_tools_5 >= taskDef5.target && saved.use_tools_5 - 1 < taskDef5.target) {
-        this._addPoints(taskDef5.points, '完成任务: ' + taskDef5.name)
+        this._addPoints(taskDef5.points, i18n.t('reasonCompleteTask') + ': ' + i18n.t(taskDef5.nameKey))
       }
     }
     return this.getDailyTasks()
@@ -340,16 +341,16 @@ var Points = {
 
   claimDailyBonus: function() {
     var taskInfo = this.getDailyTasks()
-    if (!taskInfo.allDone) return { success: false, message: '请先完成所有每日任务' }
-    if (taskInfo.bonusClaimed) return { success: false, message: '今日奖励已领取' }
+    if (!taskInfo.allDone) return { success: false, message: i18n.t('ptsTaskNotDone') }
+    if (taskInfo.bonusClaimed) return { success: false, message: i18n.t('ptsBonusClaimed') }
     var saved = storageUtil.get(DAILY_TASKS_KEY, null)
     if (!saved || typeof saved !== 'object') {
       saved = { date: this._getToday(), checkin: 0, use_tools: 0, use_tools_5: 0, share_once: 0, fun_challenge: 0, bonusClaimed: false }
     }
     saved.bonusClaimed = true
     wx.setStorageSync(DAILY_TASKS_KEY, saved)
-    this._addPoints(DAILY_TASK_BONUS, '完成全部每日任务奖励')
-    return { success: true, points: DAILY_TASK_BONUS, message: '领取成功！+' + DAILY_TASK_BONUS + '积分' }
+    this._addPoints(DAILY_TASK_BONUS, i18n.t('reasonDailyBonus'))
+    return { success: true, points: DAILY_TASK_BONUS, message: i18n.t('ptsBonusSuccess') + DAILY_TASK_BONUS + i18n.t('ptsUnit') }
   },
 
   recordShare: function() {
@@ -400,16 +401,16 @@ var Points = {
 
   recordInvite: function(inviterCode) {
     var myCode = this.getMyInviteCode()
-    if (!inviterCode) return { success: false, message: '邀请码无效' }
-    if (inviterCode === myCode) return { success: false, message: '不能使用自己的邀请码' }
-    if (inviterCode.length < 4) return { success: false, message: '邀请码格式不正确' }
-    if (inviterCode.indexOf('BB') !== 0) return { success: false, message: '邀请码格式不正确' }
+    if (!inviterCode) return { success: false, message: i18n.t('ptsInviteInvalid') }
+    if (inviterCode === myCode) return { success: false, message: i18n.t('ptsInviteSelf') }
+    if (inviterCode.length < 4) return { success: false, message: i18n.t('ptsInviteFormat') }
+    if (inviterCode.indexOf('BB') !== 0) return { success: false, message: i18n.t('ptsInviteFormat') }
     var invited = storageUtil.get('invited_by', '')
-    if (invited) return { success: false, message: '已使用过邀请码' }
+    if (invited) return { success: false, message: i18n.t('ptsInviteUsed') }
     storageUtil.set('invited_by', inviterCode)
-    this._addPoints(INVITE_POINTS, '使用邀请码奖励')
+    this._addPoints(INVITE_POINTS, i18n.t('reasonInvite'))
     this._saveInviteRelation(inviterCode)
-    return { success: true, points: INVITE_POINTS, message: '邀请码使用成功！+' + INVITE_POINTS + '积分' }
+    return { success: true, points: INVITE_POINTS, message: i18n.t('ptsInviteSuccess') + INVITE_POINTS + i18n.t('ptsUnit') }
   },
 
   checkInviteRewards: function() {
@@ -424,11 +425,11 @@ var Points = {
       count++
     }
     if (count > 0) {
-      this._addPoints(totalPoints, '邀请好友奖励 x' + count)
+      this._addPoints(totalPoints, i18n.t('reasonInviteReward', { count: count }))
       var records = storageUtil.safeGetArray(INVITE_KEY)
       for (var j = 0; j < pending.length; j++) {
         records.unshift({
-          invitee: pending[j].invitee || '好友',
+          invitee: pending[j].invitee || i18n.t('friend'),
           time: pending[j].time || Date.now(),
           points: INVITE_POINTS
         })
@@ -472,7 +473,7 @@ var Points = {
               var pending = []
               for (var i = 0; i < res.data.length; i++) {
                 pending.push({
-                  invitee: res.data[i].inviteeCode || '好友',
+                  invitee: res.data[i].inviteeCode || i18n.t('friend'),
                   time: res.data[i].time || Date.now(),
                   _id: res.data[i]._id
                 })
@@ -517,9 +518,9 @@ var Points = {
       if (item.type === 'font' && activeFont === item.id) isActive = true
       items.push({
         id: item.id,
-        name: item.name,
+        name: i18n.t(item.nameKey),
         icon: item.icon,
-        desc: item.desc,
+        desc: i18n.t(item.descKey),
         price: item.price,
         type: item.type,
         style: item.style || '',
@@ -541,18 +542,18 @@ var Points = {
     for (var i = 0; i < SHOP_ITEMS.length; i++) {
       if (SHOP_ITEMS[i].id === itemId) { itemDef = SHOP_ITEMS[i]; break }
     }
-    if (!itemDef) return { success: false, message: '商品不存在' }
+    if (!itemDef) return { success: false, message: i18n.t('ptsItemNotExist') }
 
     var owned = storageUtil.safeGetArray(SHOP_ITEMS_KEY)
     for (var j = 0; j < owned.length; j++) {
-      if (owned[j] === itemId) return { success: false, message: '已拥有该商品' }
+      if (owned[j] === itemId) return { success: false, message: i18n.t('ptsItemOwned') }
     }
 
     var currentPoints = checkin.getCurrentPoints()
-    if (currentPoints < itemDef.price) return { success: false, message: '积分不足，还需 ' + (itemDef.price - currentPoints) + ' 积分' }
+    if (currentPoints < itemDef.price) return { success: false, message: i18n.t('ptsNotEnough') + (itemDef.price - currentPoints) + i18n.t('ptsUnit') }
 
     var spendResult = checkin.spendPoints(itemDef.price)
-    if (!spendResult.success) return { success: false, message: '积分扣除失败' }
+    if (!spendResult.success) return { success: false, message: i18n.t('ptsSpendFail') }
 
     owned.push(itemId)
     wx.setStorageSync(SHOP_ITEMS_KEY, owned)
@@ -565,7 +566,7 @@ var Points = {
       storageUtil.set(ACTIVE_FONT_KEY, itemId)
     }
 
-    return { success: true, message: '购买成功！', item: itemDef }
+    return { success: true, message: i18n.t('ptsPurchaseSuccess'), item: itemDef }
   },
 
   activateItem: function(itemId) {
@@ -574,13 +575,13 @@ var Points = {
     for (var i = 0; i < owned.length; i++) {
       if (owned[i] === itemId) { isOwned = true; break }
     }
-    if (!isOwned) return { success: false, message: '未拥有该商品' }
+    if (!isOwned) return { success: false, message: i18n.t('ptsItemNotOwned') }
 
     var itemDef = null
     for (var j = 0; j < SHOP_ITEMS.length; j++) {
       if (SHOP_ITEMS[j].id === itemId) { itemDef = SHOP_ITEMS[j]; break }
     }
-    if (!itemDef) return { success: false, message: '商品不存在' }
+    if (!itemDef) return { success: false, message: i18n.t('ptsItemNotExist') }
 
     if (itemDef.type === 'frame' || itemDef.type === 'badge') {
       storageUtil.set(ACTIVE_FRAME_KEY, itemId)
@@ -589,7 +590,7 @@ var Points = {
     } else if (itemDef.type === 'font') {
       storageUtil.set(ACTIVE_FONT_KEY, itemId)
     }
-    return { success: true, message: '已激活' }
+    return { success: true, message: i18n.t('ptsActivated') }
   },
 
   deactivateItem: function(type) {
@@ -624,9 +625,9 @@ var Points = {
         if (isOwned) {
           frames.push({
             id: SHOP_ITEMS[i].id,
-            name: SHOP_ITEMS[i].name,
+            name: i18n.t(SHOP_ITEMS[i].nameKey),
             icon: SHOP_ITEMS[i].icon,
-            desc: SHOP_ITEMS[i].desc,
+            desc: i18n.t(SHOP_ITEMS[i].descKey),
             frameClass: SHOP_ITEMS[i].frameClass || ''
           })
         }
@@ -647,9 +648,9 @@ var Points = {
         if (isOwned) {
           themes.push({
             id: SHOP_ITEMS[i].id,
-            name: SHOP_ITEMS[i].name,
+            name: i18n.t(SHOP_ITEMS[i].nameKey),
             icon: SHOP_ITEMS[i].icon,
-            desc: SHOP_ITEMS[i].desc,
+            desc: i18n.t(SHOP_ITEMS[i].descKey),
             color: SHOP_ITEMS[i].color || '',
             color2: SHOP_ITEMS[i].color2 || ''
           })
@@ -671,9 +672,9 @@ var Points = {
         if (isOwned) {
           badges.push({
             id: SHOP_ITEMS[i].id,
-            name: SHOP_ITEMS[i].name,
+            name: i18n.t(SHOP_ITEMS[i].nameKey),
             icon: SHOP_ITEMS[i].icon,
-            desc: SHOP_ITEMS[i].desc,
+            desc: i18n.t(SHOP_ITEMS[i].descKey),
             badge: SHOP_ITEMS[i].badge || ''
           })
         }
@@ -792,8 +793,8 @@ var Points = {
     if (typeof totalEarned !== 'number' || isNaN(totalEarned)) totalEarned = 0
     var newCurrent = current + amount
     var newTotal = totalEarned + amount
-    wx.setStorageSync(POINTS_KEY, newCurrent)
-    wx.setStorageSync(TOTAL_POINTS_KEY, newTotal)
+    storageUtil.safeSet(POINTS_KEY, newCurrent)
+    storageUtil.safeSet(TOTAL_POINTS_KEY, newTotal)
   },
 
   _getToday: function() {

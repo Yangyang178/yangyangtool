@@ -10,13 +10,31 @@
   <view class="page-container {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" style="{{themeStyle}}">
     <!-- 应用头部 - Hero Section v2 -->
     <view class="header-section">
-      <!-- 品牌标识区 -->
+      <!-- 品牌标识区 + 数据信任条 -->
       <view class="header-brand">
-        <text class="brand-logo">🧰</text>
-        <view class="brand-text">
-          <text class="brand-title">{{i18n.brandTitle}}</text>
-          <view class="version-badge">
-            <text>v2.0</text>
+        <view class="brand-row">
+          <text class="brand-logo">🧰</text>
+          <view class="brand-text">
+            <text class="brand-title">{{i18n.brandTitle}}</text>
+            <view class="version-badge">
+              <text>v{{appVersion}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="brand-trust-bar" wx:if="{{!isEditMode}}">
+          <view class="trust-item">
+            <text class="trust-number">40+</text>
+            <text class="trust-label">{{i18n.practicalTools}}</text>
+          </view>
+          <view class="trust-divider"></view>
+          <view class="trust-item">
+            <text class="trust-number">{{totalUsageDisplay}}</text>
+            <text class="trust-label">{{i18n.totalUsage}}</text>
+          </view>
+          <view class="trust-divider"></view>
+          <view class="trust-item">
+            <text class="trust-number">100%</text>
+            <text class="trust-label">{{i18n.freeUse}}</text>
           </view>
         </view>
       </view>
@@ -82,60 +100,7 @@
           <text class="recent-arrow">›</text>
         </view>
       </view>
-
-      <!-- 默认只显示前2个记录（使用JS层过滤后的数组） -->
-      <view class="recent-list-inline">
-        <block wx:for="{{displayRecentTools}}" wx:key="id">
-          <view class="recent-item" bindtap="onRecentToolClick" data-tool="{{item}}">
-            <view class="recent-icon-wrap" style="background: {{item.iconBg}}">{{item.icon}}</view>
-            <view class="recent-info">
-              <text class="recent-name">{{item.name}}</text>
-              <text class="recent-time">{{item.usedAt ? item.usedAt : ''}}</text>
-            </view>
-            <text class="recent-arrow-right">›</text>
-          </view>
-        </block>
-      </view>
-
-      <!-- 更多提示 -->
-      <view class="recent-more-hint" wx:if="{{recentTools.length > 2}}" bindtap="showRecentModalFn">
-        <text class="recent-hint-text">{{moreRecordsText}}</text>
-      </view>
     </view>
-
-      <!-- 数据信任条 -->
-      <view class="trust-bar" wx:if="{{!isEditMode}}">
-        <view class="trust-item">
-          <text class="trust-number">40+</text>
-          <text class="trust-label">{{i18n.practicalTools}}</text>
-        </view>
-        <view class="trust-divider"></view>
-        <view class="trust-item">
-          <text class="trust-number">{{totalUsageDisplay}}</text>
-          <text class="trust-label">{{i18n.totalUsage}}</text>
-        </view>
-        <view class="trust-divider"></view>
-        <view class="trust-item">
-          <text class="trust-number">100%</text>
-          <text class="trust-label">{{i18n.freeUse}}</text>
-        </view>
-      </view>
-
-      <!-- 趣味测试入口横幅 -->
-      <view class="fun-banner" bindtap="openFunZone" wx:if="{{!isEditMode}}">
-        <view class="fun-banner-left">
-          <view class="fun-banner-icons">
-            <text class="fun-banner-main-icon">🧠</text>
-          </view>
-          <view class="fun-banner-info">
-            <text class="fun-banner-title">{{i18n.funTest}}</text>
-            <text class="fun-banner-desc">{{i18n.funTestDesc}}</text>
-          </view>
-        </view>
-        <view class="fun-banner-right">
-          <text class="fun-banner-action">{{i18n.goChallenge}} ›</text>
-        </view>
-      </view>
 
       <!-- 右侧操作区域 -->
       <view class="header-right" bindtap="{{isEditMode ? '' : 'showMoreMenu'}}">
@@ -174,6 +139,9 @@
     <!-- 搜索栏 v2 - Task B3 增强 -->
     <view class="search-bar {{showSearchPanel ? 'active' : ''}}">
       <view class="search-input-wrapper">
+        <view class="search-icon">
+          <text>🔍</text>
+        </view>
         <input
           class="search-input"
           type="text"
@@ -327,6 +295,45 @@
       </view>
     </view>
 
+    <!-- 最近更新模块 -->
+    <view class="new-tools-section" wx:if="{{!isEditMode && searchKeyword.length === 0 && newTools.length > 0}}">
+      <view class="new-tools-header">
+        <view class="new-tools-title-row">
+          <text class="new-tools-icon">✨</text>
+          <text class="new-tools-title">{{i18n.recentUpdate}}</text>
+          <view class="new-tools-badge">
+            <text>{{i18n.newBadge}}</text>
+          </view>
+        </view>
+        <text class="new-tools-tip">{{i18n.recentUpdateTip}}</text>
+      </view>
+      <scroll-view class="new-tools-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="new-tools-grid">
+          <view
+            wx:for="{{newTools}}"
+            wx:key="id"
+            class="tool-card new-tool-item {{item.isFavorite ? 'favorite' : ''}}"
+            data-tool="{{item}}"
+            bindtap="onNewToolClick"
+            hover-class="tool-card-hover"
+            hover-stay-time="100"
+          >
+            <view class="card-favorite" catchtap="toggleFavorite" data-id="{{item.id}}">
+              <text>{{item.isFavorite ? '★' : '☆'}}</text>
+            </view>
+            <view class="card-icon-wrapper" style="background: {{item.iconBg}}">
+              <text class="card-icon">{{item.icon}}</text>
+            </view>
+            <rich-text class="card-title" nodes="{{item.name}}"></rich-text>
+            <rich-text class="card-desc" nodes="{{item.description}}"></rich-text>
+            <view class="card-badge" wx:if="{{item.isHot}}">
+              <text>{{i18n.hot}}</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
     <!-- 分类折叠区 -->
     <view class="category-sections" wx:if="{{!isEditMode && searchKeyword.length === 0}}">
       <view 
@@ -381,92 +388,33 @@
       </view>
     </view>
 
-    <!-- 编辑模式下的工具网格（保持原有平铺模式） -->
-    <view class="tools-grid {{isEditMode ? 'edit-mode' : ''}}" wx:if="{{isEditMode}}">
-      <view 
-        wx:for="{{filteredTools}}" 
+    <!-- 编辑模式：分类排序列表 -->
+    <view class="category-edit-list" wx:if="{{isEditMode}}">
+      <view
+        wx:for="{{categorySections}}"
         wx:key="id"
-        class="tool-card {{item.isFavorite ? 'favorite' : ''}} {{selectedToolIndex === index ? 'selected' : ''}}"
-        data-tool="{{item}}"
+        class="category-edit-item {{selectedCategoryIndex === index ? 'selected' : ''}}"
         data-index="{{index}}"
-        bindtap="{{isEditMode ? 'onEditToolClick' : 'onToolClick'}}"
-        hover-class="{{isEditMode ? 'tool-card-edit-hover' : 'tool-card-hover'}}"
-        hover-stay-time="100"
+        bindtap="onEditCategoryClick"
+        hover-class="category-edit-hover"
+        hover-stay-time="80"
       >
-        <view class="card-favorite" catchtap="toggleFavorite" data-id="{{item.id}}" wx:if="{{!isEditMode}}">
-          <text>{{item.isFavorite ? '★' : '☆'}}</text>
+        <view class="category-edit-order">
+          <text class="order-num">{{index + 1}}</text>
         </view>
-
-        <!-- 编辑模式：显示/隐藏按钮 -->
-        <view
-          class="card-visibility {{hiddenTools.indexOf(item.id) !== -1 ? 'hidden-tool' : ''}}"
-          catchtap="toggleToolVisibility"
-          data-id="{{item.id}}"
-          wx:if="{{isEditMode}}"
-        >
-          <text>{{hiddenTools.indexOf(item.id) !== -1 ? '👁️‍🗨️' : '👁️'}}</text>
+        <view class="category-edit-icon" style="background: {{item.iconBg || ''}}">
+          <text>{{item.icon}}</text>
         </view>
-
-        <!-- 选中标记 -->
-        <view class="selected-overlay" wx:if="{{isEditMode && selectedToolIndex === index}}">
-          <view class="selected-ring"></view>
-          <view class="selected-badge">
-            <text>{{i18n.selected}}</text>
-          </view>
-          <view class="selected-hint">
-            <text>{{i18n.tapToSwap}}</text>
-          </view>
+        <view class="category-edit-info">
+          <text class="category-edit-name">{{item.name}}</text>
+          <text class="category-edit-count">{{item.countText}}</text>
         </view>
-
-        <view class="card-icon-wrapper" style="background: {{item.iconBg}}">
-          <text class="card-icon">{{item.icon}}</text>
+        <view class="category-edit-handle" wx:if="{{selectedCategoryIndex === index}}">
+          <text class="selected-mark">✓</text>
         </view>
-
-        <rich-text class="card-title" nodes="{{item._highlighted.name || item.name}}"></rich-text>
-        <rich-text class="card-desc" nodes="{{item._highlighted.description || item.description}}"></rich-text>
-
-        <view class="card-badge" wx:if="{{item.isHot}}">
-          <text>{{i18n.hot}}</text>
+        <view class="category-edit-arrow" wx:else>
+          <text>⇅</text>
         </view>
-      </view>
-
-      <!-- 空状态 -->
-      <view class="empty-state" wx:if="{{filteredTools.length === 0}}">
-        <text class="empty-icon">🔍</text>
-        <text class="empty-text">{{i18n.noToolsFound}}</text>
-        <text class="empty-subtext">{{i18n.tryOtherKeywords}}</text>
-      </view>
-    </view>
-
-    <!-- 已隐藏工具管理区 -->
-    <view class="hidden-tools-section {{isEditMode && hiddenTools.length > 0 ? 'show' : ''}}" wx:if="{{isEditMode}}">
-      <view class="hidden-header">
-        <text class="hidden-title">{{hiddenToolsText}}</text>
-        <text class="hidden-hint">{{i18n.tapToRestore}}</text>
-      </view>
-      
-      <scroll-view class="hidden-tools-scroll" scroll-x enhanced show-scrollbar="{{false}}" wx:if="{{hiddenToolsList.length > 0}}">
-        <view class="hidden-tools-list">
-          <view 
-            wx:for="{{hiddenToolsList}}" 
-            wx:key="id"
-            class="hidden-tool-item"
-            data-id="{{item.id}}"
-            catchtap="restoreHiddenTool"
-          >
-            <view class="hidden-icon-wrapper" style="background: {{item.iconBg}}">
-              <text class="hidden-icon">{{item.icon}}</text>
-            </view>
-            <text class="hidden-name">{{item.name}}</text>
-            <view class="restore-badge">
-              <text>{{i18n.restore}}</text>
-            </view>
-          </view>
-        </view>
-      </scroll-view>
-      
-      <view class="no-hidden-tools" wx:if="{{hiddenToolsList.length === 0}}">
-        <text>{{i18n.noHiddenTools}}</text>
       </view>
     </view>
 
@@ -485,15 +433,17 @@
     </view>
   </view>
 
-  <scroll-view scroll-y class="modal-body" style="max-height: 500px;">
+  <scroll-view scroll-y class="modal-body">
     <block wx:for="{{recentTools}}" wx:key="id">
-      <view class="recent-item-modal" bindtap="onRecentToolClick" data-tool="{{item}}">
-        <view class="recent-icon-wrap" style="background: {{item.iconBg}}">{{item.icon}}</view>
-        <view class="recent-info">
-          <text class="recent-name">{{item.name}}</text>
-          <text class="recent-time">{{item.usedAt ? item.usedAt : ''}}</text>
+      <view class="recent-item-modal" bindtap="onRecentToolClick" data-tool="{{item}}" hover-class="recent-item-hover" hover-stay-time="80">
+        <view class="recent-item-icon" style="background: {{item.iconBg}}">{{item.icon}}</view>
+        <view class="recent-item-info">
+          <text class="recent-item-name">{{item.name}}</text>
+          <text class="recent-item-desc">{{item.usedAt ? item.usedAt : ''}}</text>
         </view>
-        <text class="recent-arrow-right">›</text>
+        <view class="recent-item-delete" catchtap="deleteRecentTool" data-index="{{index}}">
+          <text class="delete-icon">✕</text>
+        </view>
       </view>
     </block>
 
@@ -504,8 +454,43 @@
     </view>
   </scroll-view>
 
-  <view class="modal-footer">
-    <button class="btn-secondary btn-sm" bindtap="hideRecentModal">{{i18n.close}}</button>
+  <view class="modal-footer recent-modal-footer">
+    <view class="recent-clear-action" wx:if="{{recentTools.length > 0}}" bindtap="clearAllRecentTools" hover-class="recent-clear-hover">
+      <text class="clear-icon">🗑️</text>
+      <text class="clear-text">{{i18n.clearAllRecent}}</text>
+    </view>
+    <view class="recent-close-action" bindtap="hideRecentModal" hover-class="recent-close-hover">
+      <text>{{i18n.close}}</text>
+    </view>
+  </view>
+</view>
+
+<!-- 收藏引导弹窗 -->
+<view class="star-mask" wx:if="{{showStarGuide}}" bindtap="closeStarGuide"></view>
+<view class="star-guide {{showStarGuide ? 'star-guide-show' : ''}}" wx:if="{{showStarGuide}}">
+  <view class="star-guide-dot">···</view>
+  <view class="star-guide-arrow"></view>
+  <view class="star-guide-card">
+    <view class="star-guide-icon">⭐</view>
+    <view class="star-guide-title">{{i18n.starGuideTitle}}</view>
+    <view class="star-guide-desc">{{i18n.starGuideDesc}}</view>
+    <view class="star-guide-steps">
+      <view class="star-step">
+        <view class="star-step-num">1</view>
+        <text class="star-step-text">{{i18n.starStep1}}</text>
+      </view>
+      <view class="star-step">
+        <view class="star-step-num">2</view>
+        <text class="star-step-text">{{i18n.starStep2}}</text>
+      </view>
+      <view class="star-step">
+        <view class="star-step-num">3</view>
+        <text class="star-step-text">{{i18n.starStep3}}</text>
+      </view>
+    </view>
+    <view class="star-guide-btn" bindtap="closeStarGuide" hover-class="star-btn-hover">
+      <text>{{i18n.starGuideBtn}}</text>
+    </view>
   </view>
 </view>
 

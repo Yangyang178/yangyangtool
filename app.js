@@ -20,7 +20,8 @@ App({
     sharePosterPath: '',
     toolPosterPath: '',
     openid: '',
-    cloudReady: false
+    cloudReady: false,
+    appVersion: '2.0'
   },
 
   onLaunch: function() {
@@ -422,7 +423,7 @@ App({
       }
     } catch(e) {}
     return {
-      title: '\u767E\u5B9D\u5DE5\u5177\u7BB1 - 40+\u5B9E\u7528\u5C0F\u5DE5\u5177\u5408\u96C6',
+      title: '\u767E\u5B9D\u5DE5\u5177\u7BB1 - \u6C47\u7387\u6362\u7B97\u3001\u623F\u8D37\u8BA1\u7B97\u3001\u4E8C\u7EF4\u7801\u7B4950+\u5B9E\u7528\u5DE5\u5177',
       path: '/pages/index/index',
       imageUrl: poster
     };
@@ -444,7 +445,7 @@ App({
       }
     } catch(e) {}
     return {
-      title: '\u767E\u5B9D\u5DE5\u5177\u7BB1 - \u6C47\u7387\u6362\u7B97\u3001\u5355\u4F4D\u8F6C\u6362\u7B4940+\u5B9E\u7528\u5DE5\u5177',
+      title: '\u767E\u5B9D\u5DE5\u5177\u7BB1 - \u6C47\u7387\u6362\u7B97\u3001\u623F\u8D37\u8BA1\u7B97\u3001\u4E8C\u7EF4\u7801\u7B4950+\u5B9E\u7528\u5DE5\u5177',
       query: '',
       imageUrl: poster
     };

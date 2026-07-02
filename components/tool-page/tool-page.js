@@ -55,7 +55,8 @@ Component({
     resultText: { type: String, value: '' },
     showCopyBtn: { type: Boolean, value: false },
     showResetBtn: { type: Boolean, value: false },
-    loading: { type: Boolean, value: true }
+    loading: { type: Boolean, value: true },
+    guideTip: { type: Object, value: null }
   },
 
   data: {
@@ -64,7 +65,8 @@ Component({
     themeStyle: '',
     isShortcut: false,
     fontClass: '',
-    i18n: {}
+    i18n: {},
+    showGuideTip: false
   },
 
   lifetimes: {
@@ -74,6 +76,7 @@ Component({
         this.loadRelatedTools(this.properties.toolId)
         this.checkShortcutStatus()
       }
+      this.checkGuideTip()
     }
   },
 
@@ -200,6 +203,25 @@ Component({
         wx.showToast({ title: i18n.t('shortcutAdded'), icon: 'success' })
       }
       this.triggerEvent('shortcutchange', { toolId: toolId, isShortcut: !found })
+    },
+
+    checkGuideTip: function() {
+      var guideTip = this.properties.guideTip
+      if (!guideTip || !guideTip.steps || guideTip.steps.length === 0) {
+        this.setData({ showGuideTip: false })
+        return
+      }
+      var toolId = this.properties.toolId
+      var key = 'guide_tip_closed_' + toolId
+      var closed = storageUtil.get(key, false)
+      this.setData({ showGuideTip: !closed })
+    },
+
+    closeGuideTip: function() {
+      var toolId = this.properties.toolId
+      var key = 'guide_tip_closed_' + toolId
+      storageUtil.set(key, true)
+      this.setData({ showGuideTip: false })
     }
   }
 })

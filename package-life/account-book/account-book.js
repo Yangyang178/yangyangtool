@@ -96,6 +96,7 @@ Page({
     budgetPercent: 0,
     budgetRemain: '0.00',
     budgetOver: false,
+    showGuideTip: false,
     i18n: {}
   },
 
@@ -124,6 +125,9 @@ Page({
         that.setData({ chartWidth: rect.width })
       }
     }).exec()
+    var guideClosed = storageUtil.get('guide_tip_closed_40', false)
+    this.setData({ showGuideTip: !guideClosed })
+
     poster.setupForPage(this, 40)
     this.setData({ isLoading: false })
   },
@@ -636,6 +640,11 @@ Page({
   },
 
   doNothing: function() {},
+
+  closeGuideTip: function() {
+    storageUtil.set('guide_tip_closed_40', true)
+    this.setData({ showGuideTip: false })
+  },
 
   saveBudget: function() {
     var val = parseFloat(this.data.budgetInput)

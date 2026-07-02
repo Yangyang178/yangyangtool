@@ -47,10 +47,11 @@ var tools = [
   { id: 46, name: '迷宫', description: '随机迷宫+计时通关', icon: '🏰', iconBg: 'linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%)', category: 'fun', route: '/package-fun/maze/maze', isHot: false },
   { id: 47, name: '视力测试', description: '色盲/散光/视力表三合一', icon: '👁', iconBg: 'linear-gradient(135deg, #059669 0%, #065F46 100%)', category: 'fun', route: '/package-fun/vision-test/vision-test', isHot: false },
   { id: 48, name: '心理测试', description: '趣味性格/心理小测试', icon: '🔮', iconBg: 'linear-gradient(135deg, #DB2777 0%, #9D174D 100%)', category: 'fun', route: '/package-fun/psychology-test/psychology-test', isHot: false },
-  { id: 49, name: '数字顺序记忆', description: '按1-2-3依次点完，练习专注与顺序记忆', icon: '🔢', iconBg: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)', category: 'fun', route: '/package-fun/number-sequence/number-sequence', isHot: false },
-  { id: 50, name: '时间感知训练', description: '随机目标秒数，默数计时，累计绝对误差', icon: '⏱️', iconBg: 'linear-gradient(135deg, #F59E0B 0%, #B45309 100%)', category: 'fun', route: '/package-fun/time-perception/time-perception', isHot: false },
-  { id: 51, name: '九宫格切图', description: '一键切图发朋友圈，支持2×2/3×3/4×4', icon: '🔲', iconBg: 'linear-gradient(135deg, #F472B6 0%, #EC4899 100%)', category: 'office', route: '/package-office/grid-image/grid-image', isHot: true },
-  { id: 53, name: '油耗计算器', description: '百公里油耗/费用计算，历史记录', icon: '⛽', iconBg: 'linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)', category: 'calculator', route: '/package-calculator/fuel-calculator/fuel-calculator', isHot: true }
+  { id: 49, name: '数字顺序记忆', description: '按1-2-3依次点完，练习专注与顺序记忆', icon: '🔢', iconBg: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)', category: 'fun', route: '/package-fun/number-sequence/number-sequence', isHot: false, isNew: true },
+  { id: 50, name: '时间感知训练', description: '随机目标秒数，默数计时，累计绝对误差', icon: '⏱️', iconBg: 'linear-gradient(135deg, #F59E0B 0%, #B45309 100%)', category: 'fun', route: '/package-fun/time-perception/time-perception', isHot: false, isNew: true },
+  { id: 51, name: '九宫格切图', description: '一键切图发朋友圈，支持2×2/3×3/4×4', icon: '🔲', iconBg: 'linear-gradient(135deg, #F472B6 0%, #EC4899 100%)', category: 'office', route: '/package-office/grid-image/grid-image', isHot: true, isNew: true },
+  { id: 53, name: '油耗计算器', description: '百公里油耗/费用计算，历史记录', icon: '⛽', iconBg: 'linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)', category: 'calculator', route: '/package-calculator/fuel-calculator/fuel-calculator', isHot: true, isNew: true },
+  { id: 40, name: '记账本', description: '简易收支记录+月度统计图表', icon: '📒', iconBg: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', category: 'office', route: '/package-life/account-book/account-book', isHot: true, isNew: true }
 ]
 
 var _routeMap = null
@@ -76,7 +77,6 @@ function getRouteByToolId(id) {
 }
 
 function getToolsByCategory(category) {
-  if (category === 'all') return tools.slice()
   var result = []
   for (var i = 0; i < tools.length; i++) {
     if (tools[i].category === category) result.push(tools[i])

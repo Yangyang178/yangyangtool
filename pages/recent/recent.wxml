@@ -115,9 +115,42 @@
           <text class="checkin-continuous">🔥 {{consecutiveDaysText}}</text>
           <text class="checkin-today-points">{{checkinInfo.isChecked ? i18n.todayChecked : todayPointsText}}</text>
         </view>
-        <button class="checkin-btn {{checkinInfo.isChecked ? 'checked' : ''}}" bindtap="doCheckin" disabled="{{checkinInfo.isChecked}}">
-          {{checkinInfo.isChecked ? i18n.checkedIn : i18n.checkinNow}}
-        </button>
+        <view class="checkin-btn-row">
+          <button class="checkin-btn {{checkinInfo.isChecked ? 'checked' : ''}}" bindtap="doCheckin" disabled="{{checkinInfo.isChecked}}">
+            {{checkinInfo.isChecked ? i18n.checkedIn : i18n.checkinNow}}
+          </button>
+          <view class="makeup-btn {{canMakeup ? '' : 'makeup-disabled'}}" bindtap="doMakeupCheckin" hover-class="{{canMakeup ? 'makeup-hover' : ''}}">
+            <text class="makeup-icon">🎫</text>
+            <text class="makeup-text">{{i18n.makeupCheckin}}({{makeupCards}})</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 里程碑 -->
+      <view class="milestone-section">
+        <view class="milestone-title-row">
+          <text class="milestone-title">🏔️ {{i18n.milestoneTitle}}</text>
+          <text class="milestone-total">{{checkinInfo.totalDays || 0}}{{i18n.milestoneTotalDays}}</text>
+        </view>
+        <scroll-view scroll-x class="milestone-scroll">
+          <view class="milestone-list">
+            <view wx:for="{{milestones}}" wx:key="days" class="milestone-item {{item.claimed ? 'claimed' : ''}} {{item.reached && !item.claimed ? 'claimable' : ''}}">
+              <view class="milestone-icon-wrap {{item.claimed ? 'milestone-done' : item.reached ? 'milestone-ready' : ''}}">
+                <text class="milestone-icon">{{item.icon}}</text>
+              </view>
+              <text class="milestone-name">{{item.name}}</text>
+              <text class="milestone-days">{{item.days}}{{i18n.day}}</text>
+              <text class="milestone-points">+{{item.points}}</text>
+              <view wx:if="{{item.reached && !item.claimed}}" class="milestone-claim-btn" catchtap="claimMilestone" data-days="{{item.days}}">
+                <text>{{i18n.milestoneClaim}}</text>
+              </view>
+              <view wx:elif="{{item.claimed}}" class="milestone-claimed-mark">✓</view>
+              <view wx:else class="milestone-progress-bar">
+                <view class="milestone-progress-fill" style="width: {{item.progress / item.total * 100}}%"></view>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
       </view>
 
       <!-- 社交化：排行榜 + 分享 -->
@@ -1034,7 +1067,7 @@
 
     <!-- UGC需求收集弹窗 -->
     <view class="ugc-mask" wx:if="{{showToolRequest}}" bindtap="closeToolRequest"></view>
-    <view class="ugc-panel {{showToolRequest ? 'show' : ''}}" style="padding-top: {{menuButtonInfo.top + menuButtonInfo.height + 16}}px;">
+    <view class="ugc-panel {{showToolRequest ? 'show' : ''}}">
       <view class="ugc-header">
         <text class="ugc-panel-title">{{i18n.toolRequestTitle}}</text>
         <text class="ugc-close" bindtap="closeToolRequest">✕</text>
@@ -1416,8 +1449,8 @@
       </scroll-view>
 
       <view class="frame-selector-tip" wx:if="{{ownedThemes.length === 0}}">
-        <text class="frame-tip-text">还没有主题色，去商城兑换吧</text>
-        <view class="frame-tip-btn" bindtap="goToShopFromThemeSelector">去兑换</view>
+        <text class="frame-tip-text">{{i18n.noThemeTip}}</text>
+        <view class="frame-tip-btn" bindtap="goToShopFromThemeSelector">{{i18n.goToRedeem}}</view>
       </view>
     </view>
 
@@ -1451,8 +1484,8 @@
       </scroll-view>
 
       <view class="frame-selector-tip" wx:if="{{ownedBadges.length === 0}}">
-        <text class="frame-tip-text">还没有徽章，去商城兑换吧</text>
-        <view class="frame-tip-btn" bindtap="goToShopFromBadgeSelector">去兑换</view>
+        <text class="frame-tip-text">{{i18n.noBadgeTip}}</text>
+        <view class="frame-tip-btn" bindtap="goToShopFromBadgeSelector">{{i18n.goToRedeem}}</view>
       </view>
     </view>
 
@@ -1460,7 +1493,7 @@
     <view class="ptmask" wx:if="{{showInvitePanel}}" bindtap="closeInvitePanel"></view>
     <view class="ptpanel {{showInvitePanel ? 'show' : ''}}">
       <view class="ptpanel-header">
-        <text class="ptpanel-title">🎁 邀请好友</text>
+        <text class="ptpanel-title">{{i18n.inviteFriends}}</text>
         <text class="ptpanel-close" bindtap="closeInvitePanel">✕</text>
       </view>
 
@@ -1484,7 +1517,7 @@
       <view class="invite-input-section">
         <text class="invite-section-label">{{i18n.inputFriendCode}}</text>
         <view class="invite-input-row">
-          <input class="invite-input" placeholder="输入邀请码" value="{{inviteCodeInput}}" maxlength="20" bindinput="onInviteCodeInput" />
+          <input class="invite-input" placeholder="{{i18n.enterInviteCode}}" value="{{inviteCodeInput}}" maxlength="20" bindinput="onInviteCodeInput" />
           <view class="invite-use-btn" bindtap="useInviteCode" hover-class="invite-use-hover">
             <text>{{i18n.useCode}}</text>
           </view>

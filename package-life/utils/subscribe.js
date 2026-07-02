@@ -1,4 +1,5 @@
 var storageUtil = require('../../utils/storage.js')
+var logger = require('../../utils/logger.js')
 
 // 订阅消息模板ID
 // 注意：以下模板ID为占位符，需要在微信公众平台后台申请替换
@@ -112,12 +113,12 @@ var Subscribe = {
           if (callback) callback({ success: true, subscribed: subscribed, detail: res })
         },
         fail: function(err) {
-          console.warn('requestSubscribeMessage fail:', err)
+          logger.warn('requestSubscribeMessage fail:', err)
           if (callback) callback({ success: false, subscribed: false, error: err })
         }
       })
     } catch (e) {
-      console.warn('requestSubscribeMessage error:', e)
+      logger.warn('requestSubscribeMessage error:', e)
       if (callback) callback({ success: false, subscribed: false, error: e })
     }
   },
@@ -218,7 +219,7 @@ var Subscribe = {
   // 调用云函数发送订阅消息
   sendSubscribeMessage: function(options) {
     if (!wx.cloud) {
-      console.warn('cloud not available')
+      logger.warn('cloud not available')
       return
     }
 
@@ -234,7 +235,7 @@ var Subscribe = {
         // sendSubscribeMessage success
       },
       fail: function(err) {
-        console.warn('sendSubscribeMessage fail:', err)
+        logger.warn('sendSubscribeMessage fail:', err)
       }
     })
   },
@@ -248,7 +249,7 @@ var Subscribe = {
 
     // 检查是否有足够订阅次数
     if (!this.hasSubCount('COUNTDOWN_REMIND', 1)) {
-      console.warn('no countdown subscribe count')
+      logger.warn('no countdown subscribe count')
       return
     }
 
@@ -268,7 +269,7 @@ var Subscribe = {
         // registerCountdownReminder success
       },
       fail: function(err) {
-        console.warn('registerCountdownReminder fail:', err)
+        logger.warn('registerCountdownReminder fail:', err)
         wx.showToast({ title: '提醒设置失败，请稍后重试', icon: 'none', duration: 2500 })
       }
     })
@@ -288,7 +289,7 @@ var Subscribe = {
         // cancelCountdownReminder success
       },
       fail: function(err) {
-        console.warn('cancelCountdownReminder fail:', err)
+        logger.warn('cancelCountdownReminder fail:', err)
       }
     })
   },
@@ -302,7 +303,7 @@ var Subscribe = {
 
     // 检查是否有足够订阅次数
     if (!this.hasSubCount('POMODORO_COMPLETE', 1)) {
-      console.warn('no pomodoro subscribe count')
+      logger.warn('no pomodoro subscribe count')
       return
     }
 
@@ -318,7 +319,7 @@ var Subscribe = {
         // registerPomodoroReminder success
       },
       fail: function(err) {
-        console.warn('registerPomodoroReminder fail:', err)
+        logger.warn('registerPomodoroReminder fail:', err)
         wx.showToast({ title: '提醒设置失败，请稍后重试', icon: 'none', duration: 2500 })
       }
     })
@@ -337,7 +338,7 @@ var Subscribe = {
         // cancelPomodoroReminder success
       },
       fail: function(err) {
-        console.warn('cancelPomodoroReminder fail:', err)
+        logger.warn('cancelPomodoroReminder fail:', err)
       }
     })
   },
@@ -351,7 +352,7 @@ var Subscribe = {
 
     // 检查是否有足够订阅次数
     if (!this.hasSubCount('WATER_REMIND', 1)) {
-      console.warn('no water subscribe count')
+      logger.warn('no water subscribe count')
       return
     }
 
@@ -368,7 +369,7 @@ var Subscribe = {
         // registerWaterReminder success
       },
       fail: function(err) {
-        console.warn('registerWaterReminder fail:', err)
+        logger.warn('registerWaterReminder fail:', err)
         wx.showToast({ title: '提醒设置失败，请稍后重试', icon: 'none', duration: 2500 })
       }
     })
@@ -387,7 +388,7 @@ var Subscribe = {
         // cancelWaterReminder success
       },
       fail: function(err) {
-        console.warn('cancelWaterReminder fail:', err)
+        logger.warn('cancelWaterReminder fail:', err)
       }
     })
   },

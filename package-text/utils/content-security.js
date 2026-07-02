@@ -61,20 +61,20 @@ var ContentSecurity = {
                 callback(false, '图片包含违规内容，请更换')
               }
             } else {
-              console.warn('内容安全检测异常:', res.result ? res.result.error : 'unknown')
+              logger.warn('内容安全检测异常:', res.result ? res.result.error : 'unknown')
               callback(false, '内容安全检测异常，请稍后重试')
             }
           },
           fail: function(err) {
             // 检测失败时删除临时文件
             wx.cloud.deleteFile({ fileList: [uploadRes.fileID] })
-            console.warn('内容安全云函数调用失败:', err)
+            logger.warn('内容安全云函数调用失败:', err)
             callback(false, '安全检测服务暂不可用，请稍后重试')
           }
         })
       },
       fail: function(err) {
-        console.warn('图片上传云存储失败:', err)
+        logger.warn('图片上传云存储失败:', err)
         // 上传失败时回退到base64方式
         ContentSecurity._checkImageBase64(filePath, callback)
       }
@@ -109,17 +109,17 @@ var ContentSecurity = {
               callback(false, '图片包含违规内容，请更换')
             }
           } else {
-            console.warn('内容安全检测异常:', res.result ? res.result.error : 'unknown')
+            logger.warn('内容安全检测异常:', res.result ? res.result.error : 'unknown')
             callback(false, '内容安全检测异常，请稍后重试')
           }
         },
         fail: function(err) {
-          console.warn('内容安全云函数调用失败:', err)
+          logger.warn('内容安全云函数调用失败:', err)
           callback(false, '安全检测服务暂不可用，请稍后重试')
         }
       })
     } catch (e) {
-      console.warn('读取图片文件失败:', e)
+      logger.warn('读取图片文件失败:', e)
       callback(false, '图片读取失败，请重新选择')
     }
   },
@@ -150,12 +150,12 @@ var ContentSecurity = {
             callback(false, '内容包含违规信息，请修改')
           }
         } else {
-          console.warn('内容安全检测异常:', res.result ? res.result.error : 'unknown')
+          logger.warn('内容安全检测异常:', res.result ? res.result.error : 'unknown')
           callback(false, '内容安全检测异常，请稍后重试')
         }
       },
       fail: function(err) {
-        console.warn('内容安全云函数调用失败:', err)
+        logger.warn('内容安全云函数调用失败:', err)
         callback(false, '安全检测服务暂不可用，请稍后重试')
       }
     })

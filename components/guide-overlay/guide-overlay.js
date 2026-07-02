@@ -29,20 +29,20 @@ Component({
 
     onNext: function() {
       var next = this.data.current + 1
-      if (next < 7) {
+      if (next < 4) {
         this.setData({ current: next })
       }
     },
 
     onSkip: function() {
       try { wx.setStorageSync('hasSeenGuide', true) } catch(e) {}
-      try { wx.setStorageSync('guideVersion', 4) } catch(e) {}
+      try { wx.setStorageSync('guideVersion', 5) } catch(e) {}
       this.triggerEvent('close')
     },
 
     onStart: function() {
       try { wx.setStorageSync('hasSeenGuide', true) } catch(e) {}
-      try { wx.setStorageSync('guideVersion', 4) } catch(e) {}
+      try { wx.setStorageSync('guideVersion', 5) } catch(e) {}
       this.triggerEvent('close')
     }
   }

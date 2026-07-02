@@ -1,5 +1,6 @@
 var storageUtil = require('./storage.js')
 var logger = require('./logger.js')
+var i18n = require('./i18n.js')
 
 var BACKUP_KEYS = [
   'favorites', 'recentTools', 'totalUsageCount', 'weeklyUsage', 'toolUsageLog',
@@ -223,7 +224,7 @@ var cloudSync = {
   },
 
   formatBackupTime: function(timeStr) {
-    if (!timeStr) return '从未备份'
+    if (!timeStr) return i18n.t('neverBackup')
     try {
       var d = new Date(timeStr)
       var now = new Date()
@@ -232,16 +233,16 @@ var cloudSync = {
       var hours = Math.floor(diff / 3600000)
       var days = Math.floor(diff / 86400000)
 
-      if (minutes < 1) return '刚刚'
-      if (minutes < 60) return minutes + '分钟前'
-      if (hours < 24) return hours + '小时前'
-      if (days < 7) return days + '天前'
+      if (minutes < 1) return i18n.t('justNow')
+      if (minutes < 60) return i18n.t('minutesAgo', { count: minutes })
+      if (hours < 24) return i18n.t('hoursAgo', { count: hours })
+      if (days < 7) return i18n.t('daysAgo', { count: days })
 
-      return (d.getMonth() + 1) + '月' + d.getDate() + '日 ' +
+      return (d.getMonth() + 1) + i18n.t('monthUnit') + d.getDate() + i18n.t('dayUnit') + ' ' +
         (d.getHours() < 10 ? '0' : '') + d.getHours() + ':' +
         (d.getMinutes() < 10 ? '0' : '') + d.getMinutes()
     } catch(e) {
-      return '未知'
+      return i18n.t('unknown')
     }
   }
 }

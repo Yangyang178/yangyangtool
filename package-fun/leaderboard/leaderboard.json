@@ -1,4 +1,5 @@
 {
+  "navigationBarTitleText": "排行榜 - 益智游戏排名",
   "usingComponents": {
     "navigation-bar": "/components/navigation-bar/navigation-bar"
   },

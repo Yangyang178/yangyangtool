@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "迷宫",
+  "navigationBarTitleText": "迷宫 - 随机迷宫闯关游戏",
   "usingComponents": {
     "navigation-bar": "/components/navigation-bar/navigation-bar"
   }

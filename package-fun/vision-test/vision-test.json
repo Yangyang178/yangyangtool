@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "视力测试",
+  "navigationBarTitleText": "视力测试 - 色盲散光视力表检测",
   "usingComponents": {
     "navigation-bar": "/components/navigation-bar/navigation-bar"
   }

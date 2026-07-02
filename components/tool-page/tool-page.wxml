@@ -43,6 +43,21 @@
 
       <slot name="input"></slot>
 
+      <!-- 工具引导tip条 -->
+      <view class="tp-guide-tip" wx:if="{{showGuideTip && guideTip}}">
+        <view class="tp-guide-tip-header">
+          <text class="tp-guide-tip-icon">{{guideTip.icon || '💡'}}</text>
+          <text class="tp-guide-tip-title">{{guideTip.title || i18n.guideTipDefault}}</text>
+          <view class="tp-guide-tip-close" bindtap="closeGuideTip">✕</view>
+        </view>
+        <view class="tp-guide-tip-steps" wx:if="{{guideTip.steps.length > 0}}">
+          <view class="tp-guide-step" wx:for="{{guideTip.steps}}" wx:key="index">
+            <text class="tp-guide-step-num">{{index + 1}}</text>
+            <text class="tp-guide-step-text">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
       <slot name="result"></slot>
 
       <view class="tp-quick-actions" wx:if="{{showCopyBtn || showResetBtn}}">
