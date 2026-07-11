@@ -1123,7 +1123,7 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   padding: 10px 0;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.15);
@@ -1140,7 +1140,7 @@ page {
 }
 
 .social-btn-text {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #FFFFFF;
 }
@@ -1196,6 +1196,39 @@ page {
   background: #F1F5F9;
   font-size: 14px;
   color: #64748B;
+}
+
+.rank-category-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 20px 8px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.rank-category-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #94A3B8;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.rank-category-tab.active {
+  color: #D97706;
+}
+
+.rank-category-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 20%;
+  width: 60%;
+  height: 3px;
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  border-radius: 2px;
 }
 
 .rank-tabs {

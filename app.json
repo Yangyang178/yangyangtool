@@ -3,7 +3,8 @@
     "pages/index/index",
     "pages/favorites/favorites",
     "pages/recent/recent",
-    "pages/privacy/privacy"
+    "pages/privacy/privacy",
+    "pages/tool-rank/tool-rank"
   ],
   "subPackages": [
     {

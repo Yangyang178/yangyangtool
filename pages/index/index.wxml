@@ -334,6 +334,18 @@
       </scroll-view>
     </view>
 
+    <!-- 工具打开榜入口 -->
+    <view class="tool-rank-entry" wx:if="{{!isEditMode && searchKeyword.length === 0}}" bindtap="goToToolRank">
+      <view class="tool-rank-entry-left">
+        <text class="tool-rank-entry-icon">🏅</text>
+        <view class="tool-rank-entry-info">
+          <text class="tool-rank-entry-title">{{i18n.toolRankTitle}}</text>
+          <text class="tool-rank-entry-desc">{{i18n.toolRankEntryDesc}}</text>
+        </view>
+      </view>
+      <text class="tool-rank-entry-arrow">›</text>
+    </view>
+
     <!-- 分类折叠区 -->
     <view class="category-sections" wx:if="{{!isEditMode && searchKeyword.length === 0}}">
       <view 

@@ -202,28 +202,46 @@
       </view>
     </view>
 
-    <!-- 排行榜弹窗 -->
+    <!-- 排行榜弹窗（签到排行 + 开榜） -->
     <view class="rank-overlay" wx:if="{{showRankPanel}}" bindtap="toggleRankPanel"></view>
     <view class="rank-panel {{showRankPanel ? 'rank-show' : ''}}">
       <view class="rank-header">
         <text class="rank-title">🏆 {{i18n.rankTitle}}</text>
         <view class="rank-close" bindtap="toggleRankPanel">✕</view>
       </view>
-      <view class="rank-tabs">
+      <!-- 大类 tab：签到排行 / 开榜 -->
+      <view class="rank-category-tabs">
+        <view class="rank-category-tab {{rankCategory === 'checkin' ? 'active' : ''}}" data-cat="checkin" bindtap="switchRankCategory">📅 {{i18n.rankCategoryCheckin}}</view>
+        <view class="rank-category-tab {{rankCategory === 'open' ? 'active' : ''}}" data-cat="open" bindtap="switchRankCategory">📊 {{i18n.rankCategoryOpen}}</view>
+      </view>
+      <!-- 签到排行子tab -->
+      <view class="rank-tabs" wx:if="{{rankCategory === 'checkin'}}">
         <view class="rank-tab {{rankType === 'streak' ? 'active' : ''}}" data-type="streak" bindtap="switchRankType">{{i18n.rankStreak}}</view>
         <view class="rank-tab {{rankType === 'total' ? 'active' : ''}}" data-type="total" bindtap="switchRankType">{{i18n.rankTotal}}</view>
       </view>
-      <!-- 我的排名 -->
-      <view class="rank-my" wx:if="{{myRank > 0}}">
+      <!-- 开榜子tab -->
+      <view class="rank-tabs" wx:if="{{rankCategory === 'open'}}">
+        <view class="rank-tab {{openRankType === 'today' ? 'active' : ''}}" data-type="today" bindtap="switchOpenRankType">{{i18n.openRankToday}}</view>
+        <view class="rank-tab {{openRankType === 'total' ? 'active' : ''}}" data-type="total" bindtap="switchOpenRankType">{{i18n.openRankTotal}}</view>
+      </view>
+      <!-- 签到排行：我的排名 -->
+      <view class="rank-my" wx:if="{{rankCategory === 'checkin' && myRank > 0}}">
         <text class="rank-my-label">{{i18n.rankMy}}</text>
-        <text class="rank-my-value">第{{myRank}}名</text>
+        <text class="rank-my-value">{{i18n.openRankMyRank}}{{myRank}}</text>
         <text class="rank-my-detail" wx:if="{{myRankData}}">{{rankType === 'streak' ? (myRankData.continuousDays + i18n.rankDays) : (myRankData.totalDays + i18n.rankDays)}}</text>
       </view>
-      <!-- 排行列表 -->
-      <view class="rank-loading" wx:if="{{rankLoading}}">
+      <!-- 开榜：我的排名 -->
+      <view class="rank-my" wx:if="{{rankCategory === 'open' && openMyRank > 0}}">
+        <text class="rank-my-label">{{i18n.rankMy}}</text>
+        <text class="rank-my-value">{{i18n.openRankMyRank}}{{openMyRank}}</text>
+        <text class="rank-my-detail" wx:if="{{openMyRankData}}">{{openRankType === 'today' ? (openMyRankData.todayOpens + i18n.openRankTimes) : (openMyRankData.totalOpens + i18n.openRankTimes)}}</text>
+      </view>
+      <!-- 加载中 -->
+      <view class="rank-loading" wx:if="{{(rankCategory === 'checkin' && rankLoading) || (rankCategory === 'open' && openRankLoading)}}">
         <text class="rank-loading-text">{{i18n.rankLoading}}</text>
       </view>
-      <view class="rank-list" wx:if="{{!rankLoading && rankList.length > 0}}">
+      <!-- 签到排行列表 -->
+      <view class="rank-list" wx:if="{{rankCategory === 'checkin' && !rankLoading && rankList.length > 0}}">
         <view class="rank-item {{item.isMe ? 'rank-me' : ''}}" wx:for="{{rankList}}" wx:key="rank">
           <view class="rank-pos {{item.rank <= 3 ? 'rank-top' : ''}}">
             <text wx:if="{{item.rank === 1}}">🥇</text>
@@ -242,7 +260,29 @@
           <text class="rank-points">💎 {{item.totalPoints}}</text>
         </view>
       </view>
-      <view class="rank-empty" wx:if="{{!rankLoading && rankList.length === 0}}">
+      <!-- 开榜列表 -->
+      <view class="rank-list" wx:if="{{rankCategory === 'open' && !openRankLoading && openRankList.length > 0}}">
+        <view class="rank-item {{item.isMe ? 'rank-me' : ''}}" wx:for="{{openRankList}}" wx:key="rank">
+          <view class="rank-pos {{item.rank <= 3 ? 'rank-top' : ''}}">
+            <text wx:if="{{item.rank === 1}}">🥇</text>
+            <text wx:elif="{{item.rank === 2}}">🥈</text>
+            <text wx:elif="{{item.rank === 3}}">🥉</text>
+            <text wx:else>{{item.rank}}</text>
+          </view>
+          <view class="rank-avatar" style="background: linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)">
+            <text wx:if="{{!item.avatarUrl}}">{{item.nickName[0] || '👤'}}</text>
+            <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}" class="rank-avatar-img" mode="aspectFill"></image>
+          </view>
+          <view class="rank-info">
+            <text class="rank-name">{{item.nickName}}{{item.isMe ? ' (' + i18n.rankMeTag + ')' : ''}}</text>
+            <text class="rank-days">{{openRankType === 'today' ? i18n.openRankToday : i18n.openRankTotal}} {{openRankType === 'today' ? item.todayOpens : item.totalOpens}}{{i18n.openRankTimes}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="rank-empty" wx:if="{{rankCategory === 'checkin' && !rankLoading && rankList.length === 0}}">
+        <text class="rank-empty-text">{{i18n.rankEmpty}}</text>
+      </view>
+      <view class="rank-empty" wx:if="{{rankCategory === 'open' && !openRankLoading && openRankList.length === 0}}">
         <text class="rank-empty-text">{{i18n.rankEmpty}}</text>
       </view>
     </view>
@@ -461,7 +501,7 @@
     <view class="profile-mask" wx:if="{{showEditProfile}}" bindtap="closeEditProfile"></view>
     <view class="profile-panel {{showEditProfile ? 'show' : ''}}">
       <view class="profile-header">
-        <text class="profile-title">✏️ 编辑资料</text>
+        <text class="profile-title">✏️ {{i18n.editProfile}}</text>
         <text class="profile-close" bindtap="closeEditProfile">✕</text>
       </view>
 
@@ -513,8 +553,8 @@
         <view class="frame-guide-left">
           <text class="frame-guide-icon">🎨</text>
           <view class="frame-guide-text">
-            <text class="frame-guide-title">主题色</text>
-            <text class="frame-guide-desc">{{activeTheme ? activeTheme.name : '默认深蓝'}}</text>
+            <text class="frame-guide-title">{{i18n.themeColor}}</text>
+            <text class="frame-guide-desc">{{activeTheme ? activeTheme.name : i18n.defaultDeepBlue}}</text>
           </view>
         </view>
         <text class="frame-guide-arrow">›</text>
@@ -525,8 +565,8 @@
         <view class="frame-guide-left">
           <text class="frame-guide-icon">🏅</text>
           <view class="frame-guide-text">
-            <text class="frame-guide-title">佩戴徽章</text>
-            <text class="frame-guide-desc">{{activeBadge ? '佩戴中' : '未佩戴'}}</text>
+            <text class="frame-guide-title">{{i18n.wearBadge}}</text>
+            <text class="frame-guide-desc">{{activeBadge ? i18n.badgeWorn : i18n.badgeNotWorn}}</text>
           </view>
         </view>
         <text class="frame-guide-arrow">›</text>
@@ -534,7 +574,7 @@
 
       <!-- 保存按钮 -->
       <button class="save-profile-btn" bindtap="saveProfile" hover-class="btn-hover">
-        保存
+        {{i18n.save}}
       </button>
     </view>
 
@@ -1374,7 +1414,7 @@
     <view class="ptmask" wx:if="{{showFrameSelector}}" bindtap="closeFrameSelector"></view>
     <view class="ptpanel {{showFrameSelector ? 'show' : ''}}">
       <view class="ptpanel-header">
-        <text class="ptpanel-title">🖼️ 选择头像框</text>
+        <text class="ptpanel-title">🖼️ {{i18n.selectAvatarFrame}}</text>
         <text class="ptpanel-close" bindtap="closeFrameSelector">✕</text>
       </view>
 
@@ -1427,7 +1467,7 @@
     <view class="ptmask" wx:if="{{showThemeSelector}}" bindtap="closeThemeSelector"></view>
     <view class="ptpanel {{showThemeSelector ? 'show' : ''}}">
       <view class="ptpanel-header">
-        <text class="ptpanel-title">🎨 选择主题色</text>
+        <text class="ptpanel-title">🎨 {{i18n.selectThemeColor}}</text>
         <text class="ptpanel-close" bindtap="closeThemeSelector">✕</text>
       </view>
 
@@ -1435,7 +1475,7 @@
         <view class="theme-option {{!activeTheme ? 'theme-option-active' : ''}}" bindtap="selectTheme" data-id="">
           <view class="theme-option-preview" style="background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);"></view>
           <view class="theme-option-info">
-            <text class="theme-option-name">默认深蓝</text>
+            <text class="theme-option-name">{{i18n.defaultDeepBlue}}</text>
           </view>
           <view class="frame-option-check" wx:if="{{!activeTheme}}">✓</view>
         </view>
@@ -1458,7 +1498,7 @@
     <view class="ptmask" wx:if="{{showBadgeSelector}}" bindtap="closeBadgeSelector"></view>
     <view class="ptpanel {{showBadgeSelector ? 'show' : ''}}">
       <view class="ptpanel-header">
-        <text class="ptpanel-title">🏅 选择徽章</text>
+        <text class="ptpanel-title">🏅 {{i18n.selectBadge}}</text>
         <text class="ptpanel-close" bindtap="closeBadgeSelector">✕</text>
       </view>
 
@@ -1468,7 +1508,7 @@
             <text class="badge-option-icon">—</text>
           </view>
           <view class="badge-option-info">
-            <text class="badge-option-name">不佩戴</text>
+            <text class="badge-option-name">{{i18n.badgeNotWorn}}</text>
           </view>
           <view class="frame-option-check" wx:if="{{!activeBadge}}">✓</view>
         </view>

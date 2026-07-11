@@ -129,11 +129,18 @@ Page({
     checkinShareImagePath: '',
 
     showRankPanel: false,
+    rankCategory: 'checkin',
     rankType: 'streak',
     rankList: [],
     myRank: -1,
     myRankData: null,
     rankLoading: false,
+
+    openRankType: 'today',
+    openRankList: [],
+    openMyRank: -1,
+    openMyRankData: null,
+    openRankLoading: false,
 
     showToolRequest: false,
     toolRequestContent: '',
@@ -237,6 +244,10 @@ Page({
     this.loadPointsData()
     this.loadPerfData()
     this.loadUsageStats()
+    // 如果有签到记录，同步到云端排行榜
+    if (checkin.isCheckedToday() || checkin.getContinuousDays() > 0) {
+      this.reportCheckinToCloud()
+    }
     var appInstance = getApp()
     if (appInstance) {
       var isDark = appInstance.globalData.isDarkMode || storageUtil.get('darkMode') === true
@@ -532,10 +543,36 @@ Page({
       sizeType: ['compressed'],
       success: function(res) {
         var tempPath = res.tempFiles[0].tempFilePath
-        that.setData({ tempAvatarUrl: tempPath })
-        wx.showToast({ title: '头像已选择，点击保存生效', icon: 'none', duration: 1500 })
+        that._saveAvatarPermanently(tempPath, function(savedPath) {
+          that.setData({ tempAvatarUrl: savedPath })
+          wx.showToast({ title: i18n.t('avatarSelected'), icon: 'none', duration: 1500 })
+        })
+      },
+      fail: function(err) {
+        if (err.errMsg && err.errMsg.indexOf('cancel') === -1) {
+          wx.showToast({ title: i18n.t('avatarChooseFail'), icon: 'none' })
+        }
       }
     })
+  },
+
+  _saveAvatarPermanently: function(tempPath, callback) {
+    try {
+      var fs = wx.getFileSystemManager()
+      var savedPath = wx.env.USER_DATA_PATH + '/avatar.png'
+      fs.saveFile({
+        tempFilePath: tempPath,
+        filePath: savedPath,
+        success: function() {
+          if (callback) callback(savedPath)
+        },
+        fail: function() {
+          if (callback) callback(tempPath)
+        }
+      })
+    } catch(e) {
+      if (callback) callback(tempPath)
+    }
   },
 
   onNicknameInput(e) {
@@ -552,7 +589,7 @@ Page({
     wx.vibrateShort({ type: 'light' })
     var nickname = this.data.editNickname.trim()
     if (!nickname) {
-      wx.showToast({ title: '请输入昵称', icon: 'none' })
+      wx.showToast({ title: i18n.t('enterNickname'), icon: 'none' })
       return
     }
 
@@ -562,7 +599,7 @@ Page({
       avatarBg: this.data.userInfo.avatarBg
     }
 
-    wx.setStorageSync('userProfile', profile)
+    storageUtil.safeSet('userProfile', profile)
 
     this.setData({
       showEditProfile: false,
@@ -570,7 +607,7 @@ Page({
       'userInfo.avatarUrl': this.data.tempAvatarUrl
     })
 
-    wx.showToast({ title: '资料已保存 ✅', icon: 'success' })
+    wx.showToast({ title: i18n.t('profileSaved'), icon: 'success' })
   },
 
   loadRecentTools() {
@@ -814,9 +851,11 @@ Page({
     wx.vibrateShort({ type: 'light' })
 
     var currentCount = storageUtil.get('totalUsageCount', 0)
-    wx.setStorageSync('totalUsageCount', currentCount + 1)
-    
+    storageUtil.safeSet('totalUsageCount', currentCount + 1)
+
     this.recordWeeklyUsage()
+    this._reportToolUseToCloud()
+    this._reportToolUsageRank(tool.id, tool.name, tool.icon)
 
     var targetUrl = toolsData.getRouteByToolId(tool.id)
     if (!targetUrl) {
@@ -2429,7 +2468,7 @@ Page({
         activeFrame: null,
         previewFrame: null
       })
-      wx.showToast({ title: '已取消佩戴', icon: 'none' })
+      wx.showToast({ title: i18n.t('badgeDeactivated'), icon: 'none' })
     } else {
       var result = points.activateItem(itemId)
       if (result.success) {
@@ -2516,7 +2555,7 @@ Page({
           activeTheme: activeTheme,
           themeStyle: themeStyle
         })
-        wx.showToast({ title: '已切换主题色', icon: 'success' })
+        wx.showToast({ title: i18n.t('switchThemeColor'), icon: 'success' })
       } else {
         wx.showToast({ title: result.message, icon: 'none' })
       }
@@ -2552,7 +2591,7 @@ Page({
         activeBadge: '',
         activeBadgeId: ''
       })
-      wx.showToast({ title: '已取消佩戴', icon: 'none' })
+      wx.showToast({ title: i18n.t('badgeDeactivated'), icon: 'none' })
     } else {
       var result = points.activateItem(itemId)
       if (result.success) {
@@ -2561,7 +2600,7 @@ Page({
           activeBadge: activeBadge,
           activeBadgeId: itemId
         })
-        wx.showToast({ title: '已佩戴徽章', icon: 'success' })
+        wx.showToast({ title: i18n.t('badgeActivated'), icon: 'success' })
       } else {
         wx.showToast({ title: result.message, icon: 'none' })
       }
@@ -2577,11 +2616,22 @@ Page({
       sizeType: ['compressed'],
       success: function(res) {
         var tempPath = res.tempFiles[0].tempFilePath
-        var info = that.data.userInfo
-        info.avatarUrl = tempPath
-        wx.setStorageSync('userInfo', info)
-        that.setData({ userInfo: info })
-        wx.showToast({ title: '头像已更换', icon: 'success' })
+        that._saveAvatarPermanently(tempPath, function(savedPath) {
+          var info = that.data.userInfo
+          info.avatarUrl = savedPath
+          storageUtil.safeSet('userProfile', {
+            nickname: info.nickname,
+            avatarUrl: savedPath,
+            avatarBg: info.avatarBg
+          })
+          that.setData({ userInfo: info })
+          wx.showToast({ title: i18n.t('avatarChanged'), icon: 'success' })
+        })
+      },
+      fail: function(err) {
+        if (err.errMsg && err.errMsg.indexOf('cancel') === -1) {
+          wx.showToast({ title: i18n.t('avatarChooseFail'), icon: 'none' })
+        }
       }
     })
   },
@@ -2770,8 +2820,9 @@ Page({
       var totalEarned = checkin.getTotalEarnedPoints()
       var records = checkin._getRecords()
       var today = checkin.getToday()
-      var nickName = storageUtil.get('userNickName') || ''
-      var avatarUrl = storageUtil.get('userAvatarUrl') || ''
+      var profile = storageUtil.get('userProfile', {})
+      var nickName = profile.nickname || ''
+      var avatarUrl = profile.avatarUrl || ''
       wx.cloud.callFunction({
         name: 'checkinRank',
         data: {
@@ -2782,7 +2833,8 @@ Page({
           lastCheckinDate: today,
           nickName: nickName,
           avatarUrl: avatarUrl
-        }
+        },
+        fail: function() {}
       })
     } catch(e) {}
   },
@@ -2823,9 +2875,19 @@ Page({
   toggleRankPanel: function() {
     wx.vibrateShort({ type: 'light' })
     var show = !this.data.showRankPanel
-    this.setData({ showRankPanel: show })
-    if (show && this.data.rankList.length === 0) {
+    this.setData({ showRankPanel: show, rankCategory: 'checkin' })
+    if (show) {
       this.loadCheckinRank()
+    }
+  },
+
+  switchRankCategory: function(e) {
+    var cat = e.currentTarget.dataset.cat
+    this.setData({ rankCategory: cat })
+    if (cat === 'checkin') {
+      this.loadCheckinRank()
+    } else if (cat === 'open') {
+      this.loadOpenRank()
     }
   },
 
@@ -2833,6 +2895,77 @@ Page({
     var type = e.currentTarget.dataset.type
     this.setData({ rankType: type })
     this.loadCheckinRank()
+  },
+
+  // 上报工具使用到开榜（每次使用工具也计数）
+  _reportToolUseToCloud: function() {
+    try {
+      var profile = storageUtil.get('userProfile', {})
+      wx.cloud.callFunction({
+        name: 'updateOpenStats',
+        data: {
+          action: 'report',
+          nickName: profile.nickname || '',
+          avatarUrl: profile.avatarUrl || ''
+        },
+        fail: function() {}
+      })
+    } catch(e) {}
+  },
+
+  // 开榜相关
+  loadOpenRank: function() {
+    var that = this
+    this.setData({ openRankLoading: true })
+    try {
+      wx.cloud.callFunction({
+        name: 'updateOpenStats',
+        data: {
+          action: 'getRank',
+          type: that.data.openRankType || 'today',
+          limit: 10
+        },
+        success: function(res) {
+          if (res.result && res.result.success) {
+            that.setData({
+              openRankList: res.result.rankList || [],
+              openMyRank: res.result.myRank || -1,
+              openMyRankData: res.result.myData || null,
+              openRankLoading: false
+            })
+          } else {
+            that.setData({ openRankLoading: false, openRankList: [] })
+          }
+        },
+        fail: function() {
+          that.setData({ openRankLoading: false, openRankList: [] })
+        }
+      })
+    } catch(e) {
+      this.setData({ openRankLoading: false })
+    }
+  },
+
+  switchOpenRankType: function(e) {
+    var type = e.currentTarget.dataset.type
+    this.setData({ openRankType: type })
+    this.loadOpenRank()
+  },
+
+  // 上报工具使用排行
+  _reportToolUsageRank: function(toolId, toolName, toolIcon) {
+    try {
+      wx.cloud.callFunction({
+        name: 'toolRank',
+        data: {
+          action: 'report',
+          toolId: toolId,
+          toolName: toolName || '',
+          toolIcon: toolIcon || ''
+        },
+        fail: function() {}
+      })
+    } catch(e) {}
   },
 
   // 分享签到成就卡片

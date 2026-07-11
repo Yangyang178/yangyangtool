@@ -571,6 +571,7 @@ Page({
       this.saveRecentTool(tool)
       this.recordWeeklyUsage()
       points.recordToolUse(tool.id)
+      this._reportToolUsageRank(tool.id, tool.name, tool.icon)
       var url = toolsData.getRouteByToolId(tool.id)
       if (url) { wx.navigateTo({ url: url, fail: function() { wx.showToast({ title: i18n.t('pageJumpFailed'), icon: 'none' }) } }) }
       else { wx.showToast({ title: i18n.t('featureInDev'), icon: 'none', duration: 1500 }) }
@@ -1306,6 +1307,27 @@ Page({
             success: function(res) { if (res.tempFilePath) { appInstance.globalData.sharePosterPath = res.tempFilePath; that.setData({ sharePosterPath: res.tempFilePath }) } }
           })
         }, 100)
+      })
+    } catch(e) {}
+  },
+
+  // 跳转工具排行页
+  goToToolRank: function() {
+    wx.navigateTo({ url: '/pages/tool-rank/tool-rank' })
+  },
+
+  // 上报工具使用到排行
+  _reportToolUsageRank: function(toolId, toolName, toolIcon) {
+    try {
+      wx.cloud.callFunction({
+        name: 'toolRank',
+        data: {
+          action: 'report',
+          toolId: toolId,
+          toolName: toolName || '',
+          toolIcon: toolIcon || ''
+        },
+        fail: function() {}
       })
     } catch(e) {}
   }

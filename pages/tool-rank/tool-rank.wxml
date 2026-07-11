@@ -1,0 +1,47 @@
+<navigation-bar title="{{i18n.toolRankPageTitle}}" back="{{true}}" color="{{isDarkMode ? 'white' : 'black'}}" background="{{isDarkMode ? '#0F172A' : '#F8FAFC'}}"></navigation-bar>
+
+<scroll-view class="main-scroll {{isDarkMode ? 'dark-mode' : ''}}" scroll-y enhanced show-scrollbar="{{false}}" bounces="{{false}}">
+  <view class="page-container {{isDarkMode ? 'dark-mode' : ''}}">
+
+    <!-- Tab 切换 -->
+    <view class="rank-tabs">
+      <view class="rank-tab {{rankType === 'today' ? 'active' : ''}}" data-type="today" bindtap="switchRankType">{{i18n.toolRankToday}}</view>
+      <view class="rank-tab {{rankType === 'total' ? 'active' : ''}}" data-type="total" bindtap="switchRankType">{{i18n.toolRankTotal}}</view>
+    </view>
+
+    <!-- 加载中 -->
+    <view class="rank-loading" wx:if="{{isLoading}}">
+      <text class="rank-loading-text">{{i18n.rankLoading}}</text>
+    </view>
+
+    <!-- 排行列表 -->
+    <view class="rank-list" wx:if="{{!isLoading && rankList.length > 0}}">
+      <view class="rank-item {{item.rank <= 3 ? 'rank-top-item' : ''}}" wx:for="{{rankList}}" wx:key="toolId">
+        <view class="rank-pos">
+          <text wx:if="{{item.rank === 1}}">🥇</text>
+          <text wx:elif="{{item.rank === 2}}">🥈</text>
+          <text wx:elif="{{item.rank === 3}}">🥉</text>
+          <text wx:else class="rank-num">{{item.rank}}</text>
+        </view>
+        <view class="rank-icon-wrap">
+          <text class="rank-tool-icon">{{item.toolIcon || '🔧'}}</text>
+        </view>
+        <view class="rank-info">
+          <text class="rank-name">{{item.toolName}}</text>
+          <text class="rank-count">{{rankType === 'today' ? item.todayUses : item.totalUses}} {{i18n.toolRankTimes}}</text>
+        </view>
+        <!-- 进度条 -->
+        <view class="rank-bar-wrap">
+          <view class="rank-bar" style="width: {{item.percent}}%"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="rank-empty" wx:if="{{!isLoading && rankList.length === 0}}">
+      <text class="rank-empty-icon">🏅</text>
+      <text class="rank-empty-text">{{i18n.toolRankEmpty}}</text>
+    </view>
+
+  </view>
+</scroll-view>

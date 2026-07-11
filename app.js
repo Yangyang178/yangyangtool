@@ -82,6 +82,7 @@ App({
               logger.log('[云数据库] 连接成功! tool_records记录数:', res.total)
               that.syncLocalToCloud()
               that.autoRestoreIfNeeded()
+              that.reportOpenStats()
             },
             fail: function(err) {
               logger.log('[云数据库] 连接失败，使用纯本地模式')
@@ -181,6 +182,26 @@ App({
       }
       storageUtil.safeSet('_storage_migrated_v2', true)
     } catch(e) {}
+  },
+
+  reportOpenStats: function() {
+    try {
+      var nickName = storageUtil.get('userProfile', {}).nickname || ''
+      var avatarUrl = storageUtil.get('userProfile', {}).avatarUrl || ''
+      wx.cloud.callFunction({
+        name: 'updateOpenStats',
+        data: {
+          action: 'report',
+          nickName: nickName,
+          avatarUrl: avatarUrl
+        },
+        fail: function(err) {
+          logger.log('[开榜] 上报失败:', err.errMsg || err)
+        }
+      })
+    } catch(e) {
+      logger.log('[开榜] 上报异常:', e.message || e)
+    }
   },
 
   syncLocalToCloud: function() {

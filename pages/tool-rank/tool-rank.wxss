@@ -1,0 +1,211 @@
+page {
+  height: 100vh;
+  background-color: var(--pageBg, #F8FAFC);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.main-scroll {
+  flex: 1;
+  height: 100vh;
+}
+
+.page-container {
+  padding: 16px 20px;
+  padding-bottom: calc(30px + env(safe-area-inset-bottom));
+  min-height: calc(100vh - 60px);
+}
+
+/* Tab 切换 */
+.rank-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.rank-tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #94A3B8;
+  background: #F1F5F9;
+  transition: all 0.25s ease;
+}
+
+.rank-tab.active {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.dark-mode .rank-tab {
+  background: rgba(51, 65, 85, 0.5);
+  color: #94A3B8;
+}
+
+.dark-mode .rank-tab.active {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: #FFFFFF;
+}
+
+/* 加载中 */
+.rank-loading {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+}
+
+.rank-loading-text {
+  font-size: 14px;
+  color: #94A3B8;
+}
+
+/* 排行列表 */
+.rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rank-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #FFFFFF;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.rank-top-item {
+  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.12);
+}
+
+.dark-mode .rank-item {
+  background: #1E293B;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .rank-top-item {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.1) 100%);
+}
+
+/* 排名位置 */
+.rank-pos {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.rank-num {
+  font-size: 16px;
+  font-weight: 700;
+  color: #94A3B8;
+}
+
+.dark-mode .rank-num {
+  color: #64748B;
+}
+
+/* 工具图标 */
+.rank-icon-wrap {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #F1F5F9;
+  flex-shrink: 0;
+}
+
+.dark-mode .rank-icon-wrap {
+  background: rgba(51, 65, 85, 0.5);
+}
+
+.rank-tool-icon {
+  font-size: 24px;
+}
+
+/* 工具信息 */
+.rank-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rank-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1E293B;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dark-mode .rank-name {
+  color: #E2E8F0;
+}
+
+.rank-count {
+  font-size: 13px;
+  color: #D97706;
+  font-weight: 600;
+}
+
+.dark-mode .rank-count {
+  color: #FBBF24;
+}
+
+/* 进度条 */
+.rank-bar-wrap {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.rank-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%);
+  border-radius: 0 2px 2px 0;
+  transition: width 0.5s ease;
+}
+
+.rank-top-item .rank-bar-wrap {
+  height: 3px;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+/* 空状态 */
+.rank-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 0;
+}
+
+.rank-empty-icon {
+  font-size: 48px;
+}
+
+.rank-empty-text {
+  font-size: 14px;
+  color: #94A3B8;
+}
