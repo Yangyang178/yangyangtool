@@ -69,6 +69,7 @@ Page({
       i18n: i18n.getToolPageTexts('maze')
     })
     this._initCanvas()
+    poster.setupForPage(this)
   },
 
   onShow: function() {
@@ -500,16 +501,11 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return {
-      title: '🏰 迷宫 - 我' + this.data.timeElapsed + '秒通关，你来挑战？',
-      path: '/package-fun/maze/maze'
-    }
+    return poster.getShareConfig('🏰 迷宫 - 我' + this.data.timeElapsed + '秒通关，你来挑战？', '/package-fun/maze/maze')
   },
 
   onShareTimeline: function() {
-    return {
-      title: '🏰 迷宫 - 随机迷宫计时通关挑战'
-    }
+    return poster.getTimelineConfig('🏰 迷宫 - 随机迷宫计时通关挑战')
   },
   closeResultModal: function() {
     poster.hideResultModal(this)

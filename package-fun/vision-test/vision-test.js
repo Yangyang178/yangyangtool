@@ -1,5 +1,6 @@
 var storageUtil = require('../../utils/storage.js')
 var i18n = require('../../utils/i18n.js')
+var poster = require('../utils/poster.js')
 
 // 数字点阵定义（7段显示风格，5x7网格）
 var DIGIT_DOTS = {
@@ -144,6 +145,7 @@ Page({
     var app = getApp()
     this.setData({ isDarkMode: app.globalData.isDarkMode || false, i18n: i18n.getToolPageTexts('visionTest') })
     this._initAcuityRound()
+    poster.setupForPage(this)
   },
 
   onShow: function() {
@@ -522,15 +524,10 @@ Page({
 
   // ========== 分享 ==========
   onShareAppMessage: function() {
-    return {
-      title: '👁 视力测试 - 色盲/散光/视力表，快来测测你的视力！',
-      path: '/package-fun/vision-test/vision-test'
-    }
+    return poster.getShareConfig('👁 视力测试 - 色盲/散光/视力表，快来测测你的视力！', '/package-fun/vision-test/vision-test')
   },
 
   onShareTimeline: function() {
-    return {
-      title: '👁 视力测试 - 色盲/散光/视力表'
-    }
+    return poster.getTimelineConfig('👁 视力测试 - 色盲/散光/视力表')
   }
 })

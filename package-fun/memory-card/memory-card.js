@@ -38,6 +38,7 @@ Page({
     this._newGame()
     var app = getApp()
     this.setData({ isDarkMode: app.globalData.isDarkMode || false })
+    poster.setupForPage(this)
   },
 
   onShow: function() {
@@ -197,10 +198,10 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return { title: '🃏 记忆翻牌 - 我' + this.data.moves + '步完成，你来挑战？', path: '/package-fun/memory-card/memory-card' }
+    return poster.getShareConfig('🃏 记忆翻牌 - 我' + this.data.moves + '步完成，你来挑战？', '/package-fun/memory-card/memory-card')
   },
   onShareTimeline: function() {
-    return { title: '🃏 记忆翻牌 - 测测你的记忆力' }
+    return poster.getTimelineConfig('🃏 记忆翻牌 - 测测你的记忆力')
   },
   closeResultModal: function() {
     poster.hideResultModal(this)

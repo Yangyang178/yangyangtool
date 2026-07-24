@@ -1,6 +1,7 @@
 var storageUtil = require('../../utils/storage.js')
 var points = require('../../utils/points.js')
 var i18n = require('../../utils/i18n.js')
+var poster = require('../utils/poster.js')
 
 var GAMES = [
   { id: 'reaction', name: '反应速度', icon: '⚡', key: 'reaction_best', lowerBetter: true, unit: 'ms', historyKey: 'reaction_results', formatScore: function(v) { return v > 0 ? v + 'ms' : '-' } },
@@ -33,6 +34,7 @@ Page({
     var app = getApp()
     this.setData({ isDarkMode: app.globalData.isDarkMode || false, i18n: i18n.getToolPageTexts('leaderboard') })
     this._loadCurrentGame()
+    poster.setupForPage(this)
   },
 
   onShow: function() {
@@ -105,11 +107,11 @@ Page({
 
   onShareAppMessage: function() {
     var game = GAMES[this.data.currentGame]
-    return { title: game.icon + ' ' + game.name + '排行榜 - 百宝工具箱', path: '/package-fun/leaderboard/leaderboard' }
+    return poster.getShareConfig(game.icon + ' ' + game.name + '排行榜 - 百宝工具箱', '/package-fun/leaderboard/leaderboard')
   },
 
   onShareTimeline: function() {
     var game = GAMES[this.data.currentGame]
-    return { title: game.icon + ' ' + game.name + '排行榜 - 百宝工具箱' }
+    return poster.getTimelineConfig(game.icon + ' ' + game.name + '排行榜 - 百宝工具箱')
   }
 })

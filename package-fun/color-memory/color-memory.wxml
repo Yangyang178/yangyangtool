@@ -110,5 +110,7 @@
     </view>
   </view>
 </view>
+<!-- 分享海报Canvas -->
+<canvas type="2d" id="funPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>
 <!-- 结果海报Canvas -->
 <canvas type="2d" id="resultPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:420px;height:560px;"></canvas>

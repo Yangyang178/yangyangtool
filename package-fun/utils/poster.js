@@ -1,15 +1,15 @@
 var storageUtil = require('../../utils/storage.js')
 var points = require('../../utils/points.js')
 
-var POSTER_CACHE_KEY = 'fun_poster_cache'
 var CANVAS_ID = 'funPosterCanvas'
+var _sessionCache = {}
 
 var Poster = {
   setupForPage: function(pageInstance) {
     var app = getApp()
     app.globalData.toolPosterPath = ''
 
-    var cached = storageUtil.get(POSTER_CACHE_KEY, '')
+    var cached = _sessionCache['funHome'] || ''
     if (cached) {
       app.globalData.toolPosterPath = cached
       pageInstance.setData({ _posterPath: cached })
@@ -18,7 +18,7 @@ var Poster = {
 
     Poster._drawOnCanvas(pageInstance, function(path) {
       if (path) {
-        try { storageUtil.set(POSTER_CACHE_KEY, path) } catch(e) {}
+        _sessionCache['funHome'] = path
         app.globalData.toolPosterPath = path
         pageInstance.setData({ _posterPath: path })
       }
@@ -66,12 +66,19 @@ var Poster = {
     }
   },
 
-  _drawOnCanvas: function(pageInstance, callback) {
+  _drawOnCanvas: function(pageInstance, callback, _retryCount) {
     try {
       var query = wx.createSelectorQuery().in(pageInstance)
       query.select('#' + CANVAS_ID).fields({ node: true, size: true }).exec(function(res) {
         if (!res || !res[0] || !res[0].node) {
-          if (callback) callback('')
+          var retry = (_retryCount || 0) + 1
+          if (retry <= 3) {
+            setTimeout(function() {
+              Poster._drawOnCanvas(pageInstance, callback, retry)
+            }, 300 * retry)
+          } else {
+            if (callback) callback('')
+          }
           return
         }
         var canvas = res[0].node
@@ -314,9 +321,7 @@ var Poster = {
   },
 
   clearCache: function() {
-    try {
-      wx.removeStorageSync(POSTER_CACHE_KEY)
-    } catch(e) {}
+    _sessionCache = {}
   },
 
   // 挑战结果海报 - 供各游戏工具调用
@@ -345,12 +350,19 @@ var Poster = {
     pageInstance.setData({ showResultModal: false })
   },
 
-  _drawResultOnCanvas: function(pageInstance, resultData, callback) {
+  _drawResultOnCanvas: function(pageInstance, resultData, callback, _retryCount) {
     try {
       var query = wx.createSelectorQuery().in(pageInstance)
       query.select('#' + Poster.RESULT_CANVAS_ID).fields({ node: true, size: true }).exec(function(res) {
         if (!res || !res[0] || !res[0].node) {
-          if (callback) callback('')
+          var retry = (_retryCount || 0) + 1
+          if (retry <= 3) {
+            setTimeout(function() {
+              Poster._drawResultOnCanvas(pageInstance, resultData, callback, retry)
+            }, 300 * retry)
+          } else {
+            if (callback) callback('')
+          }
           return
         }
         var canvas = res[0].node

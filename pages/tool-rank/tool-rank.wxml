@@ -16,7 +16,7 @@
 
     <!-- 排行列表 -->
     <view class="rank-list" wx:if="{{!isLoading && rankList.length > 0}}">
-      <view class="rank-item {{item.rank <= 3 ? 'rank-top-item' : ''}}" wx:for="{{rankList}}" wx:key="toolId">
+      <view class="rank-item {{item.rank <= 3 ? 'rank-top-item' : ''}}" wx:for="{{rankList}}" wx:key="toolId" data-tool-id="{{item.toolId}}" bindtap="onRankItemTap">
         <view class="rank-pos">
           <text wx:if="{{item.rank === 1}}">🥇</text>
           <text wx:elif="{{item.rank === 2}}">🥈</text>

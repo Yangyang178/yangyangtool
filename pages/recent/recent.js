@@ -2954,6 +2954,20 @@ Page({
 
   // 上报工具使用排行
   _reportToolUsageRank: function(toolId, toolName, toolIcon) {
+    // 本地即时计数
+    try {
+      var localUsage = storageUtil.get('toolLocalUsage') || {}
+      localUsage[toolId] = (localUsage[toolId] || 0) + 1
+      var todayStr = new Date().toISOString().split('T')[0]
+      var lastDate = storageUtil.get('toolLocalUsageDate') || ''
+      if (lastDate !== todayStr) {
+        localUsage = {}
+        localUsage[toolId] = 1
+        storageUtil.safeSet('toolLocalUsageDate', todayStr)
+      }
+      storageUtil.safeSet('toolLocalUsage', localUsage)
+    } catch(e) {}
+    // 异步上报云端
     try {
       wx.cloud.callFunction({
         name: 'toolRank',
@@ -2962,6 +2976,13 @@ Page({
           toolId: toolId,
           toolName: toolName || '',
           toolIcon: toolIcon || ''
+        },
+        success: function() {
+          try {
+            var lu = storageUtil.get('toolLocalUsage') || {}
+            delete lu[toolId]
+            storageUtil.safeSet('toolLocalUsage', lu)
+          } catch(e) {}
         },
         fail: function() {}
       })

@@ -150,6 +150,9 @@
   "permission": {
     "scope.userLocation": {
       "desc": "指南针需要获取您的位置信息以显示经纬度坐标"
+    },
+    "scope.writePhotosAlbum": {
+      "desc": "需要保存图片到您的相册"
     }
   },
   "__usePrivacyCheck__": true,

@@ -47,6 +47,7 @@ Page({
       difficultyText: this._getDiffText('normal', i18nData)
     })
     this._loadStats()
+    poster.setupForPage(this)
   },
 
   onShow: function() {

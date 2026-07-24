@@ -27,6 +27,7 @@ Page({
     this.setData({ bestTime: best, results: results, avgTime: avg, i18n: i18n.getToolPageTexts('reactionTest') })
     var app = getApp()
     this.setData({ isDarkMode: app.globalData.isDarkMode || false })
+    poster.setupForPage(this)
   },
 
   onShow: function() {
@@ -121,10 +122,10 @@ Page({
 
   onShareAppMessage: function() {
     var text = '我的反应速度是' + this.data.lastTime + 'ms，你能超过我吗？'
-    return { title: '⚡ 反应速度测试 - ' + text, path: '/package-fun/reaction-test/reaction-test' }
+    return poster.getShareConfig('⚡ 反应速度测试 - ' + text, '/package-fun/reaction-test/reaction-test')
   },
   onShareTimeline: function() {
-    return { title: '⚡ 反应速度测试 - 测测你的反应有多快' }
+    return poster.getTimelineConfig('⚡ 反应速度测试 - 测测你的反应有多快')
   },
   closeResultModal: function() {
     poster.hideResultModal(this)

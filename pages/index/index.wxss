@@ -1587,7 +1587,7 @@ page {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 4px 16px;
+  margin: -8px 4px 16px;
   padding: 14px 16px;
   background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
   border-radius: 14px;
@@ -1632,6 +1632,43 @@ page {
 
 .dark-mode .tool-rank-entry-desc {
   color: #FBBF24;
+}
+
+.tool-rank-entry-preview {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.tool-rank-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.dark-mode .tool-rank-preview-item {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.tool-rank-preview-icon {
+  font-size: 14px;
+}
+
+.tool-rank-preview-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: #92400E;
+  max-width: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dark-mode .tool-rank-preview-name {
+  color: #FDE68A;
 }
 
 .tool-rank-entry-arrow {

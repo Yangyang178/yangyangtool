@@ -36,6 +36,7 @@ Page({
 
   _compassStarted: false,
   _lastDirections: [],
+  _lastLocationTime: 0,
 
   onLoad: function() {
     wx.showShareMenu({
@@ -77,8 +78,11 @@ Page({
     this.setData({ fontSizeSetting: fontSize, i18n: i18n.getToolPageTexts('compass') })
     this.startCompass()
     this.startAccelerometer()
-    // 每次显示时刷新位置信息
-    this.getLocation()
+    // 每次显示时刷新位置信息（节流5秒）
+    var now = Date.now()
+    if (now - this._lastLocationTime > 5000) {
+      this.getLocation()
+    }
   },
 
   onPrivacyAgreed: function() {
@@ -202,11 +206,9 @@ Page({
 
   _doGetLocation: function() {
     var that = this
+    that._lastLocationTime = Date.now()
     wx.getLocation({
       type: 'gcj02',
-      altitude: true,
-      isHighAccuracy: true,
-      highAccuracyExpireTime: 3000,
       success: function(res) {
         var updateData = {
           latitude: res.latitude.toFixed(6),
@@ -232,11 +234,7 @@ Page({
         var errno = (err && err.errno) || 0
         // 隐私协议未声明(errno 112)或隐私授权未通过
         if (errno === 112 || msg.indexOf('privacy') > -1 || msg.indexOf('not declared') > -1) {
-          wx.showModal({
-            title: that.data.i18n.locationUnavailable,
-            content: that.data.i18n.locationUnavailableMsg,
-            showCancel: false
-          })
+          // 不弹窗，让 privacy-popup 组件处理
           return
         }
         // 授权拒绝

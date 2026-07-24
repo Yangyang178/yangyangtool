@@ -37,6 +37,7 @@ Page({
     this.setData({ bestLevel: best, totalGames: total, i18n: i18n.getToolPageTexts('colorMemory') })
     var app = getApp()
     this.setData({ isDarkMode: app.globalData.isDarkMode || false })
+    poster.setupForPage(this)
   },
 
   onShow: function() {
@@ -146,10 +147,10 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return { title: '🎨 色彩记忆 - 我到了第' + this.data.level + '关，你能超过我吗？', path: '/package-fun/color-memory/color-memory' }
+    return poster.getShareConfig('🎨 色彩记忆 - 我到了第' + this.data.level + '关，你能超过我吗？', '/package-fun/color-memory/color-memory')
   },
   onShareTimeline: function() {
-    return { title: '🎨 色彩记忆 - 测测你的记忆力' }
+    return poster.getTimelineConfig('🎨 色彩记忆 - 测测你的记忆力')
   },
   closeResultModal: function() {
     poster.hideResultModal(this)

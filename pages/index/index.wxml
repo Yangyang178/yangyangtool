@@ -295,6 +295,24 @@
       </view>
     </view>
 
+    <!-- 工具打开榜入口 -->
+    <view class="tool-rank-entry" wx:if="{{!isEditMode && searchKeyword.length === 0}}" bindtap="goToToolRank">
+      <view class="tool-rank-entry-left">
+        <text class="tool-rank-entry-icon">🏅</text>
+        <view class="tool-rank-entry-info">
+          <text class="tool-rank-entry-title">{{i18n.toolRankTitle}}</text>
+          <view class="tool-rank-entry-preview" wx:if="{{toolRankPreview.length > 0}}">
+            <view class="tool-rank-preview-item" wx:for="{{toolRankPreview}}" wx:key="toolId">
+              <text class="tool-rank-preview-icon">{{item.toolIcon}}</text>
+              <text class="tool-rank-preview-name">{{item.toolName}}</text>
+            </view>
+          </view>
+          <text class="tool-rank-entry-desc" wx:else>{{i18n.toolRankEntryDesc}}</text>
+        </view>
+      </view>
+      <text class="tool-rank-entry-arrow">›</text>
+    </view>
+
     <!-- 最近更新模块 -->
     <view class="new-tools-section" wx:if="{{!isEditMode && searchKeyword.length === 0 && newTools.length > 0}}">
       <view class="new-tools-header">
@@ -332,18 +350,6 @@
           </view>
         </view>
       </scroll-view>
-    </view>
-
-    <!-- 工具打开榜入口 -->
-    <view class="tool-rank-entry" wx:if="{{!isEditMode && searchKeyword.length === 0}}" bindtap="goToToolRank">
-      <view class="tool-rank-entry-left">
-        <text class="tool-rank-entry-icon">🏅</text>
-        <view class="tool-rank-entry-info">
-          <text class="tool-rank-entry-title">{{i18n.toolRankTitle}}</text>
-          <text class="tool-rank-entry-desc">{{i18n.toolRankEntryDesc}}</text>
-        </view>
-      </view>
-      <text class="tool-rank-entry-arrow">›</text>
     </view>
 
     <!-- 分类折叠区 -->

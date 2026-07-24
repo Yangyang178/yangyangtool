@@ -1,6 +1,7 @@
 var storageUtil = require('../../utils/storage.js')
 var points = require('../../utils/points.js')
 var i18n = require('../../utils/i18n.js')
+var poster = require('../utils/poster.js')
 
 var CANVAS_SIZE = 900
 
@@ -27,6 +28,7 @@ Page({
       fontClass: points.getFontClass(),
       isLoading: false
     })
+    poster.setupForPage(this, 51)
     wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] })
   },
 
@@ -215,9 +217,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return {
-      title: '九宫格切图 - 一键发朋友圈',
-      path: '/package-office/grid-image/grid-image'
-    }
+    return poster.getShareConfig('九宫格切图 - 一键发朋友圈', '/package-office/grid-image/grid-image')
+  },
+  onShareTimeline: function() {
+    return poster.getTimelineConfig('九宫格切图 - 一键发朋友圈')
   }
 })

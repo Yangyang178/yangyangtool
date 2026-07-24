@@ -54,7 +54,8 @@ Page({
     hiddenToolsText: '',
     allRecentUseText: '',
     categorySections: [],
-    collapsedCategories: {}
+    collapsedCategories: {},
+    toolRankPreview: []
   },
 
   onLoad: function(options) {
@@ -155,6 +156,7 @@ Page({
     } catch(e) {}
     wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] })
     this.checkBackupReminder()
+    this._loadToolRankPreview()
   },
 
   onCloudRestored: function() {
@@ -1316,8 +1318,103 @@ Page({
     wx.navigateTo({ url: '/pages/tool-rank/tool-rank' })
   },
 
-  // 上报工具使用到排行
+  // 加载工具排行预览（首页显示前3名）
+  _loadToolRankPreview: function() {
+    var that = this
+    try {
+      wx.cloud.callFunction({
+        name: 'toolRank',
+        data: {
+          action: 'getRank',
+          type: 'today',
+          limit: 3
+        },
+        success: function(res) {
+          if (res.result && res.result.success) {
+            var list = res.result.rankList || []
+            // 叠加本地未同步的使用次数
+            var localUsage = storageUtil.get('toolLocalUsage') || {}
+            for (var i = 0; i < list.length; i++) {
+              var localCount = localUsage[list[i].toolId] || 0
+              if (localCount > 0) {
+                list[i].todayUses = (list[i].todayUses || 0) + localCount
+                list[i].totalUses = (list[i].totalUses || 0) + localCount
+              }
+              var toolObj = toolsData.getToolById(list[i].toolId)
+              if (toolObj) {
+                list[i].toolName = i18n.getToolName(list[i].toolId, list[i].toolName)
+                list[i].toolIcon = toolObj.icon || list[i].toolIcon
+              }
+            }
+            // 本地有使用但未入榜的工具，补充到预览
+            var existIds = {}
+            for (var j = 0; j < list.length; j++) { existIds[list[j].toolId] = true }
+            var localItems = []
+            for (var tid in localUsage) {
+              if (!existIds[tid] && localUsage[tid] > 0) {
+                var tObj = toolsData.getToolById(tid)
+                if (tObj) {
+                  localItems.push({
+                    toolId: tid,
+                    toolName: i18n.getToolName(tid, ''),
+                    toolIcon: tObj.icon || '🔧',
+                    todayUses: localUsage[tid],
+                    totalUses: localUsage[tid]
+                  })
+                }
+              }
+            }
+            if (localItems.length > 0) {
+              list = list.concat(localItems)
+              list.sort(function(a, b) { return b.todayUses - a.todayUses })
+              list = list.slice(0, 3)
+            }
+            that.setData({ toolRankPreview: list })
+          }
+        },
+        fail: function() {
+          // 云端查询失败时，用本地数据显示预览
+          var localUsage = storageUtil.get('toolLocalUsage') || {}
+          var localList = []
+          for (var tid in localUsage) {
+            if (localUsage[tid] > 0) {
+              var tObj = toolsData.getToolById(tid)
+              if (tObj) {
+                localList.push({
+                  toolId: tid,
+                  toolName: i18n.getToolName(tid, ''),
+                  toolIcon: tObj.icon || '🔧',
+                  todayUses: localUsage[tid],
+                  totalUses: localUsage[tid]
+                })
+              }
+            }
+          }
+          localList.sort(function(a, b) { return b.todayUses - a.todayUses })
+          that.setData({ toolRankPreview: localList.slice(0, 3) })
+        }
+      })
+    } catch(e) {}
+  },
+
+  // 上报工具使用到排行（本地即时计数 + 云端异步同步）
   _reportToolUsageRank: function(toolId, toolName, toolIcon) {
+    // 本地即时计数，确保返回首页时立刻可见
+    try {
+      var localUsage = storageUtil.get('toolLocalUsage') || {}
+      localUsage[toolId] = (localUsage[toolId] || 0) + 1
+      // 只保留今天的数据，避免累积过多
+      var todayStr = new Date().toISOString().split('T')[0]
+      var lastDate = storageUtil.get('toolLocalUsageDate') || ''
+      if (lastDate !== todayStr) {
+        localUsage = {}
+        localUsage[toolId] = 1
+        storageUtil.safeSet('toolLocalUsageDate', todayStr)
+      }
+      storageUtil.safeSet('toolLocalUsage', localUsage)
+    } catch(e) {}
+
+    // 异步上报云端
     try {
       wx.cloud.callFunction({
         name: 'toolRank',
@@ -1326,6 +1423,14 @@ Page({
           toolId: toolId,
           toolName: toolName || '',
           toolIcon: toolIcon || ''
+        },
+        success: function() {
+          // 上报成功后清除本地计数，避免重复叠加
+          try {
+            var lu = storageUtil.get('toolLocalUsage') || {}
+            delete lu[toolId]
+            storageUtil.safeSet('toolLocalUsage', lu)
+          } catch(e) {}
         },
         fail: function() {}
       })

@@ -1,6 +1,7 @@
 var storageUtil = require('../../utils/storage.js')
 var points = require('../../utils/points.js')
 var i18n = require('../../utils/i18n.js')
+var poster = require('../utils/poster.js')
 
 Page({
   data: {
@@ -34,6 +35,7 @@ Page({
       fontClass: points.getFontClass(),
       isLoading: false
     })
+    poster.setupForPage(this, 53)
     var guideClosed = storageUtil.get('guide_tip_closed_53', false)
     this.setData({ showGuideTip: !guideClosed })
     wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] })
@@ -58,6 +60,7 @@ Page({
       fontSizeSetting: storageUtil.get('fontSizeSetting', 'medium'),
       fontClass: points.getFontClass()
     })
+    poster.setupForPage(this, 53)
   },
 
   switchMode: function(e) {
@@ -213,9 +216,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return {
-      title: '油耗计算器 - 百宝工具箱',
-      path: '/package-calculator/fuel-calculator/fuel-calculator'
-    }
+    return poster.getShareConfig('油耗计算器 - 百宝工具箱', '/package-calculator/fuel-calculator/fuel-calculator', '百公里油耗/费用精准计算')
+  },
+  onShareTimeline: function() {
+    return poster.getTimelineConfig('油耗计算器 - 百公里油耗/费用计算')
   }
 })

@@ -108,3 +108,4 @@
 
 <!-- 离屏Canvas -->
 <canvas type="2d" id="gridCanvas" style="position:fixed;left:-9999px;top:-9999px;width:900px;height:900px;"></canvas>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

@@ -1,6 +1,7 @@
 var storageUtil = require('../../utils/storage.js')
 var points = require('../../utils/points.js')
 var i18n = require('../../utils/i18n.js')
+var poster = require('../utils/poster.js')
 
 var CANVAS_W = 900
 var MAX_CANVAS_H = 4096
@@ -28,6 +29,7 @@ Page({
       fontClass: points.getFontClass(),
       isLoading: false
     })
+    poster.setupForPage(this, 0)
     wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] })
   },
 
@@ -260,9 +262,9 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return {
-      title: '图片拼接 - 多图合成长图',
-      path: '/package-office/image-stitch/image-stitch'
-    }
+    return poster.getShareConfig('图片拼接 - 多图合成长图', '/package-office/image-stitch/image-stitch')
+  },
+  onShareTimeline: function() {
+    return poster.getTimelineConfig('图片拼接 - 多图合成长图')
   }
 })

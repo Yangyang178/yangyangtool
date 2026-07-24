@@ -2,8 +2,8 @@ var storageUtil = require('../../utils/storage.js')
 var toolsData = require('../../data/tools.js')
 var points = require('../../utils/points.js')
 
-var POSTER_CACHE_KEY = 'tool_poster_cache_'
 var CANVAS_ID = 'toolPosterCanvas'
+var _sessionCache = {}
 
 var Poster = {
   setupForPage: function(pageInstance, toolId) {
@@ -13,8 +13,7 @@ var Poster = {
     var tool = toolsData.getToolById(toolId)
     if (!tool) return
 
-    var cacheKey = POSTER_CACHE_KEY + toolId
-    var cached = storageUtil.get(cacheKey, '')
+    var cached = _sessionCache[toolId] || ''
     if (cached) {
       app.globalData.toolPosterPath = cached
       pageInstance.setData({ _posterPath: cached })
@@ -31,7 +30,7 @@ var Poster = {
 
     Poster._drawOnCanvas(pageInstance, toolInfo, function(path) {
       if (path) {
-        try { storageUtil.set(cacheKey, path) } catch(e) {}
+        _sessionCache[toolId] = path
         app.globalData.toolPosterPath = path
         pageInstance.setData({ _posterPath: path })
       }
@@ -83,12 +82,19 @@ var Poster = {
     }
   },
 
-  _drawOnCanvas: function(pageInstance, toolInfo, callback) {
+  _drawOnCanvas: function(pageInstance, toolInfo, callback, _retryCount) {
     try {
       var query = wx.createSelectorQuery().in(pageInstance)
       query.select('#' + CANVAS_ID).fields({ node: true, size: true }).exec(function(res) {
         if (!res || !res[0] || !res[0].node) {
-          if (callback) callback('')
+          var retry = (_retryCount || 0) + 1
+          if (retry <= 3) {
+            setTimeout(function() {
+              Poster._drawOnCanvas(pageInstance, toolInfo, callback, retry)
+            }, 300 * retry)
+          } else {
+            if (callback) callback('')
+          }
           return
         }
         var canvas = res[0].node
@@ -308,15 +314,7 @@ var Poster = {
   },
 
   clearCache: function() {
-    try {
-      var info = wx.getStorageInfoSync()
-      var keys = info.keys || []
-      for (var i = 0; i < keys.length; i++) {
-        if (keys[i].indexOf(POSTER_CACHE_KEY) === 0) {
-          wx.removeStorageSync(keys[i])
-        }
-      }
-    } catch(e) {}
+    _sessionCache = {}
   }
 }
 

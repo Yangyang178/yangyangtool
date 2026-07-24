@@ -1,6 +1,7 @@
 var i18n = require('../../utils/i18n.js')
 var storage = require('../../utils/storage.js')
 var points = require('../../utils/points.js')
+var poster = require('../utils/poster.js')
 
 Page({
   data: {
@@ -29,6 +30,8 @@ Page({
       i18n: i18n.getToolPageTexts('timePerception')
     })
     this.loadBestRecord()
+    poster.setupForPage(this)
+    wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] })
   },
 
   onShow: function() {
@@ -38,6 +41,7 @@ Page({
       fontSizeSetting: app.globalData.fontSizeSetting || 'medium',
       i18n: i18n.getToolPageTexts('timePerception')
     })
+    poster.setupForPage(this)
   },
 
   onUnload: function() {
@@ -121,5 +125,12 @@ Page({
 
   goBack: function() {
     wx.navigateBack({ delta: 1 })
+  },
+
+  onShareAppMessage: function() {
+    return poster.getShareConfig('⏱️ 时间感知训练 - 测测你对时间的感知有多准', '/package-fun/time-perception/time-perception')
+  },
+  onShareTimeline: function() {
+    return poster.getTimelineConfig('⏱️ 时间感知训练 - 测测你对时间的感知')
   }
 })

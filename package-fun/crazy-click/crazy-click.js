@@ -32,6 +32,7 @@ Page({
     this.setData({ bestClicks: best, bestCps: bestCps, totalGames: total, i18n: i18n.getToolPageTexts('crazyClick') })
     var app = getApp()
     this.setData({ isDarkMode: app.globalData.isDarkMode || false })
+    poster.setupForPage(this)
   },
 
   onShow: function() {
@@ -140,10 +141,10 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return { title: '👆 疯狂点击 - 我10秒点了' + this.data.clicks + '次，你能超过我？', path: '/package-fun/crazy-click/crazy-click' }
+    return poster.getShareConfig('👆 疯狂点击 - 我10秒点了' + this.data.clicks + '次，你能超过我？', '/package-fun/crazy-click/crazy-click')
   },
   onShareTimeline: function() {
-    return { title: '👆 疯狂点击 - 测测你的手速' }
+    return poster.getTimelineConfig('👆 疯狂点击 - 测测你的手速')
   },
   closeResultModal: function() {
     poster.hideResultModal(this)

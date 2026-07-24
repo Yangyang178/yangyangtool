@@ -1,6 +1,7 @@
 var storageUtil = require('../../utils/storage.js')
 var points = require('../../utils/points.js')
 var i18n = require('../../utils/i18n.js')
+var poster = require('../utils/poster.js')
 
 // 测试数据从 i18n 动态获取（支持中英文切换）
 function getTests() {
@@ -50,6 +51,7 @@ Page({
     this.setData({ testList: list, i18n: texts })
     var app = getApp()
     this.setData({ isDarkMode: app.globalData.isDarkMode || false })
+    poster.setupForPage(this)
   },
 
   onShow: function() {
@@ -198,21 +200,13 @@ Page({
     var TESTS = getTests()
     var test = this.data.currentTestIndex >= 0 ? TESTS[this.data.currentTestIndex] : null
     if (this.data.page === 'result' && resultInfo && test) {
-      return {
-        title: test.icon + ' ' + resultInfo.title + ' - ' + (texts.toolTitle || '心理测试'),
-        path: '/package-fun/psychology-test/psychology-test'
-      }
+      return poster.getShareConfig(test.icon + ' ' + resultInfo.title + ' - ' + (texts.toolTitle || '心理测试'), '/package-fun/psychology-test/psychology-test')
     }
-    return {
-      title: texts.shareTitle || '🔮 心理测试',
-      path: '/package-fun/psychology-test/psychology-test'
-    }
+    return poster.getShareConfig(texts.shareTitle || '🔮 心理测试', '/package-fun/psychology-test/psychology-test')
   },
 
   onShareTimeline: function() {
     var texts = i18n.getToolPageTexts('psychologyTest') || {}
-    return {
-      title: texts.shareTitle || '🔮 心理测试'
-    }
+    return poster.getTimelineConfig(texts.shareTitle || '🔮 心理测试')
   }
 })

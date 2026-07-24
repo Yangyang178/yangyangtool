@@ -20,6 +20,7 @@ Page({
   onShow: function() {
     this._applyTheme()
     this._applyI18n()
+    this.loadRank()
   },
 
   _applyTheme: function() {
@@ -51,13 +52,49 @@ Page({
         success: function(res) {
           if (res.result && res.result.success) {
             var list = res.result.rankList || []
-            // 用 toolId 查找翻译后的工具名和图标
+            // 叠加本地未同步的使用次数
+            var localUsage = storageUtil.get('toolLocalUsage') || {}
             for (var k = 0; k < list.length; k++) {
+              var localCount = localUsage[list[k].toolId] || 0
+              if (localCount > 0) {
+                list[k].todayUses = (list[k].todayUses || 0) + localCount
+                list[k].totalUses = (list[k].totalUses || 0) + localCount
+              }
+              // 用 toolId 查找翻译后的工具名和图标
               var toolObj = toolsData.getToolById(list[k].toolId)
               if (toolObj) {
                 list[k].toolName = i18n.getToolName(list[k].toolId, list[k].toolName)
                 list[k].toolIcon = toolObj.icon || list[k].toolIcon
               }
+            }
+            // 本地有使用但未入榜的工具，补充进来
+            var existIds = {}
+            for (var m = 0; m < list.length; m++) { existIds[list[m].toolId] = true }
+            var localItems = []
+            for (var tid in localUsage) {
+              if (!existIds[tid] && localUsage[tid] > 0) {
+                var tObj = toolsData.getToolById(tid)
+                if (tObj) {
+                  localItems.push({
+                    toolId: tid,
+                    toolName: i18n.getToolName(tid, ''),
+                    toolIcon: tObj.icon || '🔧',
+                    todayUses: localUsage[tid],
+                    totalUses: localUsage[tid]
+                  })
+                }
+              }
+            }
+            if (localItems.length > 0) {
+              list = list.concat(localItems)
+              list.sort(function(a, b) {
+                var aVal = that.data.rankType === 'today' ? a.todayUses : a.totalUses
+                var bVal = that.data.rankType === 'today' ? b.todayUses : b.totalUses
+                return bVal - aVal
+              })
+              list = list.slice(0, 10)
+              // 重新排名
+              for (var r = 0; r < list.length; r++) { list[r].rank = r + 1 }
             }
             // 计算百分比进度条
             var maxUses = 1
@@ -88,5 +125,13 @@ Page({
     if (type === this.data.rankType) return
     this.setData({ rankType: type })
     this.loadRank()
+  },
+
+  onRankItemTap: function(e) {
+    var toolId = e.currentTarget.dataset.toolId
+    var tool = toolsData.getToolById(toolId)
+    if (tool && tool.route) {
+      wx.navigateTo({ url: tool.route })
+    }
   }
 })

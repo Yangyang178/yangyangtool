@@ -29,6 +29,7 @@ Page({
     this._newGame()
     var app = getApp()
     this.setData({ isDarkMode: app.globalData.isDarkMode || false })
+    poster.setupForPage(this)
   },
 
   onShow: function() {
@@ -179,10 +180,10 @@ Page({
   },
 
   onShareAppMessage: function() {
-    return { title: '🔢 数字猜谜 - 我' + this.data.guessCount + '次猜中，你来挑战？', path: '/package-fun/number-guess/number-guess' }
+    return poster.getShareConfig('🔢 数字猜谜 - 我' + this.data.guessCount + '次猜中，你来挑战？', '/package-fun/number-guess/number-guess')
   },
   onShareTimeline: function() {
-    return { title: '🔢 数字猜谜 - 锻炼逻辑推理能力' }
+    return poster.getTimelineConfig('🔢 数字猜谜 - 锻炼逻辑推理能力')
   },
   closeResultModal: function() {
     poster.hideResultModal(this)
