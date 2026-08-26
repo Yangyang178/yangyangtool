@@ -3,7 +3,24 @@
   "compileType": "miniprogram",
   "libVersion": "3.6.1",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "value": "docs",
+        "type": "folder"
+      },
+      {
+        "value": "clean-cache.bat",
+        "type": "file"
+      },
+      {
+        "value": "README.md",
+        "type": "file"
+      },
+      {
+        "value": ".eslintrc.js",
+        "type": "file"
+      }
+    ],
     "include": []
   },
   "setting": {
@@ -20,7 +37,18 @@
       "disablePlugins": [],
       "outputPath": ""
     },
-    "minifyWXML": true
+    "minifyWXML": true,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "packNpmManually": false,
+    "minifyWXSS": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
   },
   "condition": {},
   "editorSetting": {
@@ -28,5 +56,6 @@
     "tabSize": 2
   },
   "cloudfunctionRoot": "cloudfunctions/",
-  "cloudbaseRoot": "cloudbaserc.json"
+  "cloudbaseRoot": "cloudbaserc.json/",
+  "simulatorPluginLibVersion": {}
 }
