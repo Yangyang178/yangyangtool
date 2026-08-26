@@ -1,5 +1,9 @@
 /* ==================== CSS 变量体系（亮色模式默认值） ==================== */
 page {
+  /* ===================================
+     🎨 色彩系统
+     =================================== */
+  
   --pageBg: #F8FAFC;
   --cardBg: #FFFFFF;
   --surfaceBg: #F1F5F9;
@@ -19,52 +23,253 @@ page {
   --searchBg: #F1F5F9;
   --searchBorder: transparent;
 
-  --primaryColor: #3B82F6;
-  --primaryLight: rgba(59,130,246,0.1);
+  --primaryColor: #1E40AF;
+  --primaryLight: rgba(30,64,175,0.1);
+  --primaryDark: #1E3A8A;
+  
   --dangerColor: #EF4444;
   --successColor: #10B981;
   --warningColor: #F59E0B;
+  --infoColor: #3B82F6;
 
   --shadowSm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --shadowMd: 0 4px 12px rgba(0,0,0,0.08);
   --shadowLg: 0 10px 30px rgba(0,0,0,0.1);
+  --shadowCardDay: 0 4px 12px rgba(0,0,0,0.06);
+
+  /* ===================================
+     📐 间距系统 (8pt Grid)
+     =================================== */
+  --space-2xs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* ===================================
+     🔤 字体排版系统
+     =================================== */
+  --fontFamilyBase: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+
+  --fontSizeXs: 11px;
+  --fontSizeSm: 13px;
+  --fontSizeBase: 15px;
+  --fontSizeMd: 17px;
+  --fontSizeLg: 20px;
+  --fontSizeXl: 26px;
+  --fontSize2xl: 32px;
+
+  --fontScale: 1;
+
+  --fontWeightNormal: 400;
+  --fontWeightMedium: 500;
+  --fontWeightSemibold: 600;
+  --fontWeightBold: 700;
+  --fontWeightBlack: 900;
+
+  /* ===================================
+     🎭 圆角系统
+     =================================== */
+  --radiusSm: 8px;
+  --radiusMd: 12px;
+  --radiusLg: 16px;
+  --radiusXl: 20px;
+  --radius2xl: 24px;
+  --radiusFull: 9999px;
+
+  /* ===================================
+     ⚡ 动画曲线与时长
+     =================================== */
+  --easeDefault: cubic-bezier(0.4, 0, 0.2, 1);
+  --easeInOut: cubic-bezier(0.4, 0, 0.2, 1);
+  --easeBounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --easeSpring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  --durationFast: 150ms;
+  --durationNormal: 250ms;
+  --durationSlow: 400ms;
+  --durationSlower: 600ms;
 
   background-color: var(--pageBg);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-family: var(--fontFamilyBase);
   color: var(--textPrimary);
+}
+
+/* ==================== 字体大小等级 ==================== */
+.font-size-small {
+  --fontScale: 0.85;
+  --fontSizeXs: 10px;
+  --fontSizeSm: 12px;
+  --fontSizeBase: 13px;
+  --fontSizeMd: 15px;
+  --fontSizeLg: 17px;
+  --fontSizeXl: 22px;
+  --fontSize2xl: 28px;
+  --fontSize3xl: 32px;
+  --fontSizeHero: 34px;
+}
+.font-size-medium {
+  --fontScale: 1;
+  --fontSizeXs: 11px;
+  --fontSizeSm: 13px;
+  --fontSizeBase: 15px;
+  --fontSizeMd: 17px;
+  --fontSizeLg: 20px;
+  --fontSizeXl: 26px;
+  --fontSize2xl: 32px;
+  --fontSize3xl: 36px;
+  --fontSizeHero: 38px;
+}
+.font-size-large {
+  --fontScale: 1.15;
+  --fontSizeXs: 12px;
+  --fontSizeSm: 15px;
+  --fontSizeBase: 17px;
+  --fontSizeMd: 19px;
+  --fontSizeLg: 22px;
+  --fontSizeXl: 28px;
+  --fontSize2xl: 36px;
+  --fontSize3xl: 42px;
+  --fontSizeHero: 44px;
+}
+
+/* ==================== 字体族切换 ==================== */
+.font-family-kai {
+  --fontFamilyBase: KaiTi, STKaiti, serif;
+  font-family: KaiTi, STKaiti, serif !important;
+}
+.font-family-kai view,
+.font-family-kai text,
+.font-family-kai input,
+.font-family-kai textarea,
+.font-family-kai button {
+  font-family: KaiTi, STKaiti, serif !important;
+}
+.font-family-song {
+  --fontFamilyBase: SimSun, STSong, serif;
+  font-family: SimSun, STSong, serif !important;
+}
+.font-family-song view,
+.font-family-song text,
+.font-family-song input,
+.font-family-song textarea,
+.font-family-song button {
+  font-family: SimSun, STSong, serif !important;
+}
+.font-family-fang {
+  --fontFamilyBase: FangSong, STFangsong, serif;
+  font-family: FangSong, STFangsong, serif !important;
+}
+.font-family-fang view,
+.font-family-fang text,
+.font-family-fang input,
+.font-family-fang textarea,
+.font-family-fang button {
+  font-family: FangSong, STFangsong, serif !important;
+}
+.font-family-round {
+  --fontFamilyBase: Hiragino Sans GB, YouYuan, sans-serif;
+  font-family: Hiragino Sans GB, YouYuan, sans-serif !important;
+}
+.font-family-round view,
+.font-family-round text,
+.font-family-round input,
+.font-family-round textarea,
+.font-family-round button {
+  font-family: Hiragino Sans GB, YouYuan, sans-serif !important;
+}
+.font-family-hei {
+  --fontFamilyBase: 'ZCOOL QingKe HuangYou', sans-serif;
+  font-family: 'ZCOOL QingKe HuangYou', sans-serif !important;
+}
+.font-family-hei view,
+.font-family-hei text,
+.font-family-hei input,
+.font-family-hei textarea,
+.font-family-hei button {
+  font-family: 'ZCOOL QingKe HuangYou', sans-serif !important;
+}
+
+/* ==================== 主题色覆盖类（确保覆盖 page 级变量） ==================== */
+.theme-rose {
+  --primaryColor: #E11D48 !important;
+  --primaryDark: #BE123C !important;
+  --primaryLight: rgba(225,29,72,0.1) !important;
+}
+.theme-emerald {
+  --primaryColor: #059669 !important;
+  --primaryDark: #047857 !important;
+  --primaryLight: rgba(5,150,105,0.1) !important;
+}
+.theme-amber {
+  --primaryColor: #D97706 !important;
+  --primaryDark: #B45309 !important;
+  --primaryLight: rgba(217,119,6,0.1) !important;
+}
+.theme-violet {
+  --primaryColor: #7C3AED !important;
+  --primaryDark: #6328C4 !important;
+  --primaryLight: rgba(124,58,237,0.1) !important;
+}
+/* 暗黑模式下的主题色覆盖 */
+.dark-mode .theme-rose {
+  --primaryColor: #FB7185 !important;
+  --primaryDark: #E11D48 !important;
+  --primaryLight: rgba(251,113,133,0.15) !important;
+}
+.dark-mode .theme-emerald {
+  --primaryColor: #34D399 !important;
+  --primaryDark: #059669 !important;
+  --primaryLight: rgba(52,211,153,0.15) !important;
+}
+.dark-mode .theme-amber {
+  --primaryColor: #FBBF24 !important;
+  --primaryDark: #D97706 !important;
+  --primaryLight: rgba(251,191,36,0.15) !important;
+}
+.dark-mode .theme-violet {
+  --primaryColor: #A78BFA !important;
+  --primaryDark: #7C3AED !important;
+  --primaryLight: rgba(167,139,250,0.15) !important;
 }
 
 /* ==================== 暗黑模式：一键覆盖所有变量 ==================== */
 .dark-mode,
 .dark-mode page {
-  --pageBg: #0F172A;
-  --cardBg: #1E293B;
-  --surfaceBg: #1E293B;
-  --elevatedBg: #1E293B;
+  --pageBg: #0a0e1a;
+  --cardBg: #1a2035;
+  --surfaceBg: #1a2035;
+  --elevatedBg: #232d42;
 
   --textPrimary: #F1F5F9;
-  --textSecondary: #94A3B8;
-  --textTertiary: #64748B;
-  --textMuted: #475569;
+  --textSecondary: #CBD5E1;
+  --textTertiary: #94A3B8;
+  --textMuted: #64748B;
 
   --borderLight: #334155;
   --borderFaint: #1E293B;
   --borderDark: rgba(71,85,105,0.25);
 
-  --inputBg: #0F172A;
+  --inputBg: #232d42;
   --inputBorder: #334155;
-  --searchBg: #1E293B;
+  --searchBg: #232d42;
   --searchBorder: rgba(148,163,184,0.2);
 
-  --primaryColor: #60A5FA;
-  --primaryLight: rgba(96,165,250,0.15);
+  --primaryColor: #3B82F6;
+  --primaryLight: rgba(59,130,246,0.15);
+  --primaryDark: #1E40AF;
+
   --dangerColor: #F87171;
   --successColor: #34D399;
   --warningColor: #FBBF24;
+  --infoColor: #60A5FA;
 
   --shadowSm: 0 1px 3px rgba(0,0,0,0.3);
   --shadowMd: 0 4px 12px rgba(0,0,0,0.35);
   --shadowLg: 0 10px 30px rgba(0,0,0,0.4);
+  --shadowCardNight: 0 4px 12px rgba(0,0,0,0.3);
 
   background-color: var(--pageBg) !important;
   color: var(--textPrimary);
@@ -104,7 +309,6 @@ page {
   box-shadow: var(--shadowSm);
 }
 
-/* 白色背景的输入框容器 */
 .input-box,
 .password-display,
 .deduction-grid,
@@ -279,8 +483,54 @@ textarea {
   background-color: var(--pageBg);
 }
 
+/* ==================== 工具快捷操作栏（复制+重置） ==================== */
+.tool-actions-bar {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0;
+  padding: 0 4px;
+}
+
+.tool-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px 16px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.3;
+  transition: opacity 0.15s ease;
+}
+
+.tool-action-btn::after { border: none; }
+
+.tool-action-copy {
+  background: var(--surfaceBg);
+  color: var(--textPrimary);
+  border: 1px solid var(--borderLight);
+}
+
+.tool-action-reset {
+  background: transparent;
+  color: var(--textTertiary);
+  border: 1px dashed var(--borderLight);
+}
+
+.dark-mode .tool-action-copy {
+  background: var(--elevatedBg);
+  border-color: var(--borderDark);
+}
+
+.dark-mode .tool-action-reset {
+  border-color: var(--borderDark);
+}
+
 /* ==================== 导航栏组件 ==================== */
-/* 注意：不在此处设置导航栏背景色，由各页面自行控制 */
 
 /* ==================== icon wrapper ==================== */
 .icon-wrapper {
@@ -315,9 +565,135 @@ textarea {
 .dark-mode .empty-state,
 .dark-mode .bottom-info,
 .dark-mode .nav-placeholder,
-.dark-mode .bottom-safe-area {
+.dark-mode .bottom-safe-area,
+.dark-mode .tool-header,
+.dark-mode .start-screen,
+.dark-mode .game-section,
+.dark-mode .result-section,
+.dark-mode .stats-bar,
+.dark-mode .stat-card,
+.dark-mode .stats-card,
+.dark-mode .input-section,
+.dark-mode .output-section,
+.dark-mode .convert-section,
+.dark-mode .format-section,
+.dark-mode .preview-section,
+.dark-mode .generate-section,
+.dark-mode .lookup-section,
+.dark-mode .result-display,
+.dark-mode .history-card,
+.dark-mode .info-card,
+.dark-mode .detail-card,
+.dark-mode .option-card,
+.dark-mode .mode-card,
+.dark-mode .config-section,
+.dark-mode .display-section,
+.dark-mode .control-section,
+.dark-mode .chart-section,
+.dark-mode .list-section,
+.dark-mode .form-section,
+.dark-mode .main-content,
+.dark-mode .content-area,
+.dark-mode .tab-content,
+.dark-mode .panel-content,
+.dark-mode .card-section {
   background-color: var(--cardBg) !important;
   box-shadow: none !important;
+}
+
+/* 暗色模式下覆盖工具页面中硬编码的浅色背景 */
+.dark-mode .tool-page .input-wrapper,
+.dark-mode .tool-page .textarea-wrapper,
+.dark-mode .tool-page .result-container,
+.dark-mode .tool-page .history-item-common,
+.dark-mode .tool-page .category-chip,
+.dark-mode .tool-page .btn-secondary,
+.dark-mode .tool-page .card,
+.dark-mode .tool-page .section-card,
+.dark-mode .tool-page .form-card,
+.dark-mode .tool-page .input-group,
+.dark-mode .tool-page .output-group,
+.dark-mode .tool-page .result-group,
+.dark-mode .tool-page .option-group,
+.dark-mode .tool-page .info-row,
+.dark-mode .tool-page .detail-row,
+.dark-mode .tool-page .setting-row,
+.dark-mode .tool-page .mode-option,
+.dark-mode .tool-page .format-option,
+.dark-mode .tool-page .type-option,
+.dark-mode .tool-page .value-display,
+.dark-mode .tool-page .preview-area,
+.dark-mode .tool-page .display-area,
+.dark-mode .tool-page .code-area,
+.dark-mode .tool-page .text-area,
+.dark-mode .tool-page .input-area,
+.dark-mode .tool-page .output-area,
+.dark-mode .tool-page .history-item,
+.dark-mode .tool-page .result-item,
+.dark-mode .tool-page .list-item,
+.dark-mode .tool-page .tag-item,
+.dark-mode .tool-page .chip-item,
+.dark-mode .tool-page .field-group,
+.dark-mode .tool-page .control-group,
+.dark-mode .tool-page .action-group,
+.dark-mode .tool-page .button-group,
+.dark-mode .tool-page .tab-bar,
+.dark-mode .tool-page .picker-group,
+.dark-mode .tool-page .slider-group,
+.dark-mode .tool-page .switch-group {
+  background-color: var(--cardBg) !important;
+  border-color: var(--borderLight) !important;
+}
+
+/* 暗色模式下覆盖硬编码的深色文字 */
+.dark-mode .tool-page .section-title,
+.dark-mode .tool-page .card-title,
+.dark-mode .tool-page .form-label,
+.dark-mode .tool-page .input-label,
+.dark-mode .tool-page .field-label,
+.dark-mode .tool-page .result-label,
+.dark-mode .tool-page .detail-label,
+.dark-mode .tool-page .info-label,
+.dark-mode .tool-page .option-label,
+.dark-mode .tool-page .setting-label,
+.dark-mode .tool-page .mode-label,
+.dark-mode .tool-page .tab-label,
+.dark-mode .tool-page .history-title,
+.dark-mode .tool-page .result-title,
+.dark-mode .tool-page .item-title,
+.dark-mode .tool-page .value-text,
+.dark-mode .tool-page .detail-value,
+.dark-mode .tool-page .info-value,
+.dark-mode .tool-page .stat-value,
+.dark-mode .tool-page .main-text,
+.dark-mode .tool-page .primary-text,
+.dark-mode .tool-page .header-title,
+.dark-mode .tool-page .content-title {
+  color: var(--textPrimary) !important;
+}
+
+/* 暗色模式下覆盖硬编码的次要文字颜色 */
+.dark-mode .tool-page .section-desc,
+.dark-mode .tool-page .card-desc,
+.dark-mode .tool-page .form-hint,
+.dark-mode .tool-page .input-hint,
+.dark-mode .tool-page .field-hint,
+.dark-mode .tool-page .result-hint,
+.dark-mode .tool-page .detail-hint,
+.dark-mode .tool-page .info-hint,
+.dark-mode .tool-page .option-desc,
+.dark-mode .tool-page .setting-desc,
+.dark-mode .tool-page .mode-desc,
+.dark-mode .tool-page .tab-desc,
+.dark-mode .tool-page .history-desc,
+.dark-mode .tool-page .result-desc,
+.dark-mode .tool-page .item-desc,
+.dark-mode .tool-page .sub-text,
+.dark-mode .tool-page .secondary-text,
+.dark-mode .tool-page .helper-text,
+.dark-mode .tool-page .hint-text,
+.dark-mode .tool-page .placeholder-text {
+  color: var(--textSecondary) !important;
 }
 
 .dark-mode input,
@@ -334,4 +710,482 @@ textarea {
 
 .dark-mode .weui-navigation-bar__inner {
   background-color: var(--pageBg) !important;
+}
+
+/* ==================== 适老化字体缩放 ==================== */
+.font-size-small page,
+.font-size-small .page-container,
+.font-size-small .container {
+  font-size: 13px;
+}
+
+.font-size-medium page,
+.font-size-medium .page-container,
+.font-size-medium .container {
+  font-size: 15px;
+}
+
+.font-size-large page,
+.font-size-large .page-container,
+.font-size-large .container {
+  font-size: 17px;
+}
+
+.font-size-large .tool-name,
+.font-size-large .section-title,
+.font-size-large .setting-name {
+  font-size: 20px !important;
+}
+
+.font-size-large .result-value,
+.font-size-large .result-main,
+.font-size-large .display-text {
+  font-size: 32px !important;
+}
+
+.font-size-large .tool-desc,
+.font-size-large .setting-value,
+.font-size-large .item-desc,
+.font-size-large .desktop-entry-desc {
+  font-size: 16px !important;
+}
+
+.font-size-large .desktop-entry-title {
+  font-size: 18px !important;
+}
+
+.font-size-large .mini-app-name {
+  font-size: 15px !important;
+}
+
+.font-size-large .mini-app-desc {
+  font-size: 12px !important;
+}
+
+.font-size-large .mini-apps-title {
+  font-size: 16px !important;
+}
+
+.font-size-large input,
+.font-size-large textarea {
+  font-size: 18px !important;
+}
+
+.font-size-large .tool-action-btn,
+.font-size-large .action-btn,
+.font-size-large button {
+  font-size: 17px !important;
+  min-height: 48px !important;
+}
+
+.font-size-large .category-tab {
+  font-size: 16px !important;
+  padding: 8px 16px !important;
+}
+
+.font-size-small .tool-name,
+.font-size-small .section-title,
+.font-size-small .setting-name {
+  font-size: 14px !important;
+}
+
+.font-size-small .result-value,
+.font-size-small .result-main,
+.font-size-small .display-text {
+  font-size: 24px !important;
+}
+
+.font-size-small .tool-desc,
+.font-size-small .setting-value,
+.font-size-small .item-desc,
+.font-size-small .desktop-entry-desc {
+  font-size: 11px !important;
+}
+
+.font-size-small .desktop-entry-title {
+  font-size: 13px !important;
+}
+
+.font-size-small .mini-app-name {
+  font-size: 11px !important;
+}
+
+.font-size-small .mini-app-desc {
+  font-size: 9px !important;
+}
+
+.font-size-small .mini-apps-title {
+  font-size: 12px !important;
+}
+
+.font-size-small input,
+.font-size-small textarea {
+  font-size: 14px !important;
+}
+
+.font-size-small .tool-action-btn,
+.font-size-small .action-btn,
+.font-size-small button {
+  font-size: 13px !important;
+}
+
+.font-size-small .category-tab {
+  font-size: 12px !important;
+  padding: 5px 10px !important;
+}
+
+/* ==================== 工具页面字体缩放 ==================== */
+
+/* Large font - tool pages */
+.font-size-large .tool-title,
+.font-size-large .tool-title-main {
+  font-size: 28px !important;
+}
+.font-size-large .tool-desc,
+.font-size-large .tool-desc-main {
+  font-size: 16px !important;
+}
+.font-size-large .section-title,
+.font-size-large .section-label {
+  font-size: 18px !important;
+}
+.font-size-large .result-amount,
+.font-size-large .result-value,
+.font-size-large .result-main,
+.font-size-large .display-text,
+.font-size-large .countdown-text,
+.font-size-large .number-result-value {
+  font-size: 38px !important;
+}
+.font-size-large .stats-title {
+  font-size: 23px !important;
+}
+.font-size-large .stats-target,
+.font-size-large .rate-info,
+.font-size-large .progress-text {
+  font-size: 15px !important;
+}
+.font-size-large .option-text,
+.font-size-large .option-chip,
+.font-size-large .cup-label,
+.font-size-large .interval-value {
+  font-size: 17px !important;
+}
+.font-size-large .rate-code,
+.font-size-large .rate-name,
+.font-size-large .rate-value,
+.font-size-large .picker-name,
+.font-size-large .picker-code-text {
+  font-size: 16px !important;
+}
+.font-size-large .input-label,
+.font-size-large .amount-input,
+.font-size-large .currency-code,
+.font-size-large .currency-name {
+  font-size: 18px !important;
+}
+.font-size-large .interval-unit,
+.font-size-large .cup-hint,
+.font-size-large .source-text,
+.font-size-large .rate-source-tag,
+.font-size-large .picker-group-title {
+  font-size: 14px !important;
+}
+.font-size-large .add-input,
+.font-size-large .text-input,
+.font-size-large .lottery-textarea,
+.font-size-large .number-input {
+  font-size: 17px !important;
+}
+.font-size-large .roll-btn,
+.font-size-large .primary-btn,
+.font-size-large .start-btn,
+.font-size-large .add-btn,
+.font-size-large .action-btn,
+.font-size-large .tool-action-btn,
+.font-size-large button {
+  font-size: 18px !important;
+  min-height: 52px !important;
+}
+.font-size-large .mode-tab,
+.font-size-large .category-tab,
+.font-size-large .quick-tag,
+.font-size-large .ref-cat-btn,
+.font-size-large .dialect-reg-btn {
+  font-size: 14px !important;
+}
+.font-size-large .dice-face {
+  font-size: 42px !important;
+}
+.font-size-large .dice-total-value {
+  font-size: 32px !important;
+}
+.font-size-large .template-name,
+.font-size-large .hot-tpl-name {
+  font-size: 13px !important;
+}
+.font-size-large .answer-text {
+  font-size: 30px !important;
+}
+.font-size-large .dialect-value,
+.font-size-large .dialect-label,
+.font-size-large .ref-relation,
+.font-size-large .ref-title,
+.font-size-large .ref-call {
+  font-size: 16px !important;
+}
+
+/* Small font - tool pages */
+.font-size-small .tool-title,
+.font-size-small .tool-title-main {
+  font-size: 20px !important;
+}
+.font-size-small .tool-desc,
+.font-size-small .tool-desc-main {
+  font-size: 12px !important;
+}
+.font-size-small .section-title,
+.font-size-small .section-label {
+  font-size: 14px !important;
+}
+.font-size-small .result-amount,
+.font-size-small .result-value,
+.font-size-small .result-main,
+.font-size-small .display-text,
+.font-size-small .countdown-text,
+.font-size-small .number-result-value {
+  font-size: 26px !important;
+}
+.font-size-small .stats-title {
+  font-size: 17px !important;
+}
+.font-size-small .stats-target,
+.font-size-small .rate-info,
+.font-size-small .progress-text {
+  font-size: 12px !important;
+}
+.font-size-small .option-text,
+.font-size-small .option-chip,
+.font-size-small .cup-label,
+.font-size-small .interval-value {
+  font-size: 13px !important;
+}
+.font-size-small .rate-code,
+.font-size-small .rate-name,
+.font-size-small .rate-value,
+.font-size-small .picker-name,
+.font-size-small .picker-code-text {
+  font-size: 13px !important;
+}
+.font-size-small .input-label,
+.font-size-small .amount-input,
+.font-size-small .currency-code,
+.font-size-small .currency-name {
+  font-size: 15px !important;
+}
+.font-size-small .interval-unit,
+.font-size-small .cup-hint,
+.font-size-small .source-text,
+.font-size-small .rate-source-tag,
+.font-size-small .picker-group-title {
+  font-size: 11px !important;
+}
+.font-size-small .add-input,
+.font-size-small .text-input,
+.font-size-small .lottery-textarea,
+.font-size-small .number-input {
+  font-size: 13px !important;
+}
+.font-size-small .roll-btn,
+.font-size-small .primary-btn,
+.font-size-small .start-btn,
+.font-size-small .add-btn,
+.font-size-small .action-btn,
+.font-size-small .tool-action-btn,
+.font-size-small button {
+  font-size: 13px !important;
+  min-height: 44px !important;
+}
+.font-size-small .mode-tab,
+.font-size-small .category-tab,
+.font-size-small .quick-tag,
+.font-size-small .ref-cat-btn,
+.font-size-small .dialect-reg-btn {
+  font-size: 11px !important;
+}
+.font-size-small .dice-face {
+  font-size: 30px !important;
+}
+.font-size-small .dice-total-value {
+  font-size: 24px !important;
+}
+.font-size-small .template-name,
+.font-size-small .hot-tpl-name {
+  font-size: 11px !important;
+}
+.font-size-small .answer-text {
+  font-size: 22px !important;
+}
+.font-size-small .dialect-value,
+.font-size-small .dialect-label,
+.font-size-small .ref-relation,
+.font-size-small .ref-title,
+.font-size-small .ref-call {
+  font-size: 13px !important;
+}
+
+/* ==================== 工具页面字体缩放 - 补充常用类 ==================== */
+
+/* Large font - additional common classes */
+.font-size-large .result-title,
+.font-size-large .history-title,
+.font-size-large .status-text,
+.font-size-large .upload-text,
+.font-size-large .lottery-result-title {
+  font-size: 18px !important;
+}
+.font-size-large .password-display,
+.font-size-large .length-value,
+.font-size-large .social-icon,
+.font-size-large .number-sep {
+  font-size: 20px !important;
+}
+.font-size-large .bmi-value {
+  font-size: 46px !important;
+}
+.font-size-large .bmi-text,
+.font-size-large .time-text {
+  font-size: 42px !important;
+}
+.font-size-large .stat-value {
+  font-size: 30px !important;
+}
+.font-size-large .dice-count-btn,
+.font-size-large .lottery-count-btn,
+.font-size-large .lottery-result-item,
+.font-size-large .mode-btn,
+.font-size-large .social-input,
+.font-size-large .preset-name,
+.font-size-large .social-name,
+.font-size-large .social-row-value,
+.font-size-large .compare-value,
+.font-size-large .option-name,
+.font-size-large .batch-title,
+.font-size-large .length-label {
+  font-size: 16px !important;
+}
+.font-size-large .result-hint,
+.font-size-large .history-result,
+.font-size-large .clear-history-btn,
+.font-size-large .again-btn,
+.font-size-large .share-btn,
+.font-size-large .lottery-textarea,
+.font-size-large .content-input,
+.font-size-large .content-output,
+.font-size-large .char-count,
+.font-size-large .count-hint,
+.font-size-large .option-desc,
+.font-size-large .strength-text,
+.font-size-large .strength-label,
+.font-size-large .social-unit,
+.font-size-large .lottery-count-label,
+.font-size-large .form-hint,
+.font-size-large .social-arrow {
+  font-size: 15px !important;
+}
+.font-size-large .quick-label,
+.font-size-large .weight-toggle-text,
+.font-size-large .weight-badge,
+.font-size-large .dice-total-label,
+.font-size-large .history-time,
+.font-size-large .number-label,
+.font-size-large .paste-btn,
+.font-size-large .clear-btn,
+.font-size-large .char-hint,
+.font-size-large .batch-count-label,
+.font-size-large .length-preset,
+.font-size-large .stat-label,
+.font-size-large .preset-size,
+.font-size-large .upload-hint,
+.font-size-large .image-info-overlay text,
+.font-size-large .social-row-label,
+.font-size-large .compare-label {
+  font-size: 14px !important;
+}
+
+/* Small font - additional common classes */
+.font-size-small .result-title,
+.font-size-small .history-title,
+.font-size-small .status-text,
+.font-size-small .upload-text,
+.font-size-small .lottery-result-title {
+  font-size: 14px !important;
+}
+.font-size-small .password-display,
+.font-size-small .length-value,
+.font-size-small .social-icon,
+.font-size-small .number-sep {
+  font-size: 16px !important;
+}
+.font-size-small .bmi-value {
+  font-size: 34px !important;
+}
+.font-size-small .bmi-text,
+.font-size-small .time-text {
+  font-size: 30px !important;
+}
+.font-size-small .stat-value {
+  font-size: 22px !important;
+}
+.font-size-small .dice-count-btn,
+.font-size-small .lottery-count-btn,
+.font-size-small .lottery-result-item,
+.font-size-small .mode-btn,
+.font-size-small .social-input,
+.font-size-small .preset-name,
+.font-size-small .social-name,
+.font-size-small .social-row-value,
+.font-size-small .compare-value,
+.font-size-small .option-name,
+.font-size-small .batch-title,
+.font-size-small .length-label {
+  font-size: 13px !important;
+}
+.font-size-small .result-hint,
+.font-size-small .history-result,
+.font-size-small .clear-history-btn,
+.font-size-small .again-btn,
+.font-size-small .share-btn,
+.font-size-small .lottery-textarea,
+.font-size-small .content-input,
+.font-size-small .content-output,
+.font-size-small .char-count,
+.font-size-small .count-hint,
+.font-size-small .option-desc,
+.font-size-small .strength-text,
+.font-size-small .strength-label,
+.font-size-small .social-unit,
+.font-size-small .lottery-count-label,
+.font-size-small .form-hint,
+.font-size-small .social-arrow {
+  font-size: 12px !important;
+}
+.font-size-small .quick-label,
+.font-size-small .weight-toggle-text,
+.font-size-small .weight-badge,
+.font-size-small .dice-total-label,
+.font-size-small .history-time,
+.font-size-small .number-label,
+.font-size-small .paste-btn,
+.font-size-small .clear-btn,
+.font-size-small .char-hint,
+.font-size-small .batch-count-label,
+.font-size-small .length-preset,
+.font-size-small .stat-label,
+.font-size-small .preset-size,
+.font-size-small .upload-hint,
+.font-size-small .image-info-overlay text,
+.font-size-small .social-row-label,
+.font-size-small .compare-label {
+  font-size: 11px !important;
 }

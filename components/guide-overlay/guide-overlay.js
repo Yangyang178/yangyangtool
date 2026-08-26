@@ -1,3 +1,5 @@
+var i18n = require('../../utils/i18n.js')
+
 Component({
   properties: {
     show: {
@@ -7,7 +9,15 @@ Component({
   },
 
   data: {
-    current: 0
+    current: 0,
+    i18n: {}
+  },
+
+  lifetimes: {
+    attached: function() {
+      var texts = i18n.getToolPageTexts('guideOverlay')
+      this.setData({ i18n: texts })
+    }
   },
 
   methods: {
@@ -25,12 +35,14 @@ Component({
     },
 
     onSkip: function() {
-      wx.setStorageSync('hasSeenGuide', true)
+      try { wx.setStorageSync('hasSeenGuide', true) } catch(e) {}
+      try { wx.setStorageSync('guideVersion', 5) } catch(e) {}
       this.triggerEvent('close')
     },
 
     onStart: function() {
-      wx.setStorageSync('hasSeenGuide', true)
+      try { wx.setStorageSync('hasSeenGuide', true) } catch(e) {}
+      try { wx.setStorageSync('guideVersion', 5) } catch(e) {}
       this.triggerEvent('close')
     }
   }

@@ -1,1 +1,1 @@
-{"usingComponents": {"navigation-bar": "/components/navigation-bar/navigation-bar"}, "navigationBarTitleText": "BMI 计算器"}
+{"usingComponents": {"navigation-bar": "/components/navigation-bar/navigation-bar", "skeleton": "/components/skeleton/skeleton"}, "navigationBarTitleText": "BMI计算器 - 体重身高指数"}

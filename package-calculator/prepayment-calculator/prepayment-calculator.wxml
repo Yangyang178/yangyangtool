@@ -1,0 +1,223 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper green-gradient">
+        <view class="icon-decoration"></view>
+        <text class="tool-icon">🏦</text>
+      </view>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
+    </view>
+
+    <!-- 操作引导 -->
+    <view class="guide-tip" wx:if="{{showGuideTip}}">
+      <view class="guide-tip-header">
+        <text class="guide-tip-icon">💡</text>
+        <text class="guide-tip-title">{{i18n.guideTipTitle}}</text>
+        <view class="guide-tip-close" bindtap="closeGuideTip">✕</view>
+      </view>
+      <view class="guide-tip-steps">
+        <view class="guide-step" wx:for="{{i18n.guideSteps}}" wx:key="index">
+          <text class="guide-step-num">{{index + 1}}</text>
+          <text class="guide-step-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 贷款信息 -->
+    <view class="form-section">
+      <view class="input-group">
+        <view class="label-row">
+          <text class="label">{{i18n.loanAmount}}</text>
+          <text class="unit-hint">{{i18n.unitWan}}</text>
+        </view>
+        <input class="input" type="digit" placeholder="{{i18n.inputLoanAmount}}" value="{{loanAmount}}" bindinput="onLoanInput"/>
+      </view>
+      <view class="input-group">
+        <view class="label-row">
+          <text class="label">{{i18n.loanTermLabel}}</text>
+        </view>
+        <picker mode="selector" range="{{yearOptions}}" value="{{yearIndex}}" bindchange="onYearChange">
+          <view class="picker-value">{{yearOptions[yearIndex]}}{{i18n.yearUnit}}</view>
+        </picker>
+      </view>
+      <view class="input-group">
+        <view class="label-row">
+          <text class="label">{{i18n.annualRateLabel}}</text>
+          <text class="unit-hint">%</text>
+        </view>
+        <input class="input" type="digit" placeholder="4.2" value="{{interestRate}}" bindinput="onRateInput"/>
+        <view class="rate-tips">
+          <view class="tip-item" wx:for="{{ratePresets}}" wx:key="index" data-rate="{{item.rate}}" bindtap="usePresetRate">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 还款方式 -->
+    <view class="form-section">
+      <view class="input-group">
+        <text class="label">{{i18n.repaymentMethod}}</text>
+        <view class="type-selector">
+          <view class="type-btn {{repaymentMethod === 'equal_payment' ? 'active' : ''}}" data-method="equal_payment" bindtap="onMethodChange">
+            <text>{{i18n.equalPayment}}</text>
+            <text class="type-desc">{{i18n.equalPaymentDesc}}</text>
+          </view>
+          <view class="type-btn {{repaymentMethod === 'equal_principal' ? 'active' : ''}}" data-method="equal_principal" bindtap="onMethodChange">
+            <text>{{i18n.equalPrincipal}}</text>
+            <text class="type-desc">{{i18n.equalPrincipalDesc}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 提前还款方式 -->
+    <view class="form-section">
+      <view class="input-group">
+        <text class="label">{{i18n.prepayMethod}}</text>
+        <view class="type-selector">
+          <view class="type-btn {{prepayMethod === 'shorten' ? 'active' : ''}}" data-method="shorten" bindtap="onPrepayMethodChange">
+            <text>{{i18n.shortTerm}}</text>
+            <text class="type-desc">{{i18n.shortTermDesc}}</text>
+          </view>
+          <view class="type-btn {{prepayMethod === 'reduce' ? 'active' : ''}}" data-method="reduce" bindtap="onPrepayMethodChange">
+            <text>{{i18n.reducePayment}}</text>
+            <text class="type-desc">{{i18n.reducePaymentDesc}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 提前还款计划 -->
+    <view class="form-section">
+      <view class="section-title-row">
+        <text class="label">{{i18n.prepayPlan}} ({{prepayPlans.length}}{{i18n.planCount}})</text>
+        <text class="clear-plans-btn" wx:if="{{prepayPlans.length > 0}}" bindtap="clearPlans">{{i18n.clearBtn}}</text>
+      </view>
+      <view class="plan-list" wx:if="{{prepayPlans.length > 0}}">
+        <view class="plan-item" wx:for="{{prepayPlans}}" wx:key="index">
+          <view class="plan-info">
+            <text class="plan-tag">{{i18n.monthTag}}{{item.month}}{{i18n.monthUnit}}</text>
+            <text class="plan-amount">{{item.amount}}{{i18n.wanUnit}}</text>
+          </view>
+          <view class="plan-del" data-index="{{index}}" bindtap="removePlan">✕</view>
+        </view>
+      </view>
+      <view class="plan-add-row">
+        <input class="plan-input" type="number" placeholder="{{i18n.inputMonth}}" value="{{newPlanMonth}}" bindinput="onPlanMonthInput"/>
+        <input class="plan-input" type="digit" placeholder="{{i18n.inputAmountWan}}" value="{{newPlanAmount}}" bindinput="onPlanAmountInput"/>
+        <view class="plan-add-btn" bindtap="addPlan">{{i18n.addBtn}}</view>
+      </view>
+      <text class="plan-hint">{{i18n.planHint}}</text>
+    </view>
+
+    <view class="action-btns">
+      <button class="btn-primary" bindtap="calculate" hover-class="btn-hover">{{i18n.calculate}}</button>
+      <button class="btn-secondary" bindtap="resetData" hover-class="btn-hover">{{i18n.reset}}</button>
+    </view>
+
+    <!-- 计算结果 -->
+    <view class="result-section" wx:if="{{hasResult}}">
+      <view class="result-card">
+        <view class="main-result">
+          <text class="result-label">{{i18n.interestSaved}}</text>
+          <text class="result-value">{{savedInterest}}</text>
+          <text class="result-unit">{{i18n.yuan}}</text>
+        </view>
+        <view class="result-grid">
+          <view class="result-item">
+            <text class="item-label">{{i18n.originalMonthly}}</text>
+            <text class="item-value">{{originalMonthly}}</text>
+            <text class="item-unit">{{i18n.yuanPerMonth}}</text>
+          </view>
+          <view class="result-item">
+            <text class="item-label">{{i18n.newMonthly}}</text>
+            <text class="item-value interest">{{newMonthly}}</text>
+            <text class="item-unit">{{i18n.yuanPerMonth}}</text>
+          </view>
+          <view class="result-item">
+            <text class="item-label">{{i18n.savedMonths}}</text>
+            <text class="item-value">{{savedMonths}}</text>
+            <text class="item-unit">{{i18n.months}}</text>
+          </view>
+          <view class="result-item">
+            <text class="item-label">{{i18n.repaymentPeriod}}</text>
+            <text class="item-value">{{newTotalMonths}}</text>
+            <text class="item-unit">{{i18n.months}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 对比分析 -->
+      <view class="result-card" wx:if="{{compareData}}">
+        <view class="compare-section">
+          <text class="compare-title">{{i18n.compareAnalysis}}</text>
+          <view class="compare-row">
+            <text class="compare-label">{{i18n.totalInterest}}</text>
+            <view class="compare-values">
+              <text class="compare-old">{{compareData.noPrepay.totalInterest}}{{i18n.yuan}}</text>
+              <text class="compare-arrow">→</text>
+              <text class="compare-new">{{newTotalInterest}}{{i18n.yuan}}</text>
+            </view>
+          </view>
+          <view class="compare-row">
+            <text class="compare-label">{{i18n.totalRepayment}}</text>
+            <view class="compare-values">
+              <text class="compare-old">{{compareData.noPrepay.totalPayment}}{{i18n.yuan}}</text>
+              <text class="compare-arrow">→</text>
+              <text class="compare-new">{{newTotalPayment}}{{i18n.yuan}}</text>
+            </view>
+          </view>
+          <canvas type="2d" id="compareChart" class="compare-canvas"></canvas>
+          <view class="compare-detail">
+            <view class="compare-detail-row">
+              <view class="compare-dot" style="background:#94A3B8;"></view>
+              <text class="compare-detail-label">{{i18n.noPrepay}}</text>
+              <text class="compare-detail-val">{{compareData.noPrepay.totalInterest}}{{i18n.yuan}}</text>
+            </view>
+            <view class="compare-detail-row" wx:if="{{compareData.shortenEqual}}">
+              <view class="compare-dot" style="background:#10B981;"></view>
+              <text class="compare-detail-label">{{i18n.equalPaymentShorten}}</text>
+              <text class="compare-detail-val">{{compareData.shortenEqual.totalInterest}}{{i18n.yuan}}</text>
+            </view>
+            <view class="compare-detail-row" wx:if="{{compareData.reduceEqual}}">
+              <view class="compare-dot" style="background:#3B82F6;"></view>
+              <text class="compare-detail-label">{{i18n.equalPaymentReduce}}</text>
+              <text class="compare-detail-val">{{compareData.reduceEqual.totalInterest}}{{i18n.yuan}}</text>
+            </view>
+            <view class="compare-detail-row" wx:if="{{compareData.shortenPrincipal}}">
+              <view class="compare-dot" style="background:#F59E0B;"></view>
+              <text class="compare-detail-label">{{i18n.equalPrincipalShorten}}</text>
+              <text class="compare-detail-val">{{compareData.shortenPrincipal.totalInterest}}{{i18n.yuan}}</text>
+            </view>
+            <view class="compare-detail-row" wx:if="{{compareData.reducePrincipal}}">
+              <view class="compare-dot" style="background:#8B5CF6;"></view>
+              <text class="compare-detail-label">{{i18n.equalPrincipalReduce}}</text>
+              <text class="compare-detail-val">{{compareData.reducePrincipal.totalInterest}}{{i18n.yuan}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="tool-actions-bar" wx:if="{{hasResult}}">
+      <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResult}}</button>
+    </view>
+
+    <!-- 使用说明 -->
+    <view class="tips-section">
+      <text class="tips-title">{{i18n.usageNote}}</text>
+      <view class="tips-list">
+        <text class="tip-item">{{i18n.tip1}}</text>
+        <text class="tip-item">{{i18n.tip2}}</text>
+        <text class="tip-item">{{i18n.tip3}}</text>
+        <text class="tip-item">{{i18n.tip4}}</text>
+        <text class="tip-item">{{i18n.tip5}}</text>
+        <text class="tip-item">{{i18n.tip6}}</text>
+      </view>
+    </view>
+  </view>
+</scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

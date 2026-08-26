@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "色彩记忆 - 颜色序列记忆训练",
+  "usingComponents": {
+    "navigation-bar": "/components/navigation-bar/navigation-bar"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "进制转换 - 二八十六进制",
+  "usingComponents": {
+    "navigation-bar": "/components/navigation-bar/navigation-bar",
+    "skeleton": "/components/skeleton/skeleton"
+  }
+}

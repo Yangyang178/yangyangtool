@@ -1,0 +1,105 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper" style="background: linear-gradient(135deg, #DBEAFE 0%, #93C5FD 100%);">
+        <view class="icon-decoration"></view>
+        <text class="tool-icon">📱</text>
+      </view>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
+    </view>
+
+    <view class="input-area">
+      <textarea
+        class="text-input"
+        placeholder="{{i18n.inputPlaceholder}}"
+        value="{{inputText}}"
+        bindinput="onInput"
+        maxlength="500"
+        auto-height
+      ></textarea>
+      <view class="input-footer">
+        <text class="char-hint">{{inputText.length || 0}}/500</text>
+        <button class="clear-btn" wx:if="{{inputText}}" bindtap="resetAll">{{i18n.clearBtn}}</button>
+      </view>
+    </view>
+
+    <view class="option-section">
+      <text class="option-label">{{i18n.sizeLabel}}</text>
+      <view class="option-group">
+        <view
+          wx:for="{{sizeOptions}}"
+          wx:key="value"
+          class="option-chip {{sizeIndex === index ? 'active' : ''}}"
+          data-index="{{index}}"
+          bindtap="onSizeChange"
+        >{{item.label}}</view>
+      </view>
+    </view>
+
+    <view class="option-section">
+      <text class="option-label">{{i18n.colorLabel}}</text>
+      <view class="option-group">
+        <view
+          wx:for="{{colorOptions}}"
+          wx:key="label"
+          class="option-chip {{colorIndex === index ? 'active' : ''}}"
+          data-index="{{index}}"
+          bindtap="onColorChange"
+        >
+          <view class="color-dot" style="background: {{item.fg}};"></view>
+          {{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <view class="action-row">
+      <button class="primary-btn generate-btn" bindtap="generateQR" loading="{{isGenerating}}" disabled="{{isGenerating}}">
+        <text wx:if="{{!isGenerating}}">{{i18n.generateBtn}}</text>
+        <text wx:else>{{i18n.generating}}</text>
+      </button>
+      <button class="scan-btn" bindtap="scanQRCode">
+        <text>📷</text>
+      </button>
+    </view>
+
+    <canvas type="2d" id="qrCanvas" style="width: {{qrSize}}px; height: {{qrSize}}px; position: fixed; left: -9999px; top: -9999px;"></canvas>
+
+    <view class="result-area" wx:if="{{showResult}}">
+      <view class="result-card">
+        <image class="qr-image" src="{{qrDataUrl}}" mode="aspectFit" style="width: {{qrSize}}px; height: {{qrSize}}px;"></image>
+      </view>
+      <view class="action-btns">
+        <button class="primary-btn" bindtap="saveToAlbum">
+          <text>{{i18n.saveToAlbum}}</text>
+        </button>
+        <button class="secondary-btn" bindtap="copyResult">
+          <text>{{i18n.copyContent}}</text>
+        </button>
+      </view>
+    </view>
+
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">{{i18n.resetBtn}}</button>
+    </view>
+
+    <view class="history-section" wx:if="{{history.length > 0}}">
+      <view class="section-header">
+        <text class="section-title">{{i18n.recentGenerated}}</text>
+        <text class="section-action" bindtap="clearHistory">{{i18n.clearBtn}}</text>
+      </view>
+      <view class="history-list">
+        <view
+          wx:for="{{history}}"
+          wx:key="*this"
+          class="history-item"
+          data-text="{{item}}"
+          bindtap="onHistoryClick"
+        >{{item}}</view>
+      </view>
+    </view>
+  </view>
+</scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

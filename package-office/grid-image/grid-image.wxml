@@ -1,0 +1,111 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
+
+<view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}">
+  <view class="container">
+
+    <!-- 工具头部 -->
+    <view class="tool-header">
+      <view class="tool-icon-large" style="background: linear-gradient(135deg, rgba(244,114,182,0.2) 0%, rgba(236,72,153,0.15) 100%);">
+        <view class="tool-icon-decoration"></view>
+        <text>🔲</text>
+      </view>
+      <view class="tool-info">
+        <text class="tool-title-main">{{i18n.toolTitle}}</text>
+        <text class="tool-desc-main">{{i18n.toolDesc}}</text>
+      </view>
+    </view>
+
+    <!-- 选择图片区域 -->
+    <view class="section-card">
+      <text class="section-title">{{i18n.selectImage}}</text>
+      <view class="upload-area" bindtap="chooseImage" hover-class="upload-hover">
+        <block wx:if="{{imageUrl}}">
+          <image class="preview-image" src="{{imageUrl}}" mode="aspectFit"></image>
+          <view class="change-image-btn">
+            <text>{{i18n.changeImage}}</text>
+          </view>
+        </block>
+        <block wx:else>
+          <text class="upload-icon">🖼️</text>
+          <text class="upload-text">{{i18n.uploadTip}}</text>
+        </block>
+      </view>
+    </view>
+
+    <!-- 切图选项 -->
+    <view class="section-card" wx:if="{{imageUrl}}">
+      <text class="section-title">{{i18n.options}}</text>
+
+      <!-- 网格类型 -->
+      <view class="option-row">
+        <text class="option-label">{{i18n.gridType}}</text>
+        <view class="option-btns">
+          <view class="opt-btn {{gridType === 3 ? 'active' : ''}}" bindtap="setGridType" data-type="3">
+            <text>3×3</text>
+          </view>
+          <view class="opt-btn {{gridType === 2 ? 'active' : ''}}" bindtap="setGridType" data-type="2">
+            <text>2×2</text>
+          </view>
+          <view class="opt-btn {{gridType === 4 ? 'active' : ''}}" bindtap="setGridType" data-type="4">
+            <text>4×4</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 填充模式 -->
+      <view class="option-row">
+        <text class="option-label">{{i18n.fillMode}}</text>
+        <view class="option-btns">
+          <view class="opt-btn {{fillMode === 'cover' ? 'active' : ''}}" bindtap="setFillMode" data-mode="cover">
+            <text>{{i18n.fillCover}}</text>
+          </view>
+          <view class="opt-btn {{fillMode === 'contain' ? 'active' : ''}}" bindtap="setFillMode" data-mode="contain">
+            <text>{{i18n.fillContain}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 背景色（contain模式下可用） -->
+      <view class="option-row" wx:if="{{fillMode === 'contain'}}">
+        <text class="option-label">{{i18n.bgColor}}</text>
+        <view class="color-options">
+          <view class="color-dot {{bgColor === '#FFFFFF' ? 'active' : ''}}" style="background:#FFFFFF" bindtap="setBgColor" data-color="#FFFFFF"></view>
+          <view class="color-dot {{bgColor === '#000000' ? 'active' : ''}}" style="background:#000000" bindtap="setBgColor" data-color="#000000"></view>
+          <view class="color-dot {{bgColor === '#F5F5F5' ? 'active' : ''}}" style="background:#F5F5F5" bindtap="setBgColor" data-color="#F5F5F5"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 预览区域 -->
+    <view class="section-card" wx:if="{{gridImages.length > 0}}">
+      <text class="section-title">{{i18n.preview}}（{{gridType}}×{{gridType}}）</text>
+      <view class="grid-preview" style="grid-template-columns: repeat({{gridType}}, 1fr);">
+        <view class="grid-cell" wx:for="{{gridImages}}" wx:key="index">
+          <image class="grid-cell-img" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-src="{{item}}"></image>
+          <view class="grid-cell-index">{{index + 1}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="btn-group" wx:if="{{gridImages.length > 0}}">
+      <button class="btn-primary" bindtap="saveAllImages" loading="{{isSaving}}">
+        💾 {{i18n.saveAll}}
+      </button>
+    </view>
+
+    <!-- 使用提示 -->
+    <view class="tip-card">
+      <text class="tip-title">💡 {{i18n.tipsTitle}}</text>
+      <text class="tip-item">• {{i18n.tip1}}</text>
+      <text class="tip-item">• {{i18n.tip2}}</text>
+      <text class="tip-item">• {{i18n.tip3}}</text>
+    </view>
+
+  </view>
+</view>
+
+<!-- 离屏Canvas -->
+<canvas type="2d" id="gridCanvas" style="position:fixed;left:-9999px;top:-9999px;width:900px;height:900px;"></canvas>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

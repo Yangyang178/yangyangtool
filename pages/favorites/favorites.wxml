@@ -1,13 +1,21 @@
-<navigation-bar title="收藏夹" back="{{false}}" color="{{isDarkMode ? 'white' : 'black'}}" background="{{isDarkMode ? '#0F172A' : '#F8FAFC'}}"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{false}}" color="{{isDarkMode ? 'white' : 'black'}}" background="{{isDarkMode ? '#0F172A' : '#F8FAFC'}}"></navigation-bar>
+<skeleton show="{{isLoading}}" type="list" dark="{{isDarkMode}}"></skeleton>
 
-<scroll-view class="main-scroll {{isDarkMode ? 'dark-mode' : ''}}" scroll-y enhanced show-scrollbar="{{false}}" bounces="{{false}}">
-  <view class="page-container">
+<scroll-view class="main-scroll {{isDarkMode ? 'dark-mode' : ''}} {{fontClass}}" scroll-y enhanced show-scrollbar="{{false}}" bounces="{{false}}">
+  <view class="page-container {{isDarkMode ? 'dark-mode' : ''}} {{fontClass}} font-size-{{fontSizeSetting}}">
     <view class="header-section">
-      <text class="page-title">我的收藏</text>
-      <text class="page-subtitle">{{favoriteTools.length}} 个工具</text>
+      <view class="header-row">
+        <view class="header-left">
+          <text class="page-title">{{i18n.toolTitle}}</text>
+          <text class="page-subtitle">{{favoriteTools.length}} {{i18n.toolCount}}</text>
+        </view>
+        <view class="sort-toggle" bindtap="toggleSort" wx:if="{{favoriteTools.length > 1}}">
+          <text class="sort-icon">{{sortBy === 'time' ? '🕐' : '🔤'}}</text>
+          <text class="sort-label">{{sortBy === 'time' ? i18n.sortByTime : i18n.sortByName}}</text>
+        </view>
+      </view>
     </view>
 
-    <!-- 收藏列表 -->
     <view class="tools-list" wx:if="{{favoriteTools.length > 0}}">
       <view 
         wx:for="{{favoriteTools}}" 
@@ -24,29 +32,59 @@
         
         <view class="item-content">
           <text class="item-name">{{item.name}}</text>
-          <text class="item-desc">{{item.description}}</text>
+          <text class="item-desc">{{item.desc}}</text>
         </view>
 
-        <view class="item-action" catchtap="removeFavorite" data-id="{{item.id}}">
-          <text>取消收藏</text>
+        <view class="item-actions">
+          <view class="action-fav active" catchtap="removeFavorite" data-id="{{item.id}}" data-index="{{index}}">
+            <text>⭐</text>
+          </view>
         </view>
       </view>
     </view>
 
-    <!-- 空状态 -->
     <view class="empty-state" wx:if="{{favoriteTools.length === 0}}">
-      <text class="empty-icon">⭐</text>
-      <text class="empty-text">还没有收藏工具</text>
-      <text class="empty-subtext">在首页点击星标收藏常用工具</text>
+      <view class="empty-illustration">
+        <text class="empty-emoji">⭐</text>
+        <view class="empty-dots">
+          <text class="empty-dot"></text>
+          <text class="empty-dot"></text>
+          <text class="empty-dot"></text>
+        </view>
+      </view>
+      <text class="empty-text">{{i18n.noFavorites}}</text>
+      <text class="empty-subtext">{{i18n.noFavoritesHint}}</text>
       <view class="empty-btn" bindtap="goToHome">
-        <text>去浏览工具</text>
+        <text>{{i18n.browseTools}}</text>
       </view>
     </view>
 
-    <!-- 收藏提示 -->
-    <view class="favorite-tip">
-      <text class="tip-icon">💡</text>
-      <text class="tip-text">提示：在首页的工具卡片里点击星标进行收藏！</text>
+    <view class="popular-section" wx:if="{{popularTools.length > 0}}">
+      <view class="section-header">
+        <view class="section-title-row">
+          <text class="section-icon">🔥</text>
+          <text class="section-title">{{i18n.hotRecommend}}</text>
+        </view>
+        <text class="section-subtitle">{{i18n.everyoneUsing}}</text>
+      </view>
+      <view class="popular-grid">
+        <view 
+          wx:for="{{popularTools}}" 
+          wx:key="id"
+          class="popular-item {{item.isFavorite ? 'is-fav' : ''}}"
+          data-tool="{{item}}"
+          bindtap="onToolClick"
+          hover-class="popular-item-hover"
+        >
+          <view class="popular-icon-wrap" style="background: {{item.iconBg}}">
+            <text class="popular-icon">{{item.icon}}</text>
+          </view>
+          <text class="popular-name">{{item.name}}</text>
+          <view class="popular-fav" catchtap="toggleFavorite" data-id="{{item.id}}">
+            <text>{{item.isFavorite ? '⭐' : '☆'}}</text>
+          </view>
+        </view>
+      </view>
     </view>
 
     <view class="bottom-safe-area"></view>

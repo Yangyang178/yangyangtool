@@ -1,34 +1,36 @@
-<navigation-bar title="JSON格式化" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
 
-<scroll-view class="tool-page" scroll-y>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper" style="background: linear-gradient(135deg, #64748B33 0%, #64748B66 100%);">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">{}</text>
       </view>
-      <text class="tool-title">JSON格式化</text>
-      <text class="tool-desc">美化、压缩、验证JSON数据</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
     <view class="input-section">
       <view class="section-label">
-        <text class="label-text">📝 输入 JSON</text>
+        <text class="label-text">📝 {{i18n.inputJson}}</text>
         <view class="input-actions">
           <view class="action-tag paste" bindtap="pasteFromClipboard">
-            <text>📋 粘贴</text>
+            <text>📋 {{i18n.paste}}</text>
           </view>
           <view class="action-tag sample" bindtap="loadSample">
-            <text>📄 示例</text>
+            <text>📄 {{i18n.sample}}</text>
           </view>
           <view class="action-tag clear" bindtap="clearInput">
-            <text>🗑️ 清空</text>
+            <text>🗑️ {{i18n.clear}}</text>
           </view>
         </view>
       </view>
 
       <textarea 
         class="json-input"
-        placeholder='请输入JSON数据，例如：{"name": "张三", "age": 25}'
+        placeholder="{{i18n.inputPlaceholder}}"
         value="{{inputJson}}"
         bindinput="onInputChange"
         auto-height
@@ -42,28 +44,28 @@
 
       <view wx:if="{{!errorMsg && inputJson}}" class="success-banner">
         <text class="success-icon">✅</text>
-        <text class="success-msg">JSON格式正确 ({{jsonSize}} 字符)</text>
+        <text class="success-msg">{{i18n.jsonCorrect}} ({{jsonSize}} {{i18n.chars}})</text>
       </view>
     </view>
 
     <view class="button-group">
       <view class="main-btn format" bindtap="formatJson">
-        <text>🎨 格式化</text>
+        <text>🎨 {{i18n.format}}</text>
       </view>
       <view class="main-btn compress" bindtap="compressJson">
-        <text>🗜️ 压缩</text>
+        <text>🗜️ {{i18n.compress}}</text>
       </view>
       <view class="main-btn validate" bindtap="validateJson">
-        <text>✅ 验证</text>
+        <text>✅ {{i18n.validate}}</text>
       </view>
     </view>
 
     <view wx:if="{{outputJson}}" class="output-section">
       <view class="section-label">
-        <text class="label-text">📤 输出结果</text>
+        <text class="label-text">📤 {{i18n.outputResult}}</text>
         <view class="output-actions">
           <view class="action-tag copy" bindtap="copyOutput">
-            <text>📋 复制</text>
+            <text>📋 {{i18n.copy}}</text>
           </view>
         </view>
       </view>
@@ -77,49 +79,53 @@
       <view class="stats-row">
         <view class="stat-item">
           <text class="stat-value">{{outputStats.chars}}</text>
-          <text class="stat-label">字符数</text>
+          <text class="stat-label">{{i18n.charCount}}</text>
         </view>
         <view class="stat-item">
           <text class="stat-value">{{outputStats.lines}}</text>
-          <text class="stat-label">行数</text>
+          <text class="stat-label">{{i18n.lineCount}}</text>
         </view>
         <view class="stat-item">
           <text class="stat-value">{{outputStats.size}}</text>
-          <text class="stat-label">大小</text>
+          <text class="stat-label">{{i18n.size}}</text>
         </view>
       </view>
     </view>
 
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">🔄 {{i18n.reset}}</button>
+    </view>
+
     <view class="features-section">
-      <text class="features-title">✨ 功能特点</text>
+      <text class="features-title">✨ {{i18n.features}}</text>
       <view class="features-grid">
         <view class="feature-card">
           <text class="feature-icon">🎨</text>
-          <text class="feature-name">智能缩进</text>
-          <text class="feature-desc">2空格缩进，层次分明</text>
+          <text class="feature-name">{{i18n.smartIndent}}</text>
+          <text class="feature-desc">{{i18n.smartIndentDesc}}</text>
         </view>
         <view class="feature-card">
           <text class="feature-icon">🗜️</text>
-          <text class="feature-name">一键压缩</text>
-          <text class="feature-desc">去除多余空格换行</text>
+          <text class="feature-name">{{i18n.oneClickCompress}}</text>
+          <text class="feature-desc">{{i18n.oneClickCompressDesc}}</text>
         </view>
         <view class="feature-card">
           <text class="feature-icon">🔍</text>
-          <text class="feature-name">错误定位</text>
-          <text class="feature-desc">精确指出语法错误位置</text>
+          <text class="feature-name">{{i18n.errorLocate}}</text>
+          <text class="feature-desc">{{i18n.errorLocateDesc}}</text>
         </view>
         <view class="feature-card">
           <text class="feature-icon">📊</text>
-          <text class="feature-name">统计信息</text>
-          <text class="feature-desc">字符、行数、大小统计</text>
+          <text class="feature-name">{{i18n.statistics}}</text>
+          <text class="feature-desc">{{i18n.statisticsDesc}}</text>
         </view>
       </view>
     </view>
 
     <view wx:if="{{historyList.length > 0}}" class="history-section">
       <view class="section-header">
-        <text class="section-title">历史记录</text>
-        <text class="clear-history" bindtap="clearHistory">清空</text>
+        <text class="section-title">{{i18n.history}}</text>
+        <text class="clear-history" bindtap="clearHistory">{{i18n.clearHistory}}</text>
       </view>
       <view class="history-list">
         <view 
@@ -137,3 +143,4 @@
     </view>
   </view>
 </scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

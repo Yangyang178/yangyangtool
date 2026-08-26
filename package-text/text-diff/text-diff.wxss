@@ -1,3 +1,5 @@
+@import "../../styles/tool-common.wxss";
+
 page {
   background: #fafbff;
   height: 100vh;
@@ -506,6 +508,132 @@ page {
   color: #6b7280;
 }
 
+.item-linenum {
+  width: 32px;
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 500;
+  margin-right: 8px;
+  padding-top: 2px;
+  font-family: 'SF Mono', 'Consolas', monospace;
+  user-select: none;
+}
+
+.result-toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.toolbar-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.toolbar-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.toolbar-btn:active {
+  transform: scale(0.95);
+}
+
+.stat-same {
+  background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+  color: #4f46e5;
+}
+
+.stat-same .chip-indicator {
+  background: linear-gradient(135deg, #667eea 0%, #818cf8 100%);
+  box-shadow: 0 1px 4px rgba(102, 126, 234, 0.4);
+}
+
+.merge-panel {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background: #fafbff;
+}
+
+.merge-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.merge-options {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.merge-opt {
+  flex: 1;
+  padding: 10px 8px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  background: #ffffff;
+  color: #6b7280;
+  border: 2px solid transparent;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.merge-opt.active {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.06);
+  color: #4f46e5;
+}
+
+.merge-opt:active {
+  transform: scale(0.97);
+}
+
+.merge-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.merge-action-btn {
+  flex: 1;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.merge-action-btn.use {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.merge-action-btn.copy {
+  background: #ffffff;
+  color: #6b7280;
+  border: 1.5px solid #e5e7eb;
+}
+
+.merge-action-btn:active {
+  transform: scale(0.97);
+}
+
 /* ========== Empty State ========== */
 .empty-state {
   text-align: center;
@@ -653,4 +781,234 @@ page {
 .bottom-spacer {
   height: 60px;
   flex-shrink: 0;
+}
+
+/* ===================================
+   🌙 夜间模式完整适配 - 靛蓝主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .tool-page {
+  background: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .hero-section {
+  background: linear-gradient(135deg, #312e81 0%, #0f1419 100%);
+}
+
+.dark-mode .hero-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .hero-subtitle {
+  color: var(--accentIndigo,#A5B4FC);
+}
+
+.dark-mode .input-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .input-group {
+  background: var(--cardBg,#1a2035);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .input-group-label {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .input-label text {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .char-count {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .action-btn {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.dark-mode .action-btn text {
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .text-input {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .placeholder {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .divider-line::before,
+.dark-mode .divider-line::after {
+  background: linear-gradient(90deg, transparent 0%, rgba(71, 85, 105, 0.3) 50%, transparent 100%);
+}
+
+.dark-mode .primary-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+}
+
+.dark-mode .secondary-btn {
+  background: var(--cardBg,#1a2035);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .swap-icon {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .result-section {
+  background: var(--elevatedBg,#232d42);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .result-header {
+  border-bottom-color: var(--borderLight,#374151);
+}
+
+.dark-mode .result-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .result-icon {
+  color: var(--accentIndigo,#818CF8);
+}
+
+.dark-mode .stat-added {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .stat-removed {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--accentRed,#F87171);
+}
+
+.dark-mode .diff-item {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .is-added {
+  background: rgba(16, 185, 129, 0.08);
+  border-left-color: var(--accentGreen,#34D399);
+}
+
+.dark-mode .is-added .content-text {
+  color: #6EE7B7;
+}
+
+.dark-mode .is-removed {
+  background: rgba(239, 68, 68, 0.08);
+  border-left-color: var(--accentRed,#F87171);
+}
+
+.dark-mode .is-removed .content-text {
+  color: #FCA5A5;
+}
+
+.dark-mode .is-same {
+  opacity: 0.3;
+}
+
+.dark-mode .is-same .item-marker {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .is-same .content-text {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .item-linenum {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .result-toolbar {
+  border-bottom-color: var(--borderLight,#374151);
+}
+
+.dark-mode .toolbar-btn {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .toolbar-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #FFFFFF;
+}
+
+.dark-mode .stat-same {
+  background: rgba(102, 126, 234, 0.15);
+  color: var(--accentIndigo,#818CF8);
+}
+
+.dark-mode .merge-panel {
+  background: var(--cardBg,#1a2035);
+  border-bottom-color: var(--borderLight,#374151);
+}
+
+.dark-mode .merge-label {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .merge-opt {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode .merge-opt.active {
+  border-color: #818CF8;
+  background: rgba(129, 140, 248, 0.1);
+  color: #A5B4FC;
+}
+
+.dark-mode .merge-action-btn.use {
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+}
+
+.dark-mode .merge-action-btn.copy {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+  border-color: var(--borderDark,rgba(71,85,105,0.25));
+}
+
+.dark-mode .empty-symbol {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .empty-hint {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .welcome-card {
+  background: linear-gradient(135deg, #232d42 0%, #1a2035 100%);
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .welcome-icon-wrap {
+  background: rgba(102, 126, 234, 0.12);
+}
+
+.dark-mode .welcome-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .welcome-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .feature-bullet {
+  color: var(--accentIndigo,#818CF8);
+}
+
+.dark-mode .feature-text {
+  color: var(--textSecondary,#94A3B8);
 }

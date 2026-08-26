@@ -1,1 +1,1 @@
-{"usingComponents": {"navigation-bar": "/components/navigation-bar/navigation-bar"}}
+{"usingComponents": {"navigation-bar": "/components/navigation-bar/navigation-bar", "skeleton": "/components/skeleton/skeleton"}, "navigationBarTitleText": "日期计算器 - 天数间隔计算"}

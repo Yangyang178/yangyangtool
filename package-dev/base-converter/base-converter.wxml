@@ -1,0 +1,161 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y enhanced show-scrollbar="{{false}}">
+
+  <view class="tool-header">
+    <view class="tool-icon-large" style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);">
+      <view class="tool-icon-decoration"></view>
+      🔢
+    </view>
+    <view class="tool-info">
+      <text class="tool-title-main">{{i18n.toolTitle}}</text>
+      <text class="tool-desc-main">{{i18n.toolDesc}}</text>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <text class="section-title">🔢 {{i18n.inputNumber}}</text>
+    <view class="input-row">
+      <view class="base-tag {{activeBase === 2 ? 'active' : ''}}" bindtap="onBaseTap" data-base="2">BIN</view>
+      <view class="base-tag {{activeBase === 8 ? 'active' : ''}}" bindtap="onBaseTap" data-base="8">OCT</view>
+      <view class="base-tag {{activeBase === 10 ? 'active' : ''}}" bindtap="onBaseTap" data-base="10">DEC</view>
+      <view class="base-tag {{activeBase === 16 ? 'active' : ''}}" bindtap="onBaseTap" data-base="16">HEX</view>
+      <view class="base-tag {{activeBase === 32 ? 'active' : ''}}" bindtap="onBaseTap" data-base="32">B32</view>
+    </view>
+    <view class="input-wrap">
+      <input class="main-input" value="{{inputValue}}" placeholder="{{i18n.inputPlaceholder}}{{baseLabels[activeBase]}}{{i18n.valueLabel}}" bindinput="onInput" bindblur="onInputBlur" type="text" confirm-type="done" />
+      <view class="input-suffix">{{baseLabels[activeBase]}}</view>
+      <view class="clear-btn" wx:if="{{inputValue}}" bindtap="onClear">✕</view>
+    </view>
+    <view class="input-hint" wx:if="{{errorMessage}}">
+      <text class="error-text">{{errorMessage}}</text>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{hasResult}}">
+    <text class="section-title">📊 {{i18n.convertResult}}</text>
+    <view class="result-item" bindtap="onCopyResult" data-value="{{binValue}}">
+      <view class="result-header"><text class="result-label">{{i18n.binary}}</text><text class="result-base">Base-2</text></view>
+      <view class="result-value-row"><text class="result-value bin-value">{{binValue}}</text><text class="copy-icon">📋</text></view>
+    </view>
+    <view class="result-item" bindtap="onCopyResult" data-value="{{octValue}}">
+      <view class="result-header"><text class="result-label">{{i18n.octal}}</text><text class="result-base">Base-8</text></view>
+      <view class="result-value-row"><text class="result-value">{{octValue}}</text><text class="copy-icon">📋</text></view>
+    </view>
+    <view class="result-item" bindtap="onCopyResult" data-value="{{decValue}}">
+      <view class="result-header"><text class="result-label">{{i18n.decimal}}</text><text class="result-base">Base-10</text></view>
+      <view class="result-value-row"><text class="result-value">{{decValue}}</text><text class="copy-icon">📋</text></view>
+    </view>
+    <view class="result-item" bindtap="onCopyResult" data-value="{{hexValue}}">
+      <view class="result-header"><text class="result-label">{{i18n.hexadecimal}}</text><text class="result-base">Base-16</text></view>
+      <view class="result-value-row"><text class="result-value hex-value">{{hexValue}}</text><text class="copy-icon">📋</text></view>
+    </view>
+    <view class="result-item" bindtap="onCopyResult" data-value="{{b32Value}}" wx:if="{{b32Value}}">
+      <view class="result-header"><text class="result-label">{{i18n.base32}}</text><text class="result-base">Base-32</text></view>
+      <view class="result-value-row"><text class="result-value">{{b32Value}}</text><text class="copy-icon">📋</text></view>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{hasResult}}">
+    <text class="section-title">💡 {{i18n.bitOperation}}</text>
+    <view class="bit-info">
+      <view class="bit-row"><text class="bit-label">{{i18n.bitLength}}</text><text class="bit-value">{{bitLength}} bit</text></view>
+      <view class="bit-row"><text class="bit-label">{{i18n.complement8}}</text><text class="bit-value">{{complement8}}</text></view>
+      <view class="bit-row"><text class="bit-label">{{i18n.complement16}}</text><text class="bit-value">{{complement16}}</text></view>
+      <view class="bit-row"><text class="bit-label">{{i18n.complement32}}</text><text class="bit-value">{{complement32}}</text></view>
+    </view>
+
+    <view class="bit-visual-header" bindtap="toggleBitVisual">
+      <text class="section-title" style="margin-bottom:0;">🧮 {{i18n.bitVisual32}}</text>
+      <text class="bit-toggle {{showBitVisual ? 'active' : ''}}">{{showBitVisual ? i18n.collapse : i18n.expand}}</text>
+    </view>
+    <view class="bit-visual-section" wx:if="{{showBitVisual}}">
+      <view class="bit-grid">
+        <view
+          class="bit-cell {{item.bit ? 'on' : 'off'}}"
+          wx:for="{{bitVisual}}"
+          wx:key="position"
+          data-pos="{{item.position}}"
+          bindtap="onBitTap"
+        >
+          <text>{{item.bit}}</text>
+        </view>
+      </view>
+      <view class="bit-pos-row">
+        <text class="bit-pos">31</text>
+        <text class="bit-pos">24</text>
+        <text class="bit-pos">16</text>
+        <text class="bit-pos">8</text>
+        <text class="bit-pos">0</text>
+      </view>
+      <view class="bit-ops-grid">
+        <view class="bit-op-item" bindtap="onCopyResult" data-value="{{bitOps.not}}"><text class="bit-op-text">{{bitOps.not}}</text></view>
+        <view class="bit-op-item" bindtap="onCopyResult" data-value="{{bitOps.shl1}}"><text class="bit-op-text">{{bitOps.shl1}}</text></view>
+        <view class="bit-op-item" bindtap="onCopyResult" data-value="{{bitOps.shr1}}"><text class="bit-op-text">{{bitOps.shr1}}</text></view>
+        <view class="bit-op-item" bindtap="onCopyResult" data-value="{{bitOps.and0xFF}}"><text class="bit-op-text">{{bitOps.and0xFF}}</text></view>
+      </view>
+      <view class="bit-visual-go" bindtap="goToBitVisualizer">
+        <text class="bit-visual-go-text">🧮 {{i18n.openBitVisualizer}}</text>
+        <text class="bit-visual-go-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{hasResult && showColorLink}}">
+    <text class="section-title">🎨 {{i18n.colorValueConvert}}</text>
+    <view class="color-link-card">
+      <view class="color-preview" style="background-color: {{colorHex}};"></view>
+      <view class="color-info">
+        <text class="color-hex">{{colorHex}}</text>
+        <text class="color-rgb">RGB({{colorR}}, {{colorG}}, {{colorB}})</text>
+        <text class="color-dec">DEC: {{decValue}}</text>
+      </view>
+      <view class="color-go-btn" bindtap="goToColorConverter">
+        <text>🎨 {{i18n.openColorConverter}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <text class="section-title">⌨️ {{i18n.quickInput}}</text>
+    <view class="quick-grid">
+      <view class="quick-btn" bindtap="onQuickInput" data-val="255">255</view>
+      <view class="quick-btn" bindtap="onQuickInput" data-val="256">256</view>
+      <view class="quick-btn" bindtap="onQuickInput" data-val="1024">1024</view>
+      <view class="quick-btn" bindtap="onQuickInput" data-val="65535">65535</view>
+      <view class="quick-btn" bindtap="onQuickInput" data-val="0xFF">0xFF</view>
+      <view class="quick-btn" bindtap="onQuickInput" data-val="0xFFFF">0xFFFF</view>
+      <view class="quick-btn" bindtap="onQuickInput" data-val="0b11111111">0b11111111</view>
+      <view class="quick-btn" bindtap="onQuickInput" data-val="0o777">0o777</view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <text class="section-title">📖 {{i18n.asciiTable}}</text>
+    <view class="ascii-search-wrap">
+      <input class="ascii-search-input" placeholder="{{i18n.searchPlaceholder}}" value="{{asciiSearch}}" bindinput="onAsciiSearch" />
+    </view>
+    <view class="ascii-table">
+      <view class="ascii-row ascii-header">
+        <text class="ascii-cell">DEC</text>
+        <text class="ascii-cell">HEX</text>
+        <text class="ascii-cell">BIN</text>
+        <text class="ascii-cell">CHAR</text>
+      </view>
+      <view class="ascii-row" wx:for="{{asciiFiltered || asciiTable}}" wx:key="dec">
+        <text class="ascii-cell">{{item.dec}}</text>
+        <text class="ascii-cell">{{item.hex}}</text>
+        <text class="ascii-cell">{{item.bin}}</text>
+        <text class="ascii-cell char-cell">{{item.char}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tool-actions-bar">
+    <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">📋 {{i18n.copyResult}}</button>
+    <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">🔄 {{i18n.reset}}</button>
+  </view>
+
+</scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

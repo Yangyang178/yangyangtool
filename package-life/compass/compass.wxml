@@ -1,0 +1,165 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
+  <view class="container">
+    <view class="tool-header">
+      <view class="icon-wrapper" style="background: linear-gradient(135deg, #3B82F633 0%, #3B82F666 100%);">
+        <view class="icon-decoration"></view>
+        <text class="tool-icon">🧭</text>
+      </view>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="text-desc">{{i18n.toolDesc}}</text>
+    </view>
+
+    <view class="compass-area" wx:if="{{compassSupported}}">
+      <view class="compass-disc" style="transform: rotate({{compassRotate}}deg);">
+        <view class="compass-ring">
+          <view class="tick-mark tick-major" wx:for="{{[0,1,2,3,4,5,6,7]}}" wx:key="*this" style="transform: rotate({{item * 45}}deg);">
+            <view class="tick-line tick-line-major"></view>
+          </view>
+          <view class="tick-mark tick-minor" wx:for="{{[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]}}" wx:key="*this" style="transform: rotate({{item * 15}}deg);">
+            <view class="tick-line tick-line-minor"></view>
+          </view>
+        </view>
+        <view class="direction-labels">
+          <text class="dir-label dir-n">N</text>
+          <text class="dir-label dir-e">E</text>
+          <text class="dir-label dir-s">S</text>
+          <text class="dir-label dir-w">W</text>
+        </view>
+        <view class="compass-needle">
+          <view class="needle needle-north"></view>
+          <view class="needle needle-south"></view>
+        </view>
+        <view class="compass-center"></view>
+      </view>
+    </view>
+
+    <view class="compass-unsupported" wx:else>
+      <text class="unsupported-icon">🧭</text>
+      <text class="unsupported-text">{{i18n.unsupported}}</text>
+    </view>
+
+    <view class="direction-display">
+      <view class="direction-angle">
+        <text class="angle-number">{{direction}}</text>
+        <text class="angle-unit">°</text>
+      </view>
+      <text class="direction-name">{{directionName}}</text>
+      <text class="direction-detail">{{directionDetail}}</text>
+    </view>
+
+    <view class="calibration-tip" wx:if="{{showCalibration}}">
+      <text class="calibration-icon">🔄</text>
+      <text class="calibration-text">{{i18n.calibrationTip}}</text>
+    </view>
+
+    <view class="info-cards">
+      <view class="info-card gps-card">
+        <view class="info-card-header">
+          <text class="info-card-icon">📍</text>
+          <text class="info-card-title">{{i18n.gpsLocation}}</text>
+          <view class="gps-refresh" bindtap="refreshLocation">🔄</view>
+        </view>
+        <view class="info-card-body">
+          <view class="info-row">
+            <text class="info-label">{{i18n.latitude}}</text>
+            <text class="info-value gps-val">{{latitude}}°</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">{{i18n.longitude}}</text>
+            <text class="info-value gps-val">{{longitude}}°</text>
+          </view>
+          <view class="info-row" wx:if="{{speed !== '--'}}">
+            <text class="info-label">{{i18n.speed}}</text>
+            <text class="info-value">{{speed}} km/h</text>
+          </view>
+          <view class="info-row" wx:if="{{accuracy !== '--'}}">
+            <text class="info-label">{{i18n.accuracy}}</text>
+            <text class="info-value">≈{{accuracy}} m</text>
+          </view>
+          <view class="info-row" wx:if="{{refreshTime}}">
+            <text class="info-label">{{i18n.updated}}</text>
+            <text class="info-value time-val">{{refreshTime}}</text>
+          </view>
+        </view>
+        <view class="info-card-footer" wx:if="{{!locationAuth}}" bindtap="requestLocation">
+          <text class="info-hint">{{i18n.noLocationAuth}}</text>
+        </view>
+        <view class="info-card-footer copy-footer" wx:if="{{locationAuth}}" bindtap="copyLocation">
+          <text class="info-hint">{{i18n.copyCoords}}</text>
+        </view>
+      </view>
+
+      <view class="info-card">
+        <view class="info-card-header">
+          <text class="info-card-icon">⚖️</text>
+          <text class="info-card-title">{{i18n.level}}</text>
+        </view>
+        <view class="info-card-body">
+          <view class="level-disc">
+            <view class="level-ring"></view>
+            <view class="level-cross-h"></view>
+            <view class="level-cross-v"></view>
+            <view class="level-ball" style="transform: translate({{ballX * 6}}px, {{ballY * 6}}px);"></view>
+          </view>
+          <view class="level-status">
+            <view class="level-indicator {{isLevel ? 'level-ok' : 'level-tilt'}}"></view>
+            <text class="level-text">{{isLevel ? i18n.horizontal : i18n.tilted}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="mark-section">
+      <view class="mark-header">
+        <text class="mark-title">{{i18n.directionMarks}} ({{directionMarks.length}})</text>
+        <view class="mark-actions">
+          <text class="mark-toggle" bindtap="toggleMarks">{{showMarks ? i18n.collapse : i18n.view}}</text>
+          <text class="mark-clear" wx:if="{{directionMarks.length > 0}}" bindtap="clearMarks">🗑️</text>
+        </view>
+      </view>
+      <view class="mark-add-row">
+        <input class="mark-input" placeholder="{{i18n.markNamePlaceholder}}" value="{{markInputName}}" bindinput="onMarkNameInput"/>
+        <view class="mark-add-btn" bindtap="addDirectionMark">{{i18n.markDirection}}</view>
+      </view>
+      <view class="mark-list" wx:if="{{showMarks && directionMarks.length > 0}}">
+        <view class="mark-item" wx:for="{{directionMarks}}" wx:key="id">
+          <view class="mark-info">
+            <text class="mark-label">{{item.label}}</text>
+            <text class="mark-meta">{{item.direction}}° · {{item.time}} · {{item.lat}}, {{item.lng}}</text>
+          </view>
+          <view class="mark-del" catchtap="removeMark" data-id="{{item.id}}">✕</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyDirection}}</button>
+    </view>
+
+    <view class="tip-card" wx:if="{{showTip}}">
+      <view class="tip-header">
+        <text class="tip-icon">💡</text>
+        <text class="tip-title">{{i18n.usageTips}}</text>
+        <view class="tip-close" bindtap="dismissTip">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="tip-content">
+        <text class="tip-item">{{i18n.tip1}}</text>
+        <text class="tip-item">{{i18n.tip2}}</text>
+        <text class="tip-item">{{i18n.tip3}}</text>
+        <text class="tip-item">{{i18n.tip4}}</text>
+        <text class="tip-item">{{i18n.tip5}}</text>
+        <text class="tip-item">{{i18n.tip6}}</text>
+      </view>
+      <text class="tip-note">{{i18n.tipNote}}</text>
+    </view>
+  </view>
+</scroll-view>
+
+<privacy-popup />
+
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

@@ -1,13 +1,15 @@
-<navigation-bar title="日期计算器" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
 
-<scroll-view class="tool-page" scroll-y>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper" style="background: linear-gradient(135deg, #FBBF2433 0%, #FBBF2466 100%);">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">📅</text>
       </view>
-      <text class="tool-title">日期计算器</text>
-      <text class="tool-desc">精确计算日期间隔与差异</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
     <view class="calc-mode-tabs">
@@ -16,14 +18,14 @@
         data-mode="diff"
         bindtap="switchMode"
       >
-        <text>日期间隔</text>
+        <text>{{i18n.dateInterval}}</text>
       </view>
       <view 
         class="mode-tab {{calcMode === 'add' ? 'active' : ''}}"
         data-mode="add"
         bindtap="switchMode"
       >
-        <text>日期加减</text>
+        <text>{{i18n.dateAddSub}}</text>
       </view>
     </view>
 
@@ -31,7 +33,7 @@
       <view class="date-input-group">
         <view class="date-label">
           <text class="label-icon">📌</text>
-          <text>开始日期</text>
+          <text>{{i18n.startDate}}</text>
         </view>
         <picker mode="date" value="{{startDate}}" start="1900-01-01" end="2099-12-31" bindchange="onStartDateChange">
           <view class="date-picker">
@@ -48,7 +50,7 @@
       <view class="date-input-group">
         <view class="date-label">
           <text class="label-icon">🎯</text>
-          <text>结束日期</text>
+          <text>{{i18n.endDate}}</text>
         </view>
         <picker mode="date" value="{{endDate}}" start="1900-01-01" end="2099-12-31" bindchange="onEndDateChange">
           <view class="date-picker">
@@ -59,16 +61,16 @@
       </view>
 
       <view class="quick-dates">
-        <text class="quick-label">快捷选择：</text>
-        <view class="quick-btn" bindtap="setTodayStart">今天</view>
-        <view class="quick-btn" bindtap="setYesterday">昨天</view>
-        <view class="quick-btn" bindtap="setThisWeek">本周</view>
-        <view class="quick-btn" bindtap="setThisMonth">本月</view>
-        <view class="quick-btn" bindtap="setThisYear">今年</view>
+        <text class="quick-label">{{i18n.quickSelect}}</text>
+        <view class="quick-btn" bindtap="setTodayStart">{{i18n.today}}</view>
+        <view class="quick-btn" bindtap="setYesterday">{{i18n.yesterday}}</view>
+        <view class="quick-btn" bindtap="setThisWeek">{{i18n.thisWeek}}</view>
+        <view class="quick-btn" bindtap="setThisMonth">{{i18n.thisMonth}}</view>
+        <view class="quick-btn" bindtap="setThisYear">{{i18n.thisYear}}</view>
       </view>
 
       <view class="calculate-btn" bindtap="calculateDiff">
-        <text>计算间隔</text>
+        <text>{{i18n.calcInterval}}</text>
       </view>
     </view>
 
@@ -76,7 +78,7 @@
       <view class="date-input-group">
         <view class="date-label">
           <text class="label-icon">📌</text>
-          <text>基准日期</text>
+          <text>{{i18n.baseDate}}</text>
         </view>
         <picker mode="date" value="{{baseDate}}" start="1900-01-01" end="2099-12-31" bindchange="onBaseDateChange">
           <view class="date-picker">
@@ -92,20 +94,20 @@
           data-type="add"
           bindtap="toggleAddSubtract"
         >
-          <text>➕ 加</text>
+          <text>{{i18n.addLabel}}</text>
         </view>
         <view 
           class="toggle-btn {{addSubtract === 'subtract' ? 'active' : ''}}"
           data-type="subtract"
           bindtap="toggleAddSubtract"
         >
-          <text>➖ 减</text>
+          <text>{{i18n.subLabel}}</text>
         </view>
       </view>
 
       <view class="number-inputs">
         <view class="number-input-item">
-          <text class="number-label">年</text>
+          <text class="number-label">{{i18n.yearUnit}}</text>
           <input 
             class="number-input" 
             type="number" 
@@ -115,7 +117,7 @@
           />
         </view>
         <view class="number-input-item">
-          <text class="number-label">月</text>
+          <text class="number-label">{{i18n.monthUnit}}</text>
           <input 
             class="number-input" 
             type="number" 
@@ -125,7 +127,7 @@
           />
         </view>
         <view class="number-input-item">
-          <text class="number-label">日</text>
+          <text class="number-label">{{i18n.dayUnit}}</text>
           <input 
             class="number-input" 
             type="number" 
@@ -137,52 +139,52 @@
       </view>
 
       <view class="calculate-btn" bindtap="calculateAdd">
-        <text>计算结果</text>
+        <text>{{i18n.calcResult}}</text>
       </view>
     </view>
 
     <view wx:if="{{showResult}}" class="result-section">
       <view class="result-card">
         <view class="result-header">
-          <text class="result-title">{{calcMode === 'diff' ? '计算结果' : '计算结果'}}</text>
+          <text class="result-title">{{i18n.calcResult}}</text>
         </view>
 
         <view wx:if="{{calcMode === 'diff'}}" class="diff-results">
           <view class="main-result">
             <text class="result-number">{{totalDays}}</text>
-            <text class="result-unit">天</text>
+            <text class="result-unit">{{i18n.daysUnit}}</text>
           </view>
 
           <view class="detail-grid">
             <view class="detail-item">
               <text class="detail-value">{{weeks}}</text>
-              <text class="detail-label">周</text>
+              <text class="detail-label">{{i18n.weeks}}</text>
             </view>
             <view class="detail-item">
               <text class="detail-value">{{months}}</text>
-              <text class="detail-label">个月</text>
+              <text class="detail-label">{{i18n.totalMonths}}</text>
             </view>
             <view class="detail-item">
               <text class="detail-value">{{years}}</text>
-              <text class="detail-label">年</text>
+              <text class="detail-label">{{i18n.yearUnit}}</text>
             </view>
             <view class="detail-item">
               <text class="detail-value">{{hours}}</text>
-              <text class="detail-label">小时</text>
+              <text class="detail-label">{{i18n.hours}}</text>
             </view>
           </view>
 
           <view class="extra-info">
             <view class="info-row">
-              <text class="info-label">开始日期：</text>
+              <text class="info-label">{{i18n.startDateLabel}}</text>
               <text class="info-value">{{startDateDisplay}}</text>
             </view>
             <view class="info-row">
-              <text class="info-label">结束日期：</text>
+              <text class="info-label">{{i18n.endDateLabel}}</text>
               <text class="info-value">{{endDateDisplay}}</text>
             </view>
             <view class="info-row">
-              <text class="info-label">星期几：</text>
+              <text class="info-label">{{i18n.weekdayLabel}}</text>
               <text class="info-value">{{startWeekday}} → {{endWeekday}}</text>
             </view>
           </view>
@@ -193,32 +195,31 @@
             <text class="result-number">{{resultDate}}</text>
           </view>
           <view class="weekday-result">
-            <text>星期{{resultWeekday}}</text>
+            <text>{{i18n.weekdayPrefix}}{{resultWeekday}}</text>
           </view>
           <view class="extra-info">
             <view class="info-row">
-              <text class="info-label">基准日期：</text>
+              <text class="info-label">{{i18n.baseDateLabel}}</text>
               <text class="info-value">{{baseDate}}</text>
             </view>
             <view class="info-row">
-              <text class="info-label">{{addSubtract === 'add' ? '加上' : '减去'}}：</text>
-              <text class="info-value">{{addYears}}年 {{addMonths}}月 {{addDays}}日</text>
+              <text class="info-label">{{addSubtract === 'add' ? i18n.plusLabel : i18n.minusLabel}}：</text>
+              <text class="info-value">{{addYears}}{{i18n.yearUnit}} {{addMonths}}{{i18n.monthUnit}} {{addDays}}{{i18n.dayUnit}}</text>
             </view>
           </view>
         </view>
       </view>
 
-      <view class="action-buttons">
-        <view class="action-btn copy" bindtap="copyResult">
-          <text>📋 复制结果</text>
-        </view>
+      <view class="tool-actions-bar">
+        <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResult}}</button>
+        <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">{{i18n.resetData}}</button>
       </view>
     </view>
 
     <view wx:if="{{historyList.length > 0}}" class="history-section">
       <view class="section-header">
-        <text class="section-title">计算历史</text>
-        <text class="clear-history" bindtap="clearHistory">清空</text>
+        <text class="section-title">{{i18n.calcHistory}}</text>
+        <text class="clear-history" bindtap="clearHistory">{{i18n.clearHistory}}</text>
       </view>
       <view class="history-list">
         <view 
@@ -233,3 +234,4 @@
     </view>
   </view>
 </scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

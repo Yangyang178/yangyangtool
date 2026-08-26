@@ -1,1 +1,1 @@
-{"usingComponents": {"navigation-bar": "/components/navigation-bar/navigation-bar"}, "navigationBarTitleText": "房贷计算器"}
+{"usingComponents": {"navigation-bar": "/components/navigation-bar/navigation-bar", "skeleton": "/components/skeleton/skeleton"}, "navigationBarTitleText": "房贷计算器 - 公积金商贷月供计算"}

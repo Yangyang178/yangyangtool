@@ -1,29 +1,35 @@
-<navigation-bar title="颜色转换" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
 
-<scroll-view class="tool-page" scroll-y>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper" style="background: linear-gradient(135deg, #F472B633 0%, #F472B666 100%);">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">🎨</text>
       </view>
-      <text class="tool-title">颜色转换</text>
-      <text class="tool-desc">HEX / RGB / HSL 互转工具</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
     <!-- 颜色预览区域 -->
     <view class="color-preview-section">
       <view class="color-preview-large" style="background-color: {{currentColor}};" bindtap="showColorPicker">
         <text class="preview-hex">{{hexValue}}</text>
-        <view class="pick-hint">点击取色</view>
+        <view class="pick-hint">{{i18n.tapToPick}}</view>
       </view>
       
       <view class="color-info-row">
         <view class="color-sample-item" style="background: {{currentColor}};" bindtap="copyColor">
-          <text class="sample-label">点击复制</text>
+          <text class="sample-label">{{i18n.tapToCopy}}</text>
         </view>
         <view class="color-text-info">
           <text class="color-name-text">{{colorName}}</text>
-          <text class="contrast-text">对比度: {{contrastRatio}}</text>
+          <text class="contrast-text">{{i18n.contrast}}: {{contrastRatio}}</text>
+        </view>
+        <view class="fav-btn" bindtap="addFavorite">
+          <text class="fav-icon">❤️</text>
+          <text class="fav-text">{{i18n.favorite}}</text>
         </view>
       </view>
     </view>
@@ -31,7 +37,7 @@
     <!-- HEX 输入 -->
     <view class="input-card">
       <view class="input-header">
-        <text class="input-label">🎯 HEX 颜色</text>
+        <text class="input-label">🎯 {{i18n.hexColor}}</text>
         <view class="format-badge hex">#RRGGBB</view>
       </view>
       <view class="input-row">
@@ -60,7 +66,7 @@
     <!-- RGB 输入 -->
     <view class="input-card">
       <view class="input-header">
-        <text class="input-label">🔴 RGB 颜色</text>
+        <text class="input-label">🔴 {{i18n.rgbColor}}</text>
         <view class="format-badge rgb">R,G,B (0-255)</view>
       </view>
       <view class="rgb-inputs">
@@ -103,7 +109,7 @@
     <!-- HSL 输入 -->
     <view class="input-card">
       <view class="input-header">
-        <text class="input-label">🌈 HSL 颜色</text>
+        <text class="input-label">🌈 {{i18n.hslColor}}</text>
         <view class="format-badge hsl">H,S,L (0-360, 0-100%)</view>
       </view>
       <view class="hsl-inputs">
@@ -148,7 +154,7 @@
 
     <!-- 转换结果 -->
     <view class="result-section">
-      <text class="result-title">📋 所有格式</text>
+      <text class="result-title">📋 {{i18n.allFormats}}</text>
       
       <view class="result-grid">
         <view class="result-item" bindtap="copyHex">
@@ -174,7 +180,7 @@
 
       <!-- CSS格式 -->
       <view class="css-output">
-        <text class="css-label">CSS 格式</text>
+        <text class="css-label">{{i18n.cssFormat}}</text>
         <scroll-view scroll-x class="css-scroll">
           <view class="css-items">
             <view class="css-item" bindtap="copyCssHex">
@@ -191,9 +197,13 @@
       </view>
     </view>
 
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">🔄 {{i18n.reset}}</button>
+    </view>
+
     <!-- 常用颜色列表 -->
     <view class="palette-section">
-      <text class="palette-title">🎨 常用颜色面板</text>
+      <text class="palette-title">🎨 {{i18n.colorPalette}}</text>
       <view class="palette-grid">
         <view 
           class="palette-item"
@@ -209,13 +219,99 @@
       </view>
     </view>
 
+    <!-- 收藏颜色 -->
+    <view class="fav-section" wx:if="{{favoriteColors.length > 0}}">
+      <view class="fav-header">
+        <text class="palette-title">❤️ {{i18n.myFavorites}}</text>
+        <text class="fav-count">{{favoriteColors.length}}/20</text>
+      </view>
+      <view class="fav-grid">
+        <view class="fav-item" wx:for="{{favoriteColors}}" wx:key="*this">
+          <view class="fav-color-dot" style="background: {{item}};" data-hex="{{item}}" bindtap="selectFavorite"></view>
+          <view class="fav-remove" data-index="{{index}}" bindtap="removeFavorite">✕</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 图片取色 -->
+    <view class="pick-section">
+      <text class="palette-title">📷 {{i18n.imagePick}}</text>
+      <text class="pick-desc">{{i18n.extractColor}}</text>
+      <button class="pick-btn" bindtap="pickFromImage">
+        <text>📷 {{i18n.selectImagePick}}</text>
+      </button>
+    </view>
+    <canvas type="2d" id="pickCanvas" style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;"></canvas>
+
+    <!-- 配色方案 -->
+    <view class="scheme-section">
+      <text class="palette-title">🎯 {{i18n.colorScheme}}</text>
+      <view class="harmony-types">
+        <view 
+          wx:for="{{harmonyTypes}}" wx:key="id"
+          class="harmony-type-btn {{harmonyType === item.id ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="selectHarmonyType"
+        >{{item.name}}</view>
+      </view>
+      <view class="harmony-colors" wx:if="{{harmonyScheme}}">
+        <view 
+          wx:for="{{harmonyScheme}}" wx:key="label"
+          class="harmony-color-item"
+          style="background: {{item.hex}};"
+          data-hex="{{item.hex}}"
+          bindtap="onHarmonyColorTap"
+        >
+          <text class="harmony-label">{{item.label}}</text>
+          <text class="harmony-hex">{{item.hex}}</text>
+        </view>
+      </view>
+      <view class="harmony-copy" bindtap="copyHarmonyAll">📋 {{i18n.copyAllScheme}}</view>
+    </view>
+
+    <!-- 渐变色生成器 -->
+    <view class="gradient-section">
+      <text class="palette-title">🌈 {{i18n.gradientGenerator}}</text>
+      <view class="gradient-preview" style="background: {{gradientCSS}};">
+        <text class="gradient-css-text">{{gradientCSS}}</text>
+      </view>
+      <view class="gradient-controls">
+        <view class="gradient-color-pick">
+          <view class="grad-color-item">
+            <view class="grad-color-dot" style="background: {{gradientStart}};" bindtap="selectGradientStart"></view>
+            <text class="grad-color-label">{{i18n.startColor}}</text>
+          </view>
+          <text class="grad-arrow">→</text>
+          <view class="grad-color-item">
+            <view class="grad-color-dot" style="background: {{gradientEnd}};" bindtap="selectGradientEnd"></view>
+            <text class="grad-color-label">{{i18n.endColor}}</text>
+          </view>
+        </view>
+        <view class="gradient-angle-row">
+          <text class="grad-angle-label">{{i18n.angle}}</text>
+          <view class="grad-angle-btns">
+            <view class="grad-angle-btn {{gradientAngle === 0 ? 'active' : ''}}" data-angle="0" bindtap="selectGradientAngle">0°</view>
+            <view class="grad-angle-btn {{gradientAngle === 45 ? 'active' : ''}}" data-angle="45" bindtap="selectGradientAngle">45°</view>
+            <view class="grad-angle-btn {{gradientAngle === 90 ? 'active' : ''}}" data-angle="90" bindtap="selectGradientAngle">90°</view>
+            <view class="grad-angle-btn {{gradientAngle === 135 ? 'active' : ''}}" data-angle="135" bindtap="selectGradientAngle">135°</view>
+            <view class="grad-angle-btn {{gradientAngle === 180 ? 'active' : ''}}" data-angle="180" bindtap="selectGradientAngle">180°</view>
+            <view class="grad-angle-btn {{gradientAngle === 270 ? 'active' : ''}}" data-angle="270" bindtap="selectGradientAngle">270°</view>
+          </view>
+        </view>
+      </view>
+      <view class="gradient-actions">
+        <view class="grad-action-btn grad-random" bindtap="randomGradient">🎲 {{i18n.randomGradient}}</view>
+        <view class="grad-action-btn grad-copy" bindtap="copyGradientCSS">📋 {{i18n.copyCSS}}</view>
+      </view>
+    </view>
+
     <!-- 操作按钮 -->
     <view class="action-buttons">
       <view class="action-btn random" bindtap="generateRandomColor">
-        <text>🎲 随机颜色</text>
+        <text>🎲 {{i18n.randomColor}}</text>
       </view>
       <view class="action-btn invert" bindtap="invertColor">
-        <text>🔄 反转颜色</text>
+        <text>🔄 {{i18n.invertColor}}</text>
       </view>
     </view>
 
@@ -223,7 +319,7 @@
     <view class="color-picker-mask" wx:if="{{showPicker}}" bindtap="hideColorPicker"></view>
     <view class="color-picker-panel {{showPicker ? 'show' : ''}}">
       <view class="picker-header">
-        <text class="picker-title">🎨 选择颜色</text>
+        <text class="picker-title">🎨 {{i18n.selectColor}}</text>
         <text class="picker-close" bindtap="hideColorPicker">✕</text>
       </view>
 
@@ -261,3 +357,4 @@
     </view>
   </view>
 </scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

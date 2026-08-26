@@ -1,248 +1,335 @@
-<navigation-bar title="个税计算器" back="{{true}}" color="#0f172a" background="#f8fafb"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
 
-<scroll-view class="tool-page" scroll-y enhanced show-scrollbar="{{false}}">
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
   <view class="container">
-    <view class="hero-section">
-      <view class="hero-icon">
-        <view class="icon-glow"></view>
-        <text class="icon-emoji">💰</text>
-      </view>
-      <text class="hero-title">个税计算器</text>
-      <text class="hero-subtitle">2024最新税率 · 智能专项扣除</text>
+
+    <!-- 头部 -->
+    <view class="header">
+      <text class="header-icon">🧾</text>
+      <text class="header-title">{{i18n.toolTitle}}</text>
+      <text class="header-sub">{{i18n.toolDesc}}</text>
     </view>
 
-    <view class="input-section">
-      <view class="salary-card">
-        <view class="card-header">
-          <text class="card-label">税前月薪</text>
-          <text class="card-hint">输入您的月收入</text>
-        </view>
-        <view class="salary-input-wrapper">
-          <input
-            class="salary-input"
-            type="digit"
-            placeholder="0.00"
-            placeholder-class="placeholder"
-            value="{{salary}}"
-            bindinput="onSalaryInput"
-          />
-          <view class="unit-badge">
-            <text>元 / 月</text>
-          </view>
+    <!-- 操作引导 -->
+    <view class="guide-tip" wx:if="{{showGuideTip}}">
+      <view class="guide-tip-header">
+        <text class="guide-tip-icon">💡</text>
+        <text class="guide-tip-title">{{i18n.guideTipTitle}}</text>
+        <view class="guide-tip-close" bindtap="closeGuideTip">✕</view>
+      </view>
+      <view class="guide-tip-steps">
+        <view class="guide-step" wx:for="{{i18n.guideSteps}}" wx:key="index">
+          <text class="guide-step-num">{{index + 1}}</text>
+          <text class="guide-step-text">{{item}}</text>
         </view>
       </view>
-
-      <view class="deduction-section">
-        <view class="section-header">
-          <view class="section-title-group">
-            <text class="section-icon">⚡</text>
-            <text class="section-title">专项附加扣除</text>
-          </view>
-          <text class="total-deduction">总计: {{totalDeduction}} 元</text>
-        </view>
-
-        <view class="deduction-grid">
-          <view class="deduction-card" data-key="children">
-            <view class="deduction-top">
-              <view class="deduction-icon-wrap icon-blue">
-                <text class="ded-icon">👶</text>
-              </view>
-              <text class="deduction-name">子女教育</text>
-            </view>
-            <view class="deduction-bottom">
-              <input
-                class="deduction-field"
-                type="digit"
-                value="{{deductions.children}}"
-                data-key="children"
-                bindinput="onDeductionChange"
-                placeholder="0"
-              />
-              <text class="deduction-unit">元</text>
-            </view>
-          </view>
-
-          <view class="deduction-card" data-key="education">
-            <view class="deduction-top">
-              <view class="deduction-icon-wrap icon-purple">
-                <text class="ded-icon">🎓</text>
-              </view>
-              <text class="deduction-name">继续教育</text>
-            </view>
-            <view class="deduction-bottom">
-              <input
-                class="deduction-field"
-                type="digit"
-                value="{{deductions.education}}"
-                data-key="education"
-                bindinput="onDeductionChange"
-                placeholder="0"
-              />
-              <text class="deduction-unit">元</text>
-            </view>
-          </view>
-
-          <view class="deduction-card" data-key="housing">
-            <view class="deduction-top">
-              <view class="deduction-icon-wrap icon-orange">
-                <text class="ded-icon">🏠</text>
-              </view>
-              <text class="deduction-name">住房租金</text>
-            </view>
-            <view class="deduction-bottom">
-              <input
-                class="deduction-field"
-                type="digit"
-                value="{{deductions.housing}}"
-                data-key="housing"
-                bindinput="onDeductionChange"
-                placeholder="0"
-              />
-              <text class="deduction-unit">元</text>
-            </view>
-          </view>
-
-          <view class="deduction-card" data-key="elderly">
-            <view class="deduction-top">
-              <view class="deduction-icon-wrap icon-green">
-                <text class="ded-icon">👴</text>
-              </view>
-              <text class="deduction-name">赡养老人</text>
-            </view>
-            <view class="deduction-bottom">
-              <input
-                class="deduction-field"
-                type="digit"
-                value="{{deductions.elderly}}"
-                data-key="elderly"
-                bindinput="onDeductionChange"
-                placeholder="0"
-              />
-              <text class="deduction-unit">元</text>
-            </view>
-          </view>
-
-          <view class="deduction-card card-wide" data-key="other">
-            <view class="deduction-top">
-              <view class="deduction-icon-wrap icon-gray">
-                <text class="ded-icon">➕</text>
-              </view>
-              <text class="deduction-name">其他扣除</text>
-            </view>
-            <view class="deduction-bottom">
-              <input
-                class="deduction-field"
-                type="digit"
-                value="{{deductions.other}}"
-                data-key="other"
-                bindinput="onDeductionChange"
-                placeholder="0"
-              />
-              <text class="deduction-unit">元</text>
-            </view>
-          </view>
-        </view>
-      </view>
-
-      <button class="calculate-btn" bindtap="calculate" hover-class="btn-active">
-        <view class="btn-inner">
-          <text class="btn-icon">◆</text>
-          <text class="btn-text">计算个税</text>
-        </view>
-        <view class="btn-shine"></view>
-      </button>
     </view>
 
-    <view class="result-section" wx:if="{{result}}">
-      <view class="result-main-card">
-        <view class="result-highlight">
-          <text class="result-label">税后月薪</text>
-          <view class="amount-display">
-            <text class="currency-symbol">¥</text>
-            <text class="amount-value">{{result.afterTax}}</text>
+    <!-- 收入信息 -->
+    <view class="form-section">
+      <view class="form-item">
+        <text class="form-label">{{i18n.preTaxSalary}}</text>
+        <view class="input-row">
+          <input class="form-input" type="digit" placeholder="{{i18n.inputAmount}}" value="{{salary}}" bindinput="onSalaryInput"/>
+          <text class="input-unit">{{i18n.yuanPerMonth}}</text>
+        </view>
+      </view>
+      <view class="divider"></view>
+      <view class="form-item">
+        <text class="form-label">{{i18n.annualBonus}} <text class="form-hint">{{i18n.optional}}</text></text>
+        <view class="input-row">
+          <input class="form-input" type="digit" placeholder="{{i18n.inputBonus}}" value="{{bonus}}" bindinput="onBonusInput"/>
+          <text class="input-unit">{{i18n.yuanPerYear}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 五险一金 -->
+    <view class="form-section">
+      <view class="deduction-header">
+        <text class="deduction-title">{{i18n.socialInsurance}}</text>
+        <text class="deduction-total">{{socialTotal}}%</text>
+      </view>
+      <text class="form-hint">{{i18n.personalRate}}</text>
+      <view class="social-detail">
+        <view class="social-item" bindtap="toggleSocialDetail">
+          <view class="social-left">
+            <text class="social-icon">👴</text>
+            <text class="social-name">{{i18n.pension}}</text>
+          </view>
+          <view class="social-right">
+            <input class="social-input" type="digit" value="{{socialInsurance.pension}}" data-field="pension" bindinput="onSocialInput"/>
+            <text class="social-unit">%</text>
+            <text class="social-arrow {{showSocialDetail ? 'expanded' : ''}}">▼</text>
           </view>
         </view>
-
-        <view class="stats-row">
-          <view class="stat-box stat-tax">
-            <text class="stat-label">应缴个税</text>
-            <text class="stat-value tax-color">{{result.tax}}<text class="stat-suffix">元</text></text>
+        <view class="social-item" wx:if="{{showSocialDetail}}">
+          <view class="social-left">
+            <text class="social-icon">🏥</text>
+            <text class="social-name">{{i18n.medicalInsurance}}</text>
           </view>
-          <view class="stat-box stat-rate">
-            <text class="stat-label">实际税率</text>
-            <text class="stat-value rate-color">{{result.effectiveRate}}<text class="stat-suffix">%</text></text>
+          <view class="social-right">
+            <input class="social-input" type="digit" value="{{socialInsurance.medical}}" data-field="medical" bindinput="onSocialInput"/>
+            <text class="social-unit">%</text>
+          </view>
+        </view>
+        <view class="social-item" wx:if="{{showSocialDetail}}">
+          <view class="social-left">
+            <text class="social-icon">🛡</text>
+            <text class="social-name">{{i18n.unemploymentInsurance}}</text>
+          </view>
+          <view class="social-right">
+            <input class="social-input" type="digit" value="{{socialInsurance.unemployment}}" data-field="unemployment" bindinput="onSocialInput"/>
+            <text class="social-unit">%</text>
+          </view>
+        </view>
+        <view class="social-item" wx:if="{{showSocialDetail}}">
+          <view class="social-left">
+            <text class="social-icon">🏠</text>
+            <text class="social-name">{{i18n.housingFund}}</text>
+          </view>
+          <view class="social-right">
+            <input class="social-input" type="digit" value="{{socialInsurance.housing}}" data-field="housing" bindinput="onSocialInput"/>
+            <text class="social-unit">%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 专项附加扣除 -->
+    <view class="form-section">
+      <view class="deduction-header">
+        <text class="deduction-title">{{i18n.specialDeductionTitle}}</text>
+        <text class="deduction-total">{{totalDeduction}}{{i18n.yuan}}</text>
+      </view>
+      <view class="deduction-list">
+        <view class="deduction-item">
+          <view class="item-left">
+            <view class="item-icon">👶</view>
+            <text class="item-name">{{i18n.childrenEdu}}</text>
+          </view>
+          <view class="item-right">
+            <input class="item-input" type="digit" value="{{deductions.childrenEducation}}" data-field="childrenEducation" bindinput="onDeductionInput"/>
+            <text class="item-unit">{{i18n.yuan}}</text>
+          </view>
+        </view>
+        <view class="deduction-item">
+          <view class="item-left">
+            <view class="item-icon">📚</view>
+            <text class="item-name">{{i18n.continuingEdu}}</text>
+          </view>
+          <view class="item-right">
+            <input class="item-input" type="digit" value="{{deductions.continuingEducation}}" data-field="continuingEducation" bindinput="onDeductionInput"/>
+            <text class="item-unit">{{i18n.yuan}}</text>
+          </view>
+        </view>
+        <view class="deduction-item">
+          <view class="item-left">
+            <view class="item-icon">🏠</view>
+            <text class="item-name">{{i18n.housingRent}}</text>
+          </view>
+          <view class="item-right">
+            <input class="item-input" type="digit" value="{{deductions.housingRent}}" data-field="housingRent" bindinput="onDeductionInput"/>
+            <text class="item-unit">{{i18n.yuan}}</text>
+          </view>
+        </view>
+        <view class="deduction-item">
+          <view class="item-left">
+            <view class="item-icon">👴</view>
+            <text class="item-name">{{i18n.elderlyCare}}</text>
+          </view>
+          <view class="item-right">
+            <input class="item-input" type="digit" value="{{deductions.elderlyCare}}" data-field="elderlyCare" bindinput="onDeductionInput"/>
+            <text class="item-unit">{{i18n.yuan}}</text>
+          </view>
+        </view>
+        <view class="deduction-item">
+          <view class="item-left">
+            <view class="item-icon">📝</view>
+            <text class="item-name">{{i18n.otherDeduction}}</text>
+          </view>
+          <view class="item-right">
+            <input class="item-input" type="digit" value="{{deductions.other}}" data-field="other" bindinput="onDeductionInput"/>
+            <text class="item-unit">{{i18n.yuan}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 计算按钮 -->
+    <button class="submit-btn" bindtap="calculate" hover-class="btn-hover">{{i18n.calcTax}}</button>
+
+    <!-- 计算结果 -->
+    <view class="result-box" wx:if="{{result}}">
+      <view class="result-main">
+        <text class="result-label">{{i18n.afterTaxSalary}}</text>
+        <view class="amount-row">
+          <text class="currency">¥</text>
+          <text class="amount-num">{{result.afterTax}}</text>
+        </view>
+      </view>
+      <view class="result-grid">
+        <view class="grid-item">
+          <text class="grid-label">{{i18n.taxPayable}}</text>
+          <text class="grid-value red">{{result.tax}}</text>
+          <text class="grid-unit">{{i18n.yuan}}</text>
+        </view>
+        <view class="grid-item">
+          <text class="grid-label">{{i18n.effectiveRate}}</text>
+          <text class="grid-value">{{result.effectiveRate}}%</text>
+        </view>
+        <view class="grid-item">
+          <text class="grid-label">{{i18n.socialDeduction}}</text>
+          <text class="grid-value blue">{{result.socialDeduction}}</text>
+          <text class="grid-unit">{{i18n.yuan}}</text>
+        </view>
+        <view class="grid-item">
+          <text class="grid-label">{{i18n.monthlyNet}}</text>
+          <text class="grid-value green">{{result.monthlyNet}}</text>
+          <text class="grid-unit">{{i18n.yuan}}</text>
+        </view>
+      </view>
+
+      <!-- 年度汇总 -->
+      <view class="annual-box" wx:if="{{result.annual}}">
+        <text class="annual-title">{{i18n.annualSummary}}</text>
+        <view class="annual-list">
+          <view class="annual-row">
+            <text class="annual-label">{{i18n.annualPreTax}}</text>
+            <text class="annual-value">{{result.annual.preTax}}<text class="annual-unit">{{i18n.yuan}}</text></text>
+          </view>
+          <view class="annual-row">
+            <text class="annual-label">{{i18n.annualTax}}</text>
+            <text class="annual-value red">{{result.annual.tax}}<text class="annual-unit">{{i18n.yuan}}</text></text>
+          </view>
+          <view class="annual-row row-last">
+            <text class="annual-label">{{i18n.annualAfterTax}}</text>
+            <text class="annual-value bold">{{result.annual.afterTax}}<text class="annual-unit">{{i18n.yuan}}</text></text>
           </view>
         </view>
       </view>
 
-      <view class="annual-card">
-        <view class="annual-header">
-          <text class="annual-icon">📊</text>
-          <text class="annual-title">年度汇总</text>
-        </view>
-        <view class="annual-grid">
-          <view class="annual-item">
-            <text class="annual-label">年税前收入</text>
-            <text class="annual-value">{{result.annualSalary}}<text class="annual-unit">元</text></text>
-          </view>
-          <view class="annual-item">
-            <text class="annual-label">年应缴个税</text>
-            <text class="annual-value annual-tax">{{result.annualTax}}<text class="annual-unit">元</text></text>
-          </view>
-          <view class="annual-item item-wide">
-            <text class="annual-label">年税后收入</text>
-            <text class="annual-value annual-after">{{result.annualAfterTax}}<text class="annual-unit">元</text></text>
-          </view>
-        </view>
-      </view>
-
-      <view class="detail-card" wx:if="{{breakdown.length > 0}}">
-        <view class="detail-header">
-          <text class="detail-icon">⬡</text>
-          <text class="detail-title">计算明细</text>
-        </view>
+      <!-- 计算明细 -->
+      <view class="detail-box">
+        <text class="detail-title">{{i18n.calcDetail}}</text>
         <view class="detail-list">
-          <block wx:for="{{breakdown}}" wx:key="label">
-            <view class="detail-row">
-              <text class="detail-label">{{item.label}}</text>
-              <text class="detail-value {{item.cls}}">{{item.val}}<text class="val-unit">元</text></text>
+          <view class="detail-row" wx:for="{{breakdown}}" wx:key="label">
+            <text class="detail-label">{{item.label}}</text>
+            <text class="detail-value">{{item.val}}<text class="val-unit">{{i18n.yuan}}</text></text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 五险一金影响分析 -->
+      <view class="social-box" wx:if="{{result.socialResult}}">
+        <text class="section-title">{{i18n.socialAnalysis}}</text>
+        <view class="social-breakdown">
+          <view class="social-row">
+            <text class="social-row-label">{{i18n.pensionLabel}}</text>
+            <text class="social-row-value">{{result.socialResult.pension}}{{i18n.yuan}}</text>
+          </view>
+          <view class="social-row">
+            <text class="social-row-label">{{i18n.medicalLabel}}</text>
+            <text class="social-row-value">{{result.socialResult.medical}}{{i18n.yuan}}</text>
+          </view>
+          <view class="social-row">
+            <text class="social-row-label">{{i18n.unemploymentLabel}}</text>
+            <text class="social-row-value">{{result.socialResult.unemployment}}{{i18n.yuan}}</text>
+          </view>
+          <view class="social-row">
+            <text class="social-row-label">{{i18n.housingLabel}}</text>
+            <text class="social-row-value">{{result.socialResult.housing}}{{i18n.yuan}}</text>
+          </view>
+          <view class="social-row social-row-total">
+            <text class="social-row-label">{{i18n.monthlyTotal}}</text>
+            <text class="social-row-value">{{result.socialResult.total}}{{i18n.yuan}}</text>
+          </view>
+        </view>
+        <view class="social-compare">
+          <view class="compare-row">
+            <text class="compare-label">{{i18n.noSocialTax}}</text>
+            <text class="compare-value">{{result.socialResult.noSocialTax}}{{i18n.yuan}}</text>
+          </view>
+          <view class="compare-row">
+            <text class="compare-label">{{i18n.withSocialTax}}</text>
+            <text class="compare-value">{{result.socialResult.taxWithSocial}}{{i18n.yuan}}</text>
+          </view>
+          <view class="compare-saved">
+            <view class="compare-row">
+              <text class="compare-label">{{i18n.socialTaxSaved}}</text>
+              <text class="compare-value green">{{result.socialResult.taxSaved}}{{i18n.yuan}}</text>
             </view>
-          </block>
+          </view>
+          <view class="compare-row">
+            <text class="compare-label">{{i18n.annualSocialTotal}}</text>
+            <text class="compare-value">{{result.socialResult.annualTotal}}{{i18n.yuan}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 年终奖计税对比 -->
+      <view class="bonus-box" wx:if="{{bonusResult}}">
+        <text class="section-title">{{i18n.bonusCompare}}</text>
+        <text class="bonus-amount">{{i18n.bonusLabel}} {{bonus}}{{i18n.yuan}}</text>
+        <view class="compare-cards">
+          <view class="compare-card {{bonusResult.better === 'separate' ? 'card-better' : ''}}">
+            <view class="card-badge" wx:if="{{bonusResult.better === 'separate'}}">{{i18n.recommended}}</view>
+            <text class="card-title">{{i18n.separateTax}}</text>
+            <text class="card-desc">{{i18n.separateTaxDesc}}</text>
+            <view class="card-data">
+              <text class="card-label">{{i18n.taxPayable}}</text>
+              <text class="card-val red">{{bonusResult.separate.tax}}{{i18n.yuan}}</text>
+            </view>
+            <view class="card-data">
+              <text class="card-label">{{i18n.afterTaxBonus}}</text>
+              <text class="card-val">{{bonusResult.separate.afterTax}}{{i18n.yuan}}</text>
+            </view>
+            <view class="card-data">
+              <text class="card-label">{{i18n.effectiveRate}}</text>
+              <text class="card-val">{{bonusResult.separate.effectiveRate}}%</text>
+            </view>
+          </view>
+          <view class="compare-card {{bonusResult.better === 'combined' ? 'card-better' : ''}}">
+            <view class="card-badge" wx:if="{{bonusResult.better === 'combined'}}">{{i18n.recommended}}</view>
+            <text class="card-title">{{i18n.combinedTax}}</text>
+            <text class="card-desc">{{i18n.combinedTaxDesc}}</text>
+            <view class="card-data">
+              <text class="card-label">{{i18n.extraTax}}</text>
+              <text class="card-val red">{{bonusResult.combined.extraTax}}{{i18n.yuan}}</text>
+            </view>
+            <view class="card-data">
+              <text class="card-label">{{i18n.afterTaxNet}}</text>
+              <text class="card-val">{{bonusResult.combined.afterTax}}{{i18n.yuan}}</text>
+            </view>
+            <view class="card-data">
+              <text class="card-label">{{i18n.effectiveRate}}</text>
+              <text class="card-val">{{bonusResult.combined.effectiveRate}}%</text>
+            </view>
+          </view>
+        </view>
+        <view class="bonus-conclusion">
+          <text class="conclusion-icon">💡</text>
+          <text class="conclusion-text">{{i18n.bonusConclusionChoose}}<text class="conclusion-bold">{{bonusResult.better === 'separate' ? i18n.separateTax : i18n.combinedTax}}</text>{{i18n.bonusConclusionSave}}<text class="conclusion-green">{{bonusResult.saved}}{{i18n.yuan}}</text>{{i18n.bonusConclusionTax}}</text>
         </view>
       </view>
     </view>
 
-    <view class="info-section">
-      <view class="info-card">
-        <view class="info-header">
-          <text class="info-icon">ℹ</text>
-          <text class="info-title">使用说明</text>
-        </view>
-        <view class="info-content">
-          <view class="info-item">
-            <text class="info-bullet">●</text>
-            <text class="info-text">起征点：5000元/月（6万元/年）</text>
-          </view>
-          <view class="info-item">
-            <text class="info-bullet">●</text>
-            <text class="info-text">子女教育：每子女每月2000元</text>
-          </view>
-          <view class="info-item">
-            <text class="info-bullet">●</text>
-            <text class="info-text">继续教育：学历400元/月，职业资格3600元/月</text>
-          </view>
-          <view class="info-item">
-            <text class="info-bullet">●</text>
-            <text class="info-text">住房租金：直辖市1500元，其他城市1100元/月</text>
-          </view>
-          <view class="info-item">
-            <text class="info-bullet">●</text>
-            <text class="info-text">赡养老人：独生子女2000元，非独生1000元/月</text>
-          </view>
-        </view>
+    <!-- 使用说明 -->
+    <view class="tips-box">
+      <text class="tips-title">{{i18n.usageNote}}</text>
+      <view class="tips-list">
+        <text class="tip-line">{{i18n.tip1}}</text>
+        <text class="tip-line">{{i18n.tip2}}</text>
+        <text class="tip-line">{{i18n.tip3}}</text>
+        <text class="tip-line">{{i18n.tip4}}</text>
+        <text class="tip-line">{{i18n.tip5}}</text>
+        <text class="tip-line">{{i18n.tip6}}</text>
+        <text class="tip-line">{{i18n.tip7}}</text>
       </view>
     </view>
 
     <view class="bottom-space"></view>
   </view>
 </scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

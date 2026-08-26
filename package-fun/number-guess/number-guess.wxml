@@ -1,0 +1,163 @@
+<navigation-bar title="{{i18n.navTitle}}" />
+
+<view class="page-container {{isDarkMode ? 'dark-mode' : ''}} {{fontClass}} font-size-{{fontSizeSetting}}" style="{{themeStyle}}">
+  <!-- 工具头部 -->
+  <view class="tool-header">
+    <view class="tool-icon">🔢</view>
+    <view class="tool-title">{{i18n.toolTitle}}</view>
+    <view class="tool-subtitle">{{i18n.bullsAndCows}}</view>
+  </view>
+
+  <!-- 游戏状态消息 -->
+  <view class="message-bar {{gameState === 'won' ? 'message-won' : ''}}">
+    <text>{{message}}</text>
+  </view>
+
+  <!-- 数字输入显示区 -->
+  <view class="digit-display">
+    <view class="digit-box {{gameState === 'won' ? 'digit-box-won' : ''}} {{currentInput[0] !== undefined ? 'digit-filled' : ''}}">
+      <text class="digit-text">{{currentInput[0] !== undefined ? currentInput[0] : ''}}</text>
+    </view>
+    <view class="digit-box {{gameState === 'won' ? 'digit-box-won' : ''}} {{currentInput[1] !== undefined ? 'digit-filled' : ''}}">
+      <text class="digit-text">{{currentInput[1] !== undefined ? currentInput[1] : ''}}</text>
+    </view>
+    <view class="digit-box {{gameState === 'won' ? 'digit-box-won' : ''}} {{currentInput[2] !== undefined ? 'digit-filled' : ''}}">
+      <text class="digit-text">{{currentInput[2] !== undefined ? currentInput[2] : ''}}</text>
+    </view>
+    <view class="digit-box {{gameState === 'won' ? 'digit-box-won' : ''}} {{currentInput[3] !== undefined ? 'digit-filled' : ''}}">
+      <text class="digit-text">{{currentInput[3] !== undefined ? currentInput[3] : ''}}</text>
+    </view>
+  </view>
+
+  <!-- 数字键盘 -->
+  <view class="numpad">
+    <view class="numpad-row">
+      <view class="numpad-key {{usedDigits[1] ? 'key-disabled' : ''}}" bindtap="onTapDigit" data-digit="{{1}}">
+        <text>1</text>
+      </view>
+      <view class="numpad-key {{usedDigits[2] ? 'key-disabled' : ''}}" bindtap="onTapDigit" data-digit="{{2}}">
+        <text>2</text>
+      </view>
+      <view class="numpad-key {{usedDigits[3] ? 'key-disabled' : ''}}" bindtap="onTapDigit" data-digit="{{3}}">
+        <text>3</text>
+      </view>
+    </view>
+    <view class="numpad-row">
+      <view class="numpad-key {{usedDigits[4] ? 'key-disabled' : ''}}" bindtap="onTapDigit" data-digit="{{4}}">
+        <text>4</text>
+      </view>
+      <view class="numpad-key {{usedDigits[5] ? 'key-disabled' : ''}}" bindtap="onTapDigit" data-digit="{{5}}">
+        <text>5</text>
+      </view>
+      <view class="numpad-key {{usedDigits[6] ? 'key-disabled' : ''}}" bindtap="onTapDigit" data-digit="{{6}}">
+        <text>6</text>
+      </view>
+    </view>
+    <view class="numpad-row">
+      <view class="numpad-key {{usedDigits[7] ? 'key-disabled' : ''}}" bindtap="onTapDigit" data-digit="{{7}}">
+        <text>7</text>
+      </view>
+      <view class="numpad-key {{usedDigits[8] ? 'key-disabled' : ''}}" bindtap="onTapDigit" data-digit="{{8}}">
+        <text>8</text>
+      </view>
+      <view class="numpad-key {{usedDigits[9] ? 'key-disabled' : ''}}" bindtap="onTapDigit" data-digit="{{9}}">
+        <text>9</text>
+      </view>
+    </view>
+    <view class="numpad-row">
+      <view class="numpad-key key-action key-delete" bindtap="onTapDelete">
+        <text>⌫</text>
+      </view>
+      <view class="numpad-key {{usedDigits[0] ? 'key-disabled' : ''}}" bindtap="onTapDigit" data-digit="{{0}}">
+        <text>0</text>
+      </view>
+      <view class="numpad-key key-action key-submit {{currentInput.length < 4 ? 'key-submit-disabled' : ''}}" bindtap="onTapSubmit">
+        <text>{{i18n.confirm}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 猜测历史 -->
+  <view class="history-section" wx:if="{{guessHistory.length > 0}}">
+    <view class="section-title">{{i18n.guessRecord}}</view>
+    <view class="history-list">
+      <view class="history-row {{index % 2 === 1 ? 'history-row-alt' : ''}}" wx:for="{{guessHistory}}" wx:key="num">
+        <view class="history-num">#{{item.num}}</view>
+        <view class="history-digits">
+          <text class="history-digit">{{item.guess[0]}}</text>
+          <text class="history-digit">{{item.guess[1]}}</text>
+          <text class="history-digit">{{item.guess[2]}}</text>
+          <text class="history-digit">{{item.guess[3]}}</text>
+        </view>
+        <view class="history-result">
+          <text class="result-a">{{item.a}}A</text>
+          <text class="result-b">{{item.b}}B</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 统计信息 -->
+  <view class="stats-section">
+    <view class="section-title">{{i18n.statistics}}</view>
+    <view class="stats-grid">
+      <view class="stat-card">
+        <view class="stat-value">{{bestRecord > 0 ? bestRecord + i18n.timesUnit : '-'}}</view>
+        <view class="stat-label">{{i18n.bestRecord}}</view>
+      </view>
+      <view class="stat-card">
+        <view class="stat-value">{{totalWins}}{{i18n.gamesUnit}}</view>
+        <view class="stat-label">{{i18n.totalWins}}</view>
+      </view>
+      <view class="stat-card">
+        <view class="stat-value">{{guessCount}}{{i18n.timesUnit}}</view>
+        <view class="stat-label">{{i18n.currentGuesses}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <view class="btn btn-primary" bindtap="startNewGame">
+      <text>{{gameState === 'won' ? i18n.playAgain : i18n.restart}}</text>
+    </view>
+    <view class="btn btn-secondary" bindtap="resetStats">
+      <text>{{i18n.resetStats}}</text>
+    </view>
+  </view>
+
+  <!-- 规则提示 -->
+  <view class="tip-card">
+    <view class="tip-title">{{i18n.gameRules}}</view>
+    <view class="tip-content">
+      <text class="tip-item">{{i18n.rule1}}</text>
+      <text class="tip-item">{{i18n.rule2}}</text>
+      <text class="tip-item">{{i18n.rule3}}</text>
+      <text class="tip-item">{{i18n.rule4}}</text>
+      <text class="tip-item">{{i18n.rule5}}</text>
+    </view>
+  </view>
+</view>
+<!-- 结果弹窗 -->
+<view class="result-modal-mask" wx:if="{{showResultModal}}" bindtap="closeResultModal">
+  <view class="result-modal" catchtap="">
+    <view class="result-modal-poster" wx:if="{{_posterPath}}">
+      <image src="{{_posterPath}}" mode="widthFix" class="result-poster-img"></image>
+    </view>
+    <view class="result-modal-info" wx:else>
+      <text class="result-modal-icon">{{_resultData.icon}}</text>
+      <text class="result-modal-title">{{_resultData.title}}</text>
+      <text class="result-modal-score">{{_resultData.mainScore}}</text>
+      <text class="result-modal-label">{{_resultData.mainScoreLabel}}</text>
+      <text class="result-modal-rating" wx:if="{{_resultData.rating}}">{{_resultData.rating}}</text>
+    </view>
+    <view class="result-modal-actions">
+      <button class="result-modal-share" open-type="share">{{i18n.shareChallenge}}</button>
+      <view class="result-modal-close" bindtap="closeResultModal">{{i18n.close}}</view>
+    </view>
+  </view>
+</view>
+<!-- 分享海报Canvas -->
+<canvas type="2d" id="funPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>
+<!-- 结果海报Canvas -->
+<canvas type="2d" id="resultPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:420px;height:560px;"></canvas>

@@ -1,33 +1,34 @@
-<navigation-bar title="正则表达式测试" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
-
-<scroll-view class="tool-page" scroll-y>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper" style="background: linear-gradient(135deg, #8B5CF633 0%, #8B5CF666 100%);">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">🔍</text>
       </view>
-      <text class="tool-title">正则表达式测试</text>
-      <text class="tool-desc">实时测试、调试正则表达式</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
     <view class="regex-input-section">
       <view class="section-header-row">
-        <text class="section-label">⚡ 正则表达式</text>
+        <text class="section-label">{{i18n.regexLabel}}</text>
         <view class="regex-actions">
           <view class="action-tag sample" bindtap="loadSampleRegex">
-            <text>📄 示例</text>
+            <text>{{i18n.sampleBtn}}</text>
           </view>
           <view class="action-tag clear" bindtap="clearRegex">
-            <text>🗑️ 清空</text>
+            <text>{{i18n.clearBtn}}</text>
           </view>
         </view>
       </view>
-      
+
       <view class="regex-input-wrapper">
         <text class="regex-slash">/</text>
-        <input 
+        <input
           class="regex-input"
-          placeholder="输入正则表达式"
+          placeholder="{{i18n.regexPlaceholder}}"
           value="{{regexPattern}}"
           bindinput="onRegexInput"
         />
@@ -36,30 +37,30 @@
       </view>
 
       <view class="flags-section">
-        <text class="flags-label">标志位：</text>
-        <view 
+        <text class="flags-label">{{i18n.flagsLabel}}</text>
+        <view
           class="flag-btn {{flags.g ? 'active' : ''}}"
           data-flag="g"
           bindtap="toggleFlag"
         >
           <text class="flag-name">g</text>
-          <text class="flag-desc">全局</text>
+          <text class="flag-desc">{{i18n.flagGlobal}}</text>
         </view>
-        <view 
+        <view
           class="flag-btn {{flags.i ? 'active' : ''}}"
           data-flag="i"
           bindtap="toggleFlag"
         >
           <text class="flag-name">i</text>
-          <text class="flag-desc">忽略大小写</text>
+          <text class="flag-desc">{{i18n.flagIgnoreCase}}</text>
         </view>
-        <view 
+        <view
           class="flag-btn {{flags.m ? 'active' : ''}}"
           data-flag="m"
           bindtap="toggleFlag"
         >
           <text class="flag-name">m</text>
-          <text class="flag-desc">多行模式</text>
+          <text class="flag-desc">{{i18n.flagMultiline}}</text>
         </view>
       </view>
 
@@ -71,17 +72,17 @@
 
     <view class="test-text-section">
       <view class="section-header-row">
-        <text class="section-label">📝 测试文本</text>
+        <text class="section-label">{{i18n.testTextLabel}}</text>
         <view class="test-actions">
           <view class="action-tag paste" bindtap="pasteText">
-            <text>📋 粘贴</text>
+            <text>{{i18n.pasteBtn}}</text>
           </view>
         </view>
       </view>
 
-      <textarea 
+      <textarea
         class="test-textarea"
-        placeholder="在此输入要匹配的文本..."
+        placeholder="{{i18n.testTextPlaceholder}}"
         value="{{testText}}"
         bindinput="onTextInput"
         auto-height
@@ -89,41 +90,41 @@
       ></textarea>
 
       <view class="text-stats">
-        <text class="stat-item">字符数: {{textLength}}</text>
-        <text class="stat-item">行数: {{lineCount}}</text>
+        <text class="stat-item">{{i18n.charCountLabel}}: {{textLength}}</text>
+        <text class="stat-item">{{i18n.lineCountLabel}}: {{lineCount}}</text>
       </view>
     </view>
 
     <view class="action-buttons">
       <view class="main-btn test" bindtap="testRegex">
-        <text>🔍 测试匹配</text>
+        <text>{{i18n.testMatchBtn}}</text>
       </view>
       <view class="main-btn replace" bindtap="showReplacePanel">
-        <text>🔄 替换</text>
+        <text>{{i18n.replaceBtn}}</text>
       </view>
     </view>
 
     <view wx:if="{{showReplace}}" class="replace-section">
       <view class="replace-input-group">
-        <text class="replace-label">替换为：</text>
-        <input 
+        <text class="replace-label">{{i18n.replaceLabel}}</text>
+        <input
           class="replace-input"
-          placeholder="替换后的文本"
+          placeholder="{{i18n.replacePlaceholder}}"
           value="{{replaceText}}"
           bindinput="onReplaceInput"
         />
       </view>
       <view class="replace-btn" bindtap="executeReplace">
-        <text>✨ 执行替换</text>
+        <text>{{i18n.executeReplaceBtn}}</text>
       </view>
     </view>
 
     <view wx:if="{{matchResult}}" class="result-section">
       <view class="result-header">
-        <text class="result-title">🎯 匹配结果</text>
+        <text class="result-title">{{i18n.matchResultTitle}}</text>
         <view class="match-stats">
           <view class="stat-badge success">
-            <text>✅ {{matchCount}} 个匹配</text>
+            <text>✅ {{matchCount}} {{i18n.matchCountUnit}}</text>
           </view>
         </view>
       </view>
@@ -133,8 +134,8 @@
       </view>
 
       <view wx:if="{{matches.length > 0}}" class="matches-list">
-        <text class="matches-title">匹配详情</text>
-        <view 
+        <text class="matches-title">{{i18n.matchDetailTitle}}</text>
+        <view
           class="match-item"
           wx:for="{{matches}}"
           wx:key="index"
@@ -144,7 +145,20 @@
           </view>
           <view class="match-content">
             <text class="match-value">"{{item.match}}"</text>
-            <text class="match-position">位置: {{item.index}}</text>
+            <text class="match-position">{{i18n.positionLabel}}: {{item.index}}</text>
+          </view>
+          <view wx:if="{{item.groups.length > 0}}" class="match-groups">
+            <text class="group-label">{{i18n.captureGroupLabel}}</text>
+            <view class="group-tags">
+              <view
+                class="group-tag group-color-{{gItem.index % 8}}"
+                wx:for="{{item.groups}}"
+                wx:for-item="gItem"
+                wx:key="index"
+              >
+                <text>${{gItem.index}}: {{gItem.value}}</text>
+              </view>
+            </view>
           </view>
         </view>
       </view>
@@ -152,62 +166,81 @@
 
     <view wx:if="{{!matchResult && hasTested}}" class="no-match-section">
       <text class="no-match-icon">😕</text>
-      <text class="no-match-text">未找到匹配项</text>
+      <text class="no-match-text">{{i18n.noMatchText}}</text>
+    </view>
+
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResultBtn}}</button>
+      <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">{{i18n.resetBtn}}</button>
     </view>
 
     <view class="library-section">
-      <text class="library-title">📚 常用正则表达式</text>
+      <view class="section-header-row">
+        <text class="library-title">{{i18n.commonRegexTitle}}</text>
+      </view>
+      <view class="category-filter">
+        <view
+          class="category-tab {{activeRegexCategory === item.key ? 'active' : ''}}"
+          wx:for="{{regexCategories}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="onRegexCategoryTap"
+        >
+          <text>{{item.name}}</text>
+        </view>
+      </view>
       <view class="library-grid">
-        <view 
+        <view
           class="library-item"
-          wx:for="{{commonRegexes}}"
+          wx:for="{{filteredRegexes}}"
           wx:key="name"
           data-regex="{{item}}"
           bindtap="selectLibraryRegex"
         >
-          <text class="library-name">{{item.name}}</text>
+          <view class="library-item-header">
+            <text class="library-name">{{item.name}}</text>
+            <text class="library-category-tag">{{item.desc}}</text>
+          </view>
           <text class="library-pattern">{{item.pattern}}</text>
-          <text class="library-desc">{{item.desc}}</text>
         </view>
       </view>
     </view>
 
-    <view class="tips-section">
-      <text class="tips-title">💡 快捷参考</text>
-      <view class="tips-grid">
-        <view class="tip-card">
-          <text class="tip-pattern">\d</text>
-          <text class="tip-meaning">数字</text>
+    <view class="cheat-sheet-section">
+      <view class="section-header-row" bindtap="toggleCheatSheet">
+        <text class="cheat-title">{{i18n.cheatSheetTitle}}</text>
+        <view class="cheat-toggle">
+          <text>{{showCheatSheet ? i18n.collapse : i18n.expand}}</text>
         </view>
-        <view class="tip-card">
-          <text class="tip-pattern">\w</text>
-          <text class="tip-meaning">单词字符</text>
-        </view>
-        <view class="tip-card">
-          <text class="tip-pattern">\s</text>
-          <text class="tip-meaning">空白符</text>
-        </view>
-        <view class="tip-card">
-          <text class="tip-pattern">.</text>
-          <text class="tip-meaning">任意字符</text>
-        </view>
-        <view class="tip-card">
-          <text class="tip-pattern">*</text>
-          <text class="tip-meaning">0次或多次</text>
-        </view>
-        <view class="tip-card">
-          <text class="tip-pattern">+</text>
-          <text class="tip-meaning">1次或多次</text>
-        </view>
-        <view class="tip-card">
-          <text class="tip-pattern">?</text>
-          <text class="tip-meaning">0次或1次</text>
-        </view>
-        <view class="tip-card">
-          <text class="tip-pattern">{n}</text>
-          <text class="tip-meaning">恰好n次</text>
+      </view>
+      <view wx:if="{{showCheatSheet}}" class="cheat-content">
+        <view
+          class="cheat-category"
+          wx:for="{{cheatSheetData}}"
+          wx:key="category"
+        >
+          <view
+            class="cheat-category-header"
+            data-key="{{item.category}}"
+            bindtap="onCheatCategoryTap"
+          >
+            <text class="cheat-category-name">{{item.category}}</text>
+            <text class="cheat-category-arrow">{{activeCheatCategory === item.category ? '▲' : '▼'}}</text>
+          </view>
+          <view wx:if="{{activeCheatCategory === item.category}}" class="cheat-items">
+            <view
+              class="cheat-item"
+              wx:for="{{item.items}}"
+              wx:for-item="ci"
+              wx:key="syntax"
+            >
+              <text class="cheat-syntax">{{ci.syntax}}</text>
+              <text class="cheat-desc">{{ci.desc}}</text>
+            </view>
+          </view>
         </view>
       </view>
     </view>
   </view>
 </scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

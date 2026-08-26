@@ -1,0 +1,163 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
+  <view class="container">
+
+    <!-- 开始界面 -->
+    <view class="start-screen" wx:if="{{gameState === 'idle'}}">
+      <view class="tool-header">
+        <view class="tool-icon-large amber-gradient">
+          <view class="icon-decoration"></view>
+          <text class="tool-icon-text">⏱️</text>
+        </view>
+        <view class="tool-header-info">
+          <text class="tool-title">{{i18n.toolName}}</text>
+          <text class="tool-desc">{{i18n.toolDesc}}</text>
+        </view>
+      </view>
+
+      <view class="card">
+        <text class="card-title">{{i18n.roundCount}}</text>
+        <view class="round-options">
+          <view class="round-btn {{totalRounds === 3 ? 'active' : ''}}" bindtap="setRounds" data-rounds="3">
+            <text>3</text>
+          </view>
+          <view class="round-btn {{totalRounds === 5 ? 'active' : ''}}" bindtap="setRounds" data-rounds="5">
+            <text>5</text>
+          </view>
+          <view class="round-btn {{totalRounds === 10 ? 'active' : ''}}" bindtap="setRounds" data-rounds="10">
+            <text>10</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="primary-btn amber" bindtap="startGame" hover-class="btn-hover">
+        <text>{{i18n.startGame}}</text>
+      </view>
+
+      <view class="best-badge" wx:if="{{bestAvgError >= 0}}">
+        <text>🏆 {{i18n.bestRecord}} {{bestAvgError}}s</text>
+      </view>
+    </view>
+
+    <!-- 准备阶段 -->
+    <view class="game-section" wx:if="{{gameState === 'ready'}}">
+      <view class="target-card">
+        <text class="target-label">{{i18n.targetTime}}</text>
+        <view class="target-value-row">
+          <text class="target-value">{{targetSeconds}}</text>
+          <text class="target-unit">{{i18n.secondUnit}}</text>
+        </view>
+        <text class="target-hint">{{i18n.targetHint}}</text>
+      </view>
+      <view class="primary-btn amber" bindtap="startCounting" hover-class="btn-hover">
+        <text>{{i18n.startCount}}</text>
+      </view>
+    </view>
+
+    <!-- 默数中 -->
+    <view class="game-section" wx:if="{{gameState === 'counting'}}">
+      <view class="counting-card">
+        <view class="counting-ring">
+          <text class="counting-icon">⏳</text>
+        </view>
+        <text class="counting-hint">{{i18n.countingHint}}</text>
+      </view>
+      <view class="primary-btn red" bindtap="stopCounting" hover-class="btn-hover">
+        <text>{{i18n.stopCount}}</text>
+      </view>
+    </view>
+
+    <!-- 单轮结果 -->
+    <view class="game-section" wx:if="{{gameState === 'result'}}">
+      <view class="round-result-card">
+        <view class="result-row">
+          <text class="result-label">{{i18n.targetTime}}</text>
+          <text class="result-value">{{targetSeconds}}s</text>
+        </view>
+        <view class="result-row">
+          <text class="result-label">{{i18n.yourTime}}</text>
+          <text class="result-value">{{actualTime}}s</text>
+        </view>
+        <view class="result-row error-row">
+          <text class="result-label">{{i18n.error}}</text>
+          <text class="result-error {{errorValue <= 0.5 ? 'good' : errorValue <= 1.5 ? 'ok' : 'bad'}}">{{errorValue}}s</text>
+        </view>
+        <view class="rating-row">
+          <text wx:if="{{errorValue <= 0.3}}" class="rating excellent">🌟 {{i18n.excellent}}</text>
+          <text wx:elif="{{errorValue <= 0.8}}" class="rating good">👍 {{i18n.good}}</text>
+          <text wx:elif="{{errorValue <= 1.5}}" class="rating fair">😊 {{i18n.fair}}</text>
+          <text wx:else class="rating poor">💪 {{i18n.poor}}</text>
+        </view>
+      </view>
+      <view class="stats-bar">
+        <view class="stat">
+          <text class="stat-label">{{i18n.round}}</text>
+          <text class="stat-val">{{currentRound}}/{{totalRounds}}</text>
+        </view>
+        <view class="stat">
+          <text class="stat-label">{{i18n.totalError}}</text>
+          <text class="stat-val">{{totalError}}s</text>
+        </view>
+        <view class="stat">
+          <text class="stat-label">{{i18n.avgError}}</text>
+          <text class="stat-val">{{avgError}}s</text>
+        </view>
+      </view>
+      <view class="primary-btn amber" bindtap="nextRound" hover-class="btn-hover">
+        <text>{{currentRound >= totalRounds ? i18n.viewResult : i18n.nextRound}}</text>
+      </view>
+    </view>
+
+    <!-- 最终结果 -->
+    <view class="result-section" wx:if="{{gameState === 'finished'}}">
+      <view class="result-card">
+        <text class="result-emoji">🎯</text>
+        <text class="result-title">{{i18n.trainingComplete}}</text>
+        <view class="result-stats">
+          <view class="r-stat">
+            <text class="r-val">{{totalRounds}}</text>
+            <text class="r-label">{{i18n.round}}</text>
+          </view>
+          <view class="r-stat">
+            <text class="r-val">{{totalError}}s</text>
+            <text class="r-label">{{i18n.totalError}}</text>
+          </view>
+          <view class="r-stat">
+            <text class="r-val">{{avgError}}s</text>
+            <text class="r-label">{{i18n.avgError}}</text>
+          </view>
+        </view>
+        <view class="new-record-badge" wx:if="{{isNewRecord}}">
+          <text>🏆 {{i18n.newRecord}}</text>
+        </view>
+      </view>
+
+      <view class="detail-card">
+        <view class="detail-header">
+          <text class="detail-col">{{i18n.round}}</text>
+          <text class="detail-col">{{i18n.target}}</text>
+          <text class="detail-col">{{i18n.actual}}</text>
+          <text class="detail-col">{{i18n.error}}</text>
+        </view>
+        <view class="detail-row" wx:for="{{roundResults}}" wx:key="round">
+          <text class="detail-col">{{item.round}}</text>
+          <text class="detail-col">{{item.target}}s</text>
+          <text class="detail-col">{{item.actual}}s</text>
+          <text class="detail-col {{item.error <= 0.5 ? 'good' : ''}}">{{item.error}}s</text>
+        </view>
+      </view>
+
+      <view class="result-actions">
+        <view class="primary-btn amber" bindtap="startGame" hover-class="btn-hover">
+          <text>{{i18n.playAgain}}</text>
+        </view>
+        <view class="secondary-btn" bindtap="goBack" hover-class="btn-hover">
+          <text>{{i18n.goBack}}</text>
+        </view>
+      </view>
+    </view>
+
+  </view>
+</scroll-view>
+<canvas type="2d" id="funPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

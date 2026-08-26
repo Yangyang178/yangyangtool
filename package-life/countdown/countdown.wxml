@@ -1,22 +1,24 @@
-<navigation-bar title="倒计时" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
 
-<scroll-view class="tool-page" scroll-y>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper" style="background: linear-gradient(135deg, #3B82F633 0%, #3B82F666 100%);">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">⏰</text>
       </view>
-      <text class="tool-title">倒计时</text>
-      <text class="text-desc">重要日期倒计时提醒</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="text-desc">{{i18n.toolDesc}}</text>
     </view>
 
     <view wx:if="{{!hasEvent}}" class="create-section">
       <view class="input-card">
         <view class="input-group">
-          <text class="input-label">📝 事件名称</text>
+          <text class="input-label">{{i18n.eventName}}</text>
           <input 
             class="text-input" 
-            placeholder="例如：春节、生日、考试..." 
+            placeholder="{{i18n.eventNamePlaceholder}}" 
             value="{{eventName}}"
             bindinput="onEventNameInput"
             maxlength="20"
@@ -24,17 +26,17 @@
         </view>
 
         <view class="input-group">
-          <text class="input-label">📅 目标日期</text>
+          <text class="input-label">{{i18n.targetDate}}</text>
           <picker mode="date" value="{{targetDate}}" start="{{today}}" end="2099-12-31" bindchange="onDateChange">
             <view class="date-picker-box">
-              <text>{{targetDate || '请选择日期'}}</text>
+              <text>{{targetDate || i18n.selectDate}}</text>
               <text class="picker-icon">📅</text>
             </view>
           </picker>
         </view>
 
         <view class="input-group">
-          <text class="input-label">⏰ 目标时间（可选）</text>
+          <text class="input-label">{{i18n.targetTime}}</text>
           <picker mode="time" value="{{targetTime}}" bindchange="onTimeChange">
             <view class="date-picker-box">
               <text>{{targetTime || '00:00'}}</text>
@@ -43,90 +45,176 @@
           </picker>
         </view>
 
+        <view class="input-group">
+          <text class="input-label">{{i18n.category}}</text>
+          <view class="category-picker">
+            <view 
+              class="cat-pick-item {{selectedCategory === item.key ? 'cat-pick-active' : ''}}" 
+              wx:for="{{categories}}" 
+              wx:key="key"
+              data-key="{{item.key}}"
+              bindtap="onCategoryTap"
+            >
+              <text>{{item.icon}} {{item.name}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="input-group">
+          <text class="input-label">{{i18n.repeat}}</text>
+          <view class="repeat-picker">
+            <view 
+              class="repeat-pick-item {{selectedRepeat === item.key ? 'repeat-pick-active' : ''}}" 
+              wx:for="{{repeatOptions}}" 
+              wx:key="key"
+              data-key="{{item.key}}"
+              bindtap="onRepeatTap"
+            >
+              <text>{{item.icon}} {{item.name}}</text>
+            </view>
+          </view>
+        </view>
+
         <view class="quick-events">
-          <text class="quick-label">快捷添加：</text>
-          <view class="event-tag" wx:for="{{quickEvents}}" wx:key="name" data-event="{{item}}" bindtap="addQuickEvent">
+          <text class="quick-label">{{i18n.quickAdd}}</text>
+          <view class="event-tag" wx:for="{{quickEvents}}" wx:key="key" data-event="{{item}}" bindtap="addQuickEvent">
             <text>{{item.icon}} {{item.name}}</text>
           </view>
         </view>
 
         <view class="create-btn" bindtap="createCountdown">
-          <text>✨ 创建倒计时</text>
+          <text>{{i18n.createCountdown}}</text>
         </view>
       </view>
     </view>
 
     <view wx:if="{{hasEvent}}" class="countdown-display">
-      <canvas canvas-id="progressCanvas" class="progress-canvas"></canvas>
+      <view class="flip-card">
+        <view class="flip-event-header">
+          <view class="flip-event-left">
+            <text class="flip-cat-tag flip-cat-{{currentEvent.category || 'life'}}">{{currentEvent.category === 'work' ? '💼 ' + i18n.catWork : currentEvent.category === 'study' ? '📚 ' + i18n.catStudy : currentEvent.category === 'family' ? '👨‍👩‍👧 ' + i18n.catFamily : currentEvent.category === 'health' ? '💪 ' + i18n.catHealth : currentEvent.category === 'travel' ? '✈️ ' + i18n.catTravel : '🏠 ' + i18n.catLife}}</text>
+            <text class="flip-event-name">{{currentEvent.name}}</text>
+          </view>
+          <view class="flip-pin-btn {{currentEvent.pinned ? 'pinned' : ''}}" bindtap="pinEvent">
+            <text>{{currentEvent.pinned ? '📌' : '📍'}}</text>
+          </view>
+        </view>
+        <view class="flip-meta-row">
+          <text class="flip-target-date">{{currentEvent.date}} {{currentEvent.time || ''}}</text>
+          <text class="flip-repeat-tag" wx:if="{{currentEvent.repeat && currentEvent.repeat !== 'none'}}">{{currentEvent.repeat === 'yearly' ? '🎂 ' + i18n.repeatYearly : currentEvent.repeat === 'monthly' ? '📅 ' + i18n.repeatMonthly : currentEvent.repeat === 'weekly' ? '📆 ' + i18n.repeatWeekly : ''}}</text>
+        </view>
 
-      <view class="event-info">
-        <text class="event-name">{{currentEvent.name}}</text>
-        <text class="event-target-date">{{currentEvent.date}} {{currentEvent.time || ''}}</text>
-      </view>
-
-      <view class="time-display">
-        <view wx:if="{{!isExpired}}" class="time-grid">
-          <view class="time-block">
-            <text class="time-number">{{timeLeft.days}}</text>
-            <text class="time-unit">天</text>
+        <view wx:if="{{!isExpired}}" class="flip-grid">
+          <view class="flip-block">
+            <view class="flip-number-box">
+              <view class="flip-top">{{timeLeft.days}}</view>
+              <view class="flip-divider"></view>
+              <view class="flip-bottom">{{timeLeft.days}}</view>
+            </view>
+            <text class="flip-unit">{{i18n.days}}</text>
           </view>
-          <view class="time-separator">:</view>
-          <view class="time-block">
-            <text class="time-number">{{timeLeft.hours}}</text>
-            <text class="time-unit">时</text>
+          <view class="flip-colon">:</view>
+          <view class="flip-block">
+            <view class="flip-number-box">
+              <view class="flip-top">{{timeLeft.hours}}</view>
+              <view class="flip-divider"></view>
+              <view class="flip-bottom">{{timeLeft.hours}}</view>
+            </view>
+            <text class="flip-unit">{{i18n.hours}}</text>
           </view>
-          <view class="time-separator">:</view>
-          <view class="time-block">
-            <text class="time-number">{{timeLeft.minutes}}</text>
-            <text class="time-unit">分</text>
+          <view class="flip-colon">:</view>
+          <view class="flip-block">
+            <view class="flip-number-box">
+              <view class="flip-top">{{timeLeft.minutes}}</view>
+              <view class="flip-divider"></view>
+              <view class="flip-bottom">{{timeLeft.minutes}}</view>
+            </view>
+            <text class="flip-unit">{{i18n.minutes}}</text>
           </view>
-          <view class="time-separator">:</view>
-          <view class="time-block">
-            <text class="time-number">{{timeLeft.seconds}}</text>
-            <text class="time-unit">秒</text>
+          <view class="flip-colon">:</view>
+          <view class="flip-block">
+            <view class="flip-number-box">
+              <view class="flip-top">{{timeLeft.seconds}}</view>
+              <view class="flip-divider"></view>
+              <view class="flip-bottom">{{timeLeft.seconds}}</view>
+            </view>
+            <text class="flip-unit">{{i18n.seconds}}</text>
           </view>
         </view>
 
         <view wx:if="{{isExpired}}" class="expired-display">
           <text class="expired-icon">🎉</text>
-          <text class="expired-text">时间已到！</text>
-          <text class="expired-sub">{{currentEvent.name}} 已到来</text>
+          <text class="expired-text">{{i18n.timeUp}}</text>
+          <text class="expired-sub">{{currentEvent.name}} {{i18n.hasArrived}}</text>
         </view>
-      </view>
 
-      <view class="progress-info">
-        <text class="progress-text">已过 {{passedPercent}}%</text>
-        <view class="progress-bar">
-          <view class="progress-fill" style="width: {{passedPercent}}%"></view>
+        <view class="progress-info">
+          <text class="progress-text">{{i18n.passed}} {{passedPercent}}%</text>
+          <view class="progress-bar">
+            <view class="progress-fill" style="width: {{passedPercent}}%"></view>
+          </view>
         </view>
       </view>
 
       <view class="action-buttons">
         <view class="action-btn edit" bindtap="editEvent">
-          <text>✏️ 编辑</text>
+          <text>{{i18n.edit}}</text>
         </view>
         <view class="action-btn delete" bindtap="deleteEvent">
-          <text>🗑️ 删除</text>
+          <text>{{i18n.deleteBtn}}</text>
         </view>
         <view class="action-btn share" bindtap="shareEvent">
-          <text>📤 分享</text>
+          <text>{{i18n.share}}</text>
         </view>
       </view>
 
-      <view wx:if="{{savedEvents.length > 1}}" class="events-list">
-        <text class="list-title">其他倒计时</text>
-        <view 
-          class="event-item {{item.id === currentEvent.id ? 'active' : ''}}"
-          wx:for="{{savedEvents}}"
-          wx:key="id"
-          bindtap="switchEvent"
-          data-event="{{item}}"
-        >
-          <text class="item-name">{{item.name}}</text>
-          <text class="item-date">{{item.date}}</text>
-          <text class="item-days-left">{{item.daysLeft}}天</text>
+      <view class="tool-actions-bar">
+        <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResult}}</button>
+      </view>
+
+      <view wx:if="{{savedEvents.length > 1}}" class="events-list-section">
+        <view class="filter-bar">
+          <view 
+            class="filter-tab {{activeCategory === 'all' ? 'filter-active' : ''}}" 
+            data-key="all" 
+            bindtap="onFilterCategory"
+          >
+            <text>{{i18n.all}}</text>
+          </view>
+          <view 
+            class="filter-tab {{activeCategory === item.key ? 'filter-active' : ''}}" 
+            wx:for="{{categories}}" 
+            wx:key="key"
+            data-key="{{item.key}}"
+            bindtap="onFilterCategory"
+          >
+            <text>{{item.icon}} {{item.name}}</text>
+          </view>
+        </view>
+
+        <view class="events-list">
+          <view 
+            class="event-item {{item.id === currentEvent.id ? 'active' : ''}} {{item.pinned ? 'pinned-item' : ''}}"
+            wx:for="{{savedEvents}}"
+            wx:key="id"
+            wx:if="{{activeCategory === 'all' || item.category === activeCategory}}"
+            bindtap="switchEvent"
+            data-event="{{item}}"
+          >
+            <view class="item-left">
+              <text class="item-cat-dot cat-dot-{{item.category || 'life'}}"></text>
+              <text class="item-name">{{item.name}}</text>
+              <text class="item-pin-icon" wx:if="{{item.pinned}}">📌</text>
+              <text class="item-repeat-icon" wx:if="{{item.repeat && item.repeat !== 'none'}}">{{item.repeat === 'yearly' ? '🎂' : item.repeat === 'monthly' ? '📅' : item.repeat === 'weekly' ? '📆' : ''}}</text>
+            </view>
+            <view class="item-right">
+              <text class="item-date">{{item.date}}</text>
+              <text class="item-days-left">{{item.daysLeft}}{{i18n.daysUnit}}</text>
+            </view>
+          </view>
         </view>
       </view>
     </view>
   </view>
 </scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

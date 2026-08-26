@@ -1,120 +1,241 @@
-<navigation-bar title="世界时钟" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
 
-<scroll-view class="tool-page" scroll-y enhanced="{{false}}" show-scrollbar="{{false}}">
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y enhanced show-scrollbar="{{false}}">
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper" style="background: linear-gradient(135deg, #8B5CF633 0%, #8B5CF666 100%);">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">🌍</text>
       </view>
-      <text class="tool-title">世界时钟</text>
-      <text class="tool-desc">全球时区时间实时查看</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
     <view class="local-time-card">
       <view class="local-header">
         <text class="local-icon">📍</text>
-        <text class="local-label">本地时间</text>
+        <text class="local-label">{{i18n.localTime}}</text>
       </view>
       <view class="local-time">
         <text class="time-text">{{localTime}}</text>
-        <text class="date-text">{{localDate}}</text>
+        <text class="date-text">{{localDate}} {{localWeekday}}</text>
       </view>
       <view class="local-info">
-        <text class="timezone">UTC{{localOffset >= '+' ? '' : ''}}{{localOffset}}</text>
-        <text class="weekday">{{localWeekday}}</text>
+        <text class="timezone">UTC{{localOffset}}</text>
       </view>
     </view>
 
-    <view class="section-header">
-      <text class="section-title">已添加城市 ({{cityList.length}})</text>
+    <view class="feature-tabs">
+      <view class="feature-tab {{showTimeSlider ? 'tab-active' : ''}}" bindtap="toggleTimeSlider">
+        <text>{{i18n.timeSlider}}</text>
+      </view>
+      <view class="feature-tab {{showMeeting ? 'tab-active' : ''}}" bindtap="toggleMeeting">
+        <text>{{i18n.meetingRecommend}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{showTimeSlider}}" class="slider-section">
+      <view class="slider-card">
+        <view class="slider-header">
+          <text class="slider-title">{{i18n.dragToView}}</text>
+          <view class="reset-now-btn" bindtap="resetToNow">
+            <text>{{i18n.backToNow}}</text>
+          </view>
+        </view>
+
+        <view class="slider-time-display">
+          <text class="slider-big-time">{{sliderLabel}}</text>
+          <text class="slider-sub">{{i18n.localTimeLabel}}</text>
+        </view>
+
+        <slider 
+          class="time-slider"
+          min="0" 
+          max="1439" 
+          step="15"
+          value="{{sliderValue}}" 
+          activeColor="#8B5CF6"
+          backgroundColor="rgba(139,92,246,0.15)"
+          block-size="22"
+          block-color="#8B5CF6"
+          bindchange="onSliderChange"
+          bindchanging="onSliderChanging"
+        />
+
+        <view class="slider-marks">
+          <text class="mark">00:00</text>
+          <text class="mark">06:00</text>
+          <text class="mark">12:00</text>
+          <text class="mark">18:00</text>
+          <text class="mark">24:00</text>
+        </view>
+      </view>
+
+      <view class="slider-city-list" wx:if="{{sliderCityList.length > 0}}">
+        <view class="slider-city-item" wx:for="{{sliderCityList}}" wx:key="id">
+          <view class="sci-left">
+            <text class="sci-emoji">{{item.emoji}}</text>
+            <view class="sci-info">
+              <text class="sci-city">{{item.city}}</text>
+              <text class="sci-tz">{{item.timezone}}</text>
+            </view>
+          </view>
+          <view class="sci-right">
+            <text class="sci-time {{item.isWorkHour ? 'work-hour' : 'off-hour'}}">{{item.time}}{{item.dayText}}</text>
+            <text class="sci-status {{item.isWorkHour ? 'status-work' : 'status-off'}}">{{item.isWorkHour ? '💼' : '🌙'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{sliderCityList.length === 0}}" class="slider-empty">
+        <text class="slider-empty-text">{{i18n.addCityFirst}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{showMeeting}}" class="meeting-section">
+      <view class="meeting-card">
+        <view class="meeting-header">
+          <text class="meeting-title">{{i18n.meetingTimeTitle}}</text>
+          <text class="meeting-sub">{{i18n.workHoursLabel}}: {{workStart}}:00 - {{workEnd}}:00</text>
+        </view>
+
+        <view wx:if="{{meetingResults.length > 0}}" class="meeting-results">
+          <view class="best-slot" wx:if="{{bestMeetingTime}}">
+            <view class="best-badge">{{i18n.bestRecommend}}</view>
+            <text class="best-time">{{bestMeetingTime}}</text>
+            <text class="best-desc">{{i18n.allCitiesWorkHours}} ({{i18n.totalSlots}}{{totalWorkSlots}}{{i18n.availableSlots}})</text>
+            <text class="best-reason" wx:if="{{bestReason}}">💡 {{bestReason}}</text>
+          </view>
+
+          <view class="slot-list">
+            <view class="slot-item {{item.allInWork ? 'slot-all-work' : 'slot-near'}}" wx:for="{{meetingResults}}" wx:key="localHour">
+              <view class="slot-left">
+                <text class="slot-time">{{item.localTime}}</text>
+                <text class="slot-tag {{item.allInWork ? 'tag-good' : 'tag-partial'}}">{{item.allInWork ? i18n.allWork : i18n.partialWork}}</text>
+                <text class="slot-reason" wx:if="{{item.reason}}">{{item.reason}}</text>
+              </view>
+              <view class="slot-cities">
+                <view class="slot-city" wx:for="{{item.cityTimes}}" wx:for-item="ct" wx:key="city">
+                  <text class="sc-emoji">{{ct.emoji}}</text>
+                  <text class="sc-time {{ct.isWorkHour ? 'sc-work' : 'sc-off'}}">{{ct.hour}}{{ct.dayText}}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{meetingResults.length === 0 && cityList.length < 2}}" class="meeting-empty">
+          <text class="meeting-empty-icon">🤝</text>
+          <text class="meeting-empty-text">{{i18n.addAtLeast2}}</text>
+          <text class="meeting-empty-hint">{{i18n.toRecommendMeeting}}</text>
+        </view>
+
+        <view wx:if="{{meetingResults.length === 0 && cityList.length >= 2}}" class="meeting-empty">
+          <text class="meeting-empty-icon">😔</text>
+          <text class="meeting-empty-text">{{i18n.noAllWorkSlot}}</text>
+          <text class="meeting-empty-hint">{{i18n.adjustWorkHours}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-header" wx:if="{{!showTimeSlider}}">
+      <text class="section-title">{{i18n.worldCities}}</text>
       <view class="add-btn" bindtap="showAddCity">
-        <text>➕ 添加</text>
+        <text>+ {{i18n.addCity}}</text>
       </view>
     </view>
 
-    <view class="city-list">
-      <view 
-        class="city-card" 
-        wx:for="{{cityList}}" 
-        wx:key="id"
-      >
+    <view class="city-list" wx:if="{{!showTimeSlider && !showMeeting}}">
+      <view class="city-card" wx:for="{{cityList}}" wx:key="id">
         <view class="city-main">
-          <view class="city-emoji">{{item.emoji}}</view>
+          <text class="city-emoji">{{item.emoji}}</text>
           <view class="city-info">
             <text class="city-name">{{item.city}}</text>
             <text class="country-name">{{item.country}}</text>
           </view>
-          <view class="timezone-badge">
-            <text>{{item.timezone}}</text>
-          </view>
+          <text class="timezone-badge">{{item.timezone}}</text>
         </view>
-        
         <view class="city-time-display">
           <text class="city-time">{{item.time}}</text>
           <text class="city-date">{{item.date}}</text>
-          <view class="diff-badge {{item.diffType}}">
-            <text>{{item.diffText}}</text>
+          <text class="diff-badge {{item.diffType}}">{{item.diffText}}</text>
+          <view class="remove-btn" data-id="{{item.id}}" bindtap="removeCity">
+            <text>✕</text>
           </view>
         </view>
-      </view>
-
-      <view wx:if="{{cityList.length === 0}}" class="empty-state">
-        <text class="empty-icon">🌐</text>
-        <text class="empty-text">暂无城市，点击上方添加</text>
+        <view class="work-bar-wrap">
+          <view class="work-bar">
+            <view class="work-bar-cell {{cell.isWork ? 'work' : 'off'}} {{cell.isCurrent ? 'current' : ''}}" wx:for="{{item.workBar}}" wx:for-item="cell" wx:key="hour"></view>
+          </view>
+          <view class="work-bar-labels">
+            <text class="wb-label">0</text>
+            <text class="wb-label">{{workStart}}</text>
+            <text class="wb-label">{{workEnd}}</text>
+            <text class="wb-label">24</text>
+          </view>
+        </view>
       </view>
     </view>
 
-    <view wx:if="{{showCityPicker}}" class="picker-overlay" bindtap="hideAddCity">
-      <view class="picker-modal" catchtap="">
-        <view class="picker-header">
-          <text class="picker-title">选择城市</text>
-          <text class="picker-close" bindtap="hideAddCity">✕</text>
-        </view>
-        
-        <view class="search-box">
-          <text class="search-icon">🔍</text>
-          <input 
-            class="search-input"
-            placeholder="搜索城市..."
-            value="{{searchKeyword}}"
-            bindinput="onSearchCity"
-          />
-        </view>
-
-        <scroll-view class="city-picker-list" scroll-y>
-          <view 
-            class="picker-city-item"
-            wx:for="{{filteredCities}}"
-            wx:key="id"
-            bindtap="selectCity"
-            data-city="{{item}}"
-          >
-            <text class="picker-emoji">{{item.emoji}}</text>
-            <text class="picker-city-name">{{item.city}}</text>
-            <text class="picker-country">{{item.country}}</text>
-            <text class="picker-timezone">{{item.timezone}}</text>
-          </view>
-
-          <view wx:if="{{filteredCities.length === 0}}" class="no-result">
-            <text>未找到城市</text>
-          </view>
-        </scroll-view>
-      </view>
+    <view wx:if="{{cityList.length === 0 && !showTimeSlider && !showMeeting}}" class="empty-state">
+      <text class="empty-icon">🌍</text>
+      <text class="empty-text">{{i18n.noCityAdded}}</text>
     </view>
 
-    <view class="popular-cities">
-      <text class="popular-title">热门城市</text>
+    <view class="popular-cities" wx:if="{{!showTimeSlider && !showMeeting}}">
+      <text class="popular-title">{{i18n.hotCities}}</text>
       <view class="popular-grid">
-        <view 
-          class="popular-tag"
-          wx:for="{{popularCities}}"
-          wx:key="id"
-          bindtap="quickAddCity"
-          data-city="{{item}}"
-        >
+        <view class="popular-tag" wx:for="{{popularCities}}" wx:key="id" data-city="{{item}}" bindtap="quickAddCity">
           <text>{{item.emoji}} {{item.city}}</text>
         </view>
       </view>
     </view>
+
+    <view class="dst-alerts" wx:if="{{dstAlerts.length > 0}}">
+      <view class="dst-alert-card">
+        <text class="dst-title">{{i18n.dstReminder}}</text>
+        <view class="dst-list">
+          <view class="dst-item" wx:for="{{dstAlerts}}" wx:key="city">
+            <text class="dst-emoji">{{item.emoji}}</text>
+            <view class="dst-info">
+              <text class="dst-city">{{item.city}}</text>
+              <text class="dst-detail">{{item.inDST ? i18n.currentlyInDST : i18n.currentlyInWinter}} · {{item.effectiveTimezone}}</text>
+              <text class="dst-period">{{i18n.dstPeriod}}: {{item.dstStart}} ~ {{item.dstEnd}}</text>
+            </view>
+            <view class="dst-badge {{item.inDST ? 'dst-on' : 'dst-off'}}">{{item.inDST ? i18n.dstPeriod : i18n.winterTime}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResult}}</button>
+    </view>
   </view>
 </scroll-view>
+
+<view wx:if="{{showCityPicker}}" class="picker-overlay" bindtap="hideAddCity">
+  <view class="picker-modal" catchtap="">
+    <view class="picker-header">
+      <text class="picker-title">{{i18n.selectCity}}</text>
+      <text class="picker-close" bindtap="hideAddCity">✕</text>
+    </view>
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="{{i18n.searchCityPlaceholder}}" value="{{searchKeyword}}" bindinput="onSearchCity" />
+    </view>
+    <scroll-view class="city-picker-list" scroll-y enhanced show-scrollbar="{{false}}">
+      <view class="picker-city-item" wx:for="{{filteredCities}}" wx:key="id" data-city="{{item}}" bindtap="selectCity">
+        <text class="picker-emoji">{{item.emoji}}</text>
+        <text class="picker-city-name">{{item.city}}</text>
+        <text class="picker-country">{{item.country}}</text>
+        <text class="picker-timezone">{{item.timezone}}</text>
+      </view>
+      <view wx:if="{{filteredCities.length === 0}}" class="no-result">
+        <text>{{i18n.noCityMatch}}</text>
+      </view>
+    </scroll-view>
+  </view>
+</view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

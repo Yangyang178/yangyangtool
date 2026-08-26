@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "反应速度测试 - 手速反应力挑战",
+  "usingComponents": {
+    "navigation-bar": "/components/navigation-bar/navigation-bar"
+  }
+}

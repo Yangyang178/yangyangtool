@@ -1,0 +1,220 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
+
+<view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}">
+  <view class="container">
+    <view class="tool-header">
+      <view class="tool-icon-large" style="background: linear-gradient(135deg, rgba(255,107,107,0.2) 0%, rgba(255,202,40,0.15) 100%);">
+        <view class="tool-icon-decoration"></view>
+        <text>🎭</text>
+      </view>
+      <view class="tool-info">
+        <text class="tool-title-main">{{i18n.toolTitle}}</text>
+        <text class="tool-desc-main">{{i18n.toolDesc}}</text>
+      </view>
+    </view>
+
+    <view class="preview-section">
+      <view class="preview-box" style="background-color: {{previewBgColor}};">
+        <canvas type="2d" id="previewCanvas" class="preview-canvas"></canvas>
+        <view
+          class="touch-overlay {{activeStickers.length > 0 ? 'touch-active' : ''}}"
+          catchtouchstart="onPreviewTouchStart"
+          catchtouchmove="onPreviewTouchMove"
+          catchtouchend="onPreviewTouchEnd"
+        ></view>
+      </view>
+    </view>
+
+    <view class="section-card">
+      <text class="section-title">{{i18n.selectTemplate}}</text>
+      <scroll-view class="template-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="template-row">
+          <view
+            class="template-item {{item.id === selectedTemplate ? 'active' : ''}}"
+            wx:for="{{templates}}"
+            wx:key="id"
+            data-id="{{item.id}}"
+            bindtap="onTemplateTap"
+          >
+            <text class="template-emoji">{{item.emoji}}</text>
+            <text class="template-name">{{item.name}}</text>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="hot-toggle-row">
+        <text class="hot-toggle-label">{{i18n.hotTemplates}}</text>
+        <view class="hot-toggle {{showHotTemplates ? 'active' : ''}}" bindtap="toggleHotTemplates">
+          <text>{{showHotTemplates ? i18n.collapse : i18n.expand}}</text>
+        </view>
+      </view>
+      <view class="hot-templates" wx:if="{{showHotTemplates}}">
+        <view class="hot-grid">
+          <view
+            class="hot-item {{item.id === selectedTemplate ? 'active' : ''}}"
+            wx:for="{{hotTemplates}}"
+            wx:key="id"
+            data-id="{{item.id}}"
+            bindtap="onHotTemplateTap"
+          >
+            <text class="hot-emoji">{{item.emoji}}</text>
+            <text class="hot-name">{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="choose-image-section">
+        <view class="choose-image-btn" bindtap="onChooseImage">
+          <text>{{i18n.chooseFromAlbum}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-card">
+      <text class="section-title">{{i18n.editText}}</text>
+      <view class="input-group">
+        <text class="input-label">{{i18n.topText}}</text>
+        <input class="text-input" placeholder="{{i18n.topTextPlaceholder}}" value="{{topText}}" bindinput="onTopTextInput" maxlength="50" />
+      </view>
+      <view class="input-group">
+        <text class="input-label">{{i18n.bottomText}}</text>
+        <input class="text-input" placeholder="{{i18n.bottomTextPlaceholder}}" value="{{bottomText}}" bindinput="onBottomTextInput" maxlength="50" />
+      </view>
+    </view>
+
+    <view class="section-card">
+      <text class="section-title">{{i18n.textStyle}}</text>
+      <view class="style-row">
+        <text class="style-label">{{i18n.fontSize}}</text>
+        <text class="style-value">{{fontSize}}px</text>
+      </view>
+      <slider class="font-slider" min="20" max="80" value="{{fontSize}}" activeColor="var(--accentBlue,#3B82F6)" block-size="20" bindchange="onFontSizeChange" />
+
+      <view class="input-label" style="margin-bottom:10px;">{{i18n.fontColor}}</view>
+      <view class="color-row">
+        <view
+          class="color-dot {{item.color === fontColor ? 'active' : ''}}"
+          wx:for="{{fontColors}}"
+          wx:key="color"
+          data-color="{{item.color}}"
+          bindtap="onFontColorTap"
+          style="background-color: {{item.color}};"
+        >
+          <text class="color-check" wx:if="{{item.color === fontColor}}">✓</text>
+        </view>
+      </view>
+
+      <view class="switch-row">
+        <view class="style-row">
+          <text class="style-label">{{i18n.textStroke}}</text>
+          <switch checked="{{strokeEnabled}}" bindchange="onStrokeToggle" color="var(--accentBlue,#3B82F6)" />
+        </view>
+        <view class="color-row" wx:if="{{strokeEnabled}}" style="margin-top:8px;">
+          <view
+            class="color-dot {{item.color === strokeColor ? 'active' : ''}}"
+            wx:for="{{strokeColors}}"
+            wx:key="color"
+            data-color="{{item.color}}"
+            bindtap="onStrokeColorTap"
+            style="background-color: {{item.color}};"
+          >
+            <text class="color-check" wx:if="{{item.color === strokeColor}}">✓</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="switch-row">
+        <view class="style-row">
+          <text class="style-label">{{i18n.textShadow}}</text>
+          <switch checked="{{shadowEnabled}}" bindchange="onShadowToggle" color="var(--accentBlue,#3B82F6)" />
+        </view>
+        <view class="color-row" wx:if="{{shadowEnabled}}" style="margin-top:8px;">
+          <view
+            class="color-dot {{item.color === shadowColor ? 'active' : ''}}"
+            wx:for="{{shadowColors}}"
+            wx:key="color"
+            data-color="{{item.color}}"
+            bindtap="onShadowColorTap"
+            style="background-color: {{item.color}};"
+          >
+            <text class="color-check" wx:if="{{item.color === shadowColor}}">✓</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-card">
+      <view class="hot-toggle-row" style="margin-bottom:0;">
+        <text class="section-title" style="margin-bottom:0;">{{i18n.stickerDecor}}</text>
+        <view class="hot-toggle {{showStickers ? 'active' : ''}}" bindtap="toggleStickers">
+          <text>{{showStickers ? i18n.collapse : i18n.expand}}</text>
+        </view>
+      </view>
+      <view class="sticker-section" wx:if="{{showStickers}}">
+        <view class="sticker-grid">
+          <view
+            class="sticker-item"
+            wx:for="{{stickerList}}"
+            wx:key="*this"
+            data-emoji="{{item}}"
+            bindtap="onStickerTap"
+          >
+            <text class="sticker-emoji">{{item}}</text>
+          </view>
+        </view>
+        <view class="active-stickers" wx:if="{{activeStickers.length > 0}}">
+          <view class="active-sticker-header">
+            <text class="active-sticker-title">{{i18n.addedStickers}} ({{activeStickers.length}})</text>
+            <text class="clear-stickers-btn" bindtap="clearStickers">{{i18n.clearAll}}</text>
+          </view>
+          <view class="active-sticker-list">
+            <view class="active-sticker-item" wx:for="{{activeStickers}}" wx:key="index">
+              <text class="active-sticker-emoji">{{item.emoji}}</text>
+              <slider
+                class="sticker-size-slider"
+                min="30"
+                max="120"
+                value="{{item.size}}"
+                data-index="{{index}}"
+                bindchange="onStickerSizeChange"
+                activeColor="var(--accentBlue,#3B82F6)"
+                block-size="14"
+              />
+              <view class="sticker-del" data-index="{{index}}" catchtap="removeSticker">
+                <text>✕</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-card">
+      <text class="section-title">🖼️ {{i18n.bgColor}}</text>
+      <view class="color-row bg-colors">
+        <view
+          class="color-dot {{item === bgColor ? 'active' : ''}}"
+          wx:for="{{bgColors}}"
+          wx:key="*this"
+          data-color="{{item}}"
+          bindtap="onBgColorTap"
+          style="background-color: {{item}};"
+        >
+          <text class="color-check" wx:if="{{item === bgColor}}">✓</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="save-btn {{isGenerating ? 'disabled' : ''}}" bindtap="generateAndSave">
+      <text>{{isGenerating ? i18n.generating : i18n.saveToAlbum}}</text>
+    </view>
+
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">📋 {{i18n.copyText}}</button>
+      <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">🔄 {{i18n.resetBtn}}</button>
+    </view>
+  </view>
+
+  <canvas type="2d" id="saveCanvas" class="save-canvas"></canvas>
+</view>

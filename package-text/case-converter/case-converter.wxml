@@ -1,60 +1,80 @@
-<navigation-bar title="大小写转换" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
-
-<scroll-view class="tool-page" scroll-y>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper" style="background: linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%);">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">🔤</text>
       </view>
-      <text class="tool-title">大小写转换</text>
-      <text class="tool-desc">英文大小写一键切换，5种模式任选</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
-    <!-- 转换模式选择 -->
     <view class="mode-section">
-      <text class="section-label">选择转换模式</text>
-      <view class="modes-grid">
-        <view 
-          wx:for="{{modes}}" 
-          wx:key="id"
-          class="mode-item {{currentMode === item.id ? 'active' : ''}}"
-          data-mode="{{item.id}}"
-          bindtap="selectMode"
-        >
-          <text class="mode-icon">{{item.icon}}</text>
-          <text class="mode-name">{{item.name}}</text>
+      <text class="section-label">{{i18n.basicConvert}}</text>
+      <scroll-view class="modes-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="modes-grid">
+          <view
+            wx:for="{{modes}}"
+            wx:key="id"
+            class="mode-item {{currentMode === item.id ? 'active' : ''}}"
+            data-mode="{{item.id}}"
+            bindtap="selectMode"
+          >
+            <text class="mode-icon">{{item.icon}}</text>
+            <text class="mode-name">{{item.name}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <view class="code-mode-section">
+      <view class="code-mode-header" bindtap="toggleCodeModes">
+        <text class="section-label" style="margin-bottom:0;">{{i18n.codeNamingConvert}}</text>
+        <view class="code-toggle {{showCodeModes ? 'active' : ''}}">
+          <text>{{showCodeModes ? i18n.collapse : i18n.expand}}</text>
+        </view>
+      </view>
+      <view class="code-modes-body" wx:if="{{showCodeModes}}">
+        <view class="code-modes-grid">
+          <view
+            wx:for="{{codeModes}}"
+            wx:key="id"
+            class="code-mode-item {{currentMode === item.id ? 'active' : ''}}"
+            data-mode="{{item.id}}"
+            bindtap="selectCodeMode"
+          >
+            <text class="code-mode-icon">{{item.icon}}</text>
+            <text class="code-mode-name">{{item.name}}</text>
+            <text class="code-mode-example">{{item.example}}</text>
+          </view>
         </view>
       </view>
     </view>
 
-    <!-- 输入区域 -->
     <view class="input-section">
-      <text class="section-label">输入文本</text>
-      <textarea 
+      <text class="section-label">{{i18n.inputTextLabel}}</text>
+      <textarea
         class="text-area"
-        placeholder="请输入需要转换的英文文本..."
+        placeholder="{{i18n.inputPlaceholder}}"
         value="{{inputText}}"
         bindinput="onInput"
         auto-height
       ></textarea>
     </view>
 
-    <!-- 转换结果 -->
     <view class="output-section" wx:if="{{outputText}}">
-      <text class="section-label">转换结果</text>
+      <text class="section-label">{{i18n.convertResult}}</text>
       <view class="result-box">
         <text class="result-text">{{outputText}}</text>
       </view>
     </view>
 
-    <!-- 操作按钮 -->
-    <view class="action-btns">
-      <button class="primary-btn" bindtap="copyResult">
-        <text>📋 复制结果</text>
-      </button>
-      <button class="secondary-btn" bindtap="clearAll">
-        <text>🗑️ 清空</text>
-      </button>
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResultBtn}}</button>
+      <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">{{i18n.resetBtn}}</button>
     </view>
   </view>
 </scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

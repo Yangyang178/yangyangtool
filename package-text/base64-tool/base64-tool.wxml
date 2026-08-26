@@ -1,71 +1,164 @@
-<navigation-bar title="Base64编解码" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
-
-<scroll-view class="tool-page" scroll-y>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
   <view class="container">
-    <!-- 工具头部 -->
     <view class="tool-header">
       <view class="icon-wrapper teal-gradient">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">🔐</text>
       </view>
-      <text class="tool-title">Base64 编解码</text>
-      <text class="tool-desc">快速进行 Base64 编码和解码操作</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
-    <!-- 模式切换 -->
     <view class="mode-switcher">
       <view class="mode-btn {{mode === 'encode' ? 'active' : ''}}" data-mode="encode" bindtap="switchMode">
-        <text>📝 编码</text>
+        <text>{{i18n.modeEncode}}</text>
       </view>
       <view class="mode-btn {{mode === 'decode' ? 'active' : ''}}" data-mode="decode" bindtap="switchMode">
-        <text>🔓 解码</text>
+        <text>{{i18n.modeDecode}}</text>
+      </view>
+      <view class="mode-btn {{mode === 'imgEncode' ? 'active' : ''}}" data-mode="imgEncode" bindtap="switchMode">
+        <text>{{i18n.modeImgEncode}}</text>
+      </view>
+      <view class="mode-btn {{mode === 'imgDecode' ? 'active' : ''}}" data-mode="imgDecode" bindtap="switchMode">
+        <text>{{i18n.modeImgDecode}}</text>
       </view>
     </view>
 
-    <!-- 输入区域 -->
-    <view class="input-section">
-      <view class="section-header">
-        <text class="section-label">{{mode === 'encode' ? '原始文本' : 'Base64 编码'}}</text>
-        <button class="paste-btn" bindtap="pasteFromClipboard">粘贴</button>
-      </view>
-      
-      <textarea 
-        class="content-input"
-        placeholder="{{mode === 'encode' ? '请输入要编码的文本...' : '请输入要解码的Base64字符串...'}}"
-        value="{{inputContent}}"
-        bindinput="onInput"
-        maxlength="-1"
-        auto-height
-      ></textarea>
-      
-      <view class="input-footer">
-        <text class="char-count">{{inputContent.length}} 字符</text>
-        <button class="clear-btn" wx:if="{{inputContent}}" bindtap="clearInput">清空</button>
-      </view>
-    </view>
-
-    <!-- 操作按钮 -->
-    <button class="action-btn {{inputContent ? 'active' : ''}}" bindtap="processBase64" disabled="{{!inputContent}}">
-      <text>{{mode === 'encode' ? '🔒 编码为 Base64' : '🔓 解码为文本'}}</text>
-    </button>
-
-    <!-- 结果显示 -->
-    <view class="result-section" wx:if="{{showResult}}">
-      <view class="result-header">
-        <text class="result-label">{{mode === 'encode' ? '编码结果' : '解码结果'}}</text>
-        <view class="result-actions">
-          <button class="copy-result-btn" bindtap="copyResult">复制</button>
-          <button class="swap-btn" bindtap="swapContent">↓ 使用此结果</button>
+    <view wx:if="{{mode === 'encode' || mode === 'decode'}}">
+      <view class="input-section">
+        <view class="section-header">
+          <text class="section-label">{{mode === 'encode' ? i18n.originalText : i18n.base64Encoded}}</text>
+          <button class="paste-btn" bindtap="pasteFromClipboard">{{i18n.pasteBtn}}</button>
+        </view>
+        <textarea
+          class="content-input"
+          placeholder="{{mode === 'encode' ? i18n.encodePlaceholder : i18n.decodePlaceholder}}"
+          value="{{inputContent}}"
+          bindinput="onInput"
+          maxlength="-1"
+          auto-height
+        ></textarea>
+        <view class="input-footer">
+          <text class="char-count">{{inputContent.length}} {{i18n.charUnit}}</text>
+          <button class="clear-btn" wx:if="{{inputContent}}" bindtap="clearInput">{{i18n.clearBtn}}</button>
         </view>
       </view>
-      
-      <view class="result-content">
-        <text class="result-text">{{outputContent}}</text>
+
+      <button class="action-btn {{inputContent ? 'active' : ''}}" bindtap="processBase64" disabled="{{!inputContent}}">
+        <text>{{mode === 'encode' ? i18n.encodeToBase64 : i18n.decodeToText}}</text>
+      </button>
+
+      <view class="result-section" wx:if="{{showResult}}">
+        <view class="result-header">
+          <text class="result-label">{{mode === 'encode' ? i18n.encodeResult : i18n.decodeResult}}</text>
+          <view class="result-actions">
+            <button class="copy-result-btn" bindtap="copyResult">{{i18n.copyBtn}}</button>
+            <button class="swap-btn" bindtap="swapContent">{{i18n.useResultBtn}}</button>
+          </view>
+        </view>
+        <view class="result-content">
+          <text class="result-text">{{outputContent}}</text>
+        </view>
+        <view class="result-info" wx:if="{{mode === 'encode'}}">
+          <text class="info-item">{{i18n.originalLength}}：{{inputContent.length}} {{i18n.charUnit}}</text>
+          <text class="info-item">{{i18n.encodedLength}}：{{outputContent.length}} {{i18n.charUnit}}</text>
+          <text class="info-item">{{i18n.expansionRate}}：{{expansionRate}}%</text>
+        </view>
+        <view class="error-message" wx:if="{{errorMessage}}">
+          <text class="error-icon">⚠️</text>
+          <text class="error-text">{{errorMessage}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{mode === 'imgEncode'}}">
+      <view class="img-section">
+        <view class="img-upload-area" bindtap="chooseImage">
+          <view class="img-upload-icon">🖼️</view>
+          <text class="img-upload-text">{{i18n.selectImage}}</text>
+          <text class="img-upload-hint">{{i18n.supportFormats}}</text>
+        </view>
+
+        <view class="img-preview-card" wx:if="{{showImgPreview}}">
+          <image class="img-preview" src="{{imgPreviewUrl}}" mode="aspectFit" bindtap="previewImage"></image>
+          <view class="img-info-bar">
+            <view class="img-info-item" wx:if="{{imgWidth}}">
+              <text class="img-info-label">{{i18n.sizeLabel}}</text>
+              <text class="img-info-value">{{imgWidth}}x{{imgHeight}}</text>
+            </view>
+            <view class="img-info-item">
+              <text class="img-info-label">{{i18n.sizeLabel2}}</text>
+              <text class="img-info-value">{{imgFileSize}}</text>
+            </view>
+            <view class="img-info-item" wx:if="{{imgMimeType}}">
+              <text class="img-info-label">{{i18n.typeLabel}}</text>
+              <text class="img-info-value">{{imgMimeType}}</text>
+            </view>
+          </view>
+          <view class="img-size-info">
+            <text class="img-size-text">{{imgSizeInfo}}</text>
+          </view>
+          <view class="img-actions">
+            <button class="img-action-btn copy-img-btn" bindtap="copyImgBase64">{{i18n.copyBase64Btn}}</button>
+            <button class="img-action-btn rechoose-btn" bindtap="chooseImage">{{i18n.rechooseBtn}}</button>
+          </view>
+        </view>
+
+        <view class="img-base64-output" wx:if="{{imgBase64}}">
+          <text class="img-base64-label">{{i18n.base64EncodeResult}}</text>
+          <view class="img-base64-content">
+            <text class="img-base64-text">{{imgBase64Preview}}</text>
+          </view>
+          <view class="img-base64-footer">
+            <text class="img-base64-len">{{imgBase64Len}} {{i18n.charUnit}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{mode === 'imgDecode'}}">
+      <view class="input-section">
+        <view class="section-header">
+          <text class="section-label">{{i18n.base64ImageData}}</text>
+          <button class="paste-btn" bindtap="pasteFromClipboard">{{i18n.pasteBtn}}</button>
+        </view>
+        <textarea
+          class="content-input img-decode-input"
+          placeholder="{{i18n.imgDecodePlaceholder}}"
+          value="{{inputContent}}"
+          bindinput="onInput"
+          maxlength="-1"
+          auto-height
+        ></textarea>
+        <view class="input-footer">
+          <text class="char-count">{{inputContent.length}} {{i18n.charUnit}}</text>
+          <button class="clear-btn" wx:if="{{inputContent}}" bindtap="clearInput">{{i18n.clearBtn}}</button>
+        </view>
       </view>
 
-      <view class="result-info" wx:if="{{mode === 'encode'}}">
-        <text class="info-item">原始长度：{{inputContent.length}} 字符</text>
-        <text class="info-item">编码长度：{{outputContent.length}} 字符</text>
-        <text class="info-item">膨胀率：{{expansionRate}}%</text>
+      <button class="action-btn {{inputContent ? 'active' : ''}}" bindtap="decodeBase64Image" disabled="{{!inputContent}}">
+        <text>{{i18n.decodeToImage}}</text>
+      </button>
+
+      <view class="result-section" wx:if="{{b64ImgUrl}}">
+        <text class="result-label">{{i18n.decodeResult}}</text>
+        <image class="b64-img-preview" src="{{b64ImgUrl}}" mode="aspectFit" bindtap="previewB64Image"></image>
+        <view class="img-info-bar">
+          <view class="img-info-item" wx:if="{{b64ImgWidth}}">
+            <text class="img-info-label">{{i18n.sizeLabel}}</text>
+            <text class="img-info-value">{{b64ImgWidth}}x{{b64ImgHeight}}</text>
+          </view>
+          <view class="img-info-item">
+            <text class="img-info-label">{{i18n.sizeLabel2}}</text>
+            <text class="img-info-value">{{b64ImgSize}}</text>
+          </view>
+        </view>
+        <view class="b64-img-actions">
+          <button class="img-action-btn save-img-btn" bindtap="saveB64Image">{{i18n.saveToAlbum}}</button>
+          <button class="img-action-btn preview-img-btn" bindtap="previewB64Image">{{i18n.fullPreview}}</button>
+        </view>
       </view>
 
       <view class="error-message" wx:if="{{errorMessage}}">
@@ -74,23 +167,50 @@
       </view>
     </view>
 
-    <!-- 常用示例 -->
-    <view class="examples-section">
-      <text class="examples-title">💡 快速示例</text>
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">{{i18n.resetBtn}}</button>
+    </view>
+
+    <view class="examples-section" wx:if="{{mode === 'encode' || mode === 'decode'}}">
+      <text class="examples-title">{{i18n.quickExamples}}</text>
       <view class="example-list">
         <view class="example-item" bindtap="useExample" data-text="Hello World">
-          <text class="example-label">英文文本</text>
+          <text class="example-label">{{i18n.englishText}}</text>
           <text class="example-value">Hello World</text>
         </view>
-        <view class="example-item" bindtap="useExample" data-text="你好世界">
-          <text class="example-label">中文文本</text>
-          <text class="example-value">你好世界</text>
+        <view class="example-item" bindtap="useExample" data-text="{{i18n.chineseTextValue}}">
+          <text class="example-label">{{i18n.chineseText}}</text>
+          <text class="example-value">{{i18n.chineseTextValue}}</text>
         </view>
         <view class="example-item" bindtap="useExample" data-text='{"name":"test","value":123}'>
-          <text class="example-label">JSON数据</text>
+          <text class="example-label">{{i18n.jsonData}}</text>
           <text class="example-value">{"name":"test"}</text>
         </view>
       </view>
     </view>
+
+    <view class="size-estimator" wx:if="{{mode === 'imgEncode' || mode === 'imgDecode'}}">
+      <text class="size-est-title">{{i18n.sizeEstTitle}}</text>
+      <view class="size-est-grid">
+        <view class="size-est-item">
+          <text class="size-est-label">{{i18n.img100k}}</text>
+          <text class="size-est-value">≈ 133KB Base64</text>
+        </view>
+        <view class="size-est-item">
+          <text class="size-est-label">{{i18n.img500k}}</text>
+          <text class="size-est-value">≈ 667KB Base64</text>
+        </view>
+        <view class="size-est-item">
+          <text class="size-est-label">{{i18n.img1m}}</text>
+          <text class="size-est-value">≈ 1.33MB Base64</text>
+        </view>
+        <view class="size-est-item">
+          <text class="size-est-label">{{i18n.img2m}}</text>
+          <text class="size-est-value">≈ 2.67MB Base64</text>
+        </view>
+      </view>
+      <text class="size-est-note">{{i18n.sizeEstNote}}</text>
+    </view>
   </view>
 </scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

@@ -1,0 +1,86 @@
+<navigation-bar title="{{i18n.navTitle}}" />
+
+<canvas type="2d" id="funPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>
+
+<view class="container {{isDarkMode ? 'dark-mode' : ''}} {{fontClass}} font-size-{{fontSizeSetting}}" style="{{themeStyle}}">
+
+  <!-- 工具头部 -->
+  <view class="tool-header">
+    <view class="header-icon-wrap">
+      <text class="header-icon">🧠</text>
+    </view>
+    <view class="header-text">
+      <text class="header-title">{{i18n.toolTitle}}</text>
+      <text class="header-subtitle">{{i18n.toolDesc}}</text>
+    </view>
+  </view>
+
+  <!-- 工具卡片网格 -->
+  <view class="tool-grid">
+    <view class="tool-card {{item.locked ? 'tool-locked' : ''}}" wx:for="{{tools}}" wx:key="id" data-route="{{item.route}}" data-locked="{{item.locked}}" data-unlockdays="{{item.unlockDays}}" bindtap="openTool" hover-class="{{item.locked ? '' : 'tool-card-hover'}}">
+      <view class="card-icon-wrap" style="background: {{item.gradient}}">
+        <text class="card-icon">{{item.icon}}</text>
+        <view class="lock-mask" wx:if="{{item.locked}}">
+          <text class="lock-icon">🔒</text>
+        </view>
+      </view>
+      <view class="card-info">
+        <text class="card-name">{{item.name}}</text>
+        <text class="card-desc">{{item.locked ? i18n.unlockHint + item.unlockDays + i18n.unlockDays : item.desc}}</text>
+        <view class="unlock-progress" wx:if="{{item.locked}}">
+          <view class="unlock-progress-bar">
+            <view class="unlock-progress-fill" style="width: {{item.unlockProgress}}%;"></view>
+          </view>
+          <text class="unlock-progress-text">{{i18n.remainDays}}{{item.unlockRemainDays}}{{i18n.days}}</text>
+        </view>
+        <view class="best-record" wx:if="{{!item.locked && item.bestRecord}}">
+          <text class="best-record-icon">🏆</text>
+          <text class="best-record-text">{{item.bestRecord}}</text>
+        </view>
+      </view>
+      <view class="card-btn-wrap">
+        <view class="card-btn" style="background: {{item.locked ? '#94A3B8' : item.gradient}}">{{item.locked ? i18n.locked : i18n.startTest}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 排行榜入口 -->
+  <view class="leaderboard-entry" bindtap="openLeaderboard" hover-class="leaderboard-entry-hover">
+    <view class="leaderboard-entry-left">
+      <text class="leaderboard-entry-icon">🏆</text>
+      <view class="leaderboard-entry-info">
+        <text class="leaderboard-entry-title">{{i18n.leaderboard}}</text>
+        <text class="leaderboard-entry-desc">{{i18n.leaderboardDesc}}</text>
+      </view>
+    </view>
+    <text class="leaderboard-entry-arrow">›</text>
+  </view>
+
+  <!-- 底部提示卡片 -->
+  <view class="tip-card">
+    <view class="tip-title">{{i18n.tipTitle}}</view>
+    <view class="tip-list">
+      <view class="tip-item">
+        <text class="tip-dot">•</text>
+        <text class="tip-text">{{i18n.tip1}}</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-dot">•</text>
+        <text class="tip-text">{{i18n.tip2}}</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-dot">•</text>
+        <text class="tip-text">{{i18n.tip3}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分享按钮 -->
+  <view class="share-section">
+    <button class="share-btn" open-type="share">
+      <text class="share-icon">🔗</text>
+      <text class="share-text">{{i18n.shareToFriend}}</text>
+    </button>
+  </view>
+
+</view>

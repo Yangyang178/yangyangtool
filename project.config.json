@@ -1,1 +1,61 @@
-{"appid": "wxdbfe6f4bc45f8f28", "compileType": "miniprogram", "libVersion": "3.15.2", "packOptions": {"ignore": [], "include": []}, "setting": {"coverView": true, "es6": false, "postcss": true, "minified": true, "enhance": true, "showShadowRootInWxmlPanel": true, "urlCheck": false, "packNpmRelationList": [], "babelSetting": {"ignore": [], "disablePlugins": [], "outputPath": ""}}, "condition": {}, "editorSetting": {"tabIndent": "insertSpaces", "tabSize": 2}, "cloudfunctionRoot": "cloudfunctions/", "cloudbaseRoot": "cloudbaserc.json"}
+{
+  "appid": "wxdbfe6f4bc45f8f28",
+  "compileType": "miniprogram",
+  "libVersion": "3.6.1",
+  "packOptions": {
+    "ignore": [
+      {
+        "value": "docs",
+        "type": "folder"
+      },
+      {
+        "value": "clean-cache.bat",
+        "type": "file"
+      },
+      {
+        "value": "README.md",
+        "type": "file"
+      },
+      {
+        "value": ".eslintrc.js",
+        "type": "file"
+      }
+    ],
+    "include": []
+  },
+  "setting": {
+    "coverView": true,
+    "es6": false,
+    "postcss": true,
+    "minified": true,
+    "enhance": true,
+    "showShadowRootInWxmlPanel": true,
+    "urlCheck": false,
+    "packNpmRelationList": [],
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "minifyWXML": true,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "packNpmManually": false,
+    "minifyWXSS": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
+  },
+  "condition": {},
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  },
+  "cloudfunctionRoot": "cloudfunctions/",
+  "cloudbaseRoot": "cloudbaserc.json/",
+  "simulatorPluginLibVersion": {}
+}

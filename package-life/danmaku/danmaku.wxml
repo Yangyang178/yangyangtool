@@ -1,0 +1,210 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
+
+<view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" wx:if="{{!isFullScreen}}">
+  <view class="container">
+    <view class="tool-header">
+      <view class="tool-icon-large" style="background: linear-gradient(135deg, rgba(102,126,234,0.2) 0%, rgba(240,147,251,0.15) 100%);">
+        <view class="tool-icon-decoration"></view>
+        <text>🎬</text>
+      </view>
+      <view class="tool-info">
+        <text class="tool-title-main">{{i18n.toolTitle}}</text>
+        <text class="tool-desc-main">{{i18n.toolDesc}}</text>
+      </view>
+    </view>
+
+    <view class="input-wrapper">
+      <text class="input-label-text">{{i18n.danmakuContent}}</text>
+      <input
+        class="input-field-common"
+        placeholder="{{i18n.inputPlaceholder}}"
+        value="{{inputText}}"
+        bindinput="onInputText"
+        maxlength="50"
+        confirm-type="send"
+        bindconfirm="sendDanmaku"
+      />
+    </view>
+
+    <view class="option-card">
+      <text class="option-title">{{i18n.danmakuColor}}</text>
+      <view class="color-picker">
+        <view
+          class="color-item {{index === selectedColorIndex ? 'active' : ''}}"
+          wx:for="{{colors}}"
+          wx:key="value"
+          data-index="{{index}}"
+          bindtap="onSelectColor"
+        >
+          <view class="color-circle" style="background-color: {{item.value}};"></view>
+          <text class="color-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="option-card">
+      <text class="option-title">{{i18n.danmakuSpeed}}</text>
+      <view class="speed-picker">
+        <view
+          class="speed-item {{index === selectedSpeedIndex ? 'active' : ''}}"
+          wx:for="{{speeds}}"
+          wx:key="value"
+          data-index="{{index}}"
+          bindtap="onSelectSpeed"
+        >
+          <text>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="option-card">
+      <text class="option-title">{{i18n.fontSize}}</text>
+      <view class="fontsize-picker">
+        <view
+          class="fontsize-item {{index === selectedFontSizeIndex ? 'active' : ''}}"
+          wx:for="{{fontSizes}}"
+          wx:key="value"
+          data-index="{{index}}"
+          bindtap="onSelectFontSize"
+        >
+          <text>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="option-card">
+      <view class="option-title-row">
+        <text class="option-title" style="margin-bottom:0">{{i18n.multiLineDanmaku}}</text>
+        <view class="multi-line-toggle {{multiLineMode ? 'active' : ''}}" bindtap="toggleMultiLine">
+          <text>{{multiLineMode ? i18n.opened : i18n.closed}}</text>
+        </view>
+      </view>
+      <view class="multi-line-options" wx:if="{{multiLineMode}}">
+        <text class="option-sub-label">{{i18n.multiLineCountLabel}}（{{i18n.currentFontMax}}{{multiLineMaxLines}}{{i18n.linesUnit}}）</text>
+        <view class="line-count-picker">
+          <view
+            class="line-count-item {{item.value === multiLineCount ? 'active' : ''}} {{!item.available ? 'disabled' : ''}}"
+            wx:for="{{multiLineCounts}}"
+            wx:key="value"
+            data-value="{{item.value}}"
+            data-available="{{item.available}}"
+            bindtap="selectMultiLineCount"
+          >
+            <text>{{item.value}}{{i18n.linesUnit}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="option-card">
+      <view class="option-title-row">
+        <text class="option-title" style="margin-bottom:0">{{i18n.danmakuTemplate}}</text>
+        <view class="template-toggle {{showTemplates ? 'active' : ''}}" bindtap="toggleTemplates">
+          <text>{{showTemplates ? i18n.collapse : i18n.expand}}</text>
+        </view>
+      </view>
+      <view class="template-section" wx:if="{{showTemplates}}">
+        <view class="template-tabs">
+          <view
+            class="template-tab {{item.key === selectedTemplateKey ? 'active' : ''}}"
+            wx:for="{{templateCategories}}"
+            wx:key="key"
+            data-key="{{item.key}}"
+            bindtap="selectTemplateCategory"
+          >
+            <text>{{item.name}}</text>
+          </view>
+        </view>
+        <view class="template-items" wx:if="{{templateItems.length > 0}}">
+          <view
+            class="template-item"
+            wx:for="{{templateItems}}"
+            wx:key="index"
+            data-index="{{index}}"
+            bindtap="useTemplateItem"
+          >
+            <view class="tpl-color-dot" style="background-color: {{item.color}};"></view>
+            <text class="tpl-text">{{item.text}}</text>
+          </view>
+        </view>
+        <view class="template-empty" wx:if="{{templateItems.length === 0}}">
+          <text class="tpl-empty-text">{{i18n.selectCategoryHint}}</text>
+        </view>
+        <view class="template-barrage-btn" wx:if="{{templateItems.length > 0}}" bindtap="sendTemplateBarrage">
+          <text>{{i18n.templateBarrage}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="btn-row">
+      <view class="btn-primary send-btn" bindtap="sendDanmaku">
+        <text>{{i18n.sendDanmaku}}</text>
+      </view>
+      <view class="btn-secondary fullscreen-btn" bindtap="sendAndFullScreen">
+        <text>{{i18n.fullscreenSend}}</text>
+      </view>
+    </view>
+
+    <view class="preview-section" wx:if="{{danmakuList.length > 0}}">
+      <text class="option-title">{{i18n.danmakuPreview}}</text>
+      <view class="preview-box">
+        <view
+          class="preview-danmaku"
+          wx:for="{{danmakuList}}"
+          wx:key="id"
+          style="color: {{item.color}}; font-size: {{item.fontSize}}px; animation: danmaku-scroll {{item.duration}}s linear {{item.delay || 0}}s; top: {{item.topPercent}}%;"
+        >
+          {{item.text}}
+        </view>
+      </view>
+      <view class="enter-fullscreen-btn" bindtap="enterFullScreen">
+        <text>{{i18n.enterFullscreen}}</text>
+      </view>
+    </view>
+
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">{{i18n.copyResult}}</button>
+      <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">{{i18n.reset}}</button>
+    </view>
+
+    <view class="history-section-common" wx:if="{{historyList.length > 0}}">
+      <view class="history-title-common">
+        <text>{{i18n.historyDanmaku}}</text>
+        <text class="clear-btn" bindtap="clearHistory">{{i18n.clearBtn}}</text>
+      </view>
+      <view class="history-list-common">
+        <view
+          class="history-item-common"
+          wx:for="{{historyList}}"
+          wx:key="time"
+          data-index="{{index}}"
+          bindtap="useHistoryItem"
+        >
+          <view class="history-left">
+            <view class="history-color-dot" style="background-color: {{item.color}};"></view>
+            <text class="history-input-common">{{item.text}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="fullscreen-mode {{isFullScreen ? '' : 'fullscreen-hidden'}}" style="width: {{landscapeWidth}}px; height: {{landscapeHeight}}px;" bindtap="exitFullScreen">
+  <view class="danmaku-container">
+    <view
+      class="danmaku-item"
+      wx:for="{{danmakuList}}"
+      wx:key="id"
+      style="top: {{item.topPercent}}%; color: {{item.color}}; font-size: {{item.fontSize}}px; animation: danmaku-scroll-fs {{item.duration}}s linear {{item.delay || 0}}s both;"
+      catchtap=""
+    >
+      {{item.text}}
+    </view>
+  </view>
+  <view class="fullscreen-hint">
+    <text>{{i18n.exitFullscreen}}</text>
+  </view>
+</view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

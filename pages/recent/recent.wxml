@@ -1,41 +1,53 @@
-<navigation-bar title="我的" back="{{false}}" color="{{isDarkMode ? 'white' : 'black'}}" background="{{isDarkMode ? '#0F172A' : '#F8FAFC'}}"></navigation-bar>
+<navigation-bar title="{{i18n.myPage}}" back="{{false}}" color="{{isDarkMode ? 'white' : 'black'}}" background="{{isDarkMode ? '#0F172A' : '#F8FAFC'}}"></navigation-bar>
+<skeleton show="{{isLoading}}" type="detail" dark="{{isDarkMode}}"></skeleton>
 
-<scroll-view class="main-scroll {{isDarkMode ? 'dark-mode' : ''}}" scroll-y enhanced show-scrollbar="{{false}}" bounces="{{false}}">
-  <view class="page-container">
+<scroll-view class="main-scroll {{isDarkMode ? 'dark-mode' : ''}} {{fontClass}}" scroll-y enhanced show-scrollbar="{{false}}" bounces="{{false}}">
+  <view class="page-container {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}">
 
     <!-- 用户信息区 -->
-    <view class="user-section" bindtap="openEditProfile">
-      <view class="user-avatar" style="{{userInfo.avatarBg ? 'background:' + userInfo.avatarBg : ''}}">
-        <image wx:if="{{userInfo.avatarUrl}}" class="avatar-img" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
-        <text wx:else class="avatar-icon">👤</text>
+    <view class="user-section">
+      <view class="avatar-frame-wrap {{activeFrame ? activeFrame.frameClass : ''}}" bindtap="openEditProfile" bindlongpress="openFrameSelector" hover-class="avatar-frame-hover">
+        <view class="user-avatar" style="{{userInfo.avatarBg ? 'background:' + userInfo.avatarBg : ''}}">
+          <image wx:if="{{userInfo.avatarUrl}}" class="avatar-img" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+          <text wx:else class="avatar-icon">👤</text>
+        </view>
+        <view class="frame-deco frame-deco-tl" wx:if="{{activeFrame}}"></view>
+        <view class="frame-deco frame-deco-tr" wx:if="{{activeFrame}}"></view>
+        <view class="frame-deco frame-deco-bl" wx:if="{{activeFrame}}"></view>
+        <view class="frame-deco frame-deco-br" wx:if="{{activeFrame}}"></view>
+        <view class="frame-deco frame-deco-t" wx:if="{{activeFrame}}"></view>
+        <view class="frame-deco frame-deco-r" wx:if="{{activeFrame}}"></view>
+        <view class="frame-deco frame-deco-b" wx:if="{{activeFrame}}"></view>
+        <view class="frame-deco frame-deco-l" wx:if="{{activeFrame}}"></view>
       </view>
-      <view class="user-info">
+      <view class="user-info" bindtap="openEditProfile">
         <view class="user-name-row">
           <text class="user-nickname">{{userInfo.nickname}}</text>
+          <text wx:if="{{activeBadge}}" class="user-badge">{{activeBadge}}</text>
           <text class="edit-icon">✏️</text>
         </view>
-        <text class="user-stats">{{funStats.levelIcon}} {{funStats.efficiencyLevel}} · 已节省 {{funStats.savedTime}}</text>
+        <text class="user-stats">{{funStats.levelIcon}} {{funStats.efficiencyLevel}} · {{i18n.savedLabel}} {{funStats.savedTime}}</text>
       </view>
     </view>
 
     <!-- 趣味化统计卡片 -->
-    <view class="fun-stats-card">
+    <view class="fun-stats-card {{themeClass}}" style="{{themeStyle}}">
       <view class="stats-header">
-        <text class="stats-title">⚡ 效率统计</text>
-        <text class="stats-subtitle">累计数据</text>
+        <text class="stats-title">⚡ {{i18n.efficiencyStats}}</text>
+        <text class="stats-subtitle">{{i18n.cumulativeData}}</text>
       </view>
       
       <view class="stats-main">
         <view class="stat-item highlight">
           <text class="stat-number">{{funStats.operationCount}}</text>
-          <text class="stat-label">次操作</text>
+          <text class="stat-label">{{i18n.operations}}</text>
         </view>
         
         <view class="stat-divider"></view>
         
         <view class="stat-item">
           <text class="stat-number">{{funStats.savedTime}}</text>
-          <text class="stat-label">已节省</text>
+          <text class="stat-label">{{i18n.saved}}</text>
         </view>
         
         <view class="stat-divider"></view>
@@ -48,11 +60,355 @@
 
       <view class="progress-section">
         <view class="progress-label">
-          <text>效率进度</text>
+          <text>{{i18n.efficiencyProgress}}</text>
           <text>{{funStats.progressPercent}}%</text>
         </view>
         <view class="progress-bar">
           <view class="progress-fill" style="width: {{funStats.progressPercent}}%"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 数据看板 -->
+    <view class="section-group-title">
+      <text class="group-line"></text>
+      <text class="group-text">{{i18n.dataDashboard}}</text>
+      <text class="group-line"></text>
+    </view>
+
+    <!-- 每日签到 -->
+    <view class="checkin-card {{themeClass}}" style="{{themeStyle}}">
+      <view class="checkin-header">
+        <view class="checkin-title-row">
+          <text class="checkin-icon">📅</text>
+          <text class="checkin-title">{{i18n.dailyCheckin}}</text>
+        </view>
+        <view class="checkin-points-badge">
+          <text class="points-badge-icon">💎</text>
+          <text class="points-badge-value">{{checkinInfo.currentPoints}}</text>
+        </view>
+      </view>
+
+      <view class="checkin-streak">
+        <view class="streak-days">
+          <view wx:for="{{7}}" wx:key="index" class="streak-day {{checkinInfo.cycleDay > index ? 'active' : ''}} {{checkinInfo.cycleDay === index && !checkinInfo.isChecked ? 'current' : ''}}">
+            <text class="streak-day-num">{{index + 1}}</text>
+            <text class="streak-day-label">{{i18n.day}}</text>
+          </view>
+        </view>
+        <view class="streak-bonus-row">
+          <text class="streak-bonus-label">{{i18n.dailyPoints}}</text>
+          <view class="streak-bonus-values">
+            <text class="bonus-val">+10</text>
+            <text class="bonus-val">+15</text>
+            <text class="bonus-val">+20</text>
+            <text class="bonus-val">+25</text>
+            <text class="bonus-val">+30</text>
+            <text class="bonus-val">+40</text>
+            <text class="bonus-val">+60</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="checkin-action">
+        <view class="checkin-info-row">
+          <text class="checkin-continuous">🔥 {{consecutiveDaysText}}</text>
+          <text class="checkin-today-points">{{checkinInfo.isChecked ? i18n.todayChecked : todayPointsText}}</text>
+        </view>
+        <view class="checkin-btn-row">
+          <button class="checkin-btn {{checkinInfo.isChecked ? 'checked' : ''}}" bindtap="doCheckin" disabled="{{checkinInfo.isChecked}}">
+            {{checkinInfo.isChecked ? i18n.checkedIn : i18n.checkinNow}}
+          </button>
+          <view class="makeup-btn {{canMakeup ? '' : 'makeup-disabled'}}" bindtap="doMakeupCheckin" hover-class="{{canMakeup ? 'makeup-hover' : ''}}">
+            <text class="makeup-icon">🎫</text>
+            <text class="makeup-text">{{i18n.makeupCheckin}}({{makeupCards}})</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 里程碑 -->
+      <view class="milestone-section">
+        <view class="milestone-title-row">
+          <text class="milestone-title">🏔️ {{i18n.milestoneTitle}}</text>
+          <text class="milestone-total">{{checkinInfo.totalDays || 0}}{{i18n.milestoneTotalDays}}</text>
+        </view>
+        <scroll-view scroll-x class="milestone-scroll">
+          <view class="milestone-list">
+            <view wx:for="{{milestones}}" wx:key="days" class="milestone-item {{item.claimed ? 'claimed' : ''}} {{item.reached && !item.claimed ? 'claimable' : ''}}">
+              <view class="milestone-icon-wrap {{item.claimed ? 'milestone-done' : item.reached ? 'milestone-ready' : ''}}">
+                <text class="milestone-icon">{{item.icon}}</text>
+              </view>
+              <text class="milestone-name">{{item.name}}</text>
+              <text class="milestone-days">{{item.days}}{{i18n.day}}</text>
+              <text class="milestone-points">+{{item.points}}</text>
+              <view wx:if="{{item.reached && !item.claimed}}" class="milestone-claim-btn" catchtap="claimMilestone" data-days="{{item.days}}">
+                <text>{{i18n.milestoneClaim}}</text>
+              </view>
+              <view wx:elif="{{item.claimed}}" class="milestone-claimed-mark">✓</view>
+              <view wx:else class="milestone-progress-bar">
+                <view class="milestone-progress-fill" style="width: {{item.progress / item.total * 100}}%"></view>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <!-- 社交化：排行榜 + 分享 -->
+      <view class="checkin-social-row">
+        <view class="social-btn" bindtap="toggleRankPanel">
+          <text class="social-btn-icon">🏆</text>
+          <text class="social-btn-text">{{i18n.rankTitle}}</text>
+        </view>
+        <view class="social-btn" bindtap="shareCheckinCard">
+          <text class="social-btn-icon">🎖️</text>
+          <text class="social-btn-text">{{i18n.shareCheckinCard}}</text>
+        </view>
+      </view>
+
+      <!-- 签到日历 -->
+      <view class="cal-toggle" bindtap="toggleCalendar">
+        <text class="cal-toggle-text">📅 {{i18n.checkinCalendar}}</text>
+        <text class="cal-toggle-arrow {{showCalendar ? 'cal-arrow-up' : ''}}">›</text>
+      </view>
+      <view class="checkin-calendar {{showCalendar ? 'cal-expanded' : 'cal-collapsed'}}">
+        <view class="cal-header">
+          <view class="cal-nav" bindtap="calPrevMonth">
+            <text class="cal-nav-arrow">‹</text>
+          </view>
+          <text class="cal-month">{{calYear}}{{i18n.year}} {{calMonthName}}</text>
+          <view class="cal-nav {{calIsCurrent ? 'cal-nav-disabled' : ''}}" bindtap="calNextMonth">
+            <text class="cal-nav-arrow">›</text>
+          </view>
+        </view>
+        <view class="cal-weekdays">
+          <text wx:for="{{calWeekDays}}" wx:key="index" class="cal-weekday">{{item}}</text>
+        </view>
+        <view class="cal-grid">
+          <view wx:for="{{calDays}}" wx:key="index" class="cal-day {{item.day === 0 ? 'cal-empty' : ''}} {{item.checked ? 'cal-checked' : ''}} {{item.isToday ? 'cal-today' : ''}}">
+            <text wx:if="{{item.day > 0}}" class="cal-day-num">{{item.day}}</text>
+            <view wx:if="{{item.checked}}" class="cal-check-dot"></view>
+          </view>
+        </view>
+        <view class="cal-legend">
+          <view class="cal-legend-item">
+            <view class="cal-legend-dot cal-legend-dot-checked"></view>
+            <text class="cal-legend-text">{{i18n.checked}}</text>
+          </view>
+          <view class="cal-legend-item">
+            <view class="cal-legend-dot cal-legend-dot-today"></view>
+            <text class="cal-legend-text">{{i18n.today}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 排行榜弹窗（签到排行 + 开榜） -->
+    <view class="rank-overlay" wx:if="{{showRankPanel}}" bindtap="toggleRankPanel"></view>
+    <view class="rank-panel {{showRankPanel ? 'rank-show' : ''}}">
+      <view class="rank-header">
+        <text class="rank-title">🏆 {{i18n.rankTitle}}</text>
+        <view class="rank-close" bindtap="toggleRankPanel">✕</view>
+      </view>
+      <!-- 大类 tab：签到排行 / 开榜 -->
+      <view class="rank-category-tabs">
+        <view class="rank-category-tab {{rankCategory === 'checkin' ? 'active' : ''}}" data-cat="checkin" bindtap="switchRankCategory">📅 {{i18n.rankCategoryCheckin}}</view>
+        <view class="rank-category-tab {{rankCategory === 'open' ? 'active' : ''}}" data-cat="open" bindtap="switchRankCategory">📊 {{i18n.rankCategoryOpen}}</view>
+      </view>
+      <!-- 签到排行子tab -->
+      <view class="rank-tabs" wx:if="{{rankCategory === 'checkin'}}">
+        <view class="rank-tab {{rankType === 'streak' ? 'active' : ''}}" data-type="streak" bindtap="switchRankType">{{i18n.rankStreak}}</view>
+        <view class="rank-tab {{rankType === 'total' ? 'active' : ''}}" data-type="total" bindtap="switchRankType">{{i18n.rankTotal}}</view>
+      </view>
+      <!-- 开榜子tab -->
+      <view class="rank-tabs" wx:if="{{rankCategory === 'open'}}">
+        <view class="rank-tab {{openRankType === 'today' ? 'active' : ''}}" data-type="today" bindtap="switchOpenRankType">{{i18n.openRankToday}}</view>
+        <view class="rank-tab {{openRankType === 'total' ? 'active' : ''}}" data-type="total" bindtap="switchOpenRankType">{{i18n.openRankTotal}}</view>
+      </view>
+      <!-- 签到排行：我的排名 -->
+      <view class="rank-my" wx:if="{{rankCategory === 'checkin' && myRank > 0}}">
+        <text class="rank-my-label">{{i18n.rankMy}}</text>
+        <text class="rank-my-value">{{i18n.openRankMyRank}}{{myRank}}</text>
+        <text class="rank-my-detail" wx:if="{{myRankData}}">{{rankType === 'streak' ? (myRankData.continuousDays + i18n.rankDays) : (myRankData.totalDays + i18n.rankDays)}}</text>
+      </view>
+      <!-- 开榜：我的排名 -->
+      <view class="rank-my" wx:if="{{rankCategory === 'open' && openMyRank > 0}}">
+        <text class="rank-my-label">{{i18n.rankMy}}</text>
+        <text class="rank-my-value">{{i18n.openRankMyRank}}{{openMyRank}}</text>
+        <text class="rank-my-detail" wx:if="{{openMyRankData}}">{{openRankType === 'today' ? (openMyRankData.todayOpens + i18n.openRankTimes) : (openMyRankData.totalOpens + i18n.openRankTimes)}}</text>
+      </view>
+      <!-- 加载中 -->
+      <view class="rank-loading" wx:if="{{(rankCategory === 'checkin' && rankLoading) || (rankCategory === 'open' && openRankLoading)}}">
+        <text class="rank-loading-text">{{i18n.rankLoading}}</text>
+      </view>
+      <!-- 签到排行列表 -->
+      <view class="rank-list" wx:if="{{rankCategory === 'checkin' && !rankLoading && rankList.length > 0}}">
+        <view class="rank-item {{item.isMe ? 'rank-me' : ''}}" wx:for="{{rankList}}" wx:key="rank">
+          <view class="rank-pos {{item.rank <= 3 ? 'rank-top' : ''}}">
+            <text wx:if="{{item.rank === 1}}">🥇</text>
+            <text wx:elif="{{item.rank === 2}}">🥈</text>
+            <text wx:elif="{{item.rank === 3}}">🥉</text>
+            <text wx:else>{{item.rank}}</text>
+          </view>
+          <view class="rank-avatar" style="background: linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)">
+            <text wx:if="{{!item.avatarUrl}}">{{item.nickName[0] || '👤'}}</text>
+            <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}" class="rank-avatar-img" mode="aspectFill"></image>
+          </view>
+          <view class="rank-info">
+            <text class="rank-name">{{item.nickName}}{{item.isMe ? ' (' + i18n.rankMeTag + ')' : ''}}</text>
+            <text class="rank-days">{{rankType === 'streak' ? i18n.rankStreak : i18n.rankTotal}} {{rankType === 'streak' ? item.continuousDays : item.totalDays}}{{i18n.rankDays}}</text>
+          </view>
+          <text class="rank-points">💎 {{item.totalPoints}}</text>
+        </view>
+      </view>
+      <!-- 开榜列表 -->
+      <view class="rank-list" wx:if="{{rankCategory === 'open' && !openRankLoading && openRankList.length > 0}}">
+        <view class="rank-item {{item.isMe ? 'rank-me' : ''}}" wx:for="{{openRankList}}" wx:key="rank">
+          <view class="rank-pos {{item.rank <= 3 ? 'rank-top' : ''}}">
+            <text wx:if="{{item.rank === 1}}">🥇</text>
+            <text wx:elif="{{item.rank === 2}}">🥈</text>
+            <text wx:elif="{{item.rank === 3}}">🥉</text>
+            <text wx:else>{{item.rank}}</text>
+          </view>
+          <view class="rank-avatar" style="background: linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%)">
+            <text wx:if="{{!item.avatarUrl}}">{{item.nickName[0] || '👤'}}</text>
+            <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}" class="rank-avatar-img" mode="aspectFill"></image>
+          </view>
+          <view class="rank-info">
+            <text class="rank-name">{{item.nickName}}{{item.isMe ? ' (' + i18n.rankMeTag + ')' : ''}}</text>
+            <text class="rank-days">{{openRankType === 'today' ? i18n.openRankToday : i18n.openRankTotal}} {{openRankType === 'today' ? item.todayOpens : item.totalOpens}}{{i18n.openRankTimes}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="rank-empty" wx:if="{{rankCategory === 'checkin' && !rankLoading && rankList.length === 0}}">
+        <text class="rank-empty-text">{{i18n.rankEmpty}}</text>
+      </view>
+      <view class="rank-empty" wx:if="{{rankCategory === 'open' && !openRankLoading && openRankList.length === 0}}">
+        <text class="rank-empty-text">{{i18n.rankEmpty}}</text>
+      </view>
+    </view>
+
+    <!-- 签到分享卡片弹窗 -->
+    <view class="share-card-overlay" wx:if="{{showCheckinShareCard}}" bindtap="closeCheckinShareCard"></view>
+    <view class="share-card-popup {{showCheckinShareCard ? 'share-card-show' : ''}}" wx:if="{{showCheckinShareCard}}">
+      <view class="share-card-content">
+        <view class="share-card-bg"></view>
+        <canvas type="2d" id="checkinShareCanvas" class="checkin-share-canvas"></canvas>
+        <view class="share-card-body">
+          <view class="checkin-share-preview">
+            <text class="share-card-app">🧰 百宝工具箱</text>
+            <text class="share-card-title">{{i18n.shareCardTitle}}</text>
+            <text class="share-card-days">{{checkinInfo.continuousDays}}</text>
+            <text class="share-card-days-label">{{i18n.shareCardDaysLabel}}</text>
+            <view class="share-card-stats">
+              <view class="share-stat">
+                <text class="share-stat-value">{{checkinInfo.totalEarned}}</text>
+                <text class="share-stat-label">{{i18n.shareCardPoints}}</text>
+              </view>
+              <view class="share-stat-divider"></view>
+              <view class="share-stat">
+                <text class="share-stat-value">{{checkinInfo.isChecked ? i18n.shareCardDone : i18n.shareCardTodo}}</text>
+                <text class="share-stat-label">{{i18n.shareCardToday}}</text>
+              </view>
+            </view>
+            <text class="share-card-slogan">{{i18n.shareCardSlogan}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="share-card-actions">
+        <view class="share-card-actions-row">
+          <button class="share-card-action-btn share-card-share-btn" open-type="share" data-shareType="checkin">
+            <text class="share-card-action-icon">🚀</text>
+            <text class="share-card-action-text">{{i18n.shareCardBtn}}</text>
+          </button>
+          <view class="share-card-action-btn share-card-save-action" bindtap="saveCheckinShareCard">
+            <text class="share-card-action-icon">💾</text>
+            <text class="share-card-action-text">{{i18n.saveImage}}</text>
+          </view>
+        </view>
+        <view class="share-card-close-btn" bindtap="closeCheckinShareCard">{{i18n.shareCardClose}}</view>
+      </view>
+    </view>
+
+    <!-- 成就系统 -->
+    <view class="section-block achievement-section">
+      <view class="section-header collapse-toggle" bindtap="toggleAchievement">
+        <view class="section-title-row">
+          <text class="section-icon">🏅</text>
+          <text class="section-title">{{i18n.achievements}}</text>
+        </view>
+        <view class="collapse-header-right">
+          <text class="section-subtitle">{{achievementStats.unlocked}}/{{achievementStats.total}}</text>
+          <text class="collapse-arrow {{showAchievement ? 'collapse-arrow-up' : ''}}">›</text>
+        </view>
+      </view>
+
+      <view class="collapse-body {{showAchievement ? 'collapse-expanded' : 'collapse-collapsed'}}">
+        <view class="achievement-progress">
+          <view class="achievement-progress-bar">
+            <view class="achievement-progress-fill" style="width: {{achievementStats.percent}}%"></view>
+          </view>
+          <text class="achievement-progress-text">{{achievementStats.percent}}%</text>
+        </view>
+
+        <view class="achievement-grid">
+          <view wx:for="{{achievementList}}" wx:key="id" class="achievement-item {{item.unlocked ? 'unlocked' : 'locked'}}">
+            <view class="achievement-icon-wrap">
+              <text class="achievement-emoji">{{item.unlocked ? item.icon : '🔒'}}</text>
+            </view>
+            <text class="achievement-name">{{item.name}}</text>
+          </view>
+        </view>
+
+        <view class="achievement-view-all" bindtap="openAchievementDetail">
+          <text>{{i18n.viewAllAchievements}} ›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 积分中心入口 -->
+    <view class="section-group-title">
+      <text class="group-line"></text>
+      <text class="group-text">{{i18n.pointsCenter}}</text>
+      <text class="group-line"></text>
+    </view>
+
+    <view class="points-center-card">
+      <view class="points-balance-row">
+        <view class="points-balance-left">
+          <text class="points-balance-icon">💎</text>
+          <view class="points-balance-info">
+            <text class="points-balance-label">{{i18n.myPoints}}</text>
+            <text class="points-balance-value">{{pointsSummary.currentPoints}}</text>
+          </view>
+        </view>
+        <view class="points-balance-right">
+          <text class="points-earned-text">{{totalEarnedText}}</text>
+          <text class="points-spent-text" wx:if="{{pointsSummary.totalSpent > 0}}">{{totalSpentText}}</text>
+        </view>
+      </view>
+
+      <view class="points-entry-row">
+        <view class="points-entry-item" bindtap="openDailyTasks" hover-class="points-entry-hover">
+          <view class="entry-icon-wrap entry-tasks">
+            <text class="entry-icon">📋</text>
+          </view>
+          <text class="entry-label">{{i18n.dailyTasks}}</text>
+          <text class="entry-badge" wx:if="{{pointsSummary.dailyTaskCompleted > 0}}">{{pointsSummary.dailyTaskCompleted}}/{{pointsSummary.dailyTaskTotal}}</text>
+        </view>
+
+        <view class="points-entry-item" bindtap="openPointsShop" hover-class="points-entry-hover">
+          <view class="entry-icon-wrap entry-shop">
+            <text class="entry-icon">🛒</text>
+          </view>
+          <text class="entry-label">{{i18n.pointsShop}}</text>
+        </view>
+
+        <view class="points-entry-item" bindtap="openInvitePanel" hover-class="points-entry-hover">
+          <view class="entry-icon-wrap entry-invite">
+            <text class="entry-icon">🎁</text>
+          </view>
+          <text class="entry-label">{{i18n.inviteFriends}}</text>
+          <text class="entry-badge" wx:if="{{pointsSummary.totalInvites > 0}}">{{pointsSummary.totalInvites}}{{i18n.people}}</text>
         </view>
       </view>
     </view>
@@ -62,9 +418,9 @@
       <view class="section-header">
         <view class="section-title-row">
           <text class="section-icon">📊</text>
-          <text class="section-title">使用足迹</text>
+          <text class="section-title">{{i18n.usageFootprint}}</text>
         </view>
-        <text class="section-subtitle">(本周)</text>
+        <text class="section-subtitle">{{i18n.thisWeek}}</text>
       </view>
 
       <!-- 图表区域 -->
@@ -97,16 +453,47 @@
       <view class="footprint-summary">
         <view class="summary-item">
           <text class="summary-value">{{weeklyData.totalWeekUsage}}</text>
-          <text class="summary-label">本周总次数</text>
+          <text class="summary-label">{{i18n.weekTotal}}</text>
         </view>
         <view class="summary-item">
           <text class="summary-value">{{weeklyData.averageDaily}}</text>
-          <text class="summary-label">日均使用</text>
+          <text class="summary-label">{{i18n.dailyAverage}}</text>
         </view>
         <view class="summary-item">
           <text class="summary-value">{{weeklyData.mostUsedDay}}</text>
-          <text class="summary-label">最活跃日</text>
+          <text class="summary-label">{{i18n.mostActiveDay}}</text>
         </view>
+      </view>
+    </view>
+
+    <!-- 本周周报 -->
+    <view class="section-block weekly-report-section">
+      <view class="section-header">
+        <view class="section-title-row">
+          <text class="section-icon">📋</text>
+          <text class="section-title">{{i18n.weeklyReport}}</text>
+        </view>
+        <text class="report-compare">{{weeklyReport.compareLastWeek}}</text>
+      </view>
+
+      <view class="report-summary">
+        <text class="report-summary-text">{{weeklyReport.summary}}</text>
+      </view>
+
+      <view class="report-detail-row" wx:if="{{weeklyReport.topTools.length > 0}}">
+        <text class="report-detail-label">🏆 {{i18n.frequentTools}}</text>
+        <view class="report-top-tools">
+          <view wx:for="{{weeklyReport.topTools}}" wx:key="name" class="report-tool-item">
+            <text class="report-tool-icon">{{item.icon}}</text>
+            <text class="report-tool-name">{{item.name}}</text>
+            <text class="report-tool-count">{{item.count}}{{i18n.times}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="report-detail-row">
+        <text class="report-detail-label">📅 {{i18n.checkinLabel}}</text>
+        <text class="report-detail-value">{{weeklyReport.checkinSummary}}</text>
       </view>
     </view>
 
@@ -114,7 +501,7 @@
     <view class="profile-mask" wx:if="{{showEditProfile}}" bindtap="closeEditProfile"></view>
     <view class="profile-panel {{showEditProfile ? 'show' : ''}}">
       <view class="profile-header">
-        <text class="profile-title">✏️ 编辑资料</text>
+        <text class="profile-title">✏️ {{i18n.editProfile}}</text>
         <text class="profile-close" bindtap="closeEditProfile">✕</text>
       </view>
 
@@ -125,18 +512,18 @@
           <text wx:elif="{{userInfo.avatarUrl}}" class="avatar-img-large-wrap"><image class="avatar-img-large" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image></text>
           <text wx:else class="avatar-placeholder-large">📷</text>
         </view>
-        <text class="avatar-hint">点击更换头像</text>
+        <text class="avatar-hint">{{i18n.tapChangeAvatar}}</text>
       </view>
 
       <!-- 昵称输入 -->
       <view class="profile-input-group">
-        <text class="profile-input-label">昵称</text>
+        <text class="profile-input-label">{{i18n.nickname}}</text>
         <input class="profile-input" value="{{editNickname}}" placeholder="请输入昵称" maxlength="12" bindinput="onNicknameInput"/>
       </view>
 
       <!-- 头像背景色选择 -->
       <view class="profile-color-section">
-        <text class="profile-input-label">头像背景色</text>
+        <text class="profile-input-label">{{i18n.avatarBgColor}}</text>
         <view class="color-options">
           <view wx:for="{{avatarColors}}" wx:key="color"
             class="color-option {{selectedAvatarColor === item.color ? 'selected' : ''}}"
@@ -149,9 +536,45 @@
         </view>
       </view>
 
+      <!-- 头像框引导 -->
+      <view class="profile-frame-guide" bindtap="openFrameSelectorFromProfile">
+        <view class="frame-guide-left">
+          <text class="frame-guide-icon">🖼️</text>
+          <view class="frame-guide-text">
+            <text class="frame-guide-title">{{i18n.frameSettings}}</text>
+            <text class="frame-guide-desc">{{i18n.frameGuideDesc}}</text>
+          </view>
+        </view>
+        <text class="frame-guide-arrow">›</text>
+      </view>
+
+      <!-- 主题色切换 -->
+      <view class="profile-frame-guide" bindtap="openThemeSelector">
+        <view class="frame-guide-left">
+          <text class="frame-guide-icon">🎨</text>
+          <view class="frame-guide-text">
+            <text class="frame-guide-title">{{i18n.themeColor}}</text>
+            <text class="frame-guide-desc">{{activeTheme ? activeTheme.name : i18n.defaultDeepBlue}}</text>
+          </view>
+        </view>
+        <text class="frame-guide-arrow">›</text>
+      </view>
+
+      <!-- 徽章切换 -->
+      <view class="profile-frame-guide" bindtap="openBadgeSelector">
+        <view class="frame-guide-left">
+          <text class="frame-guide-icon">🏅</text>
+          <view class="frame-guide-text">
+            <text class="frame-guide-title">{{i18n.wearBadge}}</text>
+            <text class="frame-guide-desc">{{activeBadge ? i18n.badgeWorn : i18n.badgeNotWorn}}</text>
+          </view>
+        </view>
+        <text class="frame-guide-arrow">›</text>
+      </view>
+
       <!-- 保存按钮 -->
       <button class="save-profile-btn" bindtap="saveProfile" hover-class="btn-hover">
-        保存
+        {{i18n.save}}
       </button>
     </view>
 
@@ -159,14 +582,14 @@
     <view class="feedback-mask" wx:if="{{showFeedback}}" bindtap="closeFeedback"></view>
     <view class="feedback-panel {{showFeedback ? 'show' : ''}}">
       <view class="feedback-header">
-        <text class="feedback-title">💬 意见反馈</text>
+        <text class="feedback-title">{{i18n.feedbackTitle}}</text>
         <text class="feedback-close" bindtap="closeFeedback">✕</text>
       </view>
 
       <view class="feedback-form">
         <!-- 反馈类型 -->
         <view class="form-group">
-          <text class="form-label">反馈类型</text>
+          <text class="form-label">{{i18n.feedbackType}}</text>
           <view class="type-options">
             <view wx:for="{{feedbackTypes}}" wx:key="value"
               class="type-option {{feedbackType === item.value ? 'active' : ''}}"
@@ -179,15 +602,15 @@
 
         <!-- 联系方式（可选） -->
           <view class="form-group">
-          <text class="form-label">联系方式（选填）</text>
-          <input class="form-input" value="{{contactInfo}}" placeholder="微信号/邮箱，方便我们回复您"
+          <text class="form-label">{{i18n.contactOptional}}</text>
+          <input class="form-input" value="{{contactInfo}}" placeholder="{{i18n.contactPlaceholder}}"
             maxlength="50" bindinput="onContactInput" placeholder-class="form-placeholder"/>
         </view>
 
         <!-- 反馈内容 -->
           <view class="form-group">
-          <text class="form-label">反馈内容 <text class="required">*</text></text>
-          <textarea class="form-textarea" value="{{feedbackContent}}" placeholder="请详细描述您的问题或建议..."
+          <text class="form-label">{{i18n.feedbackContent}} <text class="required">*</text></text>
+          <textarea class="form-textarea" value="{{feedbackContent}}" placeholder="{{i18n.feedbackPlaceholder}}"
             maxlength="500" auto-height bindinput="onFeedbackInput" placeholder-class="form-placeholder"></textarea>
           <text class="char-count">{{feedbackContent.length}}/500</text>
         </view>
@@ -196,21 +619,130 @@
       <!-- 提交按钮 -->
       <button class="submit-feedback-btn {{isSubmitting ? 'disabled' : ''}}"
         bindtap="submitFeedback" disabled="{{isSubmitting}}">
-        {{isSubmitting ? '提交中...' : '提交反馈'}}
+        {{isSubmitting ? i18n.submitting : i18n.submitFeedback}}
       </button>
+    </view>
+
+    <!-- 关于我们弹窗 -->
+    <view class="about-mask" wx:if="{{showAboutUs}}" bindtap="closeAboutUs"></view>
+    <view class="about-panel {{showAboutUs ? 'show' : ''}}">
+      <view class="about-header">
+        <text class="about-title">{{i18n.aboutUsTitle}}</text>
+        <text class="about-close" bindtap="closeAboutUs">✕</text>
+      </view>
+
+      <view class="about-content">
+        <!-- 应用信息 -->
+        <view class="app-info-section">
+          <view class="app-logo-area">
+            <text class="app-logo-icon">🧰</text>
+            <text class="app-name">{{i18n.brandTitle}}</text>
+            <text class="app-version">v2.0</text>
+          </view>
+
+          <view class="app-slogan">
+            <text>{{i18n.appSlogan}}</text>
+          </view>
+        </view>
+
+        <!-- 功能介绍 -->
+        <view class="feature-list">
+          <view class="feature-item">
+            <text class="feature-icon">🎯</text>
+            <view class="feature-text">
+              <text class="feature-title">{{i18n.focusEfficiency}}</text>
+              <text class="feature-desc">{{i18n.focusEfficiencyDesc}}</text>
+            </view>
+          </view>
+
+          <view class="feature-item">
+            <text class="feature-icon">⚡</text>
+            <view class="feature-text">
+              <text class="feature-title">{{i18n.readyToUse}}</text>
+              <text class="feature-desc">{{i18n.readyToUseDesc}}</text>
+            </view>
+          </view>
+
+          <view class="feature-item">
+            <text class="feature-icon">🔒</text>
+            <view class="feature-text">
+              <text class="feature-title">{{i18n.privacySafe}}</text>
+              <text class="feature-desc">{{i18n.privacySafeDesc}}</text>
+            </view>
+          </view>
+
+          <view class="feature-item">
+            <text class="feature-icon">🆓</text>
+            <view class="feature-text">
+              <text class="feature-title">{{i18n.totallyFree}}</text>
+              <text class="feature-desc">{{i18n.totallyFreeDesc}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 统计数据 -->
+        <view class="stats-section">
+          <view class="stat-row">
+            <view class="stat-box">
+              <text class="stat-num">40+</text>
+              <text class="stat-label">{{i18n.practicalTools}}</text>
+            </view>
+            <view class="stat-box">
+              <text class="stat-num">6</text>
+              <text class="stat-label">{{i18n.allCategories}}</text>
+            </view>
+            <view class="stat-box">
+              <text class="stat-num">100%</text>
+              <text class="stat-label">{{i18n.freeUse}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 联系方式 -->
+        <view class="contact-section">
+          <text class="contact-title">{{i18n.contactUs}}</text>
+          <view class="contact-items">
+            <button
+              class="contact-item contact-service-btn"
+              hover-class="contact-hover"
+              open-type="contact"
+              session-from="来自百宝工具箱-关于我们"
+              show-message-card="true"
+              send-message-title="百宝工具箱 - 意见反馈"
+              send-message-path="/pages/index/index"
+            >
+              <view class="contact-btn-content">
+                <text class="contact-icon">💬</text>
+                <text class="contact-label">{{i18n.wechatService}}</text>
+                <text class="contact-value">{{i18n.tapConsultFeedback}}</text>
+                <text class="contact-arrow">→</text>
+              </view>
+            </button>
+          </view>
+        </view>
+
+        <!-- 版权信息 -->
+        <view class="copyright-section">
+          <text class="copyright-text">{{i18n.copyrightText}}</text>
+          <text class="copyright-sub">{{i18n.craftWithHeart}}</text>
+        </view>
+      </view>
+
+      <!-- 关闭按钮 -->
+      <button class="close-about-btn" bindtap="closeAboutUs">{{i18n.iKnow}}</button>
     </view>
 
     <!-- 缓存清理弹窗 -->
     <view class="cache-mask" wx:if="{{showClearCache}}" bindtap="closeClearCache"></view>
     <view class="cache-panel {{showClearCache ? 'show' : ''}}">
       <view class="cache-header">
-        <text class="cache-title">🗑️ 清理缓存</text>
+        <text class="cache-title">{{i18n.clearCacheTitle}}</text>
         <text class="cache-close" bindtap="closeClearCache">✕</text>
       </view>
 
       <view class="cache-overview">
         <view class="cache-total">
-          <text class="total-label">总缓存大小</text>
+          <text class="total-label">{{i18n.totalCacheSize}}</text>
           <text class="total-value">{{cacheInfo.total}}</text>
         </view>
       </view>
@@ -220,13 +752,13 @@
           <view class="item-left">
             <text class="item-icon">💾</text>
             <view class="item-info">
-              <text class="item-name">数据缓存</text>
-              <text class="item-desc">用户设置、收藏、使用记录等</text>
+              <text class="item-name">{{i18n.dataCache}}</text>
+              <text class="item-desc">{{i18n.dataCacheDesc}}</text>
             </view>
           </view>
           <view class="item-right">
             <text class="item-size">{{cacheInfo.data}}</text>
-            <text class="item-action" catchtap="clearUserData">清空</text>
+            <text class="item-action" catchtap="clearUserData">{{i18n.clearData}}</text>
           </view>
         </view>
 
@@ -234,13 +766,13 @@
           <view class="item-left">
             <text class="item-icon">🖼️</text>
             <view class="item-info">
-              <text class="item-name">图片缓存</text>
-              <text class="item-desc">头像、工具图标等临时图片</text>
+              <text class="item-name">{{i18n.imageCache}}</text>
+              <text class="item-desc">{{i18n.imageCacheDesc}}</text>
             </view>
           </view>
           <view class="item-right">
             <text class="item-size">{{cacheInfo.images}}</text>
-            <text class="item-action" catchtap="clearImageCache">清空</text>
+            <text class="item-action" catchtap="clearImageCache">{{i18n.clearImage}}</text>
           </view>
         </view>
 
@@ -248,13 +780,13 @@
           <view class="item-left">
             <text class="item-icon">📜</text>
             <view class="item-info">
-              <text class="item-name">历史记录</text>
-              <text class="item-desc">最近使用、收藏夹、反馈历史</text>
+              <text class="item-name">{{i18n.historyRecord}}</text>
+              <text class="item-desc">{{i18n.historyRecordDesc}}</text>
             </view>
           </view>
           <view class="item-right">
             <text class="item-size">{{cacheInfo.history}}</text>
-            <text class="item-action" catchtap="clearHistoryData">清空</text>
+            <text class="item-action" catchtap="clearHistoryData">{{i18n.clearData}}</text>
           </view>
         </view>
 
@@ -262,59 +794,79 @@
           <view class="item-left">
             <text class="item-icon">📋</text>
             <view class="item-info">
-              <text class="item-name">剪贴板暂存</text>
-              <text class="item-desc">反馈内容临时存储</text>
+              <text class="item-name">{{i18n.clipboardTemp}}</text>
+              <text class="item-desc">{{i18n.clipboardTempDesc}}</text>
             </view>
           </view>
           <view class="item-right">
-            <text class="item-action" bindtap="clearClipboardTemp">清空</text>
+            <text class="item-action" bindtap="clearClipboardTemp">{{i18n.clearData}}</text>
           </view>
         </view>
       </view>
 
       <view class="cache-actions">
-        <button class="cache-btn secondary" bindtap="clearHistoryData">清理历史</button>
-        <button class="cache-btn danger" bindtap="clearAllData">全部清理</button>
+        <button class="cache-btn secondary" bindtap="clearHistoryData">{{i18n.clearHistoryBtn}}</button>
+        <button class="cache-btn danger" bindtap="clearAllData">{{i18n.clearAllBtn}}</button>
       </view>
+    </view>
+
+    <!-- 工具管理 -->
+    <view class="section-group-title">
+      <text class="group-line"></text>
+      <text class="group-text">{{i18n.toolManage}}</text>
+      <text class="group-line"></text>
     </view>
 
     <!-- 最近使用 -->
     <view class="section-block">
-      <view class="section-header">
+      <view class="section-header collapse-toggle" bindtap="toggleRecentTools">
         <view class="section-title-row">
           <text class="section-icon">📌</text>
-          <text class="section-title">最近使用</text>
+          <text class="section-title">{{i18n.recentUse}}</text>
         </view>
-        <text class="section-subtitle">(最近7条)</text>
-      </view>
-
-      <view class="recent-list" wx:if="{{recentTools.length > 0}}">
-        <view
-          wx:for="{{recentTools}}"
-          wx:key="id"
-          wx:if="{{index < 7}}"
-          class="recent-item"
-          data-tool="{{item}}"
-          bindtap="onToolClick"
-          hover-class="recent-item-hover"
-          hover-stay-time="100"
-        >
-          <view class="recent-icon-wrapper" style="background: {{item.iconBg}}">
-            <text class="recent-icon">{{item.icon}}</text>
-          </view>
-          <view class="recent-content">
-            <text class="recent-name">{{item.name}}</text>
-            <text class="recent-time">{{item.timeText}}</text>
-          </view>
+        <view class="collapse-header-right">
+          <text class="section-subtitle">{{i18n.recentUse7days}}</text>
+          <text class="collapse-arrow {{showRecentTools ? 'collapse-arrow-up' : ''}}">›</text>
         </view>
       </view>
 
-      <view class="empty-mini" wx:if="{{recentTools.length === 0}}">
-        <text>暂无使用记录，去首页试试吧~</text>
-      </view>
+      <view class="collapse-body {{showRecentTools ? 'collapse-expanded' : 'collapse-collapsed'}}">
+        <view class="recent-list" wx:if="{{recentTools.length > 0}}">
+          <view
+            wx:for="{{recentTools}}"
+            wx:key="id"
+            wx:if="{{index < 7}}"
+            class="recent-item"
+            data-tool="{{item}}"
+            bindtap="onToolClick"
+            hover-class="recent-item-hover"
+            hover-stay-time="100"
+          >
+            <view class="recent-icon-wrapper" style="background: {{item.iconBg}}">
+              <text class="recent-icon">{{item.icon}}</text>
+            </view>
+            <view class="recent-content">
+              <view class="recent-info">
+                <text class="recent-name">{{item.name}}</text>
+                <text class="recent-time">{{item.timeText}}</text>
+              </view>
+              <view class="recent-usage-row" wx:if="{{item.useCount > 0}}">
+                <view class="recent-usage-track">
+                  <view class="recent-usage-fill" style="width: {{item.usePercent}}%; background: {{item.iconBg || 'linear-gradient(90deg, #6366F1, #8B5CF6)'}};"></view>
+                </view>
+                <text class="recent-usage-count">{{item.useCount}}{{i18n.times}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
 
-      <view class="see-all-btn" bindtap="goToRecentFull" wx:if="{{recentTools.length > 0}}">
-        <text>查看全部最近使用 ></text>
+        <view class="empty-mini" wx:if="{{recentTools.length === 0}}">
+          <text>{{i18n.noRecentRecordTip}}</text>
+        </view>
+
+        <view class="see-all-btn" bindtap="goToRecentFull" wx:if="{{recentTools.length > 0}}">
+          <text>{{i18n.viewAllRecent}}</text>
+        </view>
       </view>
     </view>
 
@@ -323,48 +875,154 @@
       <view class="section-header">
         <view class="section-title-row">
           <text class="section-icon">⭐</text>
-          <text class="section-title">我的收藏</text>
+          <text class="section-title">{{i18n.myFavorites}}</text>
         </view>
-        <text class="section-subtitle">({{favoriteTools.length}}个)</text>
+        <text class="section-subtitle">({{favoriteTools.length}}{{i18n.piece}})</text>
       </view>
 
       <view class="fav-preview" wx:if="{{favoriteTools.length > 0}}">
         <text class="fav-names">{{favoritePreviewNames}}</text>
       </view>
       <view class="empty-mini" wx:else>
-        <text>还没有收藏工具哦</text>
+        <text>{{i18n.noFavoriteTip}}</text>
       </view>
 
       <view class="see-all-btn" bindtap="goToFavorites">
-        <text>查看全部收藏 ></text>
+        <text>{{i18n.viewAllFavorites}} ></text>
       </view>
     </view>
 
+    <!-- 添加到桌面 -->
+    <view class="desktop-entry-card" bindtap="showDesktopGuide" hover-class="desktop-entry-hover">
+      <view class="desktop-entry-left">
+        <text class="desktop-entry-icon">📱</text>
+        <view class="desktop-entry-info">
+          <text class="desktop-entry-title">{{i18n.addToDesktop}}</text>
+          <text class="desktop-entry-desc">{{i18n.addToDesktopDesc}}</text>
+        </view>
+      </view>
+      <text class="desktop-entry-arrow">›</text>
+    </view>
+
+    <!-- 推荐小程序 -->
+    <view class="mini-apps-section">
+      <view class="mini-apps-title">{{i18n.moreMiniApps}}</view>
+      <view class="mini-apps-grid">
+        <view class="mini-app-card" bindtap="openMiniApp" bindlongpress="showMiniAppActions" data-appid="wxce11fd4934c75169" data-name="{{i18n.miniAppName1}}" hover-class="mini-app-hover">
+          <view class="mini-app-icon-wrap" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <text class="mini-app-icon-text">💰</text>
+          </view>
+          <text class="mini-app-name">{{i18n.miniAppName1}}</text>
+          <text class="mini-app-desc">{{i18n.miniAppDesc1}}</text>
+        </view>
+        <view class="mini-app-card" bindtap="openMiniApp" bindlongpress="showMiniAppActions" data-appid="wxf1f8b8990b5b4ba3" data-name="{{i18n.miniAppName2}}" hover-class="mini-app-hover">
+          <view class="mini-app-icon-wrap" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+            <text class="mini-app-icon-text">🌿</text>
+          </view>
+          <text class="mini-app-name">{{i18n.miniAppName2}}</text>
+          <text class="mini-app-desc">{{i18n.miniAppDesc2}}</text>
+        </view>
+        <view class="mini-app-card" bindtap="openMiniApp" bindlongpress="showMiniAppActions" data-appid="wx5a9042fd5b6c1e66" data-name="{{i18n.miniAppName3}}" hover-class="mini-app-hover">
+          <view class="mini-app-icon-wrap" style="background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);">
+            <text class="mini-app-icon-text">🏠</text>
+          </view>
+          <text class="mini-app-name">{{i18n.miniAppName3}}</text>
+          <text class="mini-app-desc">{{i18n.miniAppDesc3}}</text>
+        </view>
+      </view>
+      <text class="mini-apps-tip">{{i18n.miniAppLongPressTip}}</text>
+    </view>
+
+    <!-- 小程序操作面板 -->
+    <view class="mini-app-mask {{showMiniAppPanel ? 'show' : ''}}" bindtap="hideMiniAppActions"></view>
+    <view class="mini-app-panel {{showMiniAppPanel ? 'show' : ''}} {{isDarkMode ? 'dark-mode' : ''}}">
+      <view class="mini-app-panel-header">
+        <text class="mini-app-panel-title">{{miniAppActionName}}</text>
+        <view class="mini-app-panel-close" bindtap="hideMiniAppActions">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="mini-app-panel-body">
+        <view class="mini-app-panel-info">
+          <text class="mini-app-panel-label">{{i18n.miniAppIdLabel}}</text>
+          <text class="mini-app-panel-appid">{{miniAppActionAppId}}</text>
+        </view>
+        <button class="mini-app-panel-btn mini-app-panel-open" bindtap="openMiniAppFromPanel" hover-class="mini-app-panel-btn-hover">
+          <text class="mini-app-panel-btn-icon">🔗</text>
+          <text class="mini-app-panel-btn-text">{{i18n.miniAppOpenBtn}}</text>
+        </button>
+        <button class="mini-app-panel-btn mini-app-panel-copy" bindtap="copyMiniAppId" hover-class="mini-app-panel-btn-hover">
+          <text class="mini-app-panel-btn-icon">📋</text>
+          <text class="mini-app-panel-btn-text">{{i18n.miniAppCopyIdBtn}}</text>
+        </button>
+      </view>
+    </view>
+
+    <!-- 系统设置 -->
+    <view class="section-group-title">
+      <text class="group-line"></text>
+      <text class="group-text">{{i18n.systemSettings}}</text>
+      <text class="group-line"></text>
+    </view>
+
     <!-- 设置 -->
-    <view class="section-block settings-section">
+    <view class="settings-section">
       <view class="section-header">
         <view class="section-title-row">
           <text class="section-icon">⚙️</text>
-          <text class="section-title">设置</text>
+          <text class="section-title">{{i18n.settings}}</text>
         </view>
       </view>
 
       <view class="settings-list">
-        <view class="setting-item" bindtap="toggleDarkMode" hover-class="setting-hover">
+        <view class="setting-item" bindtap="toggleDarkMode" hover-class="setting-hover" aria-role="button" aria-label="外观模式设置">
           <view class="setting-left">
             <text class="setting-icon">{{darkModeSetting === 'dark' ? '🌙' : darkModeSetting === 'light' ? '☀️' : '🔄'}}</text>
-            <text class="setting-name">外观模式</text>
+            <text class="setting-name">{{i18n.appearance}}</text>
           </view>
           <view class="setting-right">
-            <text class="setting-value">{{darkModeSetting === 'system' ? '跟随系统' : darkModeSetting === 'dark' ? '夜间模式' : '白天模式'}}</text>
+            <text class="setting-value">{{darkModeSetting === 'system' ? i18n.followSystem : darkModeSetting === 'dark' ? i18n.darkMode : i18n.lightMode}}</text>
             <text class="setting-arrow">›</text>
           </view>
         </view>
 
-        <view class="setting-item" bindtap="clearCache" hover-class="setting-hover">
+        <view class="setting-item" bindtap="toggleFontSize" hover-class="setting-hover" aria-role="button" aria-label="字体大小设置">
+          <view class="setting-left">
+            <text class="setting-icon">🔤</text>
+            <text class="setting-name">{{i18n.fontSize}}</text>
+          </view>
+          <view class="setting-right">
+            <text class="setting-value">{{fontSizeSetting === 'small' ? i18n.small : fontSizeSetting === 'large' ? i18n.large : i18n.medium}}</text>
+            <text class="setting-arrow">›</text>
+          </view>
+        </view>
+
+        <view class="setting-item" bindtap="openFontPicker" hover-class="setting-hover" aria-role="button" aria-label="字体样式设置">
+          <view class="setting-left">
+            <text class="setting-icon">🖋️</text>
+            <text class="setting-name">{{i18n.fontStyle}}</text>
+          </view>
+          <view class="setting-right">
+            <text class="setting-value">{{fontName}}</text>
+            <text class="setting-arrow">›</text>
+          </view>
+        </view>
+
+        <view class="setting-item" bindtap="openLangPicker" hover-class="setting-hover" aria-role="button" aria-label="语言设置">
+          <view class="setting-left">
+            <text class="setting-icon">🌐</text>
+            <text class="setting-name">{{i18n.language}}</text>
+          </view>
+          <view class="setting-right">
+            <text class="setting-value">{{langName}}</text>
+            <text class="setting-arrow">›</text>
+          </view>
+        </view>
+
+        <view class="setting-item" bindtap="clearCache" hover-class="setting-hover" aria-role="button" aria-label="清理缓存">
           <view class="setting-left">
             <text class="setting-icon">🗑️</text>
-            <text class="setting-name">清理缓存</text>
+            <text class="setting-name">{{i18n.clearCache}}</text>
           </view>
           <view class="setting-right">
             <text class="setting-value">{{cacheSize}}</text>
@@ -372,10 +1030,61 @@
           </view>
         </view>
 
-        <view class="setting-item" bindtap="onFeedback" hover-class="setting-hover">
+        <view class="setting-item" bindtap="openDataManage" hover-class="setting-hover" aria-role="button" aria-label="数据管理">
+          <view class="setting-left">
+            <text class="setting-icon">☁️</text>
+            <text class="setting-name">{{i18n.dataManage}}</text>
+          </view>
+          <view class="setting-right">
+            <text class="setting-value">{{lastBackupTimeText}}</text>
+            <text class="setting-arrow">›</text>
+          </view>
+        </view>
+
+        <view class="setting-item" bindtap="openPerfPanel" hover-class="setting-hover" aria-role="button" aria-label="性能监控">
+          <view class="setting-left">
+            <text class="setting-icon">📊</text>
+            <text class="setting-name">{{i18n.perfMonitor}}</text>
+          </view>
+          <view class="setting-right">
+            <text class="setting-value {{storageInfo.isDanger ? 'danger' : storageInfo.isWarning ? 'warning' : ''}}">{{storageInfo.usedMB}}MB / {{storageInfo.limitMB}}MB</text>
+            <text class="setting-arrow">›</text>
+          </view>
+        </view>
+
+        <view class="setting-item" bindtap="onFeedback" hover-class="setting-hover" aria-role="button" aria-label="意见反馈">
           <view class="setting-left">
             <text class="setting-icon">💬</text>
-            <text class="setting-name">意见反馈</text>
+            <text class="setting-name">{{i18n.feedback}}</text>
+          </view>
+          <view class="setting-right">
+            <text class="setting-arrow">›</text>
+          </view>
+        </view>
+
+        <view class="setting-item" bindtap="showNewUserGuide" hover-class="setting-hover" aria-role="button" aria-label="新手引导">
+          <view class="setting-left">
+            <text class="setting-icon">📖</text>
+            <text class="setting-name">{{i18n.viewGuide}}</text>
+          </view>
+          <view class="setting-right">
+            <text class="setting-arrow">›</text>
+          </view>
+        </view>
+
+        <view class="setting-item" bindtap="showAboutUs" hover-class="setting-hover" aria-role="button" aria-label="关于我们">
+          <view class="setting-left">
+            <text class="setting-icon">ℹ️</text>
+            <text class="setting-name">{{i18n.aboutUs}}</text>
+          </view>
+          <view class="setting-right">
+            <text class="setting-arrow">›</text>
+          </view>
+        </view>
+        <view class="setting-item" bindtap="openPrivacy" hover-class="setting-hover" aria-role="button" aria-label="隐私协议">
+          <view class="setting-left">
+            <text class="setting-icon">🔒</text>
+            <text class="setting-name">{{i18n.privacyPolicy}}</text>
           </view>
           <view class="setting-right">
             <text class="setting-arrow">›</text>
@@ -390,24 +1099,24 @@
         <text class="ugc-icon">💡</text>
       </view>
       <view class="ugc-content">
-        <text class="ugc-title">想增加什么工具？</text>
-        <text class="ugc-subtitle">告诉我们你的需求，我们来实现 ✨</text>
+        <text class="ugc-title">{{i18n.wantTool}}</text>
+        <text class="ugc-subtitle">{{i18n.tellUsNeed}} ✨</text>
       </view>
       <text class="ugc-arrow">→</text>
     </view>
 
     <!-- UGC需求收集弹窗 -->
     <view class="ugc-mask" wx:if="{{showToolRequest}}" bindtap="closeToolRequest"></view>
-    <view class="ugc-panel {{showToolRequest ? 'show' : ''}}" style="padding-top: {{menuButtonInfo.top + menuButtonInfo.height + 16}}px;">
+    <view class="ugc-panel {{showToolRequest ? 'show' : ''}}">
       <view class="ugc-header">
-        <text class="ugc-panel-title">💡 工具需求建议</text>
+        <text class="ugc-panel-title">{{i18n.toolRequestTitle}}</text>
         <text class="ugc-close" bindtap="closeToolRequest">✕</text>
       </view>
 
       <view class="ugc-form">
         <!-- 快速分类选择 -->
         <view class="ugc-category-section">
-          <text class="ugc-form-label">工具类型（选填）</text>
+          <text class="ugc-form-label">{{i18n.toolTypeOptional}}</text>
           <view class="category-chips">
             <view 
               wx:for="{{toolCategories}}" 
@@ -423,11 +1132,11 @@
 
         <!-- 需求描述 -->
         <view class="ugc-input-group">
-          <text class="ugc-form-label">需求描述 <text class="required">*</text></text>
+          <text class="ugc-form-label">{{i18n.needDesc}} <text class="required">*</text></text>
           <textarea 
             class="ugc-textarea" 
             value="{{toolRequestContent}}" 
-            placeholder="请详细描述您希望添加的工具功能...&#10;例如：我想一个可以计算房贷利率对比的工具"
+            placeholder="{{i18n.toolRequestPlaceholder}}"
             maxlength="300" 
             auto-height
             bindinput="onToolRequestInput"
@@ -437,7 +1146,7 @@
 
         <!-- 优先级 -->
         <view class="ugc-priority-section">
-          <text class="ugc-form-label">优先级</text>
+          <text class="ugc-form-label">{{i18n.priority}}</text>
           <view class="priority-options">
             <view 
               wx:for="{{priorityLevels}}" 
@@ -454,11 +1163,11 @@
 
         <!-- 联系方式（可选） -->
         <view class="ugc-input-group">
-          <text class="ugc-form-label">联系方式（选填）</text>
-          <input 
+          <text class="ugc-form-label">{{i18n.contactOptional}}</text>
+          <input
             class="ugc-input" 
             value="{{toolRequestContact}}" 
-            placeholder="微信号/邮箱，方便我们联系您"
+            placeholder="{{i18n.toolRequestContactPlaceholder}}"
             maxlength="50"
             bindinput="onToolRequestContactInput"
           />
@@ -471,18 +1180,18 @@
         bindtap="submitToolRequest" 
         disabled="{{isSubmittingUGC}}"
       >
-        {{isSubmittingUGC ? '提交中...' : '提交需求 💪'}}
+        {{isSubmittingUGC ? i18n.submitting : i18n.submitRequest}}
       </button>
 
       <!-- 备用关闭按钮 -->
       <view class="close-ugc-bottom" bindtap="closeToolRequest">
-        <text class="close-ugc-text">关闭</text>
+        <text class="close-ugc-text">{{i18n.close}}</text>
       </view>
 
       <!-- 已提交的需求列表 -->
       <view class="submitted-list" wx:if="{{submittedRequests.length > 0}}">
         <view class="submitted-header">
-          <text class="submitted-title">我已提交 ({{submittedRequests.length}})</text>
+          <text class="submitted-title">{{i18n.mySubmitted}} ({{submittedRequests.length}})</text>
         </view>
         <view 
           wx:for="{{submittedRequests}}" 
@@ -496,7 +1205,458 @@
               <text class="submitted-time">{{item.time}}</text>
             </view>
           </view>
-          <text class="status-tag">{{item.status === 'pending' ? '审核中' : '已采纳'}}</text>
+          <text class="status-tag">{{item.status === 'pending' ? i18n.statusPending : i18n.statusAdopted}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 数据管理弹窗 -->
+    <view class="datamask" wx:if="{{showDataManage}}" bindtap="closeDataManage"></view>
+    <view class="datapanel {{showDataManage ? 'show' : ''}}">
+      <view class="data-header">
+        <text class="data-title">{{i18n.dataManageTitle}}</text>
+        <text class="data-close" bindtap="closeDataManage">✕</text>
+      </view>
+
+      <view class="data-status-card">
+        <view class="data-status-row">
+          <text class="data-status-icon">{{cloudBackupInfo.hasBackup ? '🟢' : '⚪'}}</text>
+          <view class="data-status-info">
+            <text class="data-status-label">{{i18n.cloudBackup}}</text>
+            <text class="data-status-desc">{{cloudBackupInfo.hasBackup ? i18n.hasBackupData : i18n.noBackupData}}</text>
+          </view>
+        </view>
+        <view class="data-status-detail" wx:if="{{cloudBackupInfo.hasBackup}}">
+          <view class="data-detail-item">
+            <text class="data-detail-label">{{i18n.backupTime}}</text>
+            <text class="data-detail-value">{{lastBackupTimeText}}</text>
+          </view>
+          <view class="data-detail-item">
+            <text class="data-detail-label">{{i18n.dataCount}}</text>
+            <text class="data-detail-value">{{cloudBackupInfo.keyCount}} {{i18n.itemsUnit}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="data-actions">
+        <button class="data-btn data-backup-btn {{isBackingUp ? 'disabled' : ''}}" 
+          bindtap="doBackup" disabled="{{isBackingUp}}">
+          {{isBackingUp ? i18n.backingUp : i18n.backupToCloud}}
+        </button>
+        <button class="data-btn data-restore-btn {{isRestoring ? 'disabled' : ''}}" 
+          bindtap="doRestore" disabled="{{isRestoring}}">
+          {{isRestoring ? i18n.restoring : i18n.restoreFromCloud}}
+        </button>
+      </view>
+
+      <view class="data-tips">
+        <text class="data-tip-title">{{i18n.dataTipTitle}}</text>
+        <text class="data-tip-item">{{i18n.dataTip1}}</text>
+        <text class="data-tip-item">{{i18n.dataTip2}}</text>
+        <text class="data-tip-item">{{i18n.dataTip3}}</text>
+        <text class="data-tip-item">{{i18n.dataTip4}}</text>
+      </view>
+    </view>
+
+    <!-- 成就解锁动画 -->
+    <view class="achievement-unlock-overlay" wx:if="{{showAchievementUnlock}}">
+      <view class="unlock-glow" style="opacity: {{unlockAnimation.glowOpacity}}"></view>
+      <view class="unlock-content" style="transform: scale({{unlockAnimation.scale}}); opacity: {{unlockAnimation.opacity}}">
+        <view class="unlock-icon-ring">
+          <text class="unlock-icon">{{unlockAchievement.icon}}</text>
+        </view>
+        <view class="unlock-text" style="opacity: {{unlockAnimation.textOpacity}}">
+          <text class="unlock-label">{{i18n.achUnlockTitle}}</text>
+          <text class="unlock-name">{{unlockAchievement.name}}</text>
+          <text class="unlock-desc">{{unlockAchievement.desc}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 成就详情弹窗 -->
+    <view class="ach-detail-mask" wx:if="{{showAchievementDetail}}" bindtap="closeAchievementDetail"></view>
+    <view class="ach-detail-panel {{showAchievementDetail ? 'show' : ''}}">
+      <view class="ach-detail-header">
+        <text class="ach-detail-title">{{i18n.achHallTitle}}</text>
+        <text class="ach-detail-close" bindtap="closeAchievementDetail">✕</text>
+      </view>
+
+      <view class="ach-filter-bar">
+        <view class="ach-filter-btn {{achievementFilter === 'all' ? 'active' : ''}}" data-filter="all" bindtap="filterAchievements">{{i18n.achFilterAll}}</view>
+        <view class="ach-filter-btn {{achievementFilter === 'unlocked' ? 'active' : ''}}" data-filter="unlocked" bindtap="filterAchievements">{{i18n.achFilterUnlocked}}</view>
+        <view class="ach-filter-btn {{achievementFilter === 'locked' ? 'active' : ''}}" data-filter="locked" bindtap="filterAchievements">{{i18n.achFilterLocked}}</view>
+      </view>
+
+      <scroll-view class="ach-detail-list" scroll-y>
+        <view wx:for="{{achievementDetailList}}" wx:key="id" class="ach-detail-item {{item.unlocked ? 'unlocked' : 'locked'}}">
+          <view class="ach-detail-icon-wrap">
+            <text class="ach-detail-emoji">{{item.unlocked ? item.icon : '🔒'}}</text>
+          </view>
+          <view class="ach-detail-info">
+            <text class="ach-detail-name">{{item.name}}</text>
+            <text class="ach-detail-desc">{{item.desc}}</text>
+          </view>
+          <view class="ach-detail-action" wx:if="{{item.unlocked}}" data-id="{{item.id}}" catchtap="shareAchievement">
+            <text class="ach-share-btn">📤</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 成就分享卡片弹窗 -->
+    <view class="share-card-mask" wx:if="{{showShareCard}}" bindtap="closeShareCard"></view>
+    <view class="share-card-panel {{showShareCard ? 'show' : ''}}">
+      <view class="share-card-header">
+        <text class="share-card-title">📤 {{i18n.shareAchievement}}</text>
+        <text class="share-card-close" bindtap="closeShareCard">✕</text>
+      </view>
+
+      <view class="share-card-preview" wx:if="{{shareCardData}}">
+        <canvas type="2d" id="shareCardCanvas" class="share-card-canvas"></canvas>
+        <view class="share-card-preview-overlay">
+          <view class="share-card-content">
+            <text class="share-card-icon">{{shareCardData.icon}}</text>
+            <text class="share-card-name">{{shareCardData.name}}</text>
+            <text class="share-card-desc">{{shareCardData.desc}}</text>
+            <text class="share-card-meta">{{shareCardData.nickname}}  |  {{i18n.unlockedCountLabel}} {{shareCardData.unlockedCount}}/{{shareCardData.totalCount}}</text>
+            <text class="share-card-app">{{i18n.brandTitle}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="share-card-actions">
+        <button class="share-card-save-btn" bindtap="saveShareCard">💾 {{i18n.saveImage}}</button>
+      </view>
+    </view>
+
+    <!-- 每日任务弹窗 -->
+    <view class="ptmask" wx:if="{{showDailyTasks}}" bindtap="closeDailyTasks"></view>
+    <view class="ptpanel {{showDailyTasks ? 'show' : ''}}">
+      <view class="ptpanel-header">
+        <text class="ptpanel-title">📋 {{i18n.dailyTasks}}</text>
+        <text class="ptpanel-close" bindtap="closeDailyTasks">✕</text>
+      </view>
+
+      <view class="task-list">
+        <view wx:for="{{dailyTaskInfo.tasks}}" wx:key="id" class="task-item {{item.completed ? 'completed' : ''}}">
+          <view class="task-icon-wrap">
+            <text class="task-icon">{{item.completed ? '✅' : item.icon}}</text>
+          </view>
+          <view class="task-info">
+            <text class="task-name">{{item.name}}</text>
+            <text class="task-desc">{{item.desc}}</text>
+            <view class="task-progress-bar" wx:if="{{!item.completed}}">
+              <view class="task-progress-fill" style="width: {{item.progress / item.target * 100}}%"></view>
+            </view>
+            <text class="task-progress-text" wx:if="{{!item.completed}}">{{item.progress}}/{{item.target}}</text>
+          </view>
+          <view class="task-reward">
+            <text class="task-reward-icon">💎</text>
+            <text class="task-reward-value">+{{item.points}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="task-bonus-section" wx:if="{{dailyTaskInfo.allDone && !dailyTaskInfo.bonusClaimed}}">
+        <view class="task-bonus-card" bindtap="claimDailyBonus" hover-class="task-bonus-hover">
+          <text class="task-bonus-icon">🎁</text>
+          <view class="task-bonus-info">
+            <text class="task-bonus-title">{{i18n.allCompletedBonus}}</text>
+            <text class="task-bonus-desc">{{i18n.allCompletedBonusDesc}}</text>
+          </view>
+          <text class="task-bonus-points">+{{dailyTaskInfo.bonusPoints}}</text>
+        </view>
+      </view>
+
+      <view class="task-bonus-section" wx:elif="{{dailyTaskInfo.bonusClaimed}}">
+        <view class="task-bonus-card claimed">
+          <text class="task-bonus-icon">✅</text>
+          <text class="task-bonus-title">{{i18n.todayRewardClaimed}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 积分商城弹窗 -->
+    <view class="ptmask" wx:if="{{showPointsShop}}" bindtap="closePointsShop"></view>
+    <view class="ptpanel ptpanel-shop {{showPointsShop ? 'show' : ''}}">
+      <view class="ptpanel-header">
+        <text class="ptpanel-title">🛒 {{i18n.pointsShop}}</text>
+        <text class="ptpanel-close" bindtap="closePointsShop">✕</text>
+      </view>
+
+      <view class="shop-balance">
+        <text class="shop-balance-icon">💎</text>
+        <text class="shop-balance-value">{{pointsSummary.currentPoints}}</text>
+        <text class="shop-balance-label">{{i18n.availablePoints}}</text>
+      </view>
+
+      <scroll-view class="shop-list" scroll-y>
+        <view wx:for="{{shopItems}}" wx:key="id" class="shop-item {{item.isOwned ? 'owned' : ''}} {{item.isActive ? 'active' : ''}}" data-id="{{item.id}}" data-type="{{item.type}}" bindtap="purchaseItem">
+          <view class="shop-item-icon-wrap {{item.frameClass ? item.frameClass + '-preview' : ''}}" wx:if="{{item.type !== 'theme'}}">
+            <text class="shop-item-icon">{{item.icon}}</text>
+          </view>
+          <view class="shop-item-color-preview" wx:if="{{item.type === 'theme'}}" style="background: {{item.color2 ? 'linear-gradient(135deg, ' + item.color + ' 0%, ' + item.color2 + ' 100%)' : item.color}};">
+            <text class="shop-item-color-icon">{{item.icon}}</text>
+          </view>
+          <view class="shop-item-info">
+            <text class="shop-item-name">{{item.name}}</text>
+            <text class="shop-item-desc">{{item.desc}}</text>
+          </view>
+          <view class="shop-item-action">
+            <text class="shop-item-price" wx:if="{{!item.isOwned}}">💎 {{item.price}}</text>
+            <text class="shop-item-owned" wx:else>{{i18n.itemOwned}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 头像框选择弹窗 -->
+    <view class="ptmask" wx:if="{{showFrameSelector}}" bindtap="closeFrameSelector"></view>
+    <view class="ptpanel {{showFrameSelector ? 'show' : ''}}">
+      <view class="ptpanel-header">
+        <text class="ptpanel-title">🖼️ {{i18n.selectAvatarFrame}}</text>
+        <text class="ptpanel-close" bindtap="closeFrameSelector">✕</text>
+      </view>
+
+      <view class="frame-preview-area">
+        <view class="frame-preview-wrap {{previewFrame ? previewFrame.frameClass : ''}}" bindtap="chooseAvatarFromSelector">
+          <view class="frame-preview-avatar" style="{{userInfo.avatarBg ? 'background:' + userInfo.avatarBg : ''}}">
+            <image wx:if="{{userInfo.avatarUrl}}" class="frame-preview-img" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+            <text wx:else class="frame-preview-icon">👤</text>
+          </view>
+          <view class="frame-deco frame-deco-tl" wx:if="{{previewFrame}}"></view>
+          <view class="frame-deco frame-deco-tr" wx:if="{{previewFrame}}"></view>
+          <view class="frame-deco frame-deco-bl" wx:if="{{previewFrame}}"></view>
+          <view class="frame-deco frame-deco-br" wx:if="{{previewFrame}}"></view>
+          <view class="frame-deco frame-deco-t" wx:if="{{previewFrame}}"></view>
+          <view class="frame-deco frame-deco-r" wx:if="{{previewFrame}}"></view>
+          <view class="frame-deco frame-deco-b" wx:if="{{previewFrame}}"></view>
+          <view class="frame-deco frame-deco-l" wx:if="{{previewFrame}}"></view>
+        </view>
+        <text class="frame-preview-name">{{previewFrame ? previewFrame.name : i18n.noFrame}}</text>
+      </view>
+
+      <scroll-view class="frame-selector-list" scroll-y>
+        <view class="frame-option {{!activeFrame ? 'frame-option-active' : ''}}" bindtap="selectFrame" data-id="">
+          <view class="frame-option-avatar">
+            <text class="frame-option-icon">👤</text>
+          </view>
+          <view class="frame-option-info">
+            <text class="frame-option-name">{{i18n.noFrame}}</text>
+          </view>
+          <view class="frame-option-check" wx:if="{{!activeFrame}}">✓</view>
+        </view>
+        <view wx:for="{{ownedFrames}}" wx:key="id" class="frame-option {{activeFrame && activeFrame.id === item.id ? 'frame-option-active' : ''}}" bindtap="selectFrame" data-id="{{item.id}}">
+          <view class="frame-option-avatar {{item.frameClass}}">
+            <text class="frame-option-icon">{{item.icon}}</text>
+          </view>
+          <view class="frame-option-info">
+            <text class="frame-option-name">{{item.name}}</text>
+          </view>
+          <view class="frame-option-check" wx:if="{{activeFrame && activeFrame.id === item.id}}">✓</view>
+        </view>
+      </scroll-view>
+
+      <view class="frame-selector-tip" wx:if="{{ownedFrames.length === 0}}">
+        <text class="frame-tip-text">{{i18n.noFrameTip}}</text>
+        <view class="frame-tip-btn" bindtap="goToShopFromSelector">{{i18n.goToRedeem}}</view>
+      </view>
+    </view>
+
+    <!-- 主题色选择弹窗 -->
+    <view class="ptmask" wx:if="{{showThemeSelector}}" bindtap="closeThemeSelector"></view>
+    <view class="ptpanel {{showThemeSelector ? 'show' : ''}}">
+      <view class="ptpanel-header">
+        <text class="ptpanel-title">🎨 {{i18n.selectThemeColor}}</text>
+        <text class="ptpanel-close" bindtap="closeThemeSelector">✕</text>
+      </view>
+
+      <scroll-view class="frame-selector-list" scroll-y>
+        <view class="theme-option {{!activeTheme ? 'theme-option-active' : ''}}" bindtap="selectTheme" data-id="">
+          <view class="theme-option-preview" style="background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);"></view>
+          <view class="theme-option-info">
+            <text class="theme-option-name">{{i18n.defaultDeepBlue}}</text>
+          </view>
+          <view class="frame-option-check" wx:if="{{!activeTheme}}">✓</view>
+        </view>
+        <view wx:for="{{ownedThemes}}" wx:key="id" class="theme-option {{activeTheme && activeTheme.id === item.id ? 'theme-option-active' : ''}}" bindtap="selectTheme" data-id="{{item.id}}">
+          <view class="theme-option-preview" style="background: {{item.color2 ? 'linear-gradient(135deg, ' + item.color + ' 0%, ' + item.color2 + ' 100%)' : item.color}};"></view>
+          <view class="theme-option-info">
+            <text class="theme-option-name">{{item.name}}</text>
+          </view>
+          <view class="frame-option-check" wx:if="{{activeTheme && activeTheme.id === item.id}}">✓</view>
+        </view>
+      </scroll-view>
+
+      <view class="frame-selector-tip" wx:if="{{ownedThemes.length === 0}}">
+        <text class="frame-tip-text">{{i18n.noThemeTip}}</text>
+        <view class="frame-tip-btn" bindtap="goToShopFromThemeSelector">{{i18n.goToRedeem}}</view>
+      </view>
+    </view>
+
+    <!-- 徽章选择弹窗 -->
+    <view class="ptmask" wx:if="{{showBadgeSelector}}" bindtap="closeBadgeSelector"></view>
+    <view class="ptpanel {{showBadgeSelector ? 'show' : ''}}">
+      <view class="ptpanel-header">
+        <text class="ptpanel-title">🏅 {{i18n.selectBadge}}</text>
+        <text class="ptpanel-close" bindtap="closeBadgeSelector">✕</text>
+      </view>
+
+      <scroll-view class="frame-selector-list" scroll-y>
+        <view class="badge-option {{!activeBadge ? 'badge-option-active' : ''}}" bindtap="selectBadge" data-id="">
+          <view class="badge-option-icon-wrap">
+            <text class="badge-option-icon">—</text>
+          </view>
+          <view class="badge-option-info">
+            <text class="badge-option-name">{{i18n.badgeNotWorn}}</text>
+          </view>
+          <view class="frame-option-check" wx:if="{{!activeBadge}}">✓</view>
+        </view>
+        <view wx:for="{{ownedBadges}}" wx:key="id" class="badge-option {{activeBadgeId === item.id ? 'badge-option-active' : ''}}" bindtap="selectBadge" data-id="{{item.id}}">
+          <view class="badge-option-icon-wrap">
+            <text class="badge-option-icon">{{item.icon}}</text>
+          </view>
+          <view class="badge-option-info">
+            <text class="badge-option-name">{{item.name}}</text>
+          </view>
+          <view class="frame-option-check" wx:if="{{activeBadgeId === item.id}}">✓</view>
+        </view>
+      </scroll-view>
+
+      <view class="frame-selector-tip" wx:if="{{ownedBadges.length === 0}}">
+        <text class="frame-tip-text">{{i18n.noBadgeTip}}</text>
+        <view class="frame-tip-btn" bindtap="goToShopFromBadgeSelector">{{i18n.goToRedeem}}</view>
+      </view>
+    </view>
+
+    <!-- 邀请好友弹窗 -->
+    <view class="ptmask" wx:if="{{showInvitePanel}}" bindtap="closeInvitePanel"></view>
+    <view class="ptpanel {{showInvitePanel ? 'show' : ''}}">
+      <view class="ptpanel-header">
+        <text class="ptpanel-title">{{i18n.inviteFriends}}</text>
+        <text class="ptpanel-close" bindtap="closeInvitePanel">✕</text>
+      </view>
+
+      <view class="invite-hero">
+        <text class="invite-hero-icon">🎉</text>
+        <text class="invite-hero-title">{{i18n.inviteHeroTitle}}</text>
+        <text class="invite-hero-desc">{{i18n.inviteHeroDesc}}</text>
+      </view>
+
+      <view class="invite-code-section">
+        <text class="invite-section-label">{{i18n.myInviteCode}}</text>
+        <view class="invite-code-row">
+          <text class="invite-code-value">{{myInviteCode}}</text>
+          <view class="invite-copy-btn" bindtap="copyInviteCode" hover-class="invite-copy-hover">
+            <text>{{i18n.copyCode}}</text>
+          </view>
+        </view>
+        <text class="invite-hint">{{i18n.inviteHint}}</text>
+      </view>
+
+      <view class="invite-input-section">
+        <text class="invite-section-label">{{i18n.inputFriendCode}}</text>
+        <view class="invite-input-row">
+          <input class="invite-input" placeholder="{{i18n.enterInviteCode}}" value="{{inviteCodeInput}}" maxlength="20" bindinput="onInviteCodeInput" />
+          <view class="invite-use-btn" bindtap="useInviteCode" hover-class="invite-use-hover">
+            <text>{{i18n.useCode}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="invite-stats" wx:if="{{inviteInfo.totalInvites > 0}}">
+        <text class="invite-stats-title">{{inviteStatsText}}</text>
+      </view>
+    </view>
+
+    <!-- 性能监控弹窗 -->
+    <view class="ptmask" wx:if="{{showPerfPanel}}" bindtap="closePerfPanel"></view>
+    <view class="ptpanel ptpanel-shop {{showPerfPanel ? 'show' : ''}}">
+      <view class="ptpanel-header">
+        <text class="ptpanel-title">{{i18n.perfMonitorTitle}}</text>
+        <text class="ptpanel-close" bindtap="closePerfPanel">✕</text>
+      </view>
+
+      <view class="perf-storage-card" wx:if="{{storageInfo}}">
+        <view class="perf-storage-header">
+          <text class="perf-storage-title">{{i18n.storageCapacity}}</text>
+          <text class="perf-storage-percent {{storageInfo.isDanger ? 'danger' : storageInfo.isWarning ? 'warning' : ''}}">{{storageInfo.percent}}%</text>
+        </view>
+        <view class="perf-storage-bar">
+          <view class="perf-storage-fill {{storageInfo.isDanger ? 'danger' : storageInfo.isWarning ? 'warning' : ''}}" style="width: {{storageInfo.percent}}%"></view>
+        </view>
+        <view class="perf-storage-detail">
+          <text class="perf-storage-used">{{storageInfo.usedMB}} MB {{i18n.used}}</text>
+          <text class="perf-storage-remain">{{storageInfo.remainingMB}} MB {{i18n.remaining}}</text>
+        </view>
+        <view class="perf-storage-warning" wx:if="{{storageInfo.isDanger}}">
+          <text class="perf-warning-icon">⚠️</text>
+          <text class="perf-warning-text danger">{{i18n.storageCritical}}</text>
+        </view>
+        <view class="perf-storage-warning" wx:elif="{{storageInfo.isWarning}}">
+          <text class="perf-warning-icon">💡</text>
+          <text class="perf-warning-text warning">{{i18n.storageWarning}}</text>
+        </view>
+      </view>
+
+      <view class="perf-section" wx:if="{{perfSummary}}">
+        <text class="perf-section-title">{{i18n.startupPerf}}</text>
+        <view class="perf-metric-row">
+          <view class="perf-metric">
+            <text class="perf-metric-value">{{perfSummary.appReadyMs || '-'}}</text>
+            <text class="perf-metric-unit">ms</text>
+            <text class="perf-metric-label">{{i18n.appStartup}}</text>
+          </view>
+          <view class="perf-metric">
+            <text class="perf-metric-value">{{storageInfo.keyCount || 0}}</text>
+            <text class="perf-metric-unit">{{i18n.unitItems}}</text>
+            <text class="perf-metric-label">{{i18n.storageKey}}</text>
+          </view>
+          <view class="perf-metric">
+            <text class="perf-metric-value">{{perfSummary.totalEvents || 0}}</text>
+            <text class="perf-metric-unit">{{i18n.unitRecords}}</text>
+            <text class="perf-metric-label">{{i18n.monitorEvents}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="perf-section" wx:if="{{perfSummary.pageLoadStats.length > 0}}">
+        <text class="perf-section-title">{{i18n.pageLoadTime}}</text>
+        <view class="perf-page-list">
+          <view wx:for="{{perfSummary.pageLoadStats}}" wx:key="page" class="perf-page-item">
+            <text class="perf-page-name">{{item.page}}</text>
+            <view class="perf-page-bar-wrap">
+              <view class="perf-page-bar" style="width: {{item.avgMs >= 2000 ? 100 : item.avgMs >= 1000 ? 80 : item.avgMs >= 500 ? 60 : item.avgMs >= 200 ? 40 : item.avgMs >= 100 ? 25 : 12}}%"></view>
+            </view>
+            <text class="perf-page-time">{{item.avgMs}}ms</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="perf-section" wx:if="{{storageBreakdown.categories.length > 0}}">
+        <text class="perf-section-title">{{i18n.storageCategory}}</text>
+        <view class="perf-category-list">
+          <view wx:for="{{storageBreakdown.categories}}" wx:key="name" class="perf-category-item">
+            <text class="perf-category-name">{{item.name}}</text>
+            <text class="perf-category-size">{{item.totalKB}}KB</text>
+            <text class="perf-category-count">{{item.count}}{{i18n.itemsUnit}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="perf-section" wx:if="{{storageBreakdown.breakdown.length > 0}}">
+        <text class="perf-section-title">{{i18n.topStorageKeys}}</text>
+        <view class="perf-key-list">
+          <view wx:for="{{storageBreakdown.breakdown}}" wx:key="key" class="perf-key-item">
+            <text class="perf-key-name">{{item.key}}</text>
+            <text class="perf-key-size">{{item.sizeKB}}KB</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="perf-actions">
+        <view class="perf-action-btn" bindtap="clearPerfRecords" hover-class="perf-action-hover">
+          <text>{{i18n.clearPerfRecords}}</text>
         </view>
       </view>
     </view>
@@ -504,3 +1664,96 @@
     <view class="bottom-safe-area"></view>
   </view>
 </scroll-view>
+
+<!-- 添加到桌面引导弹窗 -->
+<view class="ptmask" wx:if="{{showDesktopGuideModal}}" bindtap="closeDesktopGuide"></view>
+<view class="ptpanel desktop-guide-panel show" wx:if="{{showDesktopGuideModal}}">
+  <view class="ptpanel-header">
+    <text class="ptpanel-title">📱 {{i18n.addToDesktopTitle}}</text>
+    <text class="ptpanel-close" bindtap="closeDesktopGuide">✕</text>
+  </view>
+  <view class="desktop-guide-content">
+    <view class="desktop-guide-step">
+      <view class="desktop-guide-num">1</view>
+      <text class="desktop-guide-text">{{i18n.desktopGuideStep1}}</text>
+    </view>
+    <view class="desktop-guide-step">
+      <view class="desktop-guide-num">2</view>
+      <text class="desktop-guide-text">{{i18n.desktopGuideStep2}}</text>
+    </view>
+    <view class="desktop-guide-step">
+      <view class="desktop-guide-num">3</view>
+      <text class="desktop-guide-text">{{i18n.desktopGuideStep3}}</text>
+    </view>
+    <view class="desktop-guide-tip">
+      <text class="desktop-guide-tip-icon">💡</text>
+      <text class="desktop-guide-tip-text">{{i18n.desktopGuideTip}}</text>
+    </view>
+  </view>
+  <button class="desktop-guide-btn" bindtap="closeDesktopGuide">{{i18n.gotIt}}</button>
+</view>
+
+<!-- 字体选择弹窗 -->
+<view class="ptmask" wx:if="{{showFontPicker}}" bindtap="closeFontPicker"></view>
+<view class="ptpanel font-picker-panel show" wx:if="{{showFontPicker}}">
+  <view class="font-picker-header">
+    <text class="font-picker-title">{{i18n.selectFontStyle}}</text>
+    <view class="font-picker-close" bindtap="closeFontPicker">✕</view>
+  </view>
+  <scroll-view class="font-picker-list" scroll-y enhanced show-scrollbar="{{false}}">
+    <view
+      wx:for="{{fontPickerItems}}"
+      wx:key="id"
+      class="font-picker-item {{item.isActive ? 'font-picker-active' : ''}} {{!item.isOwned ? 'font-picker-locked' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="selectFont"
+      hover-class="font-picker-hover"
+    >
+      <view class="font-picker-item-left">
+        <text class="font-picker-item-icon">{{item.icon}}</text>
+        <view class="font-picker-item-info">
+          <text class="font-picker-item-name">{{item.name}}</text>
+          <text class="font-picker-item-desc">{{item.desc}}</text>
+        </view>
+      </view>
+      <view class="font-picker-item-right">
+        <text wx:if="{{item.isActive}}" class="font-picker-active-tag">{{i18n.inUse}}</text>
+        <text wx:elif="{{!item.isOwned}}" class="font-picker-locked-tag">🔒</text>
+        <text wx:else class="font-picker-owned-tag">{{i18n.owned}}</text>
+      </view>
+    </view>
+  </scroll-view>
+  <view class="font-picker-preview">
+    <text class="font-picker-preview-label">{{i18n.previewEffect}}</text>
+    <text class="font-picker-preview-text">{{i18n.fontPreviewText}}</text>
+  </view>
+</view>
+
+<!-- 语言选择弹窗 -->
+<view class="ptmask" wx:if="{{showLangPicker}}" bindtap="closeLangPicker"></view>
+<view class="ptpanel lang-picker-panel show" wx:if="{{showLangPicker}}">
+  <view class="lang-picker-header">
+    <text class="lang-picker-title">{{i18n.selectLanguage}}</text>
+    <view class="lang-picker-close" bindtap="closeLangPicker">✕</view>
+  </view>
+  <view class="lang-picker-list">
+    <view
+      wx:for="{{langPickerItems}}"
+      wx:key="id"
+      class="lang-picker-item {{item.isActive ? 'lang-picker-active' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="selectLang"
+      hover-class="lang-picker-hover"
+    >
+      <view class="lang-picker-item-left">
+        <text class="lang-picker-item-icon">{{item.icon}}</text>
+        <text class="lang-picker-item-name">{{item.name}}</text>
+      </view>
+      <view class="lang-picker-item-right">
+        <text wx:if="{{item.isActive}}" class="lang-picker-active-tag">{{i18n.inUse}}</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<privacy-popup />

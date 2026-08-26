@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "数字顺序记忆 - 专注力记忆训练",
+  "usingComponents": {
+    "navigation-bar": "/components/navigation-bar/navigation-bar"
+  }
+}

@@ -1,3 +1,5 @@
+@import "../../styles/tool-common.wxss";
+
 page { background-color: var(--pageBg,#F8FAFC); }
 
 .tool-page {
@@ -428,6 +430,21 @@ page { background-color: var(--pageBg,#F8FAFC); }
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
+.pick-section { background: var(--cardBg,#FFFFFF); border-radius: 16px; padding: 18px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); margin-bottom: 12px; }
+.pick-desc { font-size: 13px; color: var(--textTertiary,#94A3B8); display: block; margin-bottom: 12px; }
+.pick-btn { background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); color: #FFFFFF; border-radius: 14px; font-size: 15px; font-weight: 600; padding: 14px; border: none; box-shadow: 0 4px 14px rgba(139,92,246,0.3); }
+.pick-btn::after { display: none; }
+
+.scheme-section { background: var(--cardBg,#FFFFFF); border-radius: 16px; padding: 18px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); margin-bottom: 12px; }
+.scheme-list { display: flex; flex-direction: column; gap: 14px; margin-top: 12px; }
+.scheme-item { display: flex; flex-direction: column; gap: 8px; }
+.scheme-name-row { display: flex; align-items: center; }
+.scheme-name { font-size: 13px; font-weight: 700; color: var(--textPrimary,#1E293B); }
+.scheme-colors { display: flex; gap: 6px; border-radius: 12px; overflow: hidden; }
+.scheme-color { flex: 1; height: 48px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; transition: transform 0.2s; }
+.scheme-color:active { transform: scale(0.95); }
+.scheme-color-hex { font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.85); text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+
 .action-buttons {
   display: flex;
   gap: 12px;
@@ -610,4 +627,264 @@ page { background-color: var(--pageBg,#F8FAFC); }
 
 .quick-pick-item:active {
   transform: scale(0.9);
+}
+
+.fav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 10px; border-radius: 10px; background: rgba(236,72,153,0.1); flex-shrink: 0; }
+.fav-btn:active { background: rgba(236,72,153,0.2); }
+.fav-icon { font-size: 16px; }
+.fav-text { font-size: 9px; color: var(--accentPink,#EC4899); font-weight: 700; margin-top: 2px; }
+
+.fav-section { background: var(--cardBg,#FFFFFF); border-radius: 16px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 14px; }
+.fav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.fav-header .palette-title { margin-bottom: 0; }
+.fav-count { font-size: 12px; color: var(--textTertiary,#94A3B8); font-weight: 600; }
+.fav-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.fav-item { position: relative; }
+.fav-color-dot { width: 38px; height: 38px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); transition: transform 0.15s ease; }
+.fav-color-dot:active { transform: scale(0.9); }
+.fav-remove { position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%; background: var(--accentRed,#EF4444); color: #FFFFFF; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+.harmony-types { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.harmony-type-btn { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; background: var(--pageBg,#F8FAFC); color: var(--textSecondary,#64748B); border: 1.5px solid transparent; transition: all 0.2s ease; }
+.harmony-type-btn.active { background: rgba(236,72,153,0.1); color: var(--accentPink,#EC4899); border-color: var(--accentPink,#EC4899); }
+.harmony-colors { display: flex; gap: 8px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+.harmony-color-item { flex: 1; min-height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 8px 4px; border-radius: 10px; transition: transform 0.2s; }
+.harmony-color-item:active { transform: scale(0.95); }
+.harmony-label { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.9); text-shadow: 0 1px 2px rgba(0,0,0,0.3); margin-bottom: 2px; }
+.harmony-hex { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.8); text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+.harmony-copy { text-align: center; padding: 8px 0; font-size: 13px; font-weight: 600; color: var(--accentPink,#EC4899); }
+.harmony-copy:active { opacity: 0.7; }
+
+.gradient-section { background: var(--cardBg,#FFFFFF); border-radius: 16px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 14px; }
+.gradient-preview { height: 100px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.gradient-css-text { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.9); text-shadow: 0 1px 3px rgba(0,0,0,0.4); font-family: 'Courier New', monospace; text-align: center; padding: 0 12px; word-break: break-all; }
+.gradient-controls { margin-bottom: 14px; }
+.gradient-color-pick { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 14px; }
+.grad-color-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.grad-color-dot { width: 44px; height: 44px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 2px solid rgba(255,255,255,0.5); transition: transform 0.15s; }
+.grad-color-dot:active { transform: scale(0.9); }
+.grad-color-label { font-size: 11px; color: var(--textSecondary,#64748B); font-weight: 600; }
+.grad-arrow { font-size: 20px; color: var(--textTertiary,#94A3B8); }
+.gradient-angle-row { display: flex; align-items: center; gap: 8px; }
+.grad-angle-label { font-size: 12px; color: var(--textSecondary,#64748B); font-weight: 600; flex-shrink: 0; }
+.grad-angle-btns { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; }
+.grad-angle-btn { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; background: var(--pageBg,#F8FAFC); color: var(--textSecondary,#64748B); border: 1.5px solid transparent; transition: all 0.2s; }
+.grad-angle-btn.active { background: rgba(236,72,153,0.1); color: var(--accentPink,#EC4899); border-color: var(--accentPink,#EC4899); }
+.gradient-actions { display: flex; gap: 10px; }
+.grad-action-btn { flex: 1; text-align: center; padding: 10px 0; border-radius: 10px; font-size: 13px; font-weight: 700; }
+.grad-random { background: var(--pageBg,#F8FAFC); color: var(--textSecondary,#64748B); }
+.grad-random:active { opacity: 0.7; }
+.grad-copy { background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, #DB2777 100%); color: #FFFFFF; }
+.grad-copy:active { opacity: 0.8; }
+
+/* ===================================
+   🌙 夜间模式完整适配 - 粉色主题
+   =================================== */
+.dark-mode page {
+  background-color: var(--pageBgNight,#0f1419);
+}
+
+.dark-mode .icon-wrapper {
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.25);
+}
+
+.dark-mode .tool-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .tool-desc {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .color-preview-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .color-name-text {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .contrast-text {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .input-card {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .input-label {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .input-row {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .input-row:focus-within {
+  border-color: var(--accentPink,#EC4899);
+}
+
+.dark-mode .input-prefix {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .color-input {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .rgb-input,
+.dark-mode .hsl-input {
+  background: var(--cardBg,#1a2035);
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .rgb-input:focus,
+.dark-mode .hsl-input:focus {
+  border-color: var(--accentPink,#EC4899);
+  background: var(--elevatedBg,#232d42);
+}
+
+.dark-mode .hsl-unit {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .result-section {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.8) 0%, rgba(236, 72, 153, 0.6) 100%);
+  box-shadow: 0 4px 16px rgba(236, 72, 153, 0.25);
+}
+
+.dark-mode .result-title {
+  color: white;
+}
+
+.dark-mode .result-item {
+  background: rgba(26, 32, 53, 0.95);
+}
+
+.dark-mode .result-value {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .css-output {
+  background: rgba(26, 32, 53, 0.95);
+}
+
+.dark-mode .css-label {
+  color: var(--accentPink,#F472B6);
+}
+
+.dark-mode .css-code {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .css-item {
+  background: var(--cardBg,#1a2035);
+}
+
+.dark-mode .palette-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .palette-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .action-btn.random {
+  background: linear-gradient(135deg, var(--accentPink,#EC4899) 0%, #DB2777 100%);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+}
+
+.dark-mode .action-btn.invert {
+  background: linear-gradient(135deg, var(--accentPurple,#8B5CF6) 0%, var(--accentPurpleDark,#7C3AED) 100%);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.dark-mode .color-picker-panel {
+  background: var(--elevatedBg,#232d42);
+}
+
+.dark-mode .picker-title {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .picker-close {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .picker-hex-text {
+  color: var(--textPrimary,#F1F5F9);
+}
+
+.dark-mode .picker-color-box {
+  border-color: var(--borderLight,#374151);
+}
+
+.dark-mode .fav-btn {
+  background: rgba(236,72,153,0.15);
+}
+
+.dark-mode .fav-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.dark-mode .fav-count {
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .harmony-type-btn {
+  background: var(--cardBg,#1a2035);
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .harmony-type-btn.active {
+  background: rgba(236,72,153,0.15);
+  color: var(--accentPink,#F472B6);
+  border-color: var(--accentPink,#EC4899);
+}
+
+.dark-mode .harmony-copy {
+  color: var(--accentPink,#F472B6);
+}
+
+.dark-mode .gradient-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.dark-mode .grad-color-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .grad-angle-label {
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .grad-angle-btn {
+  background: var(--cardBg,#1a2035);
+  color: var(--textMuted,#475569);
+}
+
+.dark-mode .grad-angle-btn.active {
+  background: rgba(236,72,153,0.15);
+  color: var(--accentPink,#F472B6);
+  border-color: var(--accentPink,#EC4899);
+}
+
+.dark-mode .grad-random {
+  background: var(--cardBg,#1a2035);
+  color: var(--textSecondary,#94A3B8);
+}
+
+.dark-mode .scheme-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.dark-mode .pick-section {
+  background: var(--elevatedBg,#232d42);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }

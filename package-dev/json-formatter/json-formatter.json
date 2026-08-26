@@ -1,1 +1,1 @@
-{"usingComponents": {"navigation-bar": "/components/navigation-bar/navigation-bar"}}
+{"usingComponents": {"navigation-bar": "/components/navigation-bar/navigation-bar", "skeleton": "/components/skeleton/skeleton"}, "navigationBarTitleText": "JSON格式化 - 代码美化压缩"}

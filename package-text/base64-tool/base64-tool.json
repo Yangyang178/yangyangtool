@@ -1,1 +1,1 @@
-{"usingComponents": {"navigation-bar": "/components/navigation-bar/navigation-bar"}, "navigationBarTitleText": "Base64编解码"}
+{"usingComponents": {"navigation-bar": "/components/navigation-bar/navigation-bar", "skeleton": "/components/skeleton/skeleton"}, "navigationBarTitleText": "Base64编解码 - 图片文字转换"}

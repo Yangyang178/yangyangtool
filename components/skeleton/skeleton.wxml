@@ -52,4 +52,26 @@
       </view>
     </view>
   </view>
+
+  <view class="sk-container sk-tool-container" wx:if="{{type === 'tool'}}">
+    <view class="sk-tool-header">
+      <view class="sk-tool-icon"></view>
+      <view class="sk-line sk-tool-title"></view>
+      <view class="sk-line sk-tool-desc"></view>
+    </view>
+    <view class="sk-tool-card">
+      <view class="sk-line sk-tool-label"></view>
+      <view class="sk-tool-input"></view>
+      <view class="sk-line sk-tool-label short"></view>
+      <view class="sk-tool-input short"></view>
+    </view>
+    <view class="sk-tool-card">
+      <view class="sk-line sk-tool-label"></view>
+      <view class="sk-tool-result-block"></view>
+    </view>
+    <view class="sk-btn-row">
+      <view class="sk-btn"></view>
+      <view class="sk-btn sk-btn-outline"></view>
+    </view>
+  </view>
 </view>

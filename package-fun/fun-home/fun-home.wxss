@@ -1,0 +1,479 @@
+/* 益智工具库首页样式 */
+
+/* 容器 */
+.container {
+  min-height: 100vh;
+  padding: 24rpx 32rpx 48rpx;
+  background: linear-gradient(180deg, #F0F4FF 0%, #F8FAFC 30%, #FFFFFF 100%);
+  box-sizing: border-box;
+}
+
+/* 暗黑模式 */
+.container.dark-mode {
+  background: linear-gradient(180deg, #0F172A 0%, #1E293B 30%, #1E293B 100%);
+}
+
+/* 字体大小设置 */
+.font-size-small {
+  font-size: 24rpx;
+}
+.font-size-medium {
+  font-size: 28rpx;
+}
+.font-size-large {
+  font-size: 32rpx;
+}
+
+/* 工具头部 */
+.tool-header {
+  display: flex;
+  align-items: center;
+  padding: 32rpx 24rpx;
+  margin-bottom: 32rpx;
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A78BFA 100%);
+  border-radius: 24rpx;
+  box-shadow: 0 8rpx 32rpx rgba(99, 102, 241, 0.3);
+}
+
+.dark-mode .tool-header {
+  background: linear-gradient(135deg, #4338CA 0%, #6D28D9 50%, #7C3AED 100%);
+  box-shadow: 0 8rpx 32rpx rgba(99, 102, 241, 0.4);
+}
+
+.header-icon-wrap {
+  width: 96rpx;
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 20rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.header-icon {
+  font-size: 52rpx;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.3;
+}
+
+.header-subtitle {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 4rpx;
+  line-height: 1.4;
+}
+
+/* 工具卡片网格 */
+.tool-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+/* 工具卡片 */
+.tool-card {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 24rpx;
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.dark-mode .tool-card {
+  background: #334155;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.3);
+}
+
+.tool-card-hover {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .tool-card-hover {
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.4);
+}
+
+/* 卡片图标 */
+.card-icon-wrap {
+  width: 88rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.12);
+}
+
+.card-icon {
+  font-size: 44rpx;
+}
+
+/* 卡片信息 */
+.card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.card-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1E293B;
+  line-height: 1.4;
+}
+
+.dark-mode .card-name {
+  color: #F1F5F9;
+}
+
+.card-desc {
+  font-size: 24rpx;
+  color: #94A3B8;
+  margin-top: 6rpx;
+  line-height: 1.4;
+}
+
+.dark-mode .card-desc {
+  color: #94A3B8;
+}
+
+/* 卡片按钮 */
+.card-btn-wrap {
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+.card-btn {
+  padding: 12rpx 28rpx;
+  border-radius: 32rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+  white-space: nowrap;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+}
+
+.tool-locked {
+  opacity: 0.65;
+}
+
+/* 解锁进度条 */
+.unlock-progress {
+  display: flex;
+  align-items: center;
+  margin-top: 8rpx;
+  gap: 12rpx;
+}
+
+.unlock-progress-bar {
+  flex: 1;
+  height: 12rpx;
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.unlock-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8B5CF6, #A78BFA);
+  border-radius: 6rpx;
+  transition: width 0.3s ease;
+}
+
+.unlock-progress-text {
+  font-size: 20rpx;
+  color: #8B5CF6;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dark-mode .unlock-progress-bar {
+  background: rgba(148, 163, 184, 0.2);
+}
+
+.dark-mode .unlock-progress-text {
+  color: #A78BFA;
+}
+
+/* 最佳成绩 */
+.best-record {
+  display: flex;
+  align-items: center;
+  margin-top: 8rpx;
+  gap: 6rpx;
+}
+
+.best-record-icon {
+  font-size: 20rpx;
+}
+
+.best-record-text {
+  font-size: 22rpx;
+  color: #F59E0B;
+  font-weight: 600;
+}
+
+.dark-mode .best-record-text {
+  color: #FCD34D;
+}
+
+/* 排行榜入口 */
+.leaderboard-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 24rpx;
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  margin-bottom: 24rpx;
+}
+
+.dark-mode .leaderboard-entry {
+  background: #334155;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.3);
+}
+
+.leaderboard-entry-hover {
+  transform: scale(0.98);
+}
+
+.leaderboard-entry-left {
+  display: flex;
+  align-items: center;
+}
+
+.leaderboard-entry-icon {
+  font-size: 44rpx;
+  margin-right: 20rpx;
+}
+
+.leaderboard-entry-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.leaderboard-entry-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1E293B;
+}
+
+.dark-mode .leaderboard-entry-title {
+  color: #F1F5F9;
+}
+
+.leaderboard-entry-desc {
+  font-size: 24rpx;
+  color: #94A3B8;
+  margin-top: 4rpx;
+}
+
+.leaderboard-entry-arrow {
+  font-size: 36rpx;
+  color: #94A3B8;
+  font-weight: 300;
+}
+
+.lock-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+}
+
+.lock-icon {
+  font-size: 36rpx;
+}
+
+/* 提示卡片 */
+.tip-card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx 28rpx 24rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.dark-mode .tip-card {
+  background: #334155;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.3);
+}
+
+.tip-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1E293B;
+  margin-bottom: 16rpx;
+}
+
+.dark-mode .tip-title {
+  color: #F1F5F9;
+}
+
+.tip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+}
+
+.tip-dot {
+  color: #8B5CF6;
+  font-size: 28rpx;
+  margin-right: 12rpx;
+  line-height: 1.5;
+  flex-shrink: 0;
+}
+
+.dark-mode .tip-dot {
+  color: #A78BFA;
+}
+
+.tip-text {
+  font-size: 24rpx;
+  color: #64748B;
+  line-height: 1.5;
+}
+
+.dark-mode .tip-text {
+  color: #94A3B8;
+}
+
+/* 分享区域 */
+.share-section {
+  padding: 0 0 32rpx;
+}
+
+.share-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 88rpx;
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  border-radius: 20rpx;
+  border: none;
+  box-shadow: 0 6rpx 20rpx rgba(99, 102, 241, 0.3);
+  transition: all 0.2s ease;
+}
+
+.dark-mode .share-btn {
+  background: linear-gradient(135deg, #4338CA 0%, #6D28D9 100%);
+  box-shadow: 0 6rpx 20rpx rgba(99, 102, 241, 0.4);
+}
+
+/* 暗黑模式补充 */
+.dark-mode .container {
+  background: linear-gradient(180deg, #0F172A 0%, #1E293B 30%, #1E293B 100%);
+}
+
+.dark-mode .tool-card {
+  background: #334155;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .tip-card {
+  background: #334155;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .result-modal {
+  background: #1E293B;
+}
+
+.dark-mode .result-modal-close {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.share-btn::after {
+  border: none;
+}
+
+.share-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.share-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+/* 字体大小适配 */
+.font-size-small .header-title {
+  font-size: 36rpx;
+}
+.font-size-small .card-name {
+  font-size: 28rpx;
+}
+.font-size-small .card-desc {
+  font-size: 22rpx;
+}
+.font-size-small .card-btn {
+  font-size: 22rpx;
+  padding: 10rpx 24rpx;
+}
+.font-size-small .tip-title {
+  font-size: 26rpx;
+}
+.font-size-small .tip-text {
+  font-size: 22rpx;
+}
+.font-size-small .share-text {
+  font-size: 26rpx;
+}
+
+.font-size-large .header-title {
+  font-size: 46rpx;
+}
+.font-size-large .card-name {
+  font-size: 36rpx;
+}
+.font-size-large .card-desc {
+  font-size: 28rpx;
+}
+.font-size-large .card-btn {
+  font-size: 28rpx;
+  padding: 14rpx 32rpx;
+}
+.font-size-large .tip-title {
+  font-size: 34rpx;
+}
+.font-size-large .tip-text {
+  font-size: 28rpx;
+}
+.font-size-large .share-text {
+  font-size: 34rpx;
+}

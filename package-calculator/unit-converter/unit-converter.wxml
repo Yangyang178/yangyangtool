@@ -1,13 +1,15 @@
-<navigation-bar title="单位换算" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
 
-<scroll-view class="tool-page" scroll-y>
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y>
   <view class="container">
     <view class="tool-header">
       <view class="icon-wrapper red-gradient">
+        <view class="icon-decoration"></view>
         <text class="tool-icon">📏</text>
       </view>
-      <text class="tool-title">智能单位换算</text>
-      <text class="tool-desc">10大类别 · 100+单位 · 一键精准转换</text>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
     </view>
 
     <!-- 分类选择 -->
@@ -26,12 +28,12 @@
     <!-- 输入区域 -->
     <view class="input-section">
       <view class="input-card">
-        <text class="card-label">输入数值</text>
+        <text class="card-label">{{i18n.inputNumber}}</text>
         <view class="value-input-wrapper">
-          <input 
-            class="value-input" 
+          <input
+            class="value-input"
             type="digit"
-            placeholder="请输入数值"
+            placeholder="{{i18n.inputPlaceholder}}"
             value="{{inputValue}}"
             bindinput="onInput"
           />
@@ -48,7 +50,7 @@
 
       <!-- 目标单位 -->
       <view class="output-card">
-        <text class="card-label">转换结果</text>
+        <text class="card-label">{{i18n.outputResult}}</text>
         <view class="result-display">
           <text class="result-value">{{resultValue}}</text>
           <view class="unit-selector" bindtap="showToUnit">
@@ -60,7 +62,7 @@
 
     <!-- 常用换算表 -->
     <view class="conversion-table" wx:if="{{showTable}}">
-      <text class="table-title">常用换算参考</text>
+      <text class="table-title">{{i18n.commonRef}}</text>
       <view class="table-list">
         <view class="table-row" wx:for="{{conversionList}}" wx:key="index">
           <text class="table-from">{{item.from}}</text>
@@ -72,19 +74,98 @@
 
     <!-- 操作按钮 -->
     <view class="action-btns">
-      <button class="primary-btn" bindtap="copyResult">
-        <text>复制结果</text>
+      <button class="btn-primary" bindtap="copyResult">
+        <text>{{i18n.copyBtn}}</text>
       </button>
-      <button class="secondary-btn" bindtap="swapUnits">
-        <text>交换单位</text>
+      <button class="btn-secondary" bindtap="swapUnits">
+        <text>{{i18n.swapBtn}}</text>
       </button>
+      <button class="btn-fav" bindtap="addFavorite">
+        <text>{{i18n.favBtn}}</text>
+      </button>
+    </view>
+
+    <view class="feature-tabs">
+      <view class="feature-tab {{showFavorites ? 'active' : ''}}" bindtap="toggleFavorites">{{i18n.favTab}}</view>
+      <view class="feature-tab {{showRecent ? 'active' : ''}}" bindtap="toggleRecent">{{i18n.recentTab}}</view>
+    </view>
+
+    <view class="favorites-section" wx:if="{{showFavorites}}">
+      <view class="section-header">
+        <text class="section-title">{{i18n.favTitle}}</text>
+        <text class="section-count" wx:if="{{favorites.length > 0}}">{{favorites.length}}/20</text>
+      </view>
+      <view class="fav-list" wx:if="{{favorites.length > 0}}">
+        <view class="fav-item" wx:for="{{favorites}}" wx:key="index">
+          <view class="fav-main" data-index="{{index}}" bindtap="useFavorite">
+            <text class="fav-label">{{item.label}}</text>
+            <text class="fav-category">{{item.category}}</text>
+          </view>
+          <view class="fav-del" data-index="{{index}}" bindtap="removeFavorite">✕</view>
+        </view>
+      </view>
+      <view class="section-empty" wx:else>
+        <text class="empty-text">{{i18n.favEmpty}}</text>
+      </view>
+    </view>
+
+    <view class="recent-section" wx:if="{{showRecent}}">
+      <view class="section-header">
+        <text class="section-title">{{i18n.recentTitle}}</text>
+        <text class="section-clear" wx:if="{{recentUsed.length > 0}}" bindtap="clearRecent">{{i18n.clearBtn}}</text>
+      </view>
+      <view class="recent-list" wx:if="{{recentUsed.length > 0}}">
+        <view class="recent-item" wx:for="{{recentUsed}}" wx:key="index" data-index="{{index}}" bindtap="useRecent">
+          <view class="recent-main">
+            <text class="recent-label">{{item.fromUnit}} → {{item.toUnit}}</text>
+            <text class="recent-time">{{item.time}}</text>
+          </view>
+          <text class="recent-category">{{item.category}}</text>
+        </view>
+      </view>
+      <view class="section-empty" wx:else>
+        <text class="empty-text">{{i18n.recentEmpty}}</text>
+      </view>
+    </view>
+
+    <view class="exchange-section" wx:if="{{exchangeRate}}">
+      <view class="exchange-header">
+        <text class="exchange-title">{{i18n.exchangeTitle}}</text>
+        <view class="exchange-go" bindtap="goToExchangeRate">{{i18n.openExchange}}</view>
+      </view>
+      <view class="exchange-info">
+        <text class="exchange-base">{{i18n.baseLabel}} {{exchangeRate.base || 'CNY'}}</text>
+        <text class="exchange-update">{{exchangeRate.updateTime || ''}}</text>
+      </view>
+      <view class="exchange-rates" wx:if="{{exchangeRate.rates}}">
+        <view class="rate-item">
+          <text class="rate-cur">USD</text>
+          <text class="rate-val">{{exchangeRate.rates.USD || '-'}}</text>
+        </view>
+        <view class="rate-item">
+          <text class="rate-cur">EUR</text>
+          <text class="rate-val">{{exchangeRate.rates.EUR || '-'}}</text>
+        </view>
+        <view class="rate-item">
+          <text class="rate-cur">JPY</text>
+          <text class="rate-val">{{exchangeRate.rates.JPY || '-'}}</text>
+        </view>
+        <view class="rate-item">
+          <text class="rate-cur">GBP</text>
+          <text class="rate-val">{{exchangeRate.rates.GBP || '-'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="tool-actions-bar">
+      <button class="tool-action-btn tool-action-reset" bindtap="resetData" hover-class="btn-hover">{{i18n.resetBtn}}</button>
     </view>
 
     <!-- 自定义单位选择器弹窗 -->
     <view class="unit-picker-mask" wx:if="{{showUnitPicker}}" bindtap="hideUnitPicker"></view>
     <view class="unit-picker-popup {{showUnitPicker ? 'show' : ''}}">
       <view class="picker-header">
-        <text class="picker-title">选择{{pickerType === 'from' ? '源' : '目标'}}单位</text>
+        <text class="picker-title">{{pickerType === 'from' ? i18n.selectSourceUnit : i18n.selectTargetUnit}}</text>
         <view class="picker-close" bindtap="hideUnitPicker">
           <text>✕</text>
         </view>
@@ -104,3 +185,4 @@
     </view>
   </view>
 </scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

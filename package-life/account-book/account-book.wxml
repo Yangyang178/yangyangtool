@@ -1,0 +1,233 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+<skeleton show="{{isLoading}}" type="tool" dark="{{isDarkMode}}"></skeleton>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}} {{fontClass}}" scroll-y enhanced show-scrollbar="{{false}}">
+
+  <view class="tool-header">
+    <view class="tool-icon-large" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+      <view class="tool-icon-decoration"></view>
+      📒
+    </view>
+    <view class="tool-info">
+      <text class="tool-title-main">{{i18n.toolTitle}}</text>
+      <text class="tool-desc-main">{{i18n.toolDesc}}</text>
+    </view>
+  </view>
+
+  <!-- 操作引导 -->
+  <view class="guide-tip" wx:if="{{showGuideTip}}">
+    <view class="guide-tip-header">
+      <text class="guide-tip-icon">💡</text>
+      <text class="guide-tip-title">{{i18n.guideTipTitle}}</text>
+      <view class="guide-tip-close" bindtap="closeGuideTip">✕</view>
+    </view>
+    <view class="guide-tip-steps">
+      <view class="guide-step" wx:for="{{i18n.guideSteps}}" wx:key="index">
+        <text class="guide-step-num">{{index + 1}}</text>
+        <text class="guide-step-text">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="month-summary">
+    <view class="month-nav">
+      <view class="month-arrow" bindtap="onPrevMonth">◀</view>
+      <text class="month-text">{{monthDisplay}}</text>
+      <view class="month-arrow" bindtap="onNextMonth">▶</view>
+    </view>
+
+    <view class="budget-bar" wx:if="{{monthlyBudget > 0}}">
+      <view class="budget-track">
+        <view class="budget-fill {{budgetOver ? 'over' : ''}}" style="width: {{budgetPercent}}%;"></view>
+      </view>
+      <view class="budget-info">
+        <text class="budget-label">{{i18n.budget}} ¥{{monthlyBudget}}</text>
+        <text class="budget-remain {{budgetOver ? 'over-text' : ''}}">{{budgetOver ? i18n.overBudget : i18n.remainBudget}} ¥{{budgetRemain}}</text>
+      </view>
+    </view>
+
+    <view class="budget-set-hint" bindtap="showBudgetSetting" wx:if="{{monthlyBudget === 0}}">
+      <text>📋 {{i18n.setBudget}}</text>
+    </view>
+    <view class="budget-set-btn" bindtap="showBudgetSetting" wx:else>
+      <text>💰 {{i18n.modifyBudget}}</text>
+    </view>
+
+    <view class="summary-row">
+      <view class="summary-item">
+        <text class="summary-label">{{i18n.income}}</text>
+        <text class="summary-value income">+{{monthIncome}}</text>
+      </view>
+      <view class="summary-divider"></view>
+      <view class="summary-item">
+        <text class="summary-label">{{i18n.expense}}</text>
+        <text class="summary-value expense">-{{monthExpense}}</text>
+      </view>
+      <view class="summary-divider"></view>
+      <view class="summary-item">
+        <text class="summary-label">{{i18n.balance}}</text>
+        <text class="summary-value balance">{{monthBalance}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="budget-popup-mask" wx:if="{{showBudgetSet}}" catchtap="hideBudgetSetting">
+    <view class="budget-popup" catchtap="doNothing">
+      <text class="budget-popup-title">{{i18n.setBudgetTitle}}</text>
+      <input class="budget-input" type="digit" placeholder="{{i18n.budgetPlaceholder}}" value="{{budgetInput}}" bindinput="onBudgetInput" catchtap="doNothing" />
+      <view class="budget-popup-actions">
+        <view class="budget-popup-btn clear" catchtap="clearBudget"><text>{{i18n.clearBudget}}</text></view>
+        <view class="budget-popup-btn save" catchtap="saveBudget"><text>{{i18n.save}}</text></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === 'record' ? 'active' : ''}}" data-tab="record" bindtap="onTabChange">
+      <text>{{i18n.tabRecord}}</text>
+    </view>
+    <view class="tab-item {{currentTab === 'detail' ? 'active' : ''}}" data-tab="detail" bindtap="onTabChange">
+      <text>{{i18n.tabDetail}}</text>
+    </view>
+    <view class="tab-item {{currentTab === 'stats' ? 'active' : ''}}" data-tab="stats" bindtap="onTabChange">
+      <text>{{i18n.tabStats}}</text>
+    </view>
+  </view>
+
+  <view class="tab-content" wx:if="{{currentTab === 'record'}}">
+    <view class="section-card">
+      <view class="type-switch">
+        <view class="type-btn {{inputType === 'expense' ? 'active expense-active' : ''}}" data-type="expense" bindtap="onTypeChange">
+          <text>{{i18n.expense}}</text>
+        </view>
+        <view class="type-btn {{inputType === 'income' ? 'active income-active' : ''}}" data-type="income" bindtap="onTypeChange">
+          <text>{{i18n.income}}</text>
+        </view>
+      </view>
+
+      <view class="amount-input-wrap">
+        <text class="amount-symbol">¥</text>
+        <input class="amount-input" type="digit" placeholder="0.00" value="{{inputAmount}}" bindinput="onAmountInput" maxlength="12" />
+      </view>
+
+      <view class="category-grid">
+        <view class="category-item {{selectedCategory === item.key ? 'selected' : ''}}"
+              wx:for="{{inputType === 'expense' ? expenseCategories : incomeCategories}}"
+              wx:key="key"
+              data-key="{{item.key}}"
+              bindtap="onCategoryTap">
+          <text class="category-icon">{{item.icon}}</text>
+          <text class="category-name">{{item.name}}</text>
+        </view>
+      </view>
+
+      <view class="note-input-wrap">
+        <input class="note-input" placeholder="{{i18n.notePlaceholder}}" value="{{inputNote}}" bindinput="onNoteInput" maxlength="50" />
+      </view>
+
+      <view class="add-btn" bindtap="addRecord">
+        <text>{{i18n.addRecord}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tab-content" wx:if="{{currentTab === 'detail'}}">
+    <view class="detail-list" wx:if="{{filteredRecords.length > 0}}">
+      <view class="detail-day-group" wx:for="{{filteredRecords}}" wx:key="date">
+        <view class="day-header">
+          <text class="day-date">{{item.dateDisplay}}</text>
+          <view class="day-summary">
+            <text class="day-income" wx:if="{{item.dayIncome !== '0.00'}}">{{i18n.incomeShort}} {{item.dayIncome}}</text>
+            <text class="day-expense" wx:if="{{item.dayExpense !== '0.00'}}">{{i18n.expenseShort}} {{item.dayExpense}}</text>
+          </view>
+        </view>
+        <view class="record-item {{showDeleteId === item2.id ? 'show-delete' : ''}}"
+              wx:for="{{item.items}}" wx:for-item="item2" wx:key="id"
+              data-id="{{item2.id}}"
+              bindlongpress="onRecordLongPress"
+              bindtouchend="onRecordTouchEnd">
+          <view class="record-left">
+            <text class="record-cat-icon">{{item2.categoryIcon}}</text>
+            <view class="record-info">
+              <text class="record-cat-name">{{item2.categoryName}}</text>
+              <text class="record-note" wx:if="{{item2.note}}">{{item2.note}}</text>
+            </view>
+          </view>
+          <view class="record-right">
+            <text class="record-amount {{item2.type === 'income' ? 'income' : 'expense'}}">{{item2.amountDisplay}}</text>
+            <text class="record-time">{{item2.time}}</text>
+          </view>
+          <view class="delete-btn" data-id="{{item2.id}}" catchtap="onDeleteRecord">{{i18n.delete}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">📋</text>
+      <text class="empty-text">{{i18n.noRecords}}</text>
+      <text class="empty-hint">{{i18n.noRecordsHint}}</text>
+    </view>
+  </view>
+
+  <view class="tab-content" wx:if="{{currentTab === 'stats'}}">
+    <view class="section-card" wx:if="{{statsCategories.length > 0}}">
+      <text class="section-title">🍩 {{i18n.expenseCategoryRatio}}</text>
+      <view class="pie-canvas-wrap">
+        <canvas type="2d" id="pieCanvas" class="pie-canvas" style="width: 100%; height: 220px;"></canvas>
+      </view>
+      <view class="stats-list">
+        <view class="stats-item" wx:for="{{statsCategories}}" wx:key="key">
+          <view class="stats-item-left">
+            <text class="stats-cat-icon">{{item.icon}}</text>
+            <text class="stats-cat-name">{{item.name}}</text>
+          </view>
+          <view class="stats-item-right">
+            <view class="stats-bar-wrap">
+              <view class="stats-bar" style="width: {{item.percent}}%;"></view>
+            </view>
+            <text class="stats-amount">¥{{item.amount}}</text>
+            <text class="stats-percent">{{item.percent}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-card" wx:if="{{dailyData.length >= 2}}">
+      <text class="section-title">📈 {{i18n.incomeExpenseTrend}}</text>
+      <view class="trend-canvas-wrap">
+        <canvas type="2d" id="trendCanvas" class="trend-canvas" style="width: 100%; height: 200px;"></canvas>
+      </view>
+    </view>
+
+    <view class="section-card" wx:if="{{dailyData.length > 0}}">
+      <text class="section-title">📊 {{i18n.dailyExpense}}</text>
+      <view class="chart-canvas-wrap">
+        <canvas type="2d" id="statsCanvas" class="stats-canvas" style="width: 100%; height: 200px;"></canvas>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{statsCategories.length === 0}}">
+      <text class="empty-icon">📊</text>
+      <text class="empty-text">{{i18n.noExpense}}</text>
+      <text class="empty-hint">{{i18n.noExpenseHint}}</text>
+    </view>
+  </view>
+
+  <view class="tool-actions-bar">
+    <button class="tool-action-btn tool-action-copy" bindtap="copyResult" hover-class="btn-hover">📋 {{i18n.copyMonthlySummary}}</button>
+    <button class="tool-action-btn tool-action-export" bindtap="exportCSV" hover-class="btn-hover">📤 {{i18n.exportCSV}}</button>
+    <button class="tool-action-btn tool-action-share" bindtap="shareCSV" hover-class="btn-hover">💬 {{i18n.shareFile}}</button>
+  </view>
+
+  <view class="section-card tips-section">
+    <text class="section-title">💡 {{i18n.usageTips}}</text>
+    <view class="tips-content">
+      <text class="tips-item">{{i18n.tip1}}</text>
+      <text class="tips-item">{{i18n.tip2}}</text>
+      <text class="tips-item">{{i18n.tip3}}</text>
+      <text class="tips-item">{{i18n.tip4}}</text>
+      <text class="tips-item">{{i18n.tip5}}</text>
+    </view>
+  </view>
+
+</scroll-view>
+<canvas type="2d" id="toolPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>

@@ -1,0 +1,212 @@
+<navigation-bar title="{{i18n.navTitle}}" back="{{true}}" color="black" background="#F8FAFC"></navigation-bar>
+
+<scroll-view class="tool-page {{isDarkMode ? 'dark-mode' : ''}} font-size-{{fontSizeSetting}}" scroll-y>
+  <view class="container">
+
+    <!-- 工具头部 -->
+    <view class="tool-header">
+      <view class="icon-wrapper blue-gradient">
+        <view class="icon-decoration"></view>
+        <text class="tool-icon">🔢</text>
+      </view>
+      <text class="tool-title">{{i18n.toolTitle}}</text>
+      <text class="tool-desc">{{i18n.toolDesc}}</text>
+    </view>
+
+    <!-- 开始界面 -->
+    <block wx:if="{{gameState === 'idle'}}">
+      <!-- 状态栏 -->
+      <view class="stats-card">
+        <view class="stats-row">
+          <view class="stat-item">
+            <text class="stat-value">{{difficultyText}}</text>
+            <text class="stat-label">{{i18n.currentDifficulty}}</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value">{{bestTime > 0 ? bestTime + i18n.secondUnit : '-'}}</text>
+            <text class="stat-label">{{i18n.bestRecord}}</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value">{{totalGames}}</text>
+            <text class="stat-label">{{i18n.totalGames}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 难度选择 -->
+      <view class="diff-section">
+        <view class="diff-title">{{i18n.difficulty}}</view>
+        <view class="diff-options">
+          <view class="diff-btn {{difficulty === 'easy' ? 'active' : ''}}" bindtap="setDifficulty" data-diff="easy">
+            <text class="diff-label">{{i18n.easy}}</text>
+            <text class="diff-count">{{i18n.easyDesc}}</text>
+          </view>
+          <view class="diff-btn {{difficulty === 'normal' ? 'active' : ''}}" bindtap="setDifficulty" data-diff="normal">
+            <text class="diff-label">{{i18n.normal}}</text>
+            <text class="diff-count">{{i18n.normalDesc}}</text>
+          </view>
+          <view class="diff-btn {{difficulty === 'hard' ? 'active' : ''}}" bindtap="setDifficulty" data-diff="hard">
+            <text class="diff-label">{{i18n.hard}}</text>
+            <text class="diff-count">{{i18n.hardDesc}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 开始按钮 -->
+      <button class="btn-primary start-btn" bindtap="startGame">
+        <text class="btn-icon-emoji">▶</text>
+        <text>{{i18n.startGame}}</text>
+      </button>
+
+      <!-- 重置统计按钮 -->
+      <view class="reset-btn" bindtap="resetStats" wx:if="{{bestTime > 0 || totalGames > 0}}">
+        <text>{{i18n.resetStats}}</text>
+      </view>
+    </block>
+
+    <!-- 记忆阶段界面 -->
+    <block wx:if="{{gameState === 'memorizing'}}">
+      <!-- 记忆阶段状态栏 -->
+      <view class="stats-card memorize-card">
+        <view class="stats-row">
+          <view class="stat-item">
+            <text class="stat-value memorize-elapsed">{{memorizeElapsed}}{{i18n.secondUnit}}</text>
+            <text class="stat-label">{{i18n.memorizedTime}}</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value">{{numbers}}</text>
+            <text class="stat-label">{{i18n.numbers}}</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value">{{difficultyText}}</text>
+            <text class="stat-label">{{i18n.currentDifficulty}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 记忆阶段提示 -->
+      <view class="state-text-wrap memorize-tip-wrap">
+        <text class="state-text memorize-tip">🧠 {{i18n.memorizeTip}}</text>
+      </view>
+
+      <!-- 数字网格（记忆阶段显示） -->
+      <view class="game-area">
+        <view class="number-grid" style="grid-template-columns: repeat({{gridCols}}, 1fr);">
+          <view wx:for="{{gridNumbers}}" wx:key="index"
+            class="num-bubble memorizing"
+            style="--bubble-delay: {{index * 40}}ms;">
+            <view class="bubble-body">
+              <view class="bubble-shine"></view>
+              <text class="bubble-num">{{item.num}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 开始挑战按钮 -->
+      <button class="start-challenge-btn" bindtap="startChallenge">
+        <text class="challenge-btn-icon">🎯</text>
+        <text class="challenge-btn-text">{{i18n.startChallenge}}</text>
+      </button>
+    </block>
+
+    <!-- 游戏界面 -->
+    <block wx:if="{{gameState === 'playing'}}">
+      <!-- 状态栏 -->
+      <view class="stats-card">
+        <view class="stats-row">
+          <view class="stat-item">
+            <text class="stat-value">{{formattedTime}}{{i18n.secondUnit}}</text>
+            <text class="stat-label">{{i18n.timer}}</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value">{{nextNumber}}/{{numbers}}</text>
+            <text class="stat-label">{{i18n.nextNumber}}</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value">{{wrongCount}}</text>
+            <text class="stat-label">{{i18n.mistakes}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 提示文字 -->
+      <view class="state-text-wrap">
+        <text class="state-text">{{numbersHidden ? i18n.hiddenTip : i18n.yourTurn}}</text>
+      </view>
+
+      <!-- 数字网格 -->
+      <view class="game-area">
+        <view class="number-grid" style="grid-template-columns: repeat({{gridCols}}, 1fr);">
+          <view wx:for="{{gridNumbers}}" wx:key="index"
+            class="num-bubble {{item.tapped ? 'tapped' : ''}} {{item.wrong ? 'wrong' : ''}} {{numbersHidden && !item.tapped ? 'hidden-num' : ''}}"
+            data-index="{{index}}" bindtap="onNumberTap">
+            <view class="bubble-body">
+              <view class="bubble-shine" wx:if="{{!numbersHidden || item.tapped}}"></view>
+              <text wx:if="{{!numbersHidden || item.tapped}}" class="bubble-num">{{item.num}}</text>
+              <text wx:else class="bubble-placeholder">?</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 显示/隐藏数字切换按钮 -->
+      <view class="toggle-numbers-btn" bindtap="toggleNumbersVisible">
+        <text>{{numbersHidden ? i18n.showNumbers : i18n.hideNumbers}}</text>
+      </view>
+
+      <!-- 重新开始按钮 -->
+      <button class="btn-primary start-btn restart-btn" bindtap="startGame">
+        <text class="btn-icon-emoji">↻</text>
+        <text>{{i18n.restart}}</text>
+      </button>
+    </block>
+
+    <!-- 分享按钮 -->
+    <button class="share-btn" open-type="share">
+      <text class="share-icon">📤</text>
+      <text class="share-text">{{i18n.shareChallenge}}</text>
+    </button>
+
+    <!-- 提示卡片 -->
+    <view class="tips-section">
+      <view class="tips-title">{{i18n.gameRules}}</view>
+      <view class="tips-content">
+        <text class="tip-item">{{i18n.rule1}}</text>
+        <text class="tip-item">{{i18n.rule2}}</text>
+        <text class="tip-item">{{i18n.rule3}}</text>
+        <text class="tip-item">{{i18n.rule4}}</text>
+      </view>
+    </view>
+
+  </view>
+</scroll-view>
+<!-- 结果弹窗 -->
+<view class="result-modal-mask" wx:if="{{showResultModal}}" bindtap="closeResultModal">
+  <view class="result-modal" catchtap="">
+    <view class="result-modal-poster" wx:if="{{_posterPath}}">
+      <image src="{{_posterPath}}" mode="widthFix" class="result-poster-img"></image>
+    </view>
+    <view class="result-modal-info" wx:else>
+      <text class="result-modal-icon">{{_resultData.icon}}</text>
+      <text class="result-modal-title">{{_resultData.title}}</text>
+      <text class="result-modal-score">{{_resultData.mainScore}}</text>
+      <text class="result-modal-label">{{_resultData.mainScoreLabel}}</text>
+      <text class="result-modal-rating" wx:if="{{_resultData.rating}}">{{_resultData.rating}}</text>
+    </view>
+    <view class="result-modal-actions">
+      <button class="result-modal-share" open-type="share">{{i18n.shareChallenge}}</button>
+      <view class="result-modal-close" bindtap="closeResultModal">{{i18n.close}}</view>
+    </view>
+  </view>
+</view>
+<!-- 分享海报Canvas -->
+<canvas type="2d" id="funPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:500px;height:400px;"></canvas>
+<!-- 结果海报Canvas -->
+<canvas type="2d" id="resultPosterCanvas" style="position:fixed;left:-9999px;top:-9999px;width:420px;height:560px;"></canvas>

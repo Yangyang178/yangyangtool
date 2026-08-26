@@ -1,57 +1,146 @@
 <view class="guide-mask" wx:if="{{show}}" catchtouchmove="preventMove">
   <swiper class="guide-swiper" indicator-dots="{{true}}" indicator-color="rgba(255,255,255,0.4)" indicator-active-color="#FFFFFF" autoplay="{{false}}" current="{{current}}" bindchange="onSwiperChange">
-    
+
+    <!-- Page 1: 快速上手 -->
     <swiper-item class="guide-item">
       <view class="guide-content center">
-        <view class="guide-icon-wrap" style="background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)">
+        <view class="guide-icon-wrap hero-icon">
           <text class="guide-emoji">🧰</text>
         </view>
-        <text class="guide-title">欢迎使用百宝工具箱</text>
-        <text class="guide-desc">22+ 实用小工具，即用即走，轻量高效</text>
+        <text class="guide-title">{{i18n.welcomeTitle}}</text>
+        <text class="guide-desc">{{i18n.welcomeDesc}}</text>
+        <view class="guide-tags">
+          <text class="guide-tag">{{i18n.tagLocal}}</text>
+          <text class="guide-tag">{{i18n.tagInstant}}</text>
+          <text class="guide-tag">{{i18n.tagPrivacy}}</text>
+        </view>
+        <view class="guide-quick-actions">
+          <view class="quick-action-item">
+            <text class="quick-action-icon">🔍</text>
+            <text class="quick-action-text">{{i18n.quickSearch}}</text>
+          </view>
+          <view class="quick-action-item">
+            <text class="quick-action-icon">📂</text>
+            <text class="quick-action-text">{{i18n.quickCategory}}</text>
+          </view>
+          <view class="quick-action-item">
+            <text class="quick-action-icon">⭐</text>
+            <text class="quick-action-text">{{i18n.quickFavorite}}</text>
+          </view>
+        </view>
       </view>
     </swiper-item>
 
+    <!-- Page 2: 签到奖励 -->
     <swiper-item class="guide-item">
       <view class="guide-content">
         <view class="guide-highlight-box">
-          <view class="highlight-search">
-            <text class="highlight-icon">🔍</text>
-            <text class="highlight-text">搜索工具...</text>
+          <view class="highlight-checkin-card">
+            <view class="highlight-checkin-header">
+              <text class="highlight-checkin-icon">📅</text>
+              <text class="highlight-checkin-title">{{i18n.guideCheckinTitle}}</text>
+            </view>
+            <view class="highlight-checkin-streak">
+              <view class="highlight-streak-day active"><text class="streak-num">1</text></view>
+              <view class="highlight-streak-day active"><text class="streak-num">2</text></view>
+              <view class="highlight-streak-day active"><text class="streak-num">3</text></view>
+              <view class="highlight-streak-day current"><text class="streak-num">4</text></view>
+              <view class="highlight-streak-day"><text class="streak-num">5</text></view>
+              <view class="highlight-streak-day"><text class="streak-num">6</text></view>
+              <view class="highlight-streak-day"><text class="streak-num">7</text></view>
+            </view>
+            <view class="highlight-points-row">
+              <text class="highlight-points-icon">💎</text>
+              <text class="highlight-points-text">{{i18n.guidePointsSample}}</text>
+            </view>
           </view>
           <view class="highlight-arrow-down"></view>
         </view>
-        <text class="guide-title">快速搜索</text>
-        <text class="guide-desc">输入关键词即可找到需要的工具\n支持搜索历史和热门推荐</text>
-      </view>
-    </swiper-item>
-
-    <swiper-item class="guide-item">
-      <view class="guide-content">
-        <view class="guide-highlight-box">
-          <view class="highlight-tabs">
-            <view class="highlight-tab active"><text>全部</text></view>
-            <view class="highlight-tab"><text>计算</text></view>
-            <view class="highlight-tab"><text>文本</text></view>
-            <view class="highlight-tab"><text>生活</text></view>
+        <view class="guide-reward-row">
+          <view class="guide-reward-item">
+            <text class="reward-emoji">🎁</text>
+            <text class="reward-name">{{i18n.rewardChest}}</text>
           </view>
-          <view class="highlight-arrow-down"></view>
+          <view class="guide-reward-item">
+            <text class="reward-emoji">🎫</text>
+            <text class="reward-name">{{i18n.rewardMakeup}}</text>
+          </view>
+          <view class="guide-reward-item">
+            <text class="reward-emoji">🏔️</text>
+            <text class="reward-name">{{i18n.rewardMilestone}}</text>
+          </view>
         </view>
-        <text class="guide-title">分类浏览</text>
-        <text class="guide-desc">按类别快速筛选工具\n计算转换 / 文本处理 / 生活助手等</text>
+        <text class="guide-title">{{i18n.checkinTitleNew}}</text>
+        <text class="guide-desc">{{i18n.checkinDescNew}}</text>
       </view>
     </swiper-item>
 
+    <!-- Page 3: 收藏+个性 -->
     <swiper-item class="guide-item">
       <view class="guide-content">
         <view class="guide-highlight-box">
           <view class="highlight-fav">
-            <text class="highlight-star">★</text>
-            <text class="highlight-fav-text">我的收藏</text>
+            <text class="highlight-star">⭐</text>
+            <text class="highlight-fav-text">{{i18n.guideFavExample}}</text>
           </view>
           <view class="highlight-arrow-down"></view>
         </view>
-        <text class="guide-title">收藏常用</text>
-        <text class="guide-desc">点击卡片上的 ☆ 收藏常用工具\n在「我的」页面随时查看和访问</text>
+        <view class="guide-highlight-box" style="margin-top: 16rpx;">
+          <view class="highlight-settings-card">
+            <view class="highlight-setting-item">
+              <text class="highlight-setting-icon">🎨</text>
+              <text class="highlight-setting-name">{{i18n.guideThemeColor}}</text>
+            </view>
+            <view class="highlight-setting-item">
+              <text class="highlight-setting-icon">🌙</text>
+              <text class="highlight-setting-name">{{i18n.guideDarkMode}}</text>
+            </view>
+            <view class="highlight-setting-item">
+              <text class="highlight-setting-icon">🔤</text>
+              <text class="highlight-setting-name">{{i18n.guideFontSize}}</text>
+            </view>
+          </view>
+          <view class="highlight-arrow-down"></view>
+        </view>
+        <text class="guide-title">{{i18n.favPersonalTitle}}</text>
+        <text class="guide-desc">{{i18n.favPersonalDesc}}</text>
+      </view>
+    </swiper-item>
+
+    <!-- Page 4: 开始体验 -->
+    <swiper-item class="guide-item">
+      <view class="guide-content center">
+        <view class="guide-icon-wrap feature-icon">
+          <text class="guide-emoji">✨</text>
+        </view>
+        <text class="guide-title">{{i18n.startTitle}}</text>
+        <view class="feature-grid">
+          <view class="feature-item">
+            <text class="feature-emoji">💱</text>
+            <text class="feature-name">{{i18n.featureExchange}}</text>
+          </view>
+          <view class="feature-item">
+            <text class="feature-emoji">🖼️</text>
+            <text class="feature-name">{{i18n.featureBatchImage}}</text>
+          </view>
+          <view class="feature-item">
+            <text class="feature-emoji">🍅</text>
+            <text class="feature-name">{{i18n.featurePomodoro}}</text>
+          </view>
+          <view class="feature-item">
+            <text class="feature-emoji">💧</text>
+            <text class="feature-name">{{i18n.featureWaterReminder}}</text>
+          </view>
+          <view class="feature-item">
+            <text class="feature-emoji">🎬</text>
+            <text class="feature-name">{{i18n.featureDanmaku}}</text>
+          </view>
+          <view class="feature-item">
+            <text class="feature-emoji">🎭</text>
+            <text class="feature-name">{{i18n.featureMemeMaker}}</text>
+          </view>
+        </view>
+        <text class="guide-desc">{{i18n.allLocalDesc}}</text>
       </view>
     </swiper-item>
 
@@ -59,10 +148,10 @@
 
   <view class="guide-footer">
     <view class="skip-btn" bindtap="onSkip" wx:if="{{current < 3}}">
-      <text>跳过</text>
+      <text>{{i18n.skip}}</text>
     </view>
     <view class="start-btn {{current === 3 ? 'active' : ''}}" bindtap="{{current === 3 ? 'onStart' : 'onNext'}}">
-      <text>{{current === 3 ? '立即体验' : '下一步'}}</text>
+      <text>{{current === 3 ? i18n.startNow : i18n.nextStep}}</text>
       <text class="btn-arrow" wx:if="{{current < 3}}">→</text>
     </view>
   </view>

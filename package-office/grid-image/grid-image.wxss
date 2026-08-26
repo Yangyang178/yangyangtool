@@ -1,0 +1,233 @@
+@import "../../styles/tool-common.wxss";
+
+page { background-color: var(--pageBg,#F8FAFC); }
+
+/* ========== Upload Area ========== */
+.upload-area {
+  width: 100%;
+  min-height: 200px;
+  border: 2px dashed var(--borderLight);
+  border-radius: var(--radius2xl, 24px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  margin-top: 12px;
+}
+
+.upload-hover {
+  border-color: var(--primaryColor);
+  background: rgba(59,130,246,0.04);
+}
+
+.upload-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.upload-text {
+  font-size: 14px;
+  color: var(--textSecondary);
+}
+
+.preview-image {
+  width: 100%;
+  height: 240px;
+  border-radius: 16px;
+}
+
+.change-image-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.55);
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+.change-image-btn text {
+  font-size: 12px;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* ========== Options ========== */
+.option-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.option-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--textPrimary);
+}
+
+.option-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.opt-btn {
+  padding: 6px 16px;
+  border-radius: 12px;
+  background: var(--surfaceBg);
+  border: 1px solid var(--borderLight);
+  transition: all 0.15s ease;
+}
+
+.opt-btn text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--textSecondary);
+}
+
+.opt-btn.active {
+  background: linear-gradient(135deg, #F472B6 0%, #EC4899 100%);
+  border-color: #EC4899;
+}
+
+.opt-btn.active text {
+  color: #FFFFFF;
+}
+
+.color-options {
+  display: flex;
+  gap: 10px;
+}
+
+.color-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--borderLight);
+  transition: all 0.15s ease;
+}
+
+.color-dot.active {
+  border-color: #EC4899;
+  box-shadow: 0 0 0 2px rgba(236,72,153,0.3);
+}
+
+/* ========== Grid Preview ========== */
+.grid-preview {
+  display: grid;
+  gap: 4px;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.grid-cell {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.grid-cell-img {
+  width: 100%;
+  height: 100%;
+}
+
+.grid-cell-index {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+/* ========== Tip Card ========== */
+.tip-card {
+  background: linear-gradient(135deg, #FEFCE8 0%, #FEF9C3 100%);
+  border-radius: var(--radius2xl, 24px);
+  padding: 16px 20px;
+  margin-top: 16px;
+  border-left: 4px solid #EAB308;
+}
+
+.tip-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #854D0E;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.tip-item {
+  font-size: 13px;
+  color: #A16207;
+  line-height: 1.8;
+  display: block;
+}
+
+/* ========== Dark Mode ========== */
+.dark-mode .upload-area {
+  border-color: #334155;
+}
+
+.dark-mode .upload-hover {
+  border-color: #60A5FA;
+}
+
+.dark-mode .change-image-btn {
+  background: rgba(0,0,0,0.7);
+}
+
+.dark-mode .opt-btn {
+  background: #1E293B;
+  border-color: #334155;
+}
+
+.dark-mode .opt-btn text {
+  color: #94A3B8;
+}
+
+.dark-mode .opt-btn.active {
+  background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+  border-color: #EC4899;
+}
+
+.dark-mode .opt-btn.active text {
+  color: #FFFFFF;
+}
+
+.dark-mode .color-dot {
+  border-color: #475569;
+}
+
+.dark-mode .color-dot.active {
+  border-color: #F472B6;
+  box-shadow: 0 0 0 2px rgba(244,114,182,0.3);
+}
+
+.dark-mode .grid-cell-index {
+  background: rgba(0,0,0,0.65);
+}
+
+.dark-mode .tip-card {
+  background: linear-gradient(135deg, #422006 0%, #713F12 100%);
+  border-left-color: #CA8A04;
+}
+
+.dark-mode .tip-title {
+  color: #FEF08A;
+}
+
+.dark-mode .tip-item {
+  color: #D4AF37;
+}

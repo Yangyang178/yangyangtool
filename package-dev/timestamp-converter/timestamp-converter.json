@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "时间戳转换 - Unix时间戳工具",
+  "usingComponents": {
+    "navigation-bar": "/components/navigation-bar/navigation-bar",
+    "skeleton": "/components/skeleton/skeleton"
+  }
+}

@@ -1,14 +1,10 @@
 {
-  "name": "saveFeedback",
+  "name": "sendEmail",
   "version": "1.0.0",
-  "description": "",
+  "description": "保存用户反馈到数据库并发送邮件通知",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "wx-server-sdk": "~2.6.3"
+    "wx-server-sdk": "~2.6.3",
+    "nodemailer": "^6.9.13"
   }
 }
